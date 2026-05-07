@@ -183,15 +183,15 @@ function ScreenHome({ onGoToEdu, onGoToCapsula }) {
         desc="Qué esperar estos días y cómo acompañar a Sofía en esta etapa."
         mins="4 min de lectura"
         illoBg={KUN.sageSoft} illoEmoji={<IlloDrop />}
-        onClick={onGoToCapsula || onGoToEdu}
+        onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
       />
       <CapsuleCard
         tagKind="rec" tag="RECOMENDADO PARA TI"
         title="Método canguro: cómo empezar"
         desc="Una guía cálida para tu primer contacto piel con piel con Sofía."
-        mins="6 min · video"
+        mins="6 min de lectura"
         illoBg={KUN.accentSoft} illoEmoji={<IlloKangaroo />}
-        onClick={onGoToEdu}
+        onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
       />
     </>
   );

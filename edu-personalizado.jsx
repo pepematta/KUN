@@ -56,15 +56,21 @@ function RecommendedHero({ onOpenCapsula }) {
   );
 }
 
-function HistorySection({ completed }) {
+function HistorySection({ completedCapsulas }) {
   const base = [
-    { title: 'Cómo se ve tu bebé hoy',  dur: '3 min', when: 'Hace 2 días' },
-    { title: 'Entender los monitores',   dur: '5 min', when: 'Hace 5 días' },
-    { title: 'El método canguro',        dur: '6 min', when: 'La semana pasada' },
+    { title: 'Cómo se ve tu bebé hoy',          dur: '3 min', when: 'Hace 2 días' },
+    { title: 'Entender los monitores',           dur: '5 min', when: 'Hace 5 días' },
+    { title: 'Método canguro: cómo empezar',     dur: '6 min', when: 'La semana pasada' },
   ];
-  const items = completed
-    ? [{ title: 'Tu bebé empezó a alimentarse por sonda', dur: '4 min', when: 'Hoy' }, ...base]
-    : base;
+  const lib = window.CAP_LIBRARY || {};
+  const capCatalog = window.CAPSULAS || [];
+  const newItems = (completedCapsulas || []).map(id => {
+    const cap = lib[id];
+    if (!cap) return null;
+    const catalogEntry = capCatalog.find(c => c.id === id);
+    return { title: catalogEntry?.title || cap.headerTitle, dur: cap.dur.toLowerCase(), when: 'Hoy' };
+  }).filter(Boolean);
+  const items = [...newItems, ...base.filter(b => !newItems.some(n => n.title === b.title))];
   return (
     <div style={{ margin: '22px 0 0' }}>
       <div style={{ padding: '0 28px 10px', display:'flex', alignItems:'flex-end', justifyContent:'space-between' }}>
@@ -118,11 +124,11 @@ function HistorySection({ completed }) {
   );
 }
 
-function ScreenPersonalizado({ onOpenCapsula, completed }) {
+function ScreenPersonalizado({ onOpenCapsula, completedCapsulas }) {
   return (
     <>
-      <RecommendedHero onOpenCapsula={onOpenCapsula} />
-      <HistorySection completed={completed} />
+      <RecommendedHero onOpenCapsula={() => onOpenCapsula && onOpenCapsula(1)} />
+      <HistorySection completedCapsulas={completedCapsulas} />
     </>
   );
 }

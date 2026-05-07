@@ -202,7 +202,8 @@ function Prototype() {
   const [recordings, setRecordings] = useState([]);
   const [notifOpen, setNotifOpen] = useState(false);
   const [capsulaOpen, setCapsulaOpen] = useState(false);
-  const [capsulaCompleted, setCapsulaCompleted] = useState(false);
+  const [capsuleId, setCapsuleId] = useState(1);
+  const [completedCapsulas, setCompletedCapsulas] = useState([]);
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
 
   const goToEdu = (sub = 'perso') => {
@@ -210,19 +211,25 @@ function Prototype() {
     setTab('edu');
   };
 
-  const openCapsula = () => setCapsulaOpen(true);
+  const openCapsula = (id = 1) => { setCapsuleId(id); setCapsulaOpen(true); };
   const closeCapsula = () => { setCapsulaOpen(false); setTab('edu'); setEduSub('perso'); };
-  const completeCapsula = () => { setCapsulaCompleted(true); setCapsulaOpen(false); setTab('edu'); setEduSub('perso'); };
+  const completeCapsula = () => {
+    setCompletedCapsulas(prev => [capsuleId, ...prev.filter(id => id !== capsuleId)]);
+    setCapsulaOpen(false);
+    setTab('edu');
+    setEduSub('perso');
+  };
 
   const renderEdu = () => {
-    if (eduSub === 'camino') return <ScreenCamino />;
-    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completed={capsulaCompleted} />;
-    return <ScreenBiblioteca />;
+    if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} />;
+    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} />;
+    return <ScreenBiblioteca onOpenCapsula={openCapsula} />;
   };
 
   let body, hasSubtabs = false;
   if (capsulaOpen) {
     body = <ScreenCapsula
+      capsuleId={capsuleId}
       onBack={closeCapsula}
       onComplete={completeCapsula}
       onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}

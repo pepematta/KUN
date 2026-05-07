@@ -49,7 +49,7 @@ function CaminoHeader() {
 }
 
 // Station: dot sits on curve, card extends to one side
-function Station({ state, num, title, dur, cx, cy, side }) {
+function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   let dotBg, dotContent, titleColor, durColor, durBold;
   if (state === 'done') {
     dotBg = KUN.accent;
@@ -95,7 +95,9 @@ function Station({ state, num, title, dur, cx, cy, side }) {
         {dotContent}
       </div>
       {/* card */}
-      <div style={{
+      <div
+        onClick={onClick && state !== 'next' ? onClick : undefined}
+        style={{
         position:'absolute',
         left: cardLeft, top: cy - 28,
         width: cardW,
@@ -107,6 +109,7 @@ function Station({ state, num, title, dur, cx, cy, side }) {
         boxShadow: cardShadow,
         opacity: state === 'next' ? 0.85 : 1,
         boxSizing: 'border-box',
+        cursor: onClick && state !== 'next' ? 'pointer' : 'default',
       }}>
         <div style={{
           fontSize: state === 'active' ? 14.5 : 13.5,
@@ -123,15 +126,13 @@ function Station({ state, num, title, dur, cx, cy, side }) {
   );
 }
 
-function CaminoPath() {
+function CaminoPath({ onOpenCapsula }) {
   const W = 390;
-  // serpentine: alternating left/right anchor x's; smooth wave via cubic Béziers
-  // Stations laid out vertically; the curve sweeps horizontally between them.
   const stations = [
-    { state:'done',   num:1, title:'Cómo se ve tu bebé hoy',          dur:'Completada · 3 min',     x: 78,  y:  40, side:'right' },
-    { state:'done',   num:2, title:'Entender los monitores',           dur:'Completada · 5 min',     x: 312, y: 150, side:'left'  },
-    { state:'active', num:3, title:'Tocar y contener con calma',       dur:'Continúa aquí · 4 min',  x: 78,  y: 280, side:'right' },
-    { state:'next',   num:4, title:'Cambios de pañal en incubadora',   dur:'Pronto',                 x: 312, y: 410, side:'left'  },
+    { state:'done',   num:1, title:'Cómo se ve tu bebé hoy',        dur:'Completada · 3 min',    x: 78,  y:  40, side:'right', capId: 3 },
+    { state:'done',   num:2, title:'Entender los monitores',         dur:'Completada · 5 min',    x: 312, y: 150, side:'left',  capId: 4 },
+    { state:'active', num:3, title:'Método canguro: cómo empezar',   dur:'Continúa aquí · 6 min', x: 78,  y: 280, side:'right', capId: 2 },
+    { state:'next',   num:4, title:'Tu bebé empezó a alimentarse por sonda', dur:'Pronto · 4 min', x: 312, y: 410, side:'left',  capId: 1 },
   ];
 
   // Build a serpentine path that passes through all station centers.
@@ -168,17 +169,18 @@ function CaminoPath() {
           key={i}
           state={st.state} num={st.num} title={st.title} dur={st.dur}
           cx={st.x} cy={st.y} side={st.side}
+          onClick={onOpenCapsula ? () => onOpenCapsula(st.capId) : undefined}
         />
       ))}
     </div>
   );
 }
 
-function ScreenCamino() {
+function ScreenCamino({ onOpenCapsula }) {
   return (
     <>
       <CaminoHeader />
-      <CaminoPath />
+      <CaminoPath onOpenCapsula={onOpenCapsula} />
     </>
   );
 }
