@@ -388,37 +388,21 @@ function ChatBubble({ msg, profColor }) {
   );
 }
 
-function ChatComposer() {
+function ChatComposer({ onSend }) {
   const [text, setText] = React.useState('');
-  const [messages, setMessages] = React.useState([]);
 
   const send = () => {
     if (!text.trim()) return;
-    setMessages(prev => [...prev, text.trim()]);
+    onSend && onSend(text.trim());
     setText('');
   };
 
   return (
     <div style={{
       position: 'absolute', bottom: 0, left: 0, right: 0,
-      padding: '0 16px 14px',
-      background: 'linear-gradient(180deg, rgba(250,246,241,0) 0%, #FAF6F1 28%)',
+      padding: '8px 16px 14px',
+      background: 'linear-gradient(180deg, rgba(250,246,241,0) 0%, #FAF6F1 35%)',
     }}>
-      {/* Sent message bubbles from this session */}
-      {messages.map((m, i) => (
-        <div key={i} style={{
-          display: 'flex', justifyContent: 'flex-end',
-          marginBottom: 6, paddingTop: i === 0 ? 10 : 0,
-        }}>
-          <div style={{
-            background: KUN.accent, color: '#fff',
-            borderRadius: 18, borderBottomRightRadius: 6,
-            padding: '10px 14px', maxWidth: '75%',
-            fontSize: 14, fontWeight: 500, lineHeight: 1.4,
-            boxShadow: '0 4px 10px rgba(201,123,90,0.18)',
-          }}>{m}</div>
-        </div>
-      ))}
       <div style={{
         background: '#fff', borderRadius: 26,
         padding: '8px 8px 8px 16px',
@@ -466,11 +450,28 @@ function ChatThread({ profId, onBack }) {
   const prof = PROFESSIONALS.find(p => p.id === profId)
     || AVAILABLE_PROFESSIONALS.find(p => p.id === profId);
   const thread = profId === 'juanita' ? JUANITA_THREAD : GENERIC_THREAD;
+  const [extraMessages, setExtraMessages] = React.useState([]);
+  const scrollRef = React.useRef(null);
+
+  const handleSend = (text) => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    setExtraMessages(prev => [...prev, { from: 'me', kind: 'text', text, time: `${hh}:${mm}` }]);
+  };
+
+  React.useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [extraMessages]);
 
   return (
     <div style={{
-      position: 'absolute', inset: 0, background: KUN.bg,
+      position: 'absolute', top: 0, left: 0, right: 0, bottom: 122,
+      background: KUN.bg,
       display: 'flex', flexDirection: 'column',
+      zIndex: 10,
     }}>
       <div style={{ padding: '14px 20px 6px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div onClick={onBack} style={{
@@ -490,7 +491,7 @@ function ChatThread({ profId, onBack }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', paddingTop: 14, paddingBottom: 90 }}>
+      <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', paddingTop: 14, paddingBottom: 90 }}>
         <div style={{
           textAlign: 'center', fontSize: 11, fontWeight: 700,
           color: KUN.inkMuted, letterSpacing: 0.6, marginBottom: 14,
@@ -500,9 +501,10 @@ function ChatThread({ profId, onBack }) {
           }}>HOY</span>
         </div>
         {thread.map((m, i) => <ChatBubble key={i} msg={m} profColor={prof.color} />)}
+        {extraMessages.map((m, i) => <ChatBubble key={`new-${i}`} msg={m} profColor={prof.color} />)}
       </div>
 
-      <ChatComposer />
+      <ChatComposer onSend={handleSend} />
     </div>
   );
 }
@@ -899,11 +901,24 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   const [kind, setKind] = React.useState(defaultKind);
   const [anon, setAnon] = React.useState(false);
   const [posted, setPosted] = React.useState(false);
+  const [title, setTitle] = React.useState('');
+  const [body, setBody] = React.useState('');
+
+  const canPublish = kind === 'question' ? (title.trim() && body.trim()) : body.trim();
 
   const handlePublish = () => {
+    if (!canPublish) return;
     setPosted(true);
     setTimeout(onClose, 1600);
   };
+
+  const sharedInputStyle = {
+    width: '100%', border: 'none', outline: 'none', resize: 'none',
+    fontFamily: 'inherit', fontSize: 14, fontWeight: 500,
+    color: KUN.ink, background: 'transparent', lineHeight: 1.5,
+    boxSizing: 'border-box', padding: 0,
+  };
+
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 200,
@@ -940,7 +955,7 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
           ].map(t => {
             const isA = t.id === kind;
             return (
-              <div key={t.id} onClick={() => setKind(t.id)} style={{
+              <div key={t.id} onClick={() => { setKind(t.id); setTitle(''); setBody(''); }} style={{
                 flex: 1, textAlign: 'center', cursor: 'pointer',
                 padding: '11px 6px', borderRadius: 999,
                 background: isA ? KUN.accent : '#fff',
@@ -957,25 +972,30 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
         <div style={{
           background: '#fff', borderRadius: 20, padding: 16, marginBottom: 14,
           boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+          flex: 1, overflowY: 'auto',
         }}>
           {kind === 'question' && (
-            <div style={{
-              fontSize: 14, color: KUN.inkMuted, fontWeight: 500,
-              padding: '4px 4px 14px',
-              borderBottom: `1px dashed ${KUN.divider}`, marginBottom: 14,
-            }}>
-              Título de tu pregunta…
-            </div>
+            <input
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              placeholder="Título de tu pregunta…"
+              style={{
+                ...sharedInputStyle,
+                fontSize: 15, fontWeight: 700,
+                paddingBottom: 14, marginBottom: 14,
+                borderBottom: `1px dashed ${KUN.divider}`,
+              }}
+            />
           )}
-          <div style={{
-            fontSize: 14, color: KUN.inkMuted, fontWeight: 500,
-            padding: '4px 4px 80px',
-            textWrap: 'pretty',
-          }}>
-            {kind === 'question'
+          <textarea
+            value={body}
+            onChange={e => setBody(e.target.value)}
+            placeholder={kind === 'question'
               ? 'Cuenta más sobre tu situación, qué te gustaría saber…'
               : 'Comparte tu experiencia. Lo que escribas puede acompañar a otra mamá o papá.'}
-          </div>
+            rows={5}
+            style={{ ...sharedInputStyle }}
+          />
         </div>
 
         <div onClick={() => setAnon(a => !a)} style={{
@@ -1007,10 +1027,12 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
         ) : (
           <button onClick={handlePublish} style={{
             width: '100%', padding: '14px 18px', borderRadius: 18, border: 'none',
-            background: KUN.accent, color: '#fff',
+            background: canPublish ? KUN.accent : KUN.cardSoft,
+            color: canPublish ? '#fff' : KUN.inkMuted,
             fontFamily: 'inherit', fontSize: 14.5, fontWeight: 800, letterSpacing: 0.1,
-            cursor: 'pointer',
-            boxShadow: '0 8px 18px rgba(201,123,90,0.35)',
+            cursor: canPublish ? 'pointer' : 'default',
+            boxShadow: canPublish ? '0 8px 18px rgba(201,123,90,0.35)' : 'none',
+            transition: 'all .2s',
           }}>Publicar</button>
         )}
       </div>
