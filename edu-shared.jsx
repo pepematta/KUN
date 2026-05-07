@@ -166,8 +166,8 @@ function KTopBar({ title, onBell, hasNotif }) {
     }}>
       <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
         <img src="logo.png" alt="KUN" style={{
-          width: 36, height: 36, borderRadius: 10,
-          objectFit: 'cover', objectPosition: 'center',
+          width: 36, height: 36,
+          objectFit: 'contain',
         }} />
         <span style={{ fontSize: 22, fontWeight: 800, color: KUN.ink, letterSpacing: 1.4 }}>KUN</span>
       </div>

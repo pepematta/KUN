@@ -104,7 +104,7 @@ function TopicRow({ icon, name, subtopics, defaultOpen }) {
 
 function TopicList() {
   const topics = [
-    { icon: KIcon.cat.breast, name:'Lactancia', defaultOpen: true,
+    { icon: KIcon.cat.breast, name:'Lactancia', defaultOpen: false,
       subtopics: [
         { title:'Producción de leche',  meta:'4 cápsulas · 18 min' },
         { title:'Lactancia con sonda',  meta:'3 cápsulas · 12 min' },
@@ -122,7 +122,7 @@ function TopicList() {
         { title:'Cuidados al alta',       meta:'4 cápsulas · 16 min' },
       ],
     },
-    { icon: KIcon.cat.kang, name:'Método canguro', defaultOpen: true,
+    { icon: KIcon.cat.kang, name:'Método canguro', defaultOpen: false,
       subtopics: [
         { title:'Primeros pasos',     meta:'2 cápsulas · 10 min' },
         { title:'Posición correcta',  meta:'1 cápsula · 4 min'   },
