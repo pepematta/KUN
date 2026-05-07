@@ -29,14 +29,14 @@ function BabyCard() {
       }}/>
       <div style={{
         width: 84, height: 84, borderRadius: '50%',
-        background: `repeating-linear-gradient(135deg, ${KUN.accentSoft} 0 6px, #F8E9DD 6px 12px)`,
         border: `3px solid #fff`,
         boxShadow: `0 0 0 2px ${KUN.accentSoft}`,
-        display:'flex', alignItems:'center', justifyContent:'center',
         flexShrink: 0, position:'relative', zIndex: 1,
-        fontSize: 9, fontFamily:'ui-monospace, monospace',
-        color: KUN.accentDeep, fontWeight: 600, textAlign:'center',
-      }}>foto<br/>Sofía</div>
+        overflow: 'hidden',
+      }}>
+        <img src="premature.jpg" alt="Sofía"
+          style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 30%' }} />
+      </div>
 
       <div style={{ flex: 1, position:'relative', zIndex: 1 }}>
         <div style={{ fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3, marginBottom: 6 }}>Sofía</div>
@@ -61,14 +61,15 @@ function NurseCard() {
       display:'flex', alignItems:'center', gap: 14,
     }}>
       <div style={{
-        width: 42, height: 42, borderRadius: 21, background: '#fff',
-        display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
+        width: 46, height: 46, borderRadius: 23, background: '#fff',
+        flexShrink: 0, overflow: 'hidden',
+        boxShadow: `0 0 0 2px ${KUN.sageSoft}`,
       }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="8.5" r="3.5" stroke={KUN.sage} strokeWidth="1.7"/>
-          <path d="M5 20C5 16.5 8 14 12 14C16 14 19 16.5 19 20" stroke={KUN.sage} strokeWidth="1.7" strokeLinecap="round"/>
-          <path d="M10 6.5H14M12 4.5V8.5" stroke={KUN.sage} strokeWidth="1.4" strokeLinecap="round"/>
-        </svg>
+        <picture>
+          <source srcSet="tens.avif" type="image/avif" />
+          <img src="tens2.webp" alt="Valentina Rojas"
+            style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 15%' }} />
+        </picture>
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 12, color: KUN.inkSoft, fontWeight: 600, marginBottom: 2, letterSpacing: 0.2 }}>

@@ -164,8 +164,11 @@ function KTopBar({ title, onBell, hasNotif }) {
       display:'flex', alignItems:'center', justifyContent:'space-between',
       padding:'8px 24px 6px',
     }}>
-      <div style={{ display:'flex', alignItems:'baseline', gap: 10 }}>
-        <KunMark size={26} />
+      <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
+        <img src="logo.png" alt="KUN" style={{
+          width: 36, height: 36, borderRadius: 10,
+          objectFit: 'cover', objectPosition: 'center',
+        }} />
         <span style={{ fontSize: 22, fontWeight: 800, color: KUN.ink, letterSpacing: 1.4 }}>KUN</span>
       </div>
       <button onClick={onBell} style={{
