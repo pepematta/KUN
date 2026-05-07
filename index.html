@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FAF6F1" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="KUN" />
+<title>KUN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: #EDE6DC;
+    font-family: 'Nunito', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+  }
+  /* hide scrollbar in chips */
+  ::-webkit-scrollbar { display: none; }
+
+  /* On real mobile devices, drop the desktop phone-frame mock and run full-bleed */
+  @media (max-width: 500px) {
+    html, body { background: #FAF6F1; height: 100%; }
+    body { padding: 0 !important; align-items: stretch !important; justify-content: stretch !important; }
+    .kun-device {
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding-top: env(safe-area-inset-top) !important;
+      padding-bottom: env(safe-area-inset-bottom) !important;
+      box-sizing: border-box !important;
+    }
+    .kun-island, .kun-status-bar, .kun-home-indicator { display: none !important; }
+    .kun-content-wrap { height: 100% !important; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="edu-shared.jsx"></script>
+<script type="text/babel" src="screen-home.jsx"></script>
+<script type="text/babel" src="edu-camino.jsx"></script>
+<script type="text/babel" src="edu-personalizado.jsx"></script>
+<script type="text/babel" src="edu-biblioteca.jsx"></script>
+<script type="text/babel" src="screen-vinculo.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+function PlaceholderScreen({ title, subtitle, icon }) {
+  return (
+    <div style={{
+      flex: 1, display:'flex', flexDirection:'column',
+      alignItems:'center', justifyContent:'center',
+      padding: '40px 32px', textAlign:'center', gap: 16,
+    }}>
+      <div style={{
+        width: 96, height: 96, borderRadius: 32,
+        background: KUN.accentSoft,
+        display:'flex', alignItems:'center', justifyContent:'center',
+      }}>{icon}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+        {title}
+      </div>
+      <div style={{
+        fontSize: 14, color: KUN.inkSoft, fontWeight: 500,
+        lineHeight: 1.5, maxWidth: 280, textWrap:'pretty',
+      }}>
+        {subtitle}
+      </div>
+      <div style={{
+        marginTop: 8, padding: '6px 14px', borderRadius: 999,
+        background:'#fff', fontSize: 11, fontWeight: 800, color: KUN.accentDeep,
+        letterSpacing: 0.6,
+      }}>PRÓXIMAMENTE</div>
+    </div>
+  );
+}
+
+function Prototype() {
+  const [tab, setTab] = useState('home');         // home | edu | bond | comm
+  const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
+  const [bondView, setBondView] = useState('entry'); // entry | journey | songs
+  const [recordings, setRecordings] = useState([]);
+  const addRecording = (r) => setRecordings(prev => [r, ...prev]);
+
+  const goToEdu = (sub = 'perso') => {
+    setEduSub(sub);
+    setTab('edu');
+  };
+
+  const renderEdu = () => {
+    if (eduSub === 'camino') return <ScreenCamino />;
+    if (eduSub === 'perso')  return <ScreenPersonalizado />;
+    return <ScreenBiblioteca />;
+  };
+
+  let body, hasSubtabs = false;
+  if (tab === 'home') {
+    body = <ScreenHome onGoToEdu={() => goToEdu('perso')} />;
+  } else if (tab === 'edu') {
+    hasSubtabs = true;
+    body = renderEdu();
+  } else if (tab === 'bond') {
+    body = <ScreenVinculo
+      view={bondView} setView={setBondView}
+      recordings={recordings} addRecording={addRecording}
+    />;
+  } else {
+    body = <PlaceholderScreen
+      title="Comunidad"
+      subtitle="Conéctate con otras familias que están viviendo la UCIN, en privado y a tu ritmo."
+      icon={
+        <svg width="50" height="44" viewBox="0 0 28 26" fill="none">
+          <circle cx="9" cy="9" r="3.2" stroke={KUN.accentDeep} strokeWidth="1.8"/>
+          <circle cx="19" cy="9.5" r="2.8" stroke={KUN.accentDeep} strokeWidth="1.8"/>
+          <path d="M3 20C3 17 5.7 14.8 9 14.8C12.3 14.8 15 17 15 20" stroke={KUN.accentDeep} strokeWidth="1.8" strokeLinecap="round"/>
+          <path d="M16 20C16 17.5 18 15.5 21 15.5C23.5 15.5 25 17 25 19" stroke={KUN.accentDeep} strokeWidth="1.8" strokeLinecap="round"/>
+        </svg>
+      }
+    />;
+  }
+
+  const screenLabel =
+    tab === 'home' ? '01 Inicio'
+    : tab === 'edu' ? `02 Educación · ${eduSub === 'camino' ? 'Camino' : eduSub === 'perso' ? 'Personalizado' : 'Biblioteca'}`
+    : tab === 'bond' ? `03 Vínculo · ${bondView === 'entry' ? 'Inicio' : bondView === 'journey' ? 'Nuestro viaje' : 'Cuentos y canciones'}`
+    : '04 Comunidad';
+
+  return (
+    <div data-screen-label={screenLabel} className="kun-device" style={{
+      width: 390, height: 844,
+      background: KUN.bg,
+      borderRadius: 54,
+      position:'relative', overflow:'hidden',
+      boxShadow: '0 40px 80px rgba(46,42,38,0.18), 0 0 0 1px rgba(46,42,38,0.08)',
+      fontFamily: "'Nunito', system-ui, sans-serif",
+      color: KUN.ink,
+    }}>
+      {/* dynamic island */}
+      <div className="kun-island" style={{
+        position:'absolute', top: 11, left:'50%', transform:'translateX(-50%)',
+        width: 120, height: 34, borderRadius: 22, background:'#000', zIndex: 50,
+      }}/>
+      <KStatusBar />
+
+      <div className="kun-content-wrap" style={{
+        height:'calc(100% - 50px)', overflow:'hidden',
+        display:'flex', flexDirection:'column',
+      }}>
+        <KTopBar />
+        {hasSubtabs && <KSubTabs active={eduSub} onChange={setEduSub} />}
+        <div key={tab + '-' + eduSub} style={{
+          flex: 1, overflow:'auto',
+          paddingBottom: 120,
+          animation: 'fade .25s ease-out forwards',
+        }}>
+          {body}
+        </div>
+      </div>
+
+      <KBottomNav active={tab} onChange={setTab} />
+      {/* home indicator */}
+      <div className="kun-home-indicator" style={{
+        position:'absolute', bottom: 8, left: 0, right: 0,
+        display:'flex', justifyContent:'center', pointerEvents:'none', zIndex: 100,
+      }}>
+        <div style={{ width: 134, height: 5, borderRadius: 3, background:'rgba(46,42,38,0.28)' }}/>
+      </div>
+
+      <style>{`
+        @keyframes fade {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Prototype />);
+</script>
+</body>
+</html>
