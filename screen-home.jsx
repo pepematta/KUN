@@ -170,7 +170,7 @@ function IlloDrop() {
   );
 }
 
-function ScreenHome({ onGoToEdu }) {
+function ScreenHome({ onGoToEdu, onGoToCapsula }) {
   return (
     <>
       <HomeGreeting />
@@ -183,7 +183,7 @@ function ScreenHome({ onGoToEdu }) {
         desc="Qué esperar estos días y cómo acompañar a Sofía en esta etapa."
         mins="4 min de lectura"
         illoBg={KUN.sageSoft} illoEmoji={<IlloDrop />}
-        onClick={onGoToEdu}
+        onClick={onGoToCapsula || onGoToEdu}
       />
       <CapsuleCard
         tagKind="rec" tag="RECOMENDADO PARA TI"

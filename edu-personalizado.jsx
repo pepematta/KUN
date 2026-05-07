@@ -1,6 +1,6 @@
 // Personalizado screen body (no device wrapper — used inside unified shell).
 
-function RecommendedHero() {
+function RecommendedHero({ onOpenCapsula }) {
   return (
     <div style={{
       margin: '6px 20px 0',
@@ -41,7 +41,7 @@ function RecommendedHero() {
             <span style={{ width: 3, height: 3, borderRadius:'50%', background:'#fff', opacity:0.7 }}/>
             <span>Lectura + audio</span>
           </div>
-          <button style={{
+          <button onClick={onOpenCapsula} style={{
             padding: '11px 20px', borderRadius: 999, border:'none',
             background:'#fff', color: KUN.accentDeep,
             fontFamily:'inherit', fontSize: 13, fontWeight: 800, letterSpacing: 0.1,
@@ -56,12 +56,15 @@ function RecommendedHero() {
   );
 }
 
-function HistorySection() {
-  const items = [
+function HistorySection({ completed }) {
+  const base = [
     { title: 'Cómo se ve tu bebé hoy',  dur: '3 min', when: 'Hace 2 días' },
     { title: 'Entender los monitores',   dur: '5 min', when: 'Hace 5 días' },
     { title: 'El método canguro',        dur: '6 min', when: 'La semana pasada' },
   ];
+  const items = completed
+    ? [{ title: 'Tu bebé empezó a alimentarse por sonda', dur: '4 min', when: 'Hoy' }, ...base]
+    : base;
   return (
     <div style={{ margin: '22px 0 0' }}>
       <div style={{ padding: '0 28px 10px', display:'flex', alignItems:'flex-end', justifyContent:'space-between' }}>
@@ -115,11 +118,11 @@ function HistorySection() {
   );
 }
 
-function ScreenPersonalizado() {
+function ScreenPersonalizado({ onOpenCapsula, completed }) {
   return (
     <>
-      <RecommendedHero />
-      <HistorySection />
+      <RecommendedHero onOpenCapsula={onOpenCapsula} />
+      <HistorySection completed={completed} />
     </>
   );
 }

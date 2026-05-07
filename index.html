@@ -55,6 +55,7 @@
 <script type="text/babel" src="edu-biblioteca.jsx"></script>
 <script type="text/babel" src="screen-vinculo.jsx"></script>
 <script type="text/babel" src="screen-comunidad.jsx"></script>
+<script type="text/babel" src="screen-capsula.jsx"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -200,6 +201,8 @@ function Prototype() {
   const [bondView, setBondView] = useState('entry'); // entry | journey | songs
   const [recordings, setRecordings] = useState([]);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [capsulaOpen, setCapsulaOpen] = useState(false);
+  const [capsulaCompleted, setCapsulaCompleted] = useState(false);
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
 
   const goToEdu = (sub = 'perso') => {
@@ -207,15 +210,25 @@ function Prototype() {
     setTab('edu');
   };
 
+  const openCapsula = () => setCapsulaOpen(true);
+  const closeCapsula = () => { setCapsulaOpen(false); setTab('edu'); setEduSub('perso'); };
+  const completeCapsula = () => { setCapsulaCompleted(true); setCapsulaOpen(false); setTab('edu'); setEduSub('perso'); };
+
   const renderEdu = () => {
     if (eduSub === 'camino') return <ScreenCamino />;
-    if (eduSub === 'perso')  return <ScreenPersonalizado />;
+    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completed={capsulaCompleted} />;
     return <ScreenBiblioteca />;
   };
 
   let body, hasSubtabs = false;
-  if (tab === 'home') {
-    body = <ScreenHome onGoToEdu={() => goToEdu('perso')} />;
+  if (capsulaOpen) {
+    body = <ScreenCapsula
+      onBack={closeCapsula}
+      onComplete={completeCapsula}
+      onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}
+    />;
+  } else if (tab === 'home') {
+    body = <ScreenHome onGoToEdu={() => goToEdu('perso')} onGoToCapsula={openCapsula} />;
   } else if (tab === 'edu') {
     hasSubtabs = true;
     body = renderEdu();
@@ -256,10 +269,13 @@ function Prototype() {
         display:'flex', flexDirection:'column',
       }}>
         <KTopBar onBell={() => setNotifOpen(true)} hasNotif />
-        {hasSubtabs && <KSubTabs active={eduSub} onChange={setEduSub} />}
-        <div key={tab + '-' + eduSub} style={{
-          flex: 1, overflow:'auto',
-          paddingBottom: 120,
+        {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
+        <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub)} style={{
+          flex: 1,
+          overflow: capsulaOpen ? 'hidden' : 'auto',
+          paddingBottom: capsulaOpen ? 0 : 120,
+          display: capsulaOpen ? 'flex' : undefined,
+          flexDirection: capsulaOpen ? 'column' : undefined,
           animation: 'fade .25s ease-out forwards',
         }}>
           {body}
