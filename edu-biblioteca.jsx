@@ -110,8 +110,18 @@ function TopicList() {
         { title:'Lactancia con sonda',  meta:'3 cápsulas · 12 min' },
       ],
     },
-    { icon: KIcon.cat.ecmo, name:'ECMO' },
-    { icon: KIcon.cat.prem, name:'Prematuridad' },
+    { icon: KIcon.cat.ecmo, name:'ECMO',
+      subtopics: [
+        { title:'Qué es la ECMO',           meta:'2 cápsulas · 8 min'  },
+        { title:'Acompañar durante la ECMO', meta:'3 cápsulas · 14 min' },
+      ],
+    },
+    { icon: KIcon.cat.prem, name:'Prematuridad',
+      subtopics: [
+        { title:'Etapas del desarrollo',  meta:'3 cápsulas · 12 min' },
+        { title:'Cuidados al alta',       meta:'4 cápsulas · 16 min' },
+      ],
+    },
     { icon: KIcon.cat.kang, name:'Método canguro', defaultOpen: true,
       subtopics: [
         { title:'Primeros pasos',     meta:'2 cápsulas · 10 min' },

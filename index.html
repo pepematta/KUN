@@ -92,11 +92,114 @@ function PlaceholderScreen({ title, subtitle, icon }) {
   );
 }
 
+const NOTIFICATIONS = [
+  { kind:'shift',     title:'Valentina Rojas inició su turno', desc:'Está cuidando a Sofía esta mañana.', time:'Hace 10 min', color: KUN.sage },
+  { kind:'capsule',   title:'Nueva cápsula para ti',           desc:'Método canguro: cómo empezar.',     time:'Hace 1 h',    color: KUN.accent },
+  { kind:'message',   title:'Mensaje de Juanita',              desc:'Te mando un artículo que te podría servir.', time:'Hace 2 h', color: KUN.sage },
+  { kind:'progress',  title:'Camino actualizado',              desc:'Completaste "Entender los monitores".',     time:'Ayer', color: KUN.accent },
+  { kind:'community', title:'Nueva pregunta en Comunidad',     desc:'Mariana preguntó sobre lactancia materna.', time:'Ayer', color: '#7AA8B8' },
+];
+
+const NOTIF_GLYPH = {
+  shift:     (c) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="8.5" r="3.5" stroke={c} strokeWidth="1.7"/>
+      <path d="M5 20C5 16.5 8 14 12 14C16 14 19 16.5 19 20" stroke={c} strokeWidth="1.7" strokeLinecap="round"/>
+      <path d="M10 6.5H14M12 4.5V8.5" stroke={c} strokeWidth="1.4" strokeLinecap="round"/>
+    </svg>
+  ),
+  capsule:   (c) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M5 5C5 4.4 5.4 4 6 4H12V21H6C5.4 21 5 20.6 5 20V5Z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+      <path d="M21 5C21 4.4 20.6 4 20 4H14V21H20C20.6 21 21 20.6 21 20V5Z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+    </svg>
+  ),
+  message:   (c) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M4 6C4 5 5 4 6 4H18C19 4 20 5 20 6V15C20 16 19 17 18 17H10L6 20V17C5 17 4 16 4 15V6Z" stroke={c} strokeWidth="1.7" strokeLinejoin="round"/>
+    </svg>
+  ),
+  progress:  (c) => (
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+      <path d="M3.5 8.2L6.5 11L12.5 4.8" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  community: (c) => (
+    <svg width="20" height="18" viewBox="0 0 28 26" fill="none">
+      <circle cx="9" cy="9" r="3.2" stroke={c} strokeWidth="1.8"/>
+      <circle cx="19" cy="9.5" r="2.8" stroke={c} strokeWidth="1.8"/>
+      <path d="M3 20C3 17 5.7 14.8 9 14.8C12.3 14.8 15 17 15 20" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 20C16 17.5 18 15.5 21 15.5C23.5 15.5 25 17 25 19" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+};
+
+function NotificationsPanel({ onClose }) {
+  return (
+    <div style={{
+      position:'absolute', inset: 0, zIndex: 200,
+      background: KUN.bg,
+      display:'flex', flexDirection:'column',
+    }}>
+      <div style={{ padding: '60px 20px 14px', display:'flex', alignItems:'center', gap: 12 }}>
+        <div onClick={onClose} style={{
+          width: 40, height: 40, borderRadius: 20, background: '#fff',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          boxShadow:'0 1px 2px rgba(46,42,38,0.04)', cursor:'pointer',
+        }}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12 4L6 10L12 16" stroke={KUN.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+            Notificaciones
+          </div>
+          <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2 }}>
+            {NOTIFICATIONS.length} nuevas hoy
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, overflowY:'auto', padding: '0 20px 30px' }}>
+        {NOTIFICATIONS.map((it, i) => (
+          <div key={i} style={{
+            background:'#fff', borderRadius: 20, padding: '14px 16px',
+            marginBottom: 8, display:'flex', gap: 14, alignItems:'flex-start',
+            boxShadow:'0 1px 2px rgba(46,42,38,0.03)', cursor:'pointer',
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 14, background: it.color,
+              display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
+            }}>
+              {NOTIF_GLYPH[it.kind]('#fff')}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 14, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2,
+              }}>{it.title}</div>
+              <div style={{
+                fontSize: 13, color: KUN.inkSoft, fontWeight: 500,
+                marginTop: 3, lineHeight: 1.4, textWrap:'pretty',
+              }}>{it.desc}</div>
+              <div style={{
+                fontSize: 11, color: KUN.inkMuted, fontWeight: 700,
+                marginTop: 6, letterSpacing: 0.3,
+              }}>{it.time}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Prototype() {
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
   const [bondView, setBondView] = useState('entry'); // entry | journey | songs
   const [recordings, setRecordings] = useState([]);
+  const [notifOpen, setNotifOpen] = useState(false);
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
 
   const goToEdu = (sub = 'perso') => {
@@ -152,7 +255,7 @@ function Prototype() {
         height:'calc(100% - 50px)', overflow:'hidden',
         display:'flex', flexDirection:'column',
       }}>
-        <KTopBar />
+        <KTopBar onBell={() => setNotifOpen(true)} hasNotif />
         {hasSubtabs && <KSubTabs active={eduSub} onChange={setEduSub} />}
         <div key={tab + '-' + eduSub} style={{
           flex: 1, overflow:'auto',
@@ -164,6 +267,9 @@ function Prototype() {
       </div>
 
       <KBottomNav active={tab} onChange={setTab} />
+
+      {notifOpen && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
+
       {/* home indicator */}
       <div className="kun-home-indicator" style={{
         position:'absolute', bottom: 8, left: 0, right: 0,

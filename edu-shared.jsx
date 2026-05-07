@@ -158,7 +158,7 @@ function KStatusBar() {
 }
 
 // generic top bar with title and bell
-function KTopBar({ title }) {
+function KTopBar({ title, onBell, hasNotif }) {
   return (
     <div style={{
       display:'flex', alignItems:'center', justifyContent:'space-between',
@@ -168,7 +168,7 @@ function KTopBar({ title }) {
         <KunMark size={26} />
         <span style={{ fontSize: 22, fontWeight: 800, color: KUN.ink, letterSpacing: 1.4 }}>KUN</span>
       </div>
-      <button style={{
+      <button onClick={onBell} style={{
         width: 40, height: 40, borderRadius: 20, border: 'none',
         background: '#fff',
         display:'flex', alignItems:'center', justifyContent:'center',
@@ -176,6 +176,13 @@ function KTopBar({ title }) {
         cursor:'pointer', position:'relative',
       }}>
         {KIcon.bell(KUN.ink)}
+        {hasNotif && (
+          <span style={{
+            position:'absolute', top: 8, right: 9,
+            width: 8, height: 8, borderRadius: 4,
+            background: KUN.accent, border:'1.5px solid #fff',
+          }}/>
+        )}
       </button>
     </div>
   );

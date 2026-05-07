@@ -269,7 +269,72 @@ function FeedEntry({ author, role, color, time, kind, content, isVoice, duration
   );
 }
 
-function NuestroViaje({ onBack, recordings }) {
+function AddEntrySheet({ onClose, onPickVoice }) {
+  const opts = [
+    { id:'photo', label:'Subir foto',  desc:'Captura un momento del día',     icon: VINK_ICONS.camera, color: KUN.accent },
+    { id:'text',  label:'Escribir nota', desc:'Una palabra, una frase, lo que sientas', icon: VINK_ICONS.text,  color: KUN.sage },
+    { id:'voice', label:'Grabar voz', desc:'Háblale, léele o cántale a Sofía', icon: VINK_ICONS.mic,   color: KUN.accentDeep },
+  ];
+  return (
+    <div onClick={onClose} style={{
+      position:'absolute', inset: 0, zIndex: 200,
+      background:'rgba(46,42,38,0.4)',
+      display:'flex', alignItems:'flex-end',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        width:'100%', background: KUN.bg,
+        borderTopLeftRadius: 28, borderTopRightRadius: 28,
+        padding:'14px 20px 28px',
+      }}>
+        <div style={{
+          width: 44, height: 5, borderRadius: 3, background: KUN.inkFaint,
+          margin:'0 auto 14px',
+        }}/>
+        <div style={{
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          marginBottom: 14,
+        }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+            Agregar al diario
+          </div>
+          <span onClick={onClose} style={{
+            fontSize: 13, fontWeight: 700, color: KUN.inkSoft, cursor:'pointer',
+          }}>Cancelar</span>
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', gap: 8 }}>
+          {opts.map(o => (
+            <div key={o.id}
+              onClick={() => { if (o.id === 'voice') onPickVoice(); else onClose(); }}
+              style={{
+                background:'#fff', borderRadius: 20, padding:'14px 16px',
+                display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
+                boxShadow:'0 1px 2px rgba(46,42,38,0.03)',
+              }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 14, background: KUN.cardSoft,
+                display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
+              }}>{o.icon(o.color)}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontSize: 15, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2,
+                }}>{o.label}</div>
+                <div style={{
+                  fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2,
+                }}>{o.desc}</div>
+              </div>
+              {KIcon.chevRight(KUN.inkFaint)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NuestroViaje({ onBack, recordings, addRecording }) {
+  const [sheet, setSheet] = React.useState(false);
+  const [recording, setRecording] = React.useState(false);
+
   return (
     <>
       <SubHeader title="Nuestro viaje" onBack={onBack} />
@@ -305,7 +370,7 @@ function NuestroViaje({ onBack, recordings }) {
         </div>
 
         {/* FAB */}
-        <button style={{
+        <button onClick={() => setSheet(true)} style={{
           position:'absolute', bottom: 14, right: 20,
           width: 58, height: 58, borderRadius: 29, border:'none',
           background: KUN.accent, color:'#fff',
@@ -315,6 +380,19 @@ function NuestroViaje({ onBack, recordings }) {
         }}>
           {VINK_ICONS.plus('#fff')}
         </button>
+
+        {sheet && (
+          <AddEntrySheet
+            onClose={() => setSheet(false)}
+            onPickVoice={() => { setSheet(false); setRecording(true); }}
+          />
+        )}
+        {recording && addRecording && (
+          <Recorder
+            onClose={() => setRecording(false)}
+            onSave={addRecording}
+          />
+        )}
       </div>
     </>
   );
@@ -407,8 +485,16 @@ const STORIES = [
     text: 'Una nube pequeña viajaba despacio por el cielo azul. No tenía prisa. Pasaba sobre los árboles y los saludaba con suavidad. Pasaba sobre el río y se miraba en el agua tranquila. A veces se detenía y dejaba caer una lluvia muy suave, casi un susurro. Las flores levantaban sus pétalos para recibirla. Los pájaros cantaban bajito. La nube seguía su camino sin apurarse, flotando, flotando. Sabía que no importaba llegar rápido. Lo importante era el viaje. Irse despacio. Sentir el viento. Mirar el mundo desde arriba, con calma. Como tú, que estás llegando al mundo poco a poco.',
     open: true,
   },
-  { title: 'El pez pequeño', text: '...', open: false },
-  { title: 'La semilla',     text: '...', open: false },
+  {
+    title: 'El pez pequeño',
+    text: 'En el fondo del mar vivía un pez muy pequeñito. Era tan chiquito que a veces se asustaba de su propia sombra. Un día se animó a salir y nadó entre corales rojos y amarillos. Conoció estrellas que brillaban en la arena y a una tortuga muy paciente que le dijo: "No tengas miedo de ser pequeño. Lo importante es seguir nadando, despacio, a tu ritmo." El pez aprendió que aunque era chiquito, tenía un corazón grande. Y con cada aleteo se hacía un poquito más fuerte. Como tú, mi amor, que cada día creces un poquito más.',
+    open: false,
+  },
+  {
+    title: 'La semilla',
+    text: 'Había una vez una semilla que dormía bajo la tierra. Estaba abrigada y tranquila, escuchando los sonidos del mundo. Un día sintió calor en su piel y unas gotitas de agua que la acariciaban. Muy despacio, comenzó a estirarse. Sacó una raíz hacia abajo y un brote suave hacia arriba. No tenía prisa. Sabía que crecer toma tiempo. Día tras día miró el sol asomarse y la luna pasar. Hasta que una mañana se convirtió en una flor. Tú también estás creciendo así, mi amor. Despacito, con tu propio tiempo, hasta florecer.',
+    open: false,
+  },
 ];
 
 function StoryRow({ story, onRecord }) {
@@ -701,7 +787,7 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
 
 // ── Public entry ────────────────────────────────────────
 function ScreenVinculo({ view, setView, recordings, addRecording }) {
-  if (view === 'journey') return <NuestroViaje onBack={() => setView('entry')} recordings={recordings} />;
+  if (view === 'journey') return <NuestroViaje onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
   if (view === 'songs')   return <CuentosCanciones onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
   return <VinkEntry onPick={setView} />;
 }
