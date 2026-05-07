@@ -54,6 +54,7 @@
 <script type="text/babel" src="edu-personalizado.jsx"></script>
 <script type="text/babel" src="edu-biblioteca.jsx"></script>
 <script type="text/babel" src="screen-vinculo.jsx"></script>
+<script type="text/babel" src="screen-comunidad.jsx"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -121,18 +122,7 @@ function Prototype() {
       recordings={recordings} addRecording={addRecording}
     />;
   } else {
-    body = <PlaceholderScreen
-      title="Comunidad"
-      subtitle="Conéctate con otras familias que están viviendo la UCIN, en privado y a tu ritmo."
-      icon={
-        <svg width="50" height="44" viewBox="0 0 28 26" fill="none">
-          <circle cx="9" cy="9" r="3.2" stroke={KUN.accentDeep} strokeWidth="1.8"/>
-          <circle cx="19" cy="9.5" r="2.8" stroke={KUN.accentDeep} strokeWidth="1.8"/>
-          <path d="M3 20C3 17 5.7 14.8 9 14.8C12.3 14.8 15 17 15 20" stroke={KUN.accentDeep} strokeWidth="1.8" strokeLinecap="round"/>
-          <path d="M16 20C16 17.5 18 15.5 21 15.5C23.5 15.5 25 17 25 19" stroke={KUN.accentDeep} strokeWidth="1.8" strokeLinecap="round"/>
-        </svg>
-      }
-    />;
+    body = <ScreenComunidad />;
   }
 
   const screenLabel =
