@@ -35,19 +35,18 @@ function SearchField() {
   );
 }
 
-function CategoryChips() {
-  const [active, setActive] = React.useState(0);
+function CategoryChips({ active, onChange }) {
   const chips = ['Todo', 'Lactancia', 'Prematuridad', 'Método canguro', 'ECMO', 'Alta y hogar'];
   return (
     <div style={{
       display:'flex', gap: 8, padding: '0 20px 18px',
       overflowX:'auto', scrollbarWidth:'none',
     }}>
-      {chips.map((c, i) => {
-        const isA = i === active;
+      {chips.map((c) => {
+        const isA = c === active;
         return (
           <div key={c}
-            onClick={() => setActive(i)}
+            onClick={() => onChange(c)}
             style={{
               flexShrink: 0, cursor:'pointer',
               padding: '9px 16px', borderRadius: 999,
@@ -125,11 +124,11 @@ function TopicRow({ icon, name, caps, defaultOpen, onOpenCapsula }) {
   );
 }
 
-function TopicList({ onOpenCapsula }) {
+function TopicList({ onOpenCapsula, activeCategory }) {
   const byTopic = (topicName) => CAPSULAS.filter(c => c.topic === topicName);
 
-  const topics = [
-    { icon: KIcon.cat.breast,  name: 'Alimentación por sonda', caps: byTopic('Alimentación por sonda') },
+  const allTopics = [
+    { icon: KIcon.cat.breast,  name: 'Alimentación por sonda', caps: byTopic('Alimentación por sonda'), defaultOpen: true },
     { icon: KIcon.cat.breast,  name: 'Lactancia',              caps: byTopic('Lactancia') },
     { icon: KIcon.cat.prem,    name: 'Prematuridad',           caps: byTopic('Prematuridad') },
     { icon: KIcon.cat.ecmo,    name: 'Equipos y monitores',    caps: byTopic('Equipos y monitores') },
@@ -138,25 +137,45 @@ function TopicList({ onOpenCapsula }) {
     { icon: KIcon.cat.prem,    name: 'Alta y hogar',           caps: byTopic('Alta y hogar') },
   ];
 
+  // Category chip → topic name mapping
+  const chipToTopic = {
+    'Lactancia': ['Lactancia', 'Alimentación por sonda'],
+    'Prematuridad': ['Prematuridad'],
+    'Método canguro': ['Método canguro'],
+    'ECMO': ['ECMO', 'Equipos y monitores'],
+    'Alta y hogar': ['Alta y hogar'],
+  };
+
+  const topics = (!activeCategory || activeCategory === 'Todo')
+    ? allTopics
+    : allTopics.filter(t => (chipToTopic[activeCategory] || []).includes(t.name));
+
+  const totalCaps = topics.reduce((sum, t) => sum + t.caps.length, 0);
+
   return (
     <div style={{ padding: '0 20px' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding: '0 8px 10px' }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6 }}>10 CÁPSULAS</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6 }}>
+          {totalCaps} CÁPSULA{totalCaps !== 1 ? 'S' : ''}
+        </div>
         <div style={{ fontSize: 12, fontWeight: 700, color: KUN.accent, display:'flex', alignItems:'center', gap: 4 }}>
           Ordenar {KIcon.chevDown(KUN.accent)}
         </div>
       </div>
-      {topics.map((t, i) => <TopicRow key={i} {...t} onOpenCapsula={onOpenCapsula} />)}
+      {topics.map((t, i) => (
+        <TopicRow key={t.name} {...t} defaultOpen={activeCategory !== 'Todo' || i === 0} onOpenCapsula={onOpenCapsula} />
+      ))}
     </div>
   );
 }
 
 function ScreenBiblioteca({ onOpenCapsula }) {
+  const [activeCategory, setActiveCategory] = React.useState('Todo');
   return (
     <>
       <SearchField />
-      <CategoryChips />
-      <TopicList onOpenCapsula={onOpenCapsula} />
+      <CategoryChips active={activeCategory} onChange={setActiveCategory} />
+      <TopicList onOpenCapsula={onOpenCapsula} activeCategory={activeCategory} />
     </>
   );
 }

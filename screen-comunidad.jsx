@@ -389,12 +389,36 @@ function ChatBubble({ msg, profColor }) {
 }
 
 function ChatComposer() {
+  const [text, setText] = React.useState('');
+  const [messages, setMessages] = React.useState([]);
+
+  const send = () => {
+    if (!text.trim()) return;
+    setMessages(prev => [...prev, text.trim()]);
+    setText('');
+  };
+
   return (
     <div style={{
       position: 'absolute', bottom: 0, left: 0, right: 0,
-      padding: '10px 16px 14px',
-      background: 'linear-gradient(180deg, rgba(250,246,241,0) 0%, #FAF6F1 30%)',
+      padding: '0 16px 14px',
+      background: 'linear-gradient(180deg, rgba(250,246,241,0) 0%, #FAF6F1 28%)',
     }}>
+      {/* Sent message bubbles from this session */}
+      {messages.map((m, i) => (
+        <div key={i} style={{
+          display: 'flex', justifyContent: 'flex-end',
+          marginBottom: 6, paddingTop: i === 0 ? 10 : 0,
+        }}>
+          <div style={{
+            background: KUN.accent, color: '#fff',
+            borderRadius: 18, borderBottomRightRadius: 6,
+            padding: '10px 14px', maxWidth: '75%',
+            fontSize: 14, fontWeight: 500, lineHeight: 1.4,
+            boxShadow: '0 4px 10px rgba(201,123,90,0.18)',
+          }}>{m}</div>
+        </div>
+      ))}
       <div style={{
         background: '#fff', borderRadius: 26,
         padding: '8px 8px 8px 16px',
@@ -405,17 +429,27 @@ function ChatComposer() {
           <button style={composerBtn}>{COM_ICONS.image(KUN.inkSoft)}</button>
           <button style={composerBtn}>{COM_ICONS.capsule(KUN.inkSoft)}</button>
         </div>
-        <span style={{
-          flex: 1, fontSize: 14, color: KUN.inkMuted, fontWeight: 500,
-          padding: '0 4px',
-        }}>Escribe un mensaje…</span>
-        <button style={{
+        <input
+          value={text}
+          onChange={e => setText(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && send()}
+          placeholder="Escribe un mensaje…"
+          style={{
+            flex: 1, border: 'none', outline: 'none',
+            fontSize: 14, color: KUN.ink, fontWeight: 500,
+            background: 'transparent', fontFamily: 'inherit',
+            padding: '0 4px',
+          }}
+        />
+        <button onClick={send} style={{
           width: 40, height: 40, borderRadius: 20, border: 'none',
-          background: KUN.accent, color: '#fff',
+          background: text.trim() ? KUN.accent : KUN.cardSoft,
+          color: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 4px 10px rgba(201,123,90,0.35)',
-        }}>{COM_ICONS.send('#fff')}</button>
+          cursor: text.trim() ? 'pointer' : 'default',
+          boxShadow: text.trim() ? '0 4px 10px rgba(201,123,90,0.35)' : 'none',
+          transition: 'background .2s, box-shadow .2s',
+        }}>{COM_ICONS.send(text.trim() ? '#fff' : KUN.inkFaint)}</button>
       </div>
     </div>
   );
@@ -619,6 +653,15 @@ function QuestionCard({ q, onOpen }) {
 function QuestionThread({ qId, onBack }) {
   const q = QUESTIONS.find(x => x.id === qId);
   const [replyAnon, setReplyAnon] = React.useState(false);
+  const [replyText, setReplyText] = React.useState('');
+  const [replyPosted, setReplyPosted] = React.useState(false);
+
+  const handleReply = () => {
+    if (!replyText.trim()) return;
+    setReplyPosted(true);
+    setTimeout(() => setReplyPosted(false), 2000);
+    setReplyText('');
+  };
 
   return (
     <>
@@ -718,39 +761,60 @@ function QuestionThread({ qId, onBack }) {
           background: '#fff', borderRadius: 22, padding: 14,
           boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
         }}>
-          <div style={{
-            fontSize: 13, color: KUN.inkMuted, fontWeight: 500, padding: '4px 4px 12px',
-          }}>
-            Escribe tu respuesta…
-          </div>
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            paddingTop: 12, borderTop: `1px dashed ${KUN.divider}`,
-          }}>
-            <div onClick={() => setReplyAnon(a => !a)} style={{
-              display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+          {replyPosted ? (
+            <div style={{
+              padding: '14px 4px', textAlign: 'center',
+              fontSize: 14, fontWeight: 800, color: KUN.sage, lineHeight: 1.5,
             }}>
-              <div style={{
-                width: 22, height: 22, borderRadius: 6,
-                border: `1.5px solid ${replyAnon ? KUN.accent : KUN.inkFaint}`,
-                background: replyAnon ? KUN.accent : '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all .2s',
-              }}>
-                {replyAnon && KIcon.check('#fff')}
-              </div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
-                Responder de forma anónima
-              </span>
+              ¡Respuesta publicada! 🧡
             </div>
-            <button style={{
-              padding: '9px 18px', borderRadius: 999, border: 'none',
-              background: KUN.accent, color: '#fff',
-              fontFamily: 'inherit', fontSize: 13, fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: '0 4px 10px rgba(201,123,90,0.3)',
-            }}>Publicar</button>
-          </div>
+          ) : (
+            <>
+              <textarea
+                value={replyText}
+                onChange={e => setReplyText(e.target.value)}
+                placeholder="Escribe tu respuesta…"
+                style={{
+                  width: '100%', minHeight: 72, border: 'none', outline: 'none',
+                  resize: 'none', fontFamily: 'inherit',
+                  fontSize: 14, color: KUN.ink, fontWeight: 500,
+                  background: KUN.cardSoft, borderRadius: 12,
+                  padding: '10px 12px', boxSizing: 'border-box',
+                  lineHeight: 1.5, marginBottom: 12,
+                }}
+              />
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                paddingTop: 12, borderTop: `1px dashed ${KUN.divider}`,
+              }}>
+                <div onClick={() => setReplyAnon(a => !a)} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+                }}>
+                  <div style={{
+                    width: 22, height: 22, borderRadius: 6,
+                    border: `1.5px solid ${replyAnon ? KUN.accent : KUN.inkFaint}`,
+                    background: replyAnon ? KUN.accent : '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all .2s',
+                  }}>
+                    {replyAnon && KIcon.check('#fff')}
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
+                    Responder anónimamente
+                  </span>
+                </div>
+                <button onClick={handleReply} style={{
+                  padding: '9px 18px', borderRadius: 999, border: 'none',
+                  background: replyText.trim() ? KUN.accent : KUN.cardSoft,
+                  color: replyText.trim() ? '#fff' : KUN.inkMuted,
+                  fontFamily: 'inherit', fontSize: 13, fontWeight: 800,
+                  cursor: replyText.trim() ? 'pointer' : 'default',
+                  boxShadow: replyText.trim() ? '0 4px 10px rgba(201,123,90,0.3)' : 'none',
+                  transition: 'all .2s',
+                }}>Publicar</button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
@@ -834,6 +898,12 @@ function ExperiencesFeed() {
 function NewPostSheet({ onClose, defaultKind = 'question' }) {
   const [kind, setKind] = React.useState(defaultKind);
   const [anon, setAnon] = React.useState(false);
+  const [posted, setPosted] = React.useState(false);
+
+  const handlePublish = () => {
+    setPosted(true);
+    setTimeout(onClose, 1600);
+  };
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 200,
@@ -926,13 +996,23 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
           </span>
         </div>
 
-        <button onClick={onClose} style={{
-          width: '100%', padding: '14px 18px', borderRadius: 18, border: 'none',
-          background: KUN.accent, color: '#fff',
-          fontFamily: 'inherit', fontSize: 14.5, fontWeight: 800, letterSpacing: 0.1,
-          cursor: 'pointer',
-          boxShadow: '0 8px 18px rgba(201,123,90,0.35)',
-        }}>Publicar</button>
+        {posted ? (
+          <div style={{
+            width: '100%', padding: '16px 18px', borderRadius: 18,
+            background: KUN.sageSoft,
+            textAlign: 'center',
+            fontSize: 15, fontWeight: 800, color: KUN.sage,
+            letterSpacing: -0.2,
+          }}>¡Publicado con éxito! 🎉</div>
+        ) : (
+          <button onClick={handlePublish} style={{
+            width: '100%', padding: '14px 18px', borderRadius: 18, border: 'none',
+            background: KUN.accent, color: '#fff',
+            fontFamily: 'inherit', fontSize: 14.5, fontWeight: 800, letterSpacing: 0.1,
+            cursor: 'pointer',
+            boxShadow: '0 8px 18px rgba(201,123,90,0.35)',
+          }}>Publicar</button>
+        )}
       </div>
     </div>
   );

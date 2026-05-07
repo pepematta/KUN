@@ -204,25 +204,36 @@ function Prototype() {
   const [capsulaOpen, setCapsulaOpen] = useState(false);
   const [capsuleId, setCapsuleId] = useState(1);
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
+  // Tracks where the user was before opening a capsule, so we can return there
+  const [capsuleSource, setCapsuleSource] = useState({ tab: 'edu', sub: 'camino' });
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
 
-  const goToEdu = (sub = 'perso') => {
+  const goToEdu = (sub = 'camino') => {
     setEduSub(sub);
     setTab('edu');
   };
 
-  const openCapsula = (id = 1) => { setCapsuleId(id); setCapsulaOpen(true); };
-  const closeCapsula = () => { setCapsulaOpen(false); setTab('edu'); setEduSub('perso'); };
+  const openCapsula = (id = 1) => {
+    setCapsuleSource({ tab, sub: eduSub }); // remember where we came from
+    setCapsuleId(id);
+    setCapsulaOpen(true);
+  };
+  const closeCapsula = () => {
+    setCapsulaOpen(false);
+    setTab(capsuleSource.tab);
+    if (capsuleSource.tab === 'edu') setEduSub(capsuleSource.sub);
+  };
   const completeCapsula = () => {
     setCompletedCapsulas(prev => [capsuleId, ...prev.filter(id => id !== capsuleId)]);
     setCapsulaOpen(false);
+    // After completing, always go to Personalizado so user sees it in historial
     setTab('edu');
     setEduSub('perso');
   };
 
   const renderEdu = () => {
-    if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} />;
-    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} />;
+    if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} />;
+    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} onGoToBiblio={() => goToEdu('biblio')} />;
     return <ScreenBiblioteca onOpenCapsula={openCapsula} />;
   };
 
@@ -235,7 +246,7 @@ function Prototype() {
       onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}
     />;
   } else if (tab === 'home') {
-    body = <ScreenHome onGoToEdu={() => goToEdu('perso')} onGoToCapsula={openCapsula} />;
+    body = <ScreenHome onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula} />;
   } else if (tab === 'edu') {
     hasSubtabs = true;
     body = renderEdu();
@@ -289,7 +300,10 @@ function Prototype() {
         </div>
       </div>
 
-      <KBottomNav active={tab} onChange={setTab} />
+      <KBottomNav
+        active={capsulaOpen ? capsuleSource.tab : tab}
+        onChange={(t) => { setCapsulaOpen(false); setTab(t); }}
+      />
 
       {notifOpen && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
 
@@ -311,7 +325,23 @@ function Prototype() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Prototype />);
+// Defer render until all babel scripts have had a chance to compile & execute
+(function tryRender(attempts) {
+  if (
+    typeof window.ScreenHome === 'function' &&
+    typeof window.ScreenCamino === 'function' &&
+    typeof window.ScreenPersonalizado === 'function' &&
+    typeof window.ScreenBiblioteca === 'function' &&
+    typeof window.ScreenVinculo === 'function' &&
+    typeof window.ScreenComunidad === 'function' &&
+    typeof window.ScreenCapsula === 'function' &&
+    typeof window.KUN !== 'undefined'
+  ) {
+    ReactDOM.createRoot(document.getElementById('root')).render(<Prototype />);
+  } else if (attempts > 0) {
+    setTimeout(() => tryRender(attempts - 1), 80);
+  }
+})(20);
 </script>
 </body>
 </html>

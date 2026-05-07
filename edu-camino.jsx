@@ -1,7 +1,8 @@
 // Camino — serpentine path with capsules positioned on a true sinuous curve.
 // The path is a single continuous SVG curve; stations sit at sampled points along it.
 
-function CaminoHeader() {
+function CaminoHeader({ completedCount, totalCount }) {
+  const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   return (
     <div style={{ padding: '4px 24px 14px' }}>
       <div style={{
@@ -24,7 +25,7 @@ function CaminoHeader() {
             TU CAMINO
           </span>
           <span style={{ fontSize: 12, fontWeight: 700, color: KUN.ink }}>
-            2 <span style={{ color: KUN.inkMuted, fontWeight: 600 }}>de 4</span>
+            {completedCount} <span style={{ color: KUN.inkMuted, fontWeight: 600 }}>de {totalCount}</span>
           </span>
         </div>
         <div style={{
@@ -32,8 +33,10 @@ function CaminoHeader() {
           position:'relative', overflow:'hidden',
         }}>
           <div style={{
-            position:'absolute', top:0, left:0, height:'100%', width:'50%',
+            position:'absolute', top:0, left:0, height:'100%',
+            width: `${pct}%`,
             background: KUN.accent, borderRadius: 3,
+            transition: 'width 0.4s ease',
           }}/>
         </div>
         <div style={{
@@ -126,17 +129,32 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   );
 }
 
-function CaminoPath({ onOpenCapsula }) {
+function CaminoPath({ onOpenCapsula, completedCapsulas }) {
   const W = 390;
-  const stations = [
-    { state:'done',   num:1, title:'Cómo se ve tu bebé hoy',        dur:'Completada · 3 min',    x: 78,  y:  40, side:'right', capId: 3 },
-    { state:'done',   num:2, title:'Entender los monitores',         dur:'Completada · 5 min',    x: 312, y: 150, side:'left',  capId: 4 },
-    { state:'active', num:3, title:'Método canguro: cómo empezar',   dur:'Continúa aquí · 6 min', x: 78,  y: 280, side:'right', capId: 2 },
-    { state:'next',   num:4, title:'Tu bebé empezó a alimentarse por sonda', dur:'Pronto · 4 min', x: 312, y: 410, side:'left',  capId: 1 },
+  const completed = completedCapsulas || [];
+
+  // Station order: fixed sequence. State computed from completedCapsulas.
+  const stationDefs = [
+    { num:1, title:'Cómo se ve tu bebé hoy',               dur:'3 min', x: 78,  y:  40, side:'right', capId: 3 },
+    { num:2, title:'Entender los monitores',                dur:'5 min', x: 312, y: 150, side:'left',  capId: 4 },
+    { num:3, title:'Método canguro: cómo empezar',          dur:'6 min', x: 78,  y: 280, side:'right', capId: 2 },
+    { num:4, title:'Tu bebé empezó a alimentarse por sonda', dur:'4 min', x: 312, y: 410, side:'left',  capId: 1 },
   ];
 
+  // Compute state: first uncompleted = active, before it = done, after it = next
+  let foundActive = false;
+  const stations = stationDefs.map(s => {
+    if (completed.includes(s.capId)) {
+      return { ...s, state: 'done', dur: `Completada · ${s.dur}` };
+    }
+    if (!foundActive) {
+      foundActive = true;
+      return { ...s, state: 'active', dur: `Continúa aquí · ${s.dur}` };
+    }
+    return { ...s, state: 'next', dur: `Pronto · ${s.dur}` };
+  });
+
   // Build a serpentine path that passes through all station centers.
-  // For each segment between two stations, use a cubic Bezier with horizontal-tangent control points.
   const buildSeg = (a, b) => {
     const dy = (b.y - a.y);
     const c1x = a.x + (b.x - a.x) * 0.05;
@@ -146,13 +164,24 @@ function CaminoPath({ onOpenCapsula }) {
     return `C ${c1x} ${c1y}, ${c2x} ${c2y}, ${b.x} ${b.y}`;
   };
 
-  const s = stations;
-  // solid path: from s[0] through s[1] to s[2] (active station)
-  const solidD = `M ${s[0].x} ${s[0].y} ${buildSeg(s[0], s[1])} ${buildSeg(s[1], s[2])}`;
-  // dashed path: from active s[2] to s[3]
-  const dashedD = `M ${s[2].x} ${s[2].y} ${buildSeg(s[2], s[3])}`;
+  // Solid path: from first station up to and including the active station
+  // Dashed path: from active station to the end
+  const activeIdx = stations.findIndex(s => s.state === 'active');
+  const splitIdx = activeIdx >= 0 ? activeIdx : stations.length - 1;
 
-  const totalH = s[s.length-1].y + 60;
+  let solidD = `M ${stations[0].x} ${stations[0].y}`;
+  for (let i = 1; i <= splitIdx; i++) {
+    solidD += ` ${buildSeg(stations[i-1], stations[i])}`;
+  }
+  let dashedD = '';
+  if (splitIdx < stations.length - 1) {
+    dashedD = `M ${stations[splitIdx].x} ${stations[splitIdx].y}`;
+    for (let i = splitIdx + 1; i < stations.length; i++) {
+      dashedD += ` ${buildSeg(stations[i-1], stations[i])}`;
+    }
+  }
+
+  const totalH = stations[stations.length-1].y + 60;
 
   return (
     <div style={{ position:'relative', width:'100%', height: totalH, padding: 0 }}>
@@ -162,7 +191,7 @@ function CaminoPath({ onOpenCapsula }) {
         style={{ position:'absolute', top: 0, left: 0, pointerEvents:'none' }}
       >
         <path d={solidD} fill="none" stroke={KUN.accent} strokeWidth="3" strokeLinecap="round" opacity="0.85"/>
-        <path d={dashedD} fill="none" stroke={KUN.inkFaint} strokeWidth="3" strokeLinecap="round" strokeDasharray="4 8"/>
+        {dashedD && <path d={dashedD} fill="none" stroke={KUN.inkFaint} strokeWidth="3" strokeLinecap="round" strokeDasharray="4 8"/>}
       </svg>
       {stations.map((st, i) => (
         <Station
@@ -176,11 +205,14 @@ function CaminoPath({ onOpenCapsula }) {
   );
 }
 
-function ScreenCamino({ onOpenCapsula }) {
+function ScreenCamino({ onOpenCapsula, completedCapsulas }) {
+  // Count how many of the 4 camino capsules are done
+  const caminoCapIds = [3, 4, 2, 1];
+  const completedCount = (completedCapsulas || []).filter(id => caminoCapIds.includes(id)).length;
   return (
     <>
-      <CaminoHeader />
-      <CaminoPath onOpenCapsula={onOpenCapsula} />
+      <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} />
+      <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} />
     </>
   );
 }

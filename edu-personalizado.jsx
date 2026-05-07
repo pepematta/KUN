@@ -56,11 +56,11 @@ function RecommendedHero({ onOpenCapsula }) {
   );
 }
 
-function HistorySection({ completedCapsulas }) {
+function HistorySection({ completedCapsulas, onOpenCapsula, onGoToBiblio }) {
   const base = [
-    { title: 'Cómo se ve tu bebé hoy',          dur: '3 min', when: 'Hace 2 días' },
-    { title: 'Entender los monitores',           dur: '5 min', when: 'Hace 5 días' },
-    { title: 'Método canguro: cómo empezar',     dur: '6 min', when: 'La semana pasada' },
+    { id: 3, title: 'Cómo se ve tu bebé hoy',      dur: '3 min', when: 'Hace 2 días' },
+    { id: 4, title: 'Entender los monitores',       dur: '5 min', when: 'Hace 5 días' },
+    { id: 2, title: 'Método canguro: cómo empezar', dur: '6 min', when: 'La semana pasada' },
   ];
   const lib = window.CAP_LIBRARY || {};
   const capCatalog = window.CAPSULAS || [];
@@ -68,7 +68,7 @@ function HistorySection({ completedCapsulas }) {
     const cap = lib[id];
     if (!cap) return null;
     const catalogEntry = capCatalog.find(c => c.id === id);
-    return { title: catalogEntry?.title || cap.headerTitle, dur: cap.dur.toLowerCase(), when: 'Hoy' };
+    return { id, title: catalogEntry?.title || cap.headerTitle, dur: cap.dur.toLowerCase(), when: 'Hoy' };
   }).filter(Boolean);
   const items = [...newItems, ...base.filter(b => !newItems.some(n => n.title === b.title))];
   return (
@@ -82,15 +82,15 @@ function HistorySection({ completedCapsulas }) {
             Lo que ya viste, siempre disponible
           </div>
         </div>
-        <span style={{ fontSize: 12, color: KUN.accent, fontWeight: 700 }}>Ver todo</span>
+        <span onClick={onGoToBiblio} style={{ fontSize: 12, color: KUN.accent, fontWeight: 700, cursor: 'pointer' }}>Ver todo</span>
       </div>
 
       <div style={{ display:'flex', flexDirection:'column', gap: 8, padding: '0 20px' }}>
         {items.map((it, i) => (
-          <div key={i} style={{
+          <div key={i} onClick={() => it.id && onOpenCapsula && onOpenCapsula(it.id)} style={{
             background: '#fff', borderRadius: 20, padding: '14px 16px',
             display:'flex', alignItems:'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(46,42,38,0.03)', cursor:'pointer',
+            boxShadow: '0 1px 2px rgba(46,42,38,0.03)', cursor: it.id ? 'pointer' : 'default',
           }}>
             <div style={{
               width: 46, height: 46, borderRadius: 14, background: KUN.cardSoft,
@@ -124,11 +124,15 @@ function HistorySection({ completedCapsulas }) {
   );
 }
 
-function ScreenPersonalizado({ onOpenCapsula, completedCapsulas }) {
+function ScreenPersonalizado({ onOpenCapsula, completedCapsulas, onGoToBiblio }) {
   return (
     <>
       <RecommendedHero onOpenCapsula={() => onOpenCapsula && onOpenCapsula(1)} />
-      <HistorySection completedCapsulas={completedCapsulas} />
+      <HistorySection
+        completedCapsulas={completedCapsulas}
+        onOpenCapsula={onOpenCapsula}
+        onGoToBiblio={onGoToBiblio}
+      />
     </>
   );
 }

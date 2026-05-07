@@ -137,7 +137,7 @@ function SubHeader({ title, onBack }) {
 }
 
 // ── Nuestro viaje ───────────────────────────────────────
-function ActivityCard() {
+function ActivityCard({ onOpenSheet, onOpenRecorder }) {
   return (
     <div style={{
       margin: '0 20px 14px',
@@ -161,9 +161,9 @@ function ActivityCard() {
         Toma una foto donde se vean sus deditos sobre tu mano, o cuéntale en voz qué sentiste al mirarlos.
       </div>
       <div style={{ display:'flex', gap: 8 }}>
-        <button style={btnPrimary}>{VINK_ICONS.camera('#fff')}<span style={{ marginLeft: 6 }}>Subir foto</span></button>
-        <button style={btnGhost}>{VINK_ICONS.text(KUN.inkSoft)}</button>
-        <button style={btnGhost}>{VINK_ICONS.mic(KUN.inkSoft)}</button>
+        <button onClick={onOpenSheet} style={btnPrimary}>{VINK_ICONS.camera('#fff')}<span style={{ marginLeft: 6 }}>Subir foto</span></button>
+        <button onClick={onOpenSheet} style={btnGhost}>{VINK_ICONS.text(KUN.inkSoft)}</button>
+        <button onClick={onOpenRecorder} style={btnGhost}>{VINK_ICONS.mic(KUN.inkSoft)}</button>
       </div>
     </div>
   );
@@ -340,7 +340,7 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
       <SubHeader title="Nuestro viaje" onBack={onBack} />
       <div style={{ position:'relative', height:'100%' }}>
         <div style={{ paddingBottom: 100 }}>
-          <ActivityCard />
+          <ActivityCard onOpenSheet={() => setSheet(true)} onOpenRecorder={() => setRecording(true)} />
           <FeedSeparator label="HOY · DÍA 32" />
 
           <FeedEntry
