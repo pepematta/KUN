@@ -85,17 +85,16 @@ function ComAvatar({ name, color, size = 44 }) {
   );
 }
 
-// ── Subtabs principales (Chat / Comunidad) ──────────────
+// ── Subtabs principales (Chat / Foro) ──────────────
 function ComTopTabs({ active, onChange }) {
   const tabs = [
-    { id: 'chat', label: 'Chat' },
-    { id: 'community', label: 'Comunidad' },
+    { id: 'chat',      label: 'Chat' },
+    { id: 'community', label: 'Foro' },
   ];
   return (
     <div style={{
       margin: '4px 20px 12px',
-      background: '#fff', borderRadius: 999, padding: 4, display: 'flex',
-      boxShadow: '0 1px 2px rgba(46,42,38,0.04)',
+      display: 'flex', gap: 6,
     }}>
       {tabs.map(t => {
         const isA = t.id === active;
@@ -103,9 +102,13 @@ function ComTopTabs({ active, onChange }) {
           <div key={t.id} onClick={() => onChange(t.id)} style={{
             flex: 1, textAlign: 'center', cursor: 'pointer',
             padding: '10px 6px', borderRadius: 999,
-            background: isA ? KUN.accent : 'transparent',
+            background: isA ? KUN.accent : '#fff',
             color: isA ? '#fff' : KUN.inkSoft,
             fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
+            border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
+            boxShadow: isA
+              ? '0 2px 8px rgba(201,123,90,0.28)'
+              : '0 1px 2px rgba(46,42,38,0.03)',
             transition: 'all .2s',
           }}>{t.label}</div>
         );
@@ -526,19 +529,21 @@ function CommunityInnerTabs({ active, onChange }) {
   ];
   return (
     <div style={{
-      margin: '0 20px 14px', display: 'flex', gap: 8,
+      margin: '0 20px 14px', display: 'flex', gap: 6,
     }}>
       {tabs.map(t => {
         const isA = t.id === active;
         return (
           <div key={t.id} onClick={() => onChange(t.id)} style={{
             cursor: 'pointer',
-            padding: '9px 16px', borderRadius: 999,
-            background: isA ? KUN.ink : '#fff',
+            padding: '10px 16px', borderRadius: 999,
+            background: isA ? KUN.accent : '#fff',
             color: isA ? '#fff' : KUN.inkSoft,
             fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
-            boxShadow: isA ? 'none' : '0 1px 2px rgba(46,42,38,0.03)',
-            border: isA ? 'none' : '1px solid rgba(46,42,38,0.05)',
+            border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
+            boxShadow: isA
+              ? '0 2px 8px rgba(201,123,90,0.28)'
+              : '0 1px 2px rgba(46,42,38,0.03)',
             transition: 'all .2s',
           }}>{t.label}</div>
         );

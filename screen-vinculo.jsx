@@ -752,8 +752,7 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
       {/* sub-subtabs */}
       <div style={{
         margin: '0 20px 14px',
-        background: '#fff', borderRadius: 999, padding: 4, display:'flex',
-        boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
+        display:'flex', gap: 6,
       }}>
         {[
           { id:'musica', label:'Música' },
@@ -764,9 +763,13 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
             <div key={t.id} onClick={() => setSub(t.id)} style={{
               flex: 1, textAlign:'center', cursor:'pointer',
               padding: '10px 6px', borderRadius: 999,
-              background: isA ? KUN.accent : 'transparent',
+              background: isA ? KUN.accent : '#fff',
               color: isA ? '#fff' : KUN.inkSoft,
               fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
+              border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
+              boxShadow: isA
+                ? '0 2px 8px rgba(201,123,90,0.28)'
+                : '0 1px 2px rgba(46,42,38,0.03)',
               transition:'all .2s',
             }}>{t.label}</div>
           );
