@@ -51,7 +51,8 @@
 <script type="text/babel" src="edu-shared.jsx?v=6"></script>
 <script type="text/babel" src="screen-auth.jsx?v=5"></script>
 <script type="text/babel" src="screen-tour.jsx?v=2"></script>
-<script type="text/babel" src="screen-home.jsx?v=7"></script>
+<script type="text/babel" src="screen-lactario.jsx?v=4"></script>
+<script type="text/babel" src="screen-home.jsx?v=8"></script>
 <script type="text/babel" src="edu-camino.jsx?v=5"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=5"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=5"></script>
@@ -353,6 +354,8 @@ function Prototype() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [capsulaOpen, setCapsulaOpen] = useState(false);
   const [capsuleId, setCapsuleId] = useState(1);
+  const [lactarioOpen,        setLactarioOpen]        = useState(false);
+  const [lactarioReservation, setLactarioReservation] = useState(null);
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
   // Tracks where the user was before opening a capsule, so we can return there
   const [capsuleSource, setCapsuleSource] = useState({ tab: 'edu', sub: 'camino' });
@@ -419,8 +422,21 @@ function Prototype() {
       onComplete={completeCapsula}
       onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}
     />;
+  } else if (tab === 'home' && lactarioOpen) {
+    body = <ScreenLactario
+      reservation={lactarioReservation}
+      onReserve={(time) => setLactarioReservation(time)}
+      onCancel={() => setLactarioReservation(null)}
+      onBack={() => setLactarioOpen(false)}
+    />;
   } else if (tab === 'home') {
-    body = <ScreenHome onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula} parentName={parentName} babyName={babyName} />;
+    body = <ScreenHome
+      onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula}
+      parentName={parentName} babyName={babyName}
+      lactarioReservation={lactarioReservation}
+      onOpenLactario={() => setLactarioOpen(true)}
+      onCancelLactario={() => setLactarioReservation(null)}
+    />;
   } else if (tab === 'edu') {
     hasSubtabs = true;
     body = renderEdu();
@@ -466,7 +482,7 @@ function Prototype() {
           }}>
             <KTopBar onBell={() => setNotifOpen(true)} hasNotif onSettings={() => setSettingsOpen(true)} />
             {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
-            <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub)} style={{
+            <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub + (lactarioOpen ? '-lact' : ''))} style={{
               flex: 1,
               overflow: capsulaOpen ? 'hidden' : 'auto',
               paddingBottom: capsulaOpen ? 0 : 120,
@@ -519,6 +535,7 @@ function Prototype() {
   if (
     typeof window.ScreenAuth === 'function' &&
     typeof window.ScreenTour === 'function' &&
+    typeof window.ScreenLactario === 'function' &&
     typeof window.ScreenHome === 'function' &&
     typeof window.ScreenCamino === 'function' &&
     typeof window.ScreenPersonalizado === 'function' &&

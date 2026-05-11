@@ -199,6 +199,124 @@ function DailySummary({ babyName, onGoToCapsula }) {
   );
 }
 
+// ── Lactario card ──────────────────────────────────────────────────────────────
+function LactarioCard({ reservation, onOpen, onCancel }) {
+  const [confirmCancel, setConfirmCancel] = React.useState(false);
+
+  // Next available slot (first with used < 4). Falls back gracefully before
+  // window.LACTARIO_SLOTS is populated (shouldn't happen in practice).
+  const slots = window.LACTARIO_SLOTS || [];
+  const nextSlot = slots.find(s => s.used < 4);
+  const hasReservation = !!reservation;
+  const displayTime = hasReservation ? reservation : (nextSlot ? nextSlot.time : '—');
+
+  return (
+    <div style={{ margin: '14px 20px 0' }}>
+      {/* Tappable card */}
+      <div
+        onClick={onOpen}
+        style={{
+          background: '#fff',
+          borderRadius: 24,
+          padding: '14px 18px',
+          boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 18px rgba(46,42,38,0.05)',
+          display: 'flex', alignItems: 'center', gap: 14,
+          cursor: 'pointer',
+          border: hasReservation
+            ? `1.5px solid ${KUN.accentSoft}`
+            : '1.5px solid transparent',
+        }}
+      >
+        {/* Icon */}
+        <div style={{
+          width: 46, height: 46, borderRadius: 15,
+          background: hasReservation ? KUN.accentSoft : KUN.sageSoft,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          {/* Milk-drop lactario icon */}
+          <svg width="22" height="24" viewBox="0 0 22 26" fill="none">
+            <path
+              d="M11 2C11 2 5 10 5 17C5 20.9 7.7 24 11 24C14.3 24 17 20.9 17 17C17 10 11 2 11 2Z"
+              fill={hasReservation ? KUN.accent : KUN.sage}
+              opacity="0.88"
+            />
+            <ellipse cx="9" cy="14" rx="2" ry="3.5"
+              fill="#fff" opacity="0.45"
+            />
+          </svg>
+        </div>
+
+        {/* Text */}
+        <div style={{ flex: 1 }}>
+          <div style={{
+            fontSize: 11, fontWeight: 800, color: KUN.inkMuted,
+            letterSpacing: 0.5, marginBottom: 3,
+          }}>
+            LACTARIO
+          </div>
+          <div style={{
+            fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2,
+          }}>
+            {hasReservation
+              ? <><span style={{ color: KUN.accentDeep }}>Reservado:</span> {displayTime}</>
+              : <>Próximo disponible: <span style={{ color: KUN.ink }}>{displayTime}</span></>
+            }
+          </div>
+        </div>
+
+        {/* Chevron */}
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 3L11 8L6 13"
+            stroke={KUN.inkFaint} strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+
+      {/* Cancel reservation link */}
+      {hasReservation && (
+        <div style={{ textAlign: 'center', marginTop: 8, minHeight: 20 }}>
+          {confirmCancel ? (
+            <span style={{ fontSize: 12, color: KUN.inkSoft, fontWeight: 600 }}>
+              ¿Confirmar cancelación?{' '}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancel();
+                  setConfirmCancel(false);
+                }}
+                style={{
+                  color: '#C0392B', fontWeight: 800, cursor: 'pointer',
+                }}
+              >
+                Sí, cancelar
+              </span>
+              {' · '}
+              <span
+                onClick={(e) => { e.stopPropagation(); setConfirmCancel(false); }}
+                style={{ color: KUN.inkMuted, cursor: 'pointer' }}
+              >
+                No
+              </span>
+            </span>
+          ) : (
+            <span
+              onClick={(e) => { e.stopPropagation(); setConfirmCancel(true); }}
+              style={{
+                fontSize: 12, color: KUN.inkMuted, fontWeight: 600,
+                cursor: 'pointer', textDecoration: 'underline',
+                textDecorationStyle: 'dotted',
+              }}
+            >
+              Cancelar reserva
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function HomeSectionHeader({ title, onAction }) {
   return (
     <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', padding: '24px 28px 12px' }}>
@@ -278,7 +396,8 @@ function IlloDrop() {
   );
 }
 
-function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName }) {
+function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
+                       lactarioReservation, onOpenLactario, onCancelLactario }) {
   const bName = babyName || 'Sofía';
   return (
     <>
@@ -286,6 +405,11 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName }) {
       <BabyCard babyName={bName} />
       <NurseCard />
       <DailySummary babyName={bName} onGoToCapsula={onGoToCapsula} />
+      <LactarioCard
+        reservation={lactarioReservation}
+        onOpen={onOpenLactario}
+        onCancel={onCancelLactario}
+      />
       <HomeSectionHeader title="Cápsulas para ti" onAction={onGoToEdu}/>
       <CapsuleCard
         tagKind="new" tag="NUEVO"
