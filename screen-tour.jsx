@@ -80,11 +80,19 @@ function CutoutOverlay({ rect }) {
   );
 }
 
+// Tab that should be visible in the background for each step
+const STEP_TAB = [null, 'home', 'edu', 'bond', 'comm', null];
+
 // ── Tour component ────────────────────────────────────────────────────────────
-function ScreenTour({ onDone }) {
+function ScreenTour({ onDone, onStepChange }) {
   const [step, setStep] = React.useState(0);
   const current = STEPS[step];
   const isLast = step === STEPS.length - 1;
+
+  // Notify parent of tab to show whenever step changes
+  React.useEffect(() => {
+    if (onStepChange && STEP_TAB[step]) onStepChange(STEP_TAB[step]);
+  }, [step]);
 
   const advance = () => {
     if (isLast) { onDone(); }

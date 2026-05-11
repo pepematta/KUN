@@ -488,7 +488,10 @@ function Prototype() {
 
           {/* Welcome tour — overlaid on top of the real app so nav is visible through cutout */}
           {!tourDone && typeof window.ScreenTour === 'function' && (
-            <ScreenTour onDone={handleTourDone} />
+            <ScreenTour
+              onDone={handleTourDone}
+              onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
+            />
           )}
         </>
       )}
