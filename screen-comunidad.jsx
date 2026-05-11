@@ -24,6 +24,13 @@ const COM_ICONS = {
       <path d="M3 14.5L8 11L13 14L17 11L19 12.5" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
+  camera: (c) => (
+    <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+      <path d="M3 8C3 7 4 6 5 6H7L8.2 4.4C8.4 4.15 8.7 4 9 4H13C13.3 4 13.6 4.15 13.8 4.4L15 6H17C18 6 19 7 19 8V16C19 17 18 18 17 18H5C4 18 3 17 3 16V8Z"
+        stroke={c} strokeWidth="1.7" strokeLinejoin="round"/>
+      <circle cx="11" cy="12" r="3.2" stroke={c} strokeWidth="1.7"/>
+    </svg>
+  ),
   attach: (c) => (
     <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
       <path d="M14 7L8 13C7 14 7 15.5 8 16.5C9 17.5 10.5 17.5 11.5 16.5L17 11C18.5 9.5 18.5 7 17 5.5C15.5 4 13 4 11.5 5.5L5.5 11.5C3.5 13.5 3.5 16.5 5.5 18.5C7.5 20.5 10.5 20.5 12.5 18.5"
@@ -410,8 +417,7 @@ function ChatComposer({ onSend }) {
         boxShadow: '0 4px 14px rgba(46,42,38,0.06), 0 1px 3px rgba(46,42,38,0.04)',
       }}>
         <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-          <button style={composerBtn}>{COM_ICONS.image(KUN.inkSoft)}</button>
-          <button style={composerBtn}>{COM_ICONS.capsule(KUN.inkSoft)}</button>
+          <button style={composerBtn}>{COM_ICONS.camera(KUN.inkSoft)}</button>
         </div>
         <input
           value={text}
