@@ -50,6 +50,7 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel" src="edu-shared.jsx?v=5"></script>
 <script type="text/babel" src="screen-auth.jsx?v=5"></script>
+<script type="text/babel" src="screen-tour.jsx?v=1"></script>
 <script type="text/babel" src="screen-home.jsx?v=5"></script>
 <script type="text/babel" src="edu-camino.jsx?v=5"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=5"></script>
@@ -335,6 +336,11 @@ function Prototype() {
     return (stored && stored.sessionActive) ? stored : null;
   });
 
+  // Tour: show once after first login
+  const [tourDone, setTourDone] = useState(() =>
+    typeof window.KTour !== 'undefined' ? window.KTour.isDone() : true
+  );
+
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
   const [bondView, setBondView] = useState('entry'); // entry | journey | songs
@@ -467,6 +473,11 @@ function Prototype() {
 
           {notifOpen    && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
           {settingsOpen && <SettingsPanel authData={authData} onSave={saveSettings} onClose={() => setSettingsOpen(false)} onLogout={handleLogout} />}
+
+          {/* Welcome tour — overlaid on top of the real app so nav is visible through cutout */}
+          {!tourDone && typeof window.ScreenTour === 'function' && (
+            <ScreenTour onDone={() => setTourDone(true)} />
+          )}
         </>
       )}
 
@@ -492,6 +503,7 @@ function Prototype() {
 (function tryRender(attempts) {
   if (
     typeof window.ScreenAuth === 'function' &&
+    typeof window.ScreenTour === 'function' &&
     typeof window.ScreenHome === 'function' &&
     typeof window.ScreenCamino === 'function' &&
     typeof window.ScreenPersonalizado === 'function' &&
