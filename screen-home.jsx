@@ -92,6 +92,113 @@ function NurseCard() {
   );
 }
 
+// ── Daily summary ─────────────────────────────────────────────────────────────
+const DAILY_SUMMARY = {
+  text: 'Sofía tuvo una noche tranquila. Está respirando con un poco de ayuda del ventilador y recibiendo leche por sonda cada 3 horas. Su peso se mantiene estable.',
+  concepts: [
+    { label: 'Ventilación mecánica',   capsuleId: 4 }, // Entender los monitores
+    { label: 'Alimentación por sonda', capsuleId: 1 }, // Tu bebé empezó a alimentarse por sonda
+  ],
+};
+
+function DailySummary({ babyName, onGoToCapsula }) {
+  const bName = babyName || 'Sofía';
+  const { text, concepts } = DAILY_SUMMARY;
+  const empty = !text && concepts.length === 0;
+
+  return (
+    <div style={{ margin: '14px 20px 0' }}>
+      {/* Section title */}
+      <div style={{
+        fontSize: 19, fontWeight: 700, color: KUN.ink,
+        letterSpacing: -0.2, marginBottom: 12,
+      }}>
+        Cómo está {bName} hoy
+      </div>
+
+      {empty ? (
+        <div style={{
+          background: KUN.sageSoft, borderRadius: 22,
+          padding: '16px 20px',
+          fontSize: 15, fontWeight: 600, color: KUN.inkSoft,
+          textAlign: 'center',
+        }}>
+          Todo tranquilo hoy 🧡
+        </div>
+      ) : (
+        <div style={{
+          background: '#fff', borderRadius: 24,
+          padding: '16px 18px',
+          boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 18px rgba(46,42,38,0.05)',
+          display: 'flex', flexDirection: 'column', gap: 14,
+        }}>
+
+          {/* Clinical summary text */}
+          {text && (
+            <div style={{
+              fontSize: 14, fontWeight: 500, color: KUN.inkSoft,
+              lineHeight: 1.6,
+            }}>
+              {text}
+            </div>
+          )}
+
+          {/* Concept chips */}
+          {concepts.length > 0 && (
+            <div style={{
+              display: 'flex', flexDirection: 'column', gap: 8,
+              paddingTop: text ? 2 : 0,
+              borderTop: text ? `1px dashed ${KUN.divider}` : 'none',
+            }}>
+              {concepts.map((c, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '10px 12px',
+                  background: KUN.accentSoft,
+                  borderRadius: 16,
+                }}>
+                  {/* Dot */}
+                  <div style={{
+                    width: 8, height: 8, borderRadius: '50%',
+                    background: KUN.accent, flexShrink: 0,
+                  }}/>
+
+                  {/* Concept name */}
+                  <div style={{
+                    flex: 1,
+                    fontSize: 14, fontWeight: 700, color: KUN.ink,
+                    letterSpacing: -0.1,
+                  }}>
+                    {c.label}
+                  </div>
+
+                  {/* Arrow-only button */}
+                  <div
+                    onClick={() => onGoToCapsula && onGoToCapsula(c.capsuleId)}
+                    style={{
+                      width: 32, height: 32, borderRadius: '50%',
+                      background: KUN.accent, color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', flexShrink: 0,
+                      boxShadow: `0 2px 8px rgba(201,123,90,0.35)`,
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M3 7H11M11 7L7.5 3.5M11 7L7.5 10.5"
+                        stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 function HomeSectionHeader({ title, onAction }) {
   return (
     <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', padding: '24px 28px 12px' }}>
@@ -178,6 +285,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName }) {
       <HomeGreeting parentName={parentName} />
       <BabyCard babyName={bName} />
       <NurseCard />
+      <DailySummary babyName={bName} onGoToCapsula={onGoToCapsula} />
       <HomeSectionHeader title="Cápsulas para ti" onAction={onGoToEdu}/>
       <CapsuleCard
         tagKind="new" tag="NUEVO"
