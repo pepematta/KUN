@@ -39,6 +39,14 @@ function KunMark({ size = 28, color = KUN.accent }) {
 
 // icon set
 const KIcon = {
+  gear: (c = KUN.ink) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+        stroke={c} strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+        stroke={c} strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
   bell: (c = KUN.ink) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
       <path d="M6 9.5C6 6.5 8.5 4 12 4C15.5 4 18 6.5 18 9.5V13.5L19.5 16.5H4.5L6 13.5V9.5Z"
@@ -157,8 +165,8 @@ function KStatusBar() {
   );
 }
 
-// generic top bar with title and bell
-function KTopBar({ title, onBell, hasNotif }) {
+// generic top bar with title, bell, and settings
+function KTopBar({ title, onBell, hasNotif, onSettings }) {
   return (
     <div style={{
       display:'flex', alignItems:'center', justifyContent:'space-between',
@@ -171,22 +179,35 @@ function KTopBar({ title, onBell, hasNotif }) {
         }} />
         <span style={{ fontSize: 22, fontWeight: 800, color: KUN.ink, letterSpacing: 1.4 }}>KUN</span>
       </div>
-      <button onClick={onBell} style={{
-        width: 40, height: 40, borderRadius: 20, border: 'none',
-        background: '#fff',
-        display:'flex', alignItems:'center', justifyContent:'center',
-        boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
-        cursor:'pointer', position:'relative',
-      }}>
-        {KIcon.bell(KUN.ink)}
-        {hasNotif && (
-          <span style={{
-            position:'absolute', top: 8, right: 9,
-            width: 8, height: 8, borderRadius: 4,
-            background: KUN.accent, border:'1.5px solid #fff',
-          }}/>
+      <div style={{ display:'flex', gap: 8, alignItems:'center' }}>
+        {onSettings && (
+          <button onClick={onSettings} style={{
+            width: 40, height: 40, borderRadius: 20, border: 'none',
+            background: '#fff',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
+            cursor:'pointer',
+          }}>
+            {KIcon.gear(KUN.ink)}
+          </button>
         )}
-      </button>
+        <button onClick={onBell} style={{
+          width: 40, height: 40, borderRadius: 20, border: 'none',
+          background: '#fff',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
+          cursor:'pointer', position:'relative',
+        }}>
+          {KIcon.bell(KUN.ink)}
+          {hasNotif && (
+            <span style={{
+              position:'absolute', top: 8, right: 9,
+              width: 8, height: 8, borderRadius: 4,
+              background: KUN.accent, border:'1.5px solid #fff',
+            }}/>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

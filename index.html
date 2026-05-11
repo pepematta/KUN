@@ -48,14 +48,15 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="edu-shared.jsx?v=3"></script>
-<script type="text/babel" src="screen-home.jsx?v=3"></script>
-<script type="text/babel" src="edu-camino.jsx?v=3"></script>
-<script type="text/babel" src="edu-personalizado.jsx?v=3"></script>
-<script type="text/babel" src="edu-biblioteca.jsx?v=3"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=3"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=3"></script>
-<script type="text/babel" src="screen-capsula.jsx?v=3"></script>
+<script type="text/babel" src="edu-shared.jsx?v=5"></script>
+<script type="text/babel" src="screen-auth.jsx?v=5"></script>
+<script type="text/babel" src="screen-home.jsx?v=5"></script>
+<script type="text/babel" src="edu-camino.jsx?v=5"></script>
+<script type="text/babel" src="edu-personalizado.jsx?v=5"></script>
+<script type="text/babel" src="edu-biblioteca.jsx?v=5"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=5"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=5"></script>
+<script type="text/babel" src="screen-capsula.jsx?v=5"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -195,18 +196,173 @@ function NotificationsPanel({ onClose }) {
   );
 }
 
+function SettingsPanel({ authData, onSave, onClose, onLogout }) {
+  const [parentName, setParentName] = React.useState(authData?.parentName || '');
+  const [babyName,   setBabyName]   = React.useState(authData?.babyName   || '');
+
+  const handleSave = () => {
+    onSave({ parentName: parentName.trim(), babyName: babyName.trim() });
+    onClose();
+  };
+
+  const inputStyle = {
+    width: '100%', boxSizing: 'border-box',
+    padding: '14px 16px', borderRadius: 16, border: `1.5px solid ${KUN.trackSoft}`,
+    fontSize: 16, fontWeight: 600, color: KUN.ink,
+    background: '#fff', outline: 'none',
+    fontFamily: "'Nunito', system-ui, sans-serif",
+  };
+  const labelStyle = {
+    fontSize: 11, fontWeight: 800, color: KUN.inkMuted,
+    letterSpacing: 0.8, marginBottom: 6, display:'block',
+  };
+
+  return (
+    <div style={{
+      position:'absolute', inset: 0, zIndex: 200,
+      background: KUN.bg,
+      display:'flex', flexDirection:'column',
+    }}>
+      {/* header */}
+      <div style={{ padding: '60px 20px 14px', display:'flex', alignItems:'center', gap: 12 }}>
+        <div onClick={onClose} style={{
+          width: 40, height: 40, borderRadius: 20, background: '#fff',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          boxShadow:'0 1px 2px rgba(46,42,38,0.04)', cursor:'pointer', flexShrink: 0,
+        }}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12 4L6 10L12 16" stroke={KUN.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>Ajustes</div>
+          <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2 }}>Perfil y sesión</div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, overflowY:'auto', padding: '8px 20px 30px', display:'flex', flexDirection:'column', gap: 12 }}>
+
+        {/* Profile card */}
+        <div style={{
+          background: '#fff', borderRadius: 24, padding: '20px 18px',
+          boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+          display:'flex', flexDirection:'column', gap: 16,
+        }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: KUN.ink, letterSpacing: -0.1 }}>Información personal</div>
+
+          <div>
+            <label style={labelStyle}>TU NOMBRE</label>
+            <input
+              style={inputStyle}
+              type="text"
+              placeholder="¿Cómo te llamas?"
+              value={parentName}
+              onChange={e => setParentName(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label style={labelStyle}>NOMBRE DE TU BEBÉ</label>
+            <input
+              style={inputStyle}
+              type="text"
+              placeholder="Nombre del bebé"
+              value={babyName}
+              onChange={e => setBabyName(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label style={labelStyle}>RUT</label>
+            <div style={{
+              padding: '14px 16px', borderRadius: 16,
+              background: KUN.cardSoft,
+              fontSize: 15, fontWeight: 600, color: KUN.inkMuted,
+              letterSpacing: 0.2,
+            }}>
+              {authData?.rut || '—'}
+            </div>
+          </div>
+        </div>
+
+        {/* Save button */}
+        <button onClick={handleSave} style={{
+          width: '100%', padding: '16px', borderRadius: 20, border: 'none',
+          background: KUN.accent, color: '#fff',
+          fontSize: 15, fontWeight: 800, letterSpacing: -0.1,
+          cursor:'pointer', boxShadow: `0 4px 14px rgba(201,123,90,0.35)`,
+        }}>
+          Guardar cambios
+        </button>
+
+        {/* Logout */}
+        <div style={{
+          background: '#fff', borderRadius: 24, padding: '4px 8px',
+          boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+        }}>
+          <div onClick={onLogout} style={{
+            display:'flex', alignItems:'center', gap: 14, padding: '14px 10px',
+            cursor:'pointer',
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 14,
+              background: '#FEF0EE',
+              display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M15 12H3M3 12L7 8M3 12L7 16" stroke="#D94F3D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 7V5C9 4.4 9.4 4 10 4H20C20.6 4 21 4.4 21 5V19C21 19.6 20.6 20 20 20H10C9.4 20 9 19.6 9 19V17" stroke="#D94F3D" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#D94F3D' }}>Cerrar sesión</div>
+              <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 1 }}>
+                RUT {authData?.rut}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 function Prototype() {
+  // Auth: read persisted session on first render. If no active session, show login.
+  const [authData, setAuthData] = useState(() => {
+    const stored = (typeof window.KAuth !== 'undefined') ? window.KAuth.load() : null;
+    return (stored && stored.sessionActive) ? stored : null;
+  });
+
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
   const [bondView, setBondView] = useState('entry'); // entry | journey | songs
   const [recordings, setRecordings] = useState([]);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [capsulaOpen, setCapsulaOpen] = useState(false);
   const [capsuleId, setCapsuleId] = useState(1);
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
   // Tracks where the user was before opening a capsule, so we can return there
   const [capsuleSource, setCapsuleSource] = useState({ tab: 'edu', sub: 'camino' });
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
+
+  // Derived names (with fallbacks)
+  const parentName = authData?.parentName || '';
+  const babyName   = authData?.babyName   || 'Sofía';
+
+  const saveSettings = ({ parentName: pn, babyName: bn }) => {
+    const updated = { ...authData, parentName: pn, babyName: bn };
+    if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
+    setAuthData(updated);
+  };
+
+  const handleLogout = () => {
+    if (typeof window.KAuth !== 'undefined') window.KAuth.clear();
+    setAuthData(null);
+    setSettingsOpen(false);
+  };
 
   const goToEdu = (sub = 'camino') => {
     setEduSub(sub);
@@ -232,7 +388,7 @@ function Prototype() {
   };
 
   const renderEdu = () => {
-    if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} />;
+    if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} parentName={parentName} babyName={babyName} />;
     if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} onGoToBiblio={() => goToEdu('biblio')} />;
     return <ScreenBiblioteca onOpenCapsula={openCapsula} />;
   };
@@ -246,7 +402,7 @@ function Prototype() {
       onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}
     />;
   } else if (tab === 'home') {
-    body = <ScreenHome onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula} />;
+    body = <ScreenHome onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula} parentName={parentName} babyName={babyName} />;
   } else if (tab === 'edu') {
     hasSubtabs = true;
     body = renderEdu();
@@ -282,30 +438,37 @@ function Prototype() {
       }}/>
       <KStatusBar />
 
-      <div className="kun-content-wrap" style={{
-        height:'calc(100% - 50px)', overflow:'hidden',
-        display:'flex', flexDirection:'column',
-      }}>
-        <KTopBar onBell={() => setNotifOpen(true)} hasNotif />
-        {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
-        <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub)} style={{
-          flex: 1,
-          overflow: capsulaOpen ? 'hidden' : 'auto',
-          paddingBottom: capsulaOpen ? 0 : 120,
-          display: capsulaOpen ? 'flex' : undefined,
-          flexDirection: capsulaOpen ? 'column' : undefined,
-          animation: 'fade .25s ease-out forwards',
-        }}>
-          {body}
-        </div>
-      </div>
+      {!authData ? (
+        <ScreenAuth onAuthenticated={setAuthData} />
+      ) : (
+        <>
+          <div className="kun-content-wrap" style={{
+            height:'calc(100% - 50px)', overflow:'hidden',
+            display:'flex', flexDirection:'column',
+          }}>
+            <KTopBar onBell={() => setNotifOpen(true)} hasNotif onSettings={() => setSettingsOpen(true)} />
+            {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
+            <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub)} style={{
+              flex: 1,
+              overflow: capsulaOpen ? 'hidden' : 'auto',
+              paddingBottom: capsulaOpen ? 0 : 120,
+              display: capsulaOpen ? 'flex' : undefined,
+              flexDirection: capsulaOpen ? 'column' : undefined,
+              animation: 'fade .25s ease-out forwards',
+            }}>
+              {body}
+            </div>
+          </div>
 
-      <KBottomNav
-        active={capsulaOpen ? capsuleSource.tab : tab}
-        onChange={(t) => { setCapsulaOpen(false); setTab(t); }}
-      />
+          <KBottomNav
+            active={capsulaOpen ? capsuleSource.tab : tab}
+            onChange={(t) => { setCapsulaOpen(false); setTab(t); }}
+          />
 
-      {notifOpen && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
+          {notifOpen    && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
+          {settingsOpen && <SettingsPanel authData={authData} onSave={saveSettings} onClose={() => setSettingsOpen(false)} onLogout={handleLogout} />}
+        </>
+      )}
 
       {/* home indicator */}
       <div className="kun-home-indicator" style={{
@@ -328,6 +491,7 @@ function Prototype() {
 // Defer render until all babel scripts have had a chance to compile & execute
 (function tryRender(attempts) {
   if (
+    typeof window.ScreenAuth === 'function' &&
     typeof window.ScreenHome === 'function' &&
     typeof window.ScreenCamino === 'function' &&
     typeof window.ScreenPersonalizado === 'function' &&

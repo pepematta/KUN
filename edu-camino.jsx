@@ -1,8 +1,10 @@
 // Camino — serpentine path with capsules positioned on a true sinuous curve.
 // The path is a single continuous SVG curve; stations sit at sampled points along it.
 
-function CaminoHeader({ completedCount, totalCount }) {
+function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
   const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const displayName = parentName || 'apoderado/a';
+  const displayBaby = babyName || 'tu bebé';
   return (
     <div style={{ padding: '4px 24px 14px' }}>
       <div style={{
@@ -12,7 +14,7 @@ function CaminoHeader({ completedCount, totalCount }) {
       }}>
         Sigamos juntos, <span style={{
           fontStyle: 'italic', color: KUN.accent, fontWeight: 700,
-        }}>mamá de Sofía</span>
+        }}>{displayName}</span>
       </div>
 
       <div style={{
@@ -44,7 +46,7 @@ function CaminoHeader({ completedCount, totalCount }) {
           fontSize: 13, color: KUN.inkSoft, fontWeight: 600,
         }}>
           <span style={{ width: 8, height: 8, borderRadius:'50%', background: KUN.accent }}/>
-          Pilar 1 · <span style={{ color: KUN.ink, fontWeight: 700 }}>Cuerpo y cuidados</span>
+          Pilar 1 · <span style={{ color: KUN.ink, fontWeight: 700 }}>Cuerpo y cuidados de {displayBaby}</span>
         </div>
       </div>
     </div>
@@ -129,7 +131,7 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   );
 }
 
-function CaminoPath({ onOpenCapsula, completedCapsulas }) {
+function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
   const W = 390;
   const completed = completedCapsulas || [];
 
@@ -205,14 +207,14 @@ function CaminoPath({ onOpenCapsula, completedCapsulas }) {
   );
 }
 
-function ScreenCamino({ onOpenCapsula, completedCapsulas }) {
+function ScreenCamino({ onOpenCapsula, completedCapsulas, parentName, babyName }) {
   // Count how many of the 4 camino capsules are done
   const caminoCapIds = [3, 4, 2, 1];
   const completedCount = (completedCapsulas || []).filter(id => caminoCapIds.includes(id)).length;
   return (
     <>
-      <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} />
-      <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} />
+      <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} parentName={parentName} babyName={babyName} />
+      <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} babyName={babyName} />
     </>
   );
 }

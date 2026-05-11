@@ -1,10 +1,11 @@
 // Home screen body — used inside unified prototype (no device wrapper).
 
-function HomeGreeting() {
+function HomeGreeting({ parentName }) {
+  const name = parentName || 'apoderado/a';
   return (
     <div style={{ padding: '14px 24px 8px' }}>
       <div style={{ fontSize: 15, color: KUN.inkSoft, fontWeight: 500, marginBottom: 4 }}>
-        Buenos días, Mateo
+        Buenos días, {name}
       </div>
       <div style={{ fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4, lineHeight: 1.15 }}>
         Sigamos juntos hoy.
@@ -13,7 +14,7 @@ function HomeGreeting() {
   );
 }
 
-function BabyCard() {
+function BabyCard({ babyName = 'Sofía' }) {
   return (
     <div style={{
       margin: '14px 20px 0', padding: '22px 22px',
@@ -39,7 +40,7 @@ function BabyCard() {
       </div>
 
       <div style={{ flex: 1, position:'relative', zIndex: 1 }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3, marginBottom: 6 }}>Sofía</div>
+        <div style={{ fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3, marginBottom: 6 }}>{babyName}</div>
         <div style={{ display:'flex', flexDirection:'column', gap: 3 }}>
           <div style={{ fontSize: 14, color: KUN.inkSoft, fontWeight: 500 }}>
             <span style={{ color: KUN.accentDeep, fontWeight: 700 }}>32 días</span> hospitalizada
@@ -170,17 +171,18 @@ function IlloDrop() {
   );
 }
 
-function ScreenHome({ onGoToEdu, onGoToCapsula }) {
+function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName }) {
+  const bName = babyName || 'Sofía';
   return (
     <>
-      <HomeGreeting />
-      <BabyCard />
+      <HomeGreeting parentName={parentName} />
+      <BabyCard babyName={bName} />
       <NurseCard />
       <HomeSectionHeader title="Cápsulas para ti" onAction={onGoToEdu}/>
       <CapsuleCard
         tagKind="new" tag="NUEVO"
         title="Tu bebé empezó a alimentarse por sonda"
-        desc="Qué esperar estos días y cómo acompañar a Sofía en esta etapa."
+        desc={`Qué esperar estos días y cómo acompañar a ${bName} en esta etapa.`}
         mins="4 min de lectura"
         illoBg={KUN.sageSoft} illoEmoji={<IlloDrop />}
         onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
@@ -188,7 +190,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula }) {
       <CapsuleCard
         tagKind="rec" tag="RECOMENDADO PARA TI"
         title="Método canguro: cómo empezar"
-        desc="Una guía cálida para tu primer contacto piel con piel con Sofía."
+        desc={`Una guía cálida para tu primer contacto piel con piel con ${bName}.`}
         mins="6 min de lectura"
         illoBg={KUN.accentSoft} illoEmoji={<IlloKangaroo />}
         onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
