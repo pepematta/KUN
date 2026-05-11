@@ -336,10 +336,14 @@ function Prototype() {
     return (stored && stored.sessionActive) ? stored : null;
   });
 
-  // Tour: show once after first login
-  const [tourDone, setTourDone] = useState(() =>
-    typeof window.KTour !== 'undefined' ? window.KTour.isDone() : true
-  );
+  // Tour: tied to each user's authData (not a global flag)
+  // so a new user always sees the tour even on the same device.
+  const [tourDone, setTourDone] = useState(() => !!authData?.tourDone);
+
+  // Reset when a different user logs in/out
+  React.useEffect(() => {
+    setTourDone(!!authData?.tourDone);
+  }, [authData?.rut]);
 
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
@@ -368,6 +372,14 @@ function Prototype() {
     if (typeof window.KAuth !== 'undefined') window.KAuth.clear();
     setAuthData(null);
     setSettingsOpen(false);
+  };
+
+  // Called when user completes or skips the tour — saves flag per user
+  const handleTourDone = () => {
+    const updated = { ...authData, tourDone: true };
+    if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
+    setAuthData(updated);
+    setTourDone(true);
   };
 
   const goToEdu = (sub = 'camino') => {
@@ -476,7 +488,7 @@ function Prototype() {
 
           {/* Welcome tour — overlaid on top of the real app so nav is visible through cutout */}
           {!tourDone && typeof window.ScreenTour === 'function' && (
-            <ScreenTour onDone={() => setTourDone(true)} />
+            <ScreenTour onDone={handleTourDone} />
           )}
         </>
       )}

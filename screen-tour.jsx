@@ -87,10 +87,10 @@ function ScreenTour({ onDone }) {
   const isLast = step === STEPS.length - 1;
 
   const advance = () => {
-    if (isLast) { KTour.markDone(); onDone(); }
+    if (isLast) { onDone(); }
     else setStep(s => s + 1);
   };
-  const skip = () => { KTour.markDone(); onDone(); };
+  const skip = () => { onDone(); };
 
   // Step progress dots
   const Dots = ({ light }) => (
