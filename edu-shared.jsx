@@ -274,6 +274,7 @@ function KBottomNav({ active = 'edu', onChange }) {
           const color = isActive ? KUN.accent : KUN.inkMuted;
           return (
             <div key={t.id}
+              data-nav-tab={t.id}
               onClick={() => onChange && onChange(t.id)}
               style={{
                 display:'flex', flexDirection:'column', alignItems:'center', gap: 3,

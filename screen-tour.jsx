@@ -9,16 +9,28 @@ const KTour = {
 };
 window.KTour = KTour;
 
-// ── Precise tab geometry (measured from live DOM, 390×844 device) ──
-// navPill: {x:16, y:737, w:358, h:80}
-// tabs: home {x:27,y:747,w:80,h:60}, edu {x:112}, bond {x:198}, comm {x:283}
-const PAD = 10;
-const TAB_RECTS = [
-  { x: 27-PAD, y: 737, w: 80+PAD*2, h: 80 },   // Inicio
-  { x:112-PAD, y: 737, w: 80+PAD*2, h: 80 },   // Educación
-  { x:198-PAD, y: 737, w: 80+PAD*2, h: 80 },   // Vínculo
-  { x:283-PAD, y: 737, w: 80+PAD*2, h: 80 },   // Comunidad
-];
+// ── Tab IDs matching data-nav-tab attributes in KBottomNav ──
+const TAB_IDS = ['home', 'edu', 'bond', 'comm'];
+const HIGHLIGHT_PAD = 8;
+
+// Measure a tab's rect relative to the device container at runtime.
+// Works on any screen size (desktop frame or full-bleed mobile).
+function measureTabRect(tabId) {
+  const device = document.querySelector('.kun-device') || document.documentElement;
+  const tab    = document.querySelector(`[data-nav-tab="${tabId}"]`);
+  if (!tab) return null;
+  const dr = device.getBoundingClientRect();
+  const tr = tab.getBoundingClientRect();
+  const p  = HIGHLIGHT_PAD;
+  return {
+    x: Math.round(tr.left - dr.left) - p,
+    y: Math.round(tr.top  - dr.top)  - p,
+    w: Math.round(tr.width)  + p * 2,
+    h: Math.round(tr.height) + p * 2,
+    // bottom offset of card above the tab (for positioning the floating card)
+    cardBottom: Math.round(dr.bottom - tr.top) + 16,
+  };
+}
 
 const STEPS = [
   {
@@ -86,12 +98,25 @@ const STEP_TAB = [null, 'home', 'edu', 'bond', 'comm', null];
 // ── Tour component ────────────────────────────────────────────────────────────
 function ScreenTour({ onDone, onStepChange }) {
   const [step, setStep] = React.useState(0);
+  const [tabRect, setTabRect] = React.useState(null);
   const current = STEPS[step];
   const isLast = step === STEPS.length - 1;
 
-  // Notify parent of tab to show whenever step changes
+  // Notify parent of tab and measure real DOM position on each step change
   React.useEffect(() => {
-    if (onStepChange && STEP_TAB[step]) onStepChange(STEP_TAB[step]);
+    const tabId = STEP_TAB[step];
+    if (tabId && onStepChange) onStepChange(tabId);
+
+    if (current.type === 'nav') {
+      // Small delay so the background tab has rendered before we measure
+      const id = setTimeout(() => {
+        const r = measureTabRect(TAB_IDS[current.tabIndex]);
+        setTabRect(r);
+      }, 60);
+      return () => clearTimeout(id);
+    } else {
+      setTabRect(null);
+    }
   }, [step]);
 
   const advance = () => {
@@ -189,7 +214,11 @@ function ScreenTour({ onDone, onStepChange }) {
   }
 
   // ── Nav highlight steps (steps 1–4) ──────────────────────────────────────
-  const rect = TAB_RECTS[current.tabIndex];
+  // tabRect is measured from the live DOM — works on any screen size
+  if (!tabRect) {
+    // Still measuring — render full dark overlay while we wait the 60ms
+    return <div style={{ position:'absolute', inset:0, zIndex: 400, background:'rgba(0,0,0,0.72)' }}/>;
+  }
 
   return (
     <div style={{ position:'absolute', inset:0, zIndex: 400 }}>
@@ -197,17 +226,17 @@ function ScreenTour({ onDone, onStepChange }) {
       <div style={{ position:'absolute', inset:0, zIndex: 0 }}/>
 
       {/* Overlay with cutout */}
-      <CutoutOverlay rect={rect} />
+      <CutoutOverlay rect={tabRect} />
 
       {/* Step dots — top of dark area */}
       <div style={{ position:'absolute', top: 68, left:0, right:0, zIndex: 10 }}>
         <Dots />
       </div>
 
-      {/* KUN + bubble card — above the nav, full width with margins */}
+      {/* KUN + bubble card — floats above the highlighted tab */}
       <div style={{
         position:'absolute', left: 20, right: 20,
-        bottom: 126,
+        bottom: tabRect.cardBottom,
         zIndex: 10,
       }}>
         <div style={{
