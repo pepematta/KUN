@@ -713,71 +713,74 @@ const CAP_QUIZZES = {
   },
 };
 
+// ── DS scoped fonts ──────────────────────────────────────────
+const CAP_FT = 'Quicksand, sans-serif';
+const CAP_FB = 'Poppins, sans-serif';
+
 function CapsuleQuiz({ quiz, selected, onSelect, celebrating }) {
   const selectedOption = selected !== null ? quiz.options[selected] : null;
   const correctIndex = quiz.options.findIndex(option => option.correct);
 
   return (
     <div style={{
-      background: '#fff', borderRadius: 22, padding: 16,
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+      background: '#fff', borderRadius: 22, padding: 18,
+      border: `1px solid ${KUN.hair}`,
       marginBottom: 12,
     }}>
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
-        marginBottom: 10,
+        marginBottom: 12,
       }}>
         <div style={{
-          width: 34, height: 34, borderRadius: 17,
-          background: KUN.sageSoft,
+          width: 36, height: 36, borderRadius: 12,
+          background: KUN.sun,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0,
         }}>
-          {CI.star(KUN.sage)}
+          {CI.star(KUN.ink)}
         </div>
         <div>
           <div style={{
-            fontSize: 12, fontWeight: 800, color: KUN.accentDeep,
-            letterSpacing: 0.5, textTransform: 'uppercase',
+            fontFamily: CAP_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+            letterSpacing: 1, textTransform: 'uppercase',
           }}>Repaso amable</div>
           <div style={{
-            fontSize: 12.5, fontWeight: 600, color: KUN.inkMuted,
-            marginTop: 1,
+            fontFamily: CAP_FB, fontSize: 12, fontWeight: 400, color: KUN.inkSoft,
+            marginTop: 2,
           }}>No es una prueba: es una pausa para reforzar.</div>
         </div>
       </div>
 
       <div style={{
-        fontSize: 16, fontWeight: 800, color: KUN.ink,
-        letterSpacing: -0.2, lineHeight: 1.35, marginBottom: 12,
-        textWrap: 'pretty',
+        fontFamily: CAP_FT, fontSize: 16, fontWeight: 700, color: KUN.ink,
+        letterSpacing: -0.2, lineHeight: 1.35, marginBottom: 14,
       }}>{quiz.prompt}</div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {quiz.options.map((option, i) => {
           const isSelected = selected === i;
           const showCorrect = selected !== null && option.correct;
           return (
             <button key={i} onClick={() => onSelect(i)} style={{
-              width: '100%', border: `1px solid ${isSelected ? KUN.accent : showCorrect ? KUN.sage : KUN.divider}`,
-              background: isSelected ? KUN.accentSoft : showCorrect ? KUN.sageSoft : KUN.cardSoft,
-              color: KUN.ink, borderRadius: 16, padding: '12px 13px',
+              width: '100%', border: `1.5px solid ${isSelected ? KUN.brick : showCorrect ? KUN.apple : KUN.hair}`,
+              background: isSelected ? KUN.rosehip : showCorrect ? KUN.apple : KUN.cream,
+              color: KUN.ink, borderRadius: 16, padding: '12px 14px',
               display: 'flex', alignItems: 'center', gap: 10,
               fontFamily: 'inherit', textAlign: 'left', cursor: 'pointer',
               transition: 'background .2s, border .2s',
             }}>
               <span style={{
-                width: 24, height: 24, borderRadius: 12,
-                background: isSelected ? KUN.accent : showCorrect ? KUN.sage : '#fff',
+                width: 26, height: 26, borderRadius: '50%',
+                background: isSelected ? KUN.brick : showCorrect ? KUN.ink : '#fff',
                 color: (isSelected || showCorrect) ? '#fff' : KUN.inkMuted,
+                border: (isSelected || showCorrect) ? 'none' : `1px solid ${KUN.hair}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, fontSize: 12, fontWeight: 900,
+                flexShrink: 0, fontFamily: CAP_FT, fontSize: 12, fontWeight: 700,
               }}>
                 {showCorrect || (isSelected && option.correct) ? '✓' : String.fromCharCode(65 + i)}
               </span>
               <span style={{
-                fontSize: 13.5, fontWeight: 700, lineHeight: 1.35,
-                textWrap: 'pretty',
+                fontFamily: CAP_FB, fontSize: 13.5, fontWeight: 500, lineHeight: 1.4,
               }}>{option.text}</span>
             </button>
           );
@@ -786,17 +789,17 @@ function CapsuleQuiz({ quiz, selected, onSelect, celebrating }) {
 
       {selectedOption && (
         <div style={{
-          marginTop: 12, borderRadius: 16, padding: '12px 14px',
-          background: selectedOption.correct ? KUN.sageSoft : '#FFF6EF',
-          color: KUN.inkSoft, fontSize: 13.5, fontWeight: 600,
-          lineHeight: 1.5, textWrap: 'pretty',
+          marginTop: 14, borderRadius: 16, padding: '12px 14px',
+          background: selectedOption.correct ? KUN.apple : KUN.rosehip,
+          color: KUN.ink, fontFamily: CAP_FB, fontSize: 13, fontWeight: 400,
+          lineHeight: 1.55,
         }}>
-          <strong style={{ color: KUN.ink }}>
+          <strong style={{ fontFamily: CAP_FT, fontWeight: 700, color: KUN.ink }}>
             {selectedOption.correct ? 'Vas muy bien. ' : 'Vamos paso a paso. '}
           </strong>
           {selectedOption.feedback}
           {!selectedOption.correct && (
-            <div style={{ marginTop: 8, color: KUN.ink }}>
+            <div style={{ marginTop: 8, fontFamily: CAP_FT, fontWeight: 600 }}>
               La respuesta que buscamos es: {quiz.options[correctIndex].text}.
             </div>
           )}
@@ -805,21 +808,17 @@ function CapsuleQuiz({ quiz, selected, onSelect, celebrating }) {
 
       {selectedOption && (
         <div style={{
-          marginTop: 10,
+          marginTop: 12,
           borderRadius: 999,
-          padding: '9px 12px',
-          background: celebrating ? KUN.accent : KUN.cardSoft,
-          color: celebrating ? '#fff' : KUN.accentDeep,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 6,
-          fontSize: 12.5,
-          fontWeight: 800,
-          letterSpacing: 0.1,
+          padding: '9px 14px',
+          background: celebrating ? KUN.brick : KUN.cream,
+          border: celebrating ? 'none' : `1px solid ${KUN.hair}`,
+          color: celebrating ? '#fff' : KUN.brick,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          fontFamily: CAP_FT, fontSize: 12.5, fontWeight: 700, letterSpacing: 0.1,
           transition: 'background .25s, color .25s',
         }}>
-          {KIcon.check(celebrating ? '#fff' : KUN.accentDeep)}
+          {KIcon.check(celebrating ? '#fff' : KUN.brick)}
           Repaso completado
         </div>
       )}
@@ -833,9 +832,9 @@ const CAP_TOTAL_PAGES = 5;
 function CapLeft({ onClick, visible }) {
   return (
     <button onClick={onClick} style={{
-      width: 48, height: 48, borderRadius: 24, border: 'none',
+      width: 48, height: 48, borderRadius: '50%',
       background: visible ? '#fff' : 'transparent',
-      boxShadow: visible ? '0 1px 2px rgba(46,42,38,0.06), 0 4px 12px rgba(46,42,38,0.06)' : 'none',
+      border: visible ? `1px solid ${KUN.hair}` : 'none',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       cursor: visible ? 'pointer' : 'default',
       opacity: visible ? 1 : 0,
@@ -853,9 +852,9 @@ function CapLeft({ onClick, visible }) {
 function CapRight({ onClick, visible }) {
   return (
     <button onClick={onClick} style={{
-      width: 48, height: 48, borderRadius: 24, border: 'none',
-      background: visible ? KUN.accent : 'transparent',
-      boxShadow: visible ? '0 6px 14px rgba(201,123,90,0.3)' : 'none',
+      width: 48, height: 48, borderRadius: '50%',
+      background: visible ? KUN.brick : 'transparent',
+      border: 'none',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       cursor: visible ? 'pointer' : 'default',
       opacity: visible ? 1 : 0,
@@ -940,9 +939,9 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
         padding: '4px 20px 10px', flexShrink: 0,
       }}>
         <div onClick={onBack} style={{
-          width: 40, height: 40, borderRadius: 20, background: '#fff',
+          width: 40, height: 40, borderRadius: '50%', background: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 1px 2px rgba(46,42,38,0.04)', cursor: 'pointer', flexShrink: 0,
+          border: `1px solid ${KUN.hair}`, cursor: 'pointer', flexShrink: 0,
         }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12 4L6 10L12 16" stroke={KUN.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -950,16 +949,17 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: 13, fontWeight: 700, color: KUN.inkSoft, letterSpacing: -0.1,
+            fontFamily: CAP_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+            letterSpacing: 1, textTransform: 'uppercase',
+          }}>
+            Cápsula educativa · {capsule.dur}
+          </div>
+          <div style={{
+            fontFamily: CAP_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2,
+            marginTop: 2,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>
             {capsule.headerTitle}
-          </div>
-          <div style={{
-            fontSize: 10.5, fontWeight: 800, color: KUN.accentDeep,
-            letterSpacing: 0.5, marginTop: 1,
-          }}>
-            CÁPSULA EDUCATIVA · {capsule.dur}
           </div>
         </div>
       </div>
@@ -970,16 +970,16 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
           display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
           marginBottom: 8,
         }}>
-          <span style={{ fontSize: 11.5, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6 }}>
-            {page.num} DE {CAP_TOTAL_PAGES}
+          <span style={{ fontFamily: CAP_FT, fontSize: 12, fontWeight: 700, color: KUN.ink, letterSpacing: 0.3 }}>
+            {page.num} <span style={{ fontFamily: CAP_FB, color: KUN.inkMuted, fontWeight: 500 }}>de {CAP_TOTAL_PAGES}</span>
           </span>
-          <span style={{ fontSize: 11.5, fontWeight: 600, color: KUN.inkMuted }}>
+          <span style={{ fontFamily: CAP_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 0.3 }}>
             {Math.round((page.num / CAP_TOTAL_PAGES) * 100)}% completado
           </span>
         </div>
-        <div style={{ height: 6, borderRadius: 3, background: KUN.trackSoft, overflow: 'hidden' }}>
+        <div style={{ height: 8, borderRadius: 999, background: 'rgba(42,35,32,0.07)', overflow: 'hidden' }}>
           <div style={{
-            height: '100%', borderRadius: 3, background: KUN.accent,
+            height: '100%', borderRadius: 999, background: KUN.brick,
             width: `${(page.num / CAP_TOTAL_PAGES) * 100}%`,
             transition: 'width 0.35s ease',
           }} />
@@ -994,29 +994,29 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
 
         {/* Título de página */}
         <div style={{
-          fontSize: 24, fontWeight: 800, color: KUN.ink,
-          letterSpacing: -0.4, lineHeight: 1.2,
-          marginBottom: 18, textWrap: 'pretty',
+          fontFamily: CAP_FT, fontSize: 26, fontWeight: 700, color: KUN.ink,
+          letterSpacing: -0.5, lineHeight: 1.2,
+          marginBottom: 20,
         }}>{page.title}</div>
 
         {/* ── Página de texto ── */}
         {page.kind === 'text' && (
           <div style={{
             background: '#fff', borderRadius: 24,
-            padding: '20px 20px 24px',
-            boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 8px 22px rgba(46,42,38,0.05)',
+            padding: '22px 22px 26px',
+            border: `1px solid ${KUN.hair}`,
           }}>
             <div style={{
-              width: 52, height: 52, borderRadius: 16,
+              width: 56, height: 56, borderRadius: 18,
               background: page.accent,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              marginBottom: 16,
+              marginBottom: 18,
             }}>
               {page.icon && page.icon()}
             </div>
             <div style={{
-              fontSize: 16, color: KUN.ink, fontWeight: 500,
-              lineHeight: 1.65, textWrap: 'pretty',
+              fontFamily: CAP_FB, fontSize: 15, color: KUN.ink, fontWeight: 400,
+              lineHeight: 1.65,
             }}>{page.text}</div>
           </div>
         )}
@@ -1027,24 +1027,24 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
             {page.items.map((item, i) => (
               <div key={i} style={{
                 background: '#fff', borderRadius: 22, padding: '16px 18px',
-                boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+                border: `1px solid ${KUN.hair}`,
                 display: 'flex', gap: 14, alignItems: 'flex-start',
               }}>
                 <div style={{
-                  width: 34, height: 34, borderRadius: 17,
-                  background: KUN.accentSoft,
+                  width: 36, height: 36, borderRadius: '50%',
+                  background: KUN.rosehip,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   flexShrink: 0,
-                  fontSize: 14, fontWeight: 800, color: KUN.accentDeep,
+                  fontFamily: CAP_FT, fontSize: 14, fontWeight: 700, color: KUN.ink,
                 }}>{i + 1}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{
-                    fontSize: 15, fontWeight: 800, color: KUN.ink,
-                    letterSpacing: -0.2, marginBottom: 5,
+                    fontFamily: CAP_FT, fontSize: 15, fontWeight: 700, color: KUN.ink,
+                    letterSpacing: -0.2, marginBottom: 6,
                   }}>{item.title}</div>
                   <div style={{
-                    fontSize: 13.5, color: KUN.inkSoft, fontWeight: 500,
-                    lineHeight: 1.5, textWrap: 'pretty',
+                    fontFamily: CAP_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400,
+                    lineHeight: 1.55,
                   }}>{item.text}</div>
                 </div>
               </div>
@@ -1059,13 +1059,13 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
               {page.points.map((pt, i) => (
                 <div key={i} style={{
-                  background: '#fff', borderRadius: 20, padding: '14px 18px',
-                  boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+                  background: '#fff', borderRadius: 22, padding: '14px 18px',
+                  border: `1px solid ${KUN.hair}`,
                   display: 'flex', gap: 14, alignItems: 'center',
                 }}>
                   <div style={{
-                    width: 36, height: 36, borderRadius: 18,
-                    background: KUN.accent,
+                    width: 38, height: 38, borderRadius: '50%',
+                    background: KUN.brick,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0,
                   }}>
@@ -1073,11 +1073,11 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{
-                      fontSize: 14.5, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2,
+                      fontFamily: CAP_FT, fontSize: 14.5, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
                     }}>{pt.headline}</div>
                     <div style={{
-                      fontSize: 12.5, color: KUN.inkSoft, fontWeight: 500,
-                      marginTop: 2, lineHeight: 1.4,
+                      fontFamily: CAP_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400,
+                      marginTop: 3, lineHeight: 1.45,
                     }}>{pt.sub}</div>
                   </div>
                 </div>
@@ -1086,19 +1086,19 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
 
             {/* Campo de pregunta */}
             <div style={{
-              background: '#fff', borderRadius: 22, padding: 16,
-              boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+              background: '#fff', borderRadius: 22, padding: 18,
+              border: `1px solid ${KUN.hair}`,
               marginBottom: 12,
             }}>
               <div style={{
-                fontSize: 15, fontWeight: 800, color: KUN.ink,
+                fontFamily: CAP_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink,
                 letterSpacing: -0.2, marginBottom: 12,
               }}>¿Te quedó alguna duda?</div>
 
               {published ? (
                 <div style={{
                   padding: '14px 0', textAlign: 'center',
-                  fontSize: 15, fontWeight: 700, color: KUN.accentDeep, lineHeight: 1.5,
+                  fontFamily: CAP_FT, fontSize: 14.5, fontWeight: 700, color: KUN.brick, lineHeight: 1.5,
                 }}>
                   Tu pregunta fue publicada en el foro 🧡
                 </div>
@@ -1109,20 +1109,20 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
                     onChange={e => setQuestion(e.target.value)}
                     placeholder="Escribe tu pregunta… la comunidad puede ayudarte"
                     style={{
-                      width: '100%', minHeight: 90, border: 'none', outline: 'none',
-                      resize: 'none', fontFamily: 'inherit',
-                      fontSize: 14, color: KUN.ink, fontWeight: 500,
-                      background: KUN.cardSoft, borderRadius: 14,
+                      width: '100%', minHeight: 90, border: `1.5px solid ${KUN.hair}`, outline: 'none',
+                      resize: 'none', fontFamily: CAP_FB,
+                      fontSize: 14, color: KUN.ink, fontWeight: 400,
+                      background: '#fff', borderRadius: 14,
                       padding: '12px 14px', boxSizing: 'border-box',
                       lineHeight: 1.5,
                     }}
                   />
                   <button onClick={handlePublish} style={{
                     width: '100%', marginTop: 10,
-                    padding: '12px 16px', borderRadius: 14, border: 'none',
-                    background: question.trim() ? KUN.ink : KUN.cardSoft,
+                    padding: '11px 16px', height: 42, borderRadius: 999, border: 'none',
+                    background: question.trim() ? KUN.ink : 'rgba(42,35,32,0.08)',
                     color: question.trim() ? '#fff' : KUN.inkMuted,
-                    fontFamily: 'inherit', fontSize: 14, fontWeight: 800,
+                    fontFamily: CAP_FT, fontSize: 13.5, fontWeight: 700, letterSpacing: -0.1,
                     cursor: question.trim() ? 'pointer' : 'default',
                     transition: 'background .2s, color .2s',
                   }}>
@@ -1140,23 +1140,23 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
             />
 
             <div style={{
-              margin: '-2px 4px 10px',
-              fontSize: 12.5,
-              fontWeight: 700,
+              margin: '-2px 4px 12px',
+              fontFamily: CAP_FB,
+              fontSize: 12,
+              fontWeight: 400,
               color: KUN.inkMuted,
-              lineHeight: 1.4,
+              lineHeight: 1.5,
               textAlign: 'center',
             }}>
               Puedes responder el repaso o marcar la cápsula como completada ahora.
             </div>
 
-            {/* Botón completar */}
+            {/* Botón completar — DS pill */}
             <button onClick={handleComplete} style={{
-              width: '100%', padding: '15px 20px', borderRadius: 18, border: 'none',
-              background: KUN.accent, color: '#fff',
-              fontFamily: 'inherit', fontSize: 15, fontWeight: 800,
-              letterSpacing: 0.1, cursor: 'pointer',
-              boxShadow: '0 8px 20px rgba(201,123,90,0.35)',
+              width: '100%', padding: '14px 22px', height: 50, borderRadius: 999, border: 'none',
+              background: KUN.brick, color: '#fff',
+              fontFamily: CAP_FT, fontSize: 15, fontWeight: 700,
+              letterSpacing: -0.1, cursor: 'pointer',
               marginBottom: 8,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             }}>
@@ -1173,7 +1173,7 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
         flexShrink: 0,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '10px 20px 14px',
-        borderTop: `1px solid ${KUN.divider}`,
+        borderTop: `1px solid ${KUN.hair}`,
       }}>
         <CapLeft onClick={goPrev} visible={!isFirst} />
 
@@ -1182,7 +1182,7 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
           {pages.map((_, i) => (
             <div key={i} onClick={() => setIdx(i)} style={{
               width: i === idx ? 22 : 7, height: 7, borderRadius: 4,
-              background: i === idx ? KUN.accent : KUN.trackSoft,
+              background: i === idx ? KUN.brick : 'rgba(42,35,32,0.12)',
               transition: 'all 0.3s ease', cursor: 'pointer',
             }} />
           ))}
@@ -1202,13 +1202,13 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
         }}>
           <div style={{ fontSize: 64 }}>🎉</div>
           <div style={{
-            fontSize: 24, fontWeight: 800, color: KUN.ink,
+            fontFamily: CAP_FT, fontSize: 26, fontWeight: 700, color: KUN.ink,
             letterSpacing: -0.4, textAlign: 'center',
           }}>¡Lo lograste!</div>
           <div style={{
-            fontSize: 15, color: KUN.inkSoft, fontWeight: 500,
-            textAlign: 'center', textWrap: 'pretty',
-            maxWidth: 260, lineHeight: 1.55,
+            fontFamily: CAP_FB, fontSize: 14.5, color: KUN.inkSoft, fontWeight: 400,
+            textAlign: 'center',
+            maxWidth: 260, lineHeight: 1.6,
           }}>
             Completaste la cápsula.<br />La encontrarás en tu historial.
           </div>

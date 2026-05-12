@@ -76,14 +76,19 @@ function ComAvatar({ name, color, size = 44 }) {
   const initial = (name || '?').charAt(0).toUpperCase();
   return (
     <div style={{
-      width: size, height: size, borderRadius: size / 2,
-      background: color, color: '#fff',
+      width: size, height: size, borderRadius: '50%',
+      background: color, color: KUN.ink,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: size * 0.38, fontWeight: 800, flexShrink: 0,
+      fontFamily: 'Quicksand, sans-serif',
+      fontSize: size * 0.40, fontWeight: 700, flexShrink: 0,
       letterSpacing: -0.2,
     }}>{initial}</div>
   );
 }
+
+// ── DS scoped fonts ─────────────────────────────────
+const COM_FT = 'Quicksand, sans-serif';
+const COM_FB = 'Poppins, sans-serif';
 
 // ── Subtabs principales (Chat / Foro) ──────────────
 function ComTopTabs({ active, onChange }) {
@@ -94,7 +99,7 @@ function ComTopTabs({ active, onChange }) {
   return (
     <div style={{
       margin: '4px 20px 12px',
-      display: 'flex', gap: 6,
+      display: 'flex', gap: 8,
     }}>
       {tabs.map(t => {
         const isA = t.id === active;
@@ -102,13 +107,10 @@ function ComTopTabs({ active, onChange }) {
           <div key={t.id} onClick={() => onChange(t.id)} style={{
             flex: 1, textAlign: 'center', cursor: 'pointer',
             padding: '10px 6px', borderRadius: 999,
-            background: isA ? KUN.accent : '#fff',
+            background: isA ? KUN.brick : KUN.cardSoft,
             color: isA ? '#fff' : KUN.inkSoft,
-            fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
-            border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
-            boxShadow: isA
-              ? '0 2px 8px rgba(201,123,90,0.28)'
-              : '0 1px 2px rgba(46,42,38,0.03)',
+            fontFamily: COM_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+            border: isA ? 'none' : `1px solid ${KUN.hair}`,
             transition: 'all .2s',
           }}>{t.label}</div>
         );
@@ -125,20 +127,20 @@ function ComSubHeader({ title, subtitle, onBack, right }) {
       padding: '4px 20px 14px',
     }}>
       <div onClick={onBack} style={{
-        width: 40, height: 40, borderRadius: 20, background: '#fff',
+        width: 40, height: 40, borderRadius: '50%', background: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 1px 2px rgba(46,42,38,0.04)', cursor: 'pointer',
+        border: `1px solid ${KUN.hair}`, cursor: 'pointer',
         flexShrink: 0,
       }}>{COM_ICONS.back(KUN.ink)}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontSize: 18, fontWeight: 800, color: KUN.ink,
+          fontFamily: COM_FT, fontSize: 20, fontWeight: 700, color: KUN.ink,
           letterSpacing: -0.3, lineHeight: 1.2,
           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>{title}</div>
         {subtitle && (
           <div style={{
-            fontSize: 12, color: KUN.inkMuted, fontWeight: 600,
+            fontFamily: COM_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400,
             marginTop: 2, letterSpacing: 0.1,
           }}>{subtitle}</div>
         )}
@@ -187,23 +189,24 @@ function ChatList({ onOpenChat, onNew }) {
         {/* Search */}
         <div style={{ padding: '0 20px 14px' }}>
           <div style={{
-            background: '#fff', borderRadius: 18, padding: '13px 16px',
+            background: '#fff', borderRadius: 16, padding: '12px 16px',
             display: 'flex', alignItems: 'center', gap: 10,
-            boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+            border: `1.5px solid ${KUN.hair}`,
           }}>
             {COM_ICONS.search(KUN.inkMuted)}
             <span style={{
-              fontSize: 14.5, color: KUN.inkMuted, fontWeight: 500,
-              letterSpacing: -0.1,
+              fontFamily: COM_FB, fontSize: 14, color: KUN.inkMuted, fontWeight: 400,
+              letterSpacing: 0.1,
             }}>Buscar conversación…</span>
           </div>
         </div>
 
         <div style={{
-          padding: '0 28px 10px',
-          fontSize: 12, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6,
+          padding: '0 28px 12px',
+          fontFamily: COM_FB, fontSize: 11, fontWeight: 500,
+          color: KUN.inkMuted, letterSpacing: 1, textTransform: 'uppercase',
         }}>
-          TUS CONVERSACIONES
+          Tus conversaciones
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 20px' }}>
@@ -211,15 +214,15 @@ function ChatList({ onOpenChat, onNew }) {
             <div key={p.id} onClick={() => onOpenChat(p.id)} style={{
               background: '#fff', borderRadius: 22, padding: '14px 16px',
               display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+              border: `1px solid ${KUN.hair}`,
             }}>
               <div style={{ position: 'relative' }}>
                 <ComAvatar name={p.name} color={p.color} size={48} />
                 {p.online && (
                   <div style={{
                     position: 'absolute', bottom: 0, right: 0,
-                    width: 12, height: 12, borderRadius: 6,
-                    background: KUN.sage, border: '2px solid #fff',
+                    width: 12, height: 12, borderRadius: '50%',
+                    background: KUN.apple, border: '2px solid #fff',
                   }} />
                 )}
               </div>
@@ -229,23 +232,23 @@ function ChatList({ onOpenChat, onNew }) {
                   marginBottom: 2,
                 }}>
                   <div style={{
-                    fontSize: 15.5, fontWeight: 800, color: KUN.ink,
+                    fontFamily: COM_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink,
                     letterSpacing: -0.2,
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                   }}>{p.name}</div>
                   <span style={{
-                    fontSize: 11, fontWeight: 700, color: KUN.inkMuted,
-                    flexShrink: 0,
+                    fontFamily: COM_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
+                    flexShrink: 0, letterSpacing: 0.2,
                   }}>{p.time}</span>
                 </div>
                 <div style={{
-                  fontSize: 11, fontWeight: 700, color: KUN.accentDeep,
-                  letterSpacing: 0.3, marginBottom: 4,
-                }}>{p.role.toUpperCase()}</div>
+                  fontFamily: COM_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+                  letterSpacing: 0.8, marginBottom: 4, textTransform: 'uppercase',
+                }}>{p.role}</div>
                 <div style={{
-                  fontSize: 13, color: KUN.inkSoft, fontWeight: 500,
+                  fontFamily: COM_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 400,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                  lineHeight: 1.3,
+                  lineHeight: 1.4,
                 }}>{p.last}</div>
               </div>
             </div>
@@ -256,10 +259,10 @@ function ChatList({ onOpenChat, onNew }) {
       {/* FAB nueva conversación */}
       <button onClick={onNew} style={{
         position: 'absolute', bottom: 14, right: 20,
-        width: 58, height: 58, borderRadius: 29, border: 'none',
-        background: KUN.accent, color: '#fff',
+        width: 58, height: 58, borderRadius: '50%', border: 'none',
+        background: KUN.brick, color: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 8px 18px rgba(201,123,90,0.4)', cursor: 'pointer',
+        boxShadow: '0 8px 18px rgba(240,116,62,0.40)', cursor: 'pointer',
         zIndex: 5,
       }}>
         {COM_ICONS.plus('#fff')}
@@ -274,30 +277,31 @@ function NewConversation({ onBack, onPick }) {
       <ComSubHeader title="Nueva conversación" subtitle="Elige con quién hablar" onBack={onBack} />
       <div style={{ padding: '0 20px' }}>
         <div style={{
-          padding: '0 8px 10px',
-          fontSize: 12, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6,
+          padding: '0 8px 12px',
+          fontFamily: COM_FB, fontSize: 11, fontWeight: 500,
+          color: KUN.inkMuted, letterSpacing: 1, textTransform: 'uppercase',
         }}>
-          PROFESIONALES DISPONIBLES
+          Profesionales disponibles
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {AVAILABLE_PROFESSIONALS.map(p => (
             <div key={p.id} onClick={() => onPick(p.id)} style={{
-              background: '#fff', borderRadius: 20, padding: '14px 16px',
+              background: '#fff', borderRadius: 22, padding: '14px 16px',
               display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+              border: `1px solid ${KUN.hair}`,
             }}>
               <ComAvatar name={p.name} color={p.color} size={44} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontSize: 14.5, fontWeight: 800, color: KUN.ink,
-                  letterSpacing: -0.2, marginBottom: 2,
+                  fontFamily: COM_FT, fontSize: 14.5, fontWeight: 700, color: KUN.ink,
+                  letterSpacing: -0.1, marginBottom: 2,
                 }}>{p.name}</div>
                 <div style={{
-                  fontSize: 11, fontWeight: 700, color: KUN.accentDeep,
-                  letterSpacing: 0.3, marginBottom: 3,
-                }}>{p.role.toUpperCase()}</div>
+                  fontFamily: COM_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+                  letterSpacing: 0.8, marginBottom: 4, textTransform: 'uppercase',
+                }}>{p.role}</div>
                 <div style={{
-                  fontSize: 12, color: KUN.inkMuted, fontWeight: 600,
+                  fontFamily: COM_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400,
                 }}>{p.desc}</div>
               </div>
               {KIcon.chevRight(KUN.inkFaint)}
@@ -330,27 +334,28 @@ const GENERIC_THREAD = [
 function ChatCapsuleCard({ capsule }) {
   return (
     <div style={{
-      background: KUN.cardSoft, borderRadius: 16, padding: 12,
+      background: '#fff', borderRadius: 18, padding: 12,
+      border: `1px solid ${KUN.hair}`,
       display: 'flex', gap: 12, alignItems: 'center',
       maxWidth: 240,
     }}>
       <div style={{
         width: 44, height: 44, borderRadius: 14,
-        background: KUN.accentSoft,
+        background: KUN.rosehip,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
-      }}>{COM_ICONS.capsule(KUN.accentDeep)}</div>
+      }}>{COM_ICONS.capsule(KUN.ink)}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontSize: 10, fontWeight: 800, color: KUN.accentDeep,
-          letterSpacing: 0.5, marginBottom: 3,
-        }}>CÁPSULA · {capsule.tag.toUpperCase()}</div>
+          fontFamily: COM_FB, fontSize: 10, fontWeight: 500, color: KUN.brick,
+          letterSpacing: 0.8, marginBottom: 3, textTransform: 'uppercase',
+        }}>Cápsula · {capsule.tag}</div>
         <div style={{
-          fontSize: 13, fontWeight: 700, color: KUN.ink,
-          letterSpacing: -0.2, lineHeight: 1.3, marginBottom: 4, textWrap: 'pretty',
+          fontFamily: COM_FT, fontSize: 13.5, fontWeight: 700, color: KUN.ink,
+          letterSpacing: -0.1, lineHeight: 1.3, marginBottom: 4,
         }}>{capsule.title}</div>
         <div style={{
-          fontSize: 11, color: KUN.inkMuted, fontWeight: 600,
+          fontFamily: COM_FB, fontSize: 11, color: KUN.inkSoft, fontWeight: 400,
         }}>{capsule.mins}</div>
       </div>
     </div>
@@ -359,7 +364,7 @@ function ChatCapsuleCard({ capsule }) {
 
 function ChatBubble({ msg, profColor }) {
   const isMe = msg.from === 'me';
-  const bg = isMe ? KUN.accent : '#fff';
+  const bg = isMe ? KUN.brick : '#fff';
   const color = isMe ? '#fff' : KUN.ink;
   return (
     <div style={{
@@ -376,21 +381,21 @@ function ChatBubble({ msg, profColor }) {
         borderTopLeftRadius: isMe ? 20 : 6,
         borderBottomRightRadius: isMe ? 6 : 20,
         padding: msg.kind === 'capsule' ? 0 : '10px 14px',
-        boxShadow: msg.kind === 'capsule' ? 'none' : (isMe ? '0 4px 10px rgba(201,123,90,0.18)' : '0 1px 2px rgba(46,42,38,0.04)'),
+        border: msg.kind === 'capsule' ? 'none' : (isMe ? 'none' : `1px solid ${KUN.hair}`),
       }}>
         {msg.kind === 'text' && (
           <div style={{
-            fontSize: 14, fontWeight: 500, lineHeight: 1.45,
-            letterSpacing: -0.1, textWrap: 'pretty',
+            fontFamily: COM_FB, fontSize: 14, fontWeight: 400, lineHeight: 1.5,
+            letterSpacing: 0.1,
           }}>{msg.text}</div>
         )}
         {msg.kind === 'capsule' && <ChatCapsuleCard capsule={msg.capsule} />}
         <div style={{
-          fontSize: 10, fontWeight: 700,
+          fontFamily: COM_FB, fontSize: 10, fontWeight: 500,
           color: isMe ? 'rgba(255,255,255,0.75)' : KUN.inkMuted,
           marginTop: 4,
           textAlign: isMe ? 'right' : 'left',
-          letterSpacing: 0.2,
+          letterSpacing: 0.3,
           paddingLeft: msg.kind === 'capsule' ? 4 : 0,
         }}>{msg.time}</div>
       </div>
@@ -417,10 +422,10 @@ function ChatComposer({ onSend }) {
         background: '#fff', borderRadius: 26,
         padding: '8px 8px 8px 16px',
         display: 'flex', alignItems: 'center', gap: 8,
-        boxShadow: '0 4px 14px rgba(46,42,38,0.06), 0 1px 3px rgba(46,42,38,0.04)',
+        border: `1px solid ${KUN.hair}`,
       }}>
         <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-          <button style={composerBtn}>{COM_ICONS.camera(KUN.inkSoft)}</button>
+          <button style={composerBtn}>{COM_ICONS.camera(KUN.ink)}</button>
         </div>
         <input
           value={text}
@@ -429,19 +434,18 @@ function ChatComposer({ onSend }) {
           placeholder="Escribe un mensaje…"
           style={{
             flex: 1, border: 'none', outline: 'none',
-            fontSize: 14, color: KUN.ink, fontWeight: 500,
-            background: 'transparent', fontFamily: 'inherit',
+            fontFamily: COM_FB, fontSize: 14, color: KUN.ink, fontWeight: 400,
+            background: 'transparent',
             padding: '0 4px',
           }}
         />
         <button onClick={send} style={{
-          width: 40, height: 40, borderRadius: 20, border: 'none',
-          background: text.trim() ? KUN.accent : KUN.cardSoft,
+          width: 40, height: 40, borderRadius: '50%', border: 'none',
+          background: text.trim() ? KUN.brick : 'rgba(42,35,32,0.08)',
           color: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: text.trim() ? 'pointer' : 'default',
-          boxShadow: text.trim() ? '0 4px 10px rgba(201,123,90,0.35)' : 'none',
-          transition: 'background .2s, box-shadow .2s',
+          transition: 'background .2s',
         }}>{COM_ICONS.send(text.trim() ? '#fff' : KUN.inkFaint)}</button>
       </div>
     </div>
@@ -449,8 +453,8 @@ function ChatComposer({ onSend }) {
 }
 
 const composerBtn = {
-  width: 36, height: 36, borderRadius: 18, border: 'none',
-  background: KUN.cardSoft,
+  width: 36, height: 36, borderRadius: '50%', border: `1px solid ${KUN.hair}`,
+  background: '#fff',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   cursor: 'pointer',
 };
@@ -484,29 +488,30 @@ function ChatThread({ profId, onBack }) {
     }}>
       <div style={{ padding: '14px 20px 6px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div onClick={onBack} style={{
-          width: 40, height: 40, borderRadius: 20, background: '#fff',
+          width: 40, height: 40, borderRadius: '50%', background: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 1px 2px rgba(46,42,38,0.04)', cursor: 'pointer',
+          border: `1px solid ${KUN.hair}`, cursor: 'pointer',
         }}>{COM_ICONS.back(KUN.ink)}</div>
         <ComAvatar name={prof.name} color={prof.color} size={40} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: 16, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2,
+            fontFamily: COM_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>{prof.name}</div>
           <div style={{
-            fontSize: 11, fontWeight: 700, color: KUN.accentDeep, letterSpacing: 0.3,
-          }}>{prof.role.toUpperCase()}</div>
+            fontFamily: COM_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+            letterSpacing: 0.8, textTransform: 'uppercase',
+          }}>{prof.role}</div>
         </div>
       </div>
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', paddingTop: 14, paddingBottom: 90 }}>
         <div style={{
-          textAlign: 'center', fontSize: 11, fontWeight: 700,
-          color: KUN.inkMuted, letterSpacing: 0.6, marginBottom: 14,
+          textAlign: 'center', marginBottom: 14,
         }}>
           <span style={{
-            background: KUN.cardSoft, padding: '4px 12px', borderRadius: 999,
+            background: KUN.cardSoft, padding: '5px 12px', borderRadius: 999,
+            fontFamily: COM_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.5,
           }}>HOY</span>
         </div>
         {thread.map((m, i) => <ChatBubble key={i} msg={m} profColor={prof.color} />)}
@@ -529,21 +534,18 @@ function CommunityInnerTabs({ active, onChange }) {
   ];
   return (
     <div style={{
-      margin: '0 20px 14px', display: 'flex', gap: 6,
+      margin: '0 20px 14px', display: 'flex', gap: 8,
     }}>
       {tabs.map(t => {
         const isA = t.id === active;
         return (
           <div key={t.id} onClick={() => onChange(t.id)} style={{
             cursor: 'pointer',
-            padding: '10px 16px', borderRadius: 999,
-            background: isA ? KUN.accent : '#fff',
+            padding: '10px 18px', borderRadius: 999,
+            background: isA ? KUN.brick : KUN.cardSoft,
             color: isA ? '#fff' : KUN.inkSoft,
-            fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
-            border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
-            boxShadow: isA
-              ? '0 2px 8px rgba(201,123,90,0.28)'
-              : '0 1px 2px rgba(46,42,38,0.03)',
+            fontFamily: COM_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+            border: isA ? 'none' : `1px solid ${KUN.hair}`,
             transition: 'all .2s',
           }}>{t.label}</div>
         );
@@ -560,22 +562,22 @@ function PostActions({ likes, replies, onReply }) {
     <div style={{
       display: 'flex', alignItems: 'center', gap: 18,
       paddingTop: 12, marginTop: 12,
-      borderTop: `1px dashed ${KUN.divider}`,
+      borderTop: `1px dashed ${KUN.hair}`,
     }}>
       <div onClick={(e) => { e.stopPropagation(); setLiked(l => !l); }} style={{
         display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
       }}>
-        {COM_ICONS.heart(liked ? KUN.accent : KUN.inkSoft, liked)}
+        {COM_ICONS.heart(liked ? KUN.brick : KUN.inkSoft, liked)}
         <span style={{
-          fontSize: 12, fontWeight: 700,
-          color: liked ? KUN.accent : KUN.inkSoft,
+          fontFamily: COM_FT, fontSize: 12.5, fontWeight: 700,
+          color: liked ? KUN.brick : KUN.inkSoft,
         }}>{count}</span>
       </div>
       <div onClick={(e) => { e.stopPropagation(); onReply && onReply(); }} style={{
         display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
       }}>
         {COM_ICONS.reply(KUN.inkSoft)}
-        <span style={{ fontSize: 12, fontWeight: 700, color: KUN.inkSoft }}>
+        <span style={{ fontFamily: COM_FT, fontSize: 12.5, fontWeight: 700, color: KUN.inkSoft }}>
           {replies}
         </span>
       </div>
@@ -622,40 +624,40 @@ function QuestionCard({ q, onOpen }) {
   return (
     <div onClick={() => onOpen(q.id)} style={{
       background: '#fff', borderRadius: 24, padding: 18,
-      marginBottom: 10, cursor: 'pointer',
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 16px rgba(46,42,38,0.04)',
+      marginBottom: 12, cursor: 'pointer',
+      border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <ComAvatar name={q.author} color={q.authorColor} size={40} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: 14, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2,
+            fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
           }}>{q.author}</div>
-          <div style={{ fontSize: 11.5, color: KUN.inkMuted, fontWeight: 600, marginTop: 1 }}>
+          <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
             {q.role} · {q.time}
           </div>
         </div>
         <span style={{
-          padding: '4px 10px', borderRadius: 999,
-          background: KUN.accentSoft, color: KUN.accentDeep,
-          fontSize: 10.5, fontWeight: 800, letterSpacing: 0.4,
+          padding: '5px 11px', borderRadius: 999,
+          background: KUN.sun, color: KUN.ink,
+          fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
           flexShrink: 0,
         }}>PREGUNTA</span>
       </div>
 
       <div style={{
-        fontSize: 11, fontWeight: 700, color: KUN.sage,
-        letterSpacing: 0.5, marginBottom: 6,
-      }}>{q.category.toUpperCase()}</div>
+        fontFamily: COM_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+        letterSpacing: 1, marginBottom: 6, textTransform: 'uppercase',
+      }}>{q.category}</div>
 
       <div style={{
-        fontSize: 16, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3,
-        lineHeight: 1.25, marginBottom: 8, textWrap: 'pretty',
+        fontFamily: COM_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
+        lineHeight: 1.3, marginBottom: 10,
       }}>{q.title}</div>
 
       <div style={{
-        fontSize: 13.5, color: KUN.inkSoft, fontWeight: 500,
-        lineHeight: 1.5, textWrap: 'pretty',
+        fontFamily: COM_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400,
+        lineHeight: 1.6,
       }}>{q.text}</div>
 
       <PostActions likes={q.likes} replies={q.replies} />
@@ -683,86 +685,89 @@ function QuestionThread({ qId, onBack }) {
         {/* La pregunta original */}
         <div style={{
           background: '#fff', borderRadius: 24, padding: 18, marginBottom: 16,
-          boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 16px rgba(46,42,38,0.04)',
+          border: `1px solid ${KUN.hair}`,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <ComAvatar name={q.author} color={q.authorColor} size={40} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>
+              <div style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
                 {q.author}
               </div>
-              <div style={{ fontSize: 11.5, color: KUN.inkMuted, fontWeight: 600, marginTop: 1 }}>
+              <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
                 {q.role} · {q.time}
               </div>
             </div>
           </div>
           <div style={{
-            fontSize: 11, fontWeight: 700, color: KUN.sage,
-            letterSpacing: 0.5, marginBottom: 6,
-          }}>{q.category.toUpperCase()}</div>
+            fontFamily: COM_FB, fontSize: 10.5, fontWeight: 500, color: KUN.brick,
+            letterSpacing: 1, marginBottom: 6, textTransform: 'uppercase',
+          }}>{q.category}</div>
           <div style={{
-            fontSize: 17, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3,
-            lineHeight: 1.25, marginBottom: 8, textWrap: 'pretty',
+            fontFamily: COM_FT, fontSize: 18, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
+            lineHeight: 1.3, marginBottom: 10,
           }}>{q.title}</div>
           <div style={{
-            fontSize: 14, color: KUN.inkSoft, fontWeight: 500,
-            lineHeight: 1.5, textWrap: 'pretty',
+            fontFamily: COM_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400,
+            lineHeight: 1.6,
           }}>{q.text}</div>
           <PostActions likes={q.likes} replies={q.replies} />
         </div>
 
         {/* Respuestas */}
         <div style={{
-          padding: '0 8px 10px', fontSize: 12, fontWeight: 700,
-          color: KUN.inkMuted, letterSpacing: 0.6,
+          padding: '0 8px 12px',
+          fontFamily: COM_FB, fontSize: 11, fontWeight: 500,
+          color: KUN.inkMuted, letterSpacing: 1, textTransform: 'uppercase',
         }}>
-          {q.answers.length} {q.answers.length === 1 ? 'RESPUESTA' : 'RESPUESTAS'}
+          {q.answers.length} {q.answers.length === 1 ? 'respuesta' : 'respuestas'}
         </div>
 
         {q.answers.length === 0 ? (
           <div style={{
             background: '#fff', borderRadius: 22,
-            padding: '22px 18px', textAlign: 'center',
+            padding: '24px 20px', textAlign: 'center',
             border: `1.5px dashed ${KUN.inkFaint}`,
             marginBottom: 16,
           }}>
-            <div style={{ fontSize: 28, marginBottom: 6 }}>💬</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
+            <div style={{ fontFamily: COM_FT, fontSize: 14.5, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
               Aún no hay respuestas
             </div>
-            <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, lineHeight: 1.4, textWrap: 'pretty' }}>
+            <div style={{ fontFamily: COM_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
               Sé la primera en responder y acompañar a {q.author}.
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
             {q.answers.map((a, i) => (
               <div key={i} style={{
-                background: '#fff', borderRadius: 20, padding: '14px 16px',
-                boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+                background: '#fff', borderRadius: 22, padding: '14px 16px',
+                border: `1px solid ${KUN.hair}`,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                   {a.anonymous ? (
                     <div style={{
-                      width: 32, height: 32, borderRadius: 16,
+                      width: 32, height: 32, borderRadius: '50%',
                       background: KUN.cardSoft,
+                      border: `1px solid ${KUN.hair}`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 14, color: KUN.inkMuted,
+                      fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.inkMuted,
                     }}>?</div>
                   ) : (
                     <ComAvatar name={a.author} color={a.color} size={32} />
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontSize: 13, fontWeight: 800, color: a.anonymous ? KUN.inkMuted : KUN.ink,
+                      fontFamily: COM_FT, fontSize: 13, fontWeight: 700,
+                      color: a.anonymous ? KUN.inkMuted : KUN.ink,
                       letterSpacing: -0.1, fontStyle: a.anonymous ? 'italic' : 'normal',
                     }}>{a.author}</div>
-                    <div style={{ fontSize: 11, color: KUN.inkMuted, fontWeight: 600 }}>{a.time}</div>
+                    <div style={{ fontFamily: COM_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, letterSpacing: 0.2 }}>{a.time}</div>
                   </div>
                 </div>
                 <div style={{
-                  fontSize: 13.5, color: KUN.ink, fontWeight: 500,
-                  lineHeight: 1.5, textWrap: 'pretty',
+                  fontFamily: COM_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
+                  lineHeight: 1.6,
                 }}>{a.text}</div>
               </div>
             ))}
@@ -771,13 +776,13 @@ function QuestionThread({ qId, onBack }) {
 
         {/* Composer de respuesta */}
         <div style={{
-          background: '#fff', borderRadius: 22, padding: 14,
-          boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+          background: '#fff', borderRadius: 22, padding: 16,
+          border: `1px solid ${KUN.hair}`,
         }}>
           {replyPosted ? (
             <div style={{
               padding: '14px 4px', textAlign: 'center',
-              fontSize: 14, fontWeight: 800, color: KUN.sage, lineHeight: 1.5,
+              fontFamily: COM_FT, fontSize: 14.5, fontWeight: 700, color: KUN.brick, lineHeight: 1.5,
             }}>
               ¡Respuesta publicada! 🧡
             </div>
@@ -788,41 +793,40 @@ function QuestionThread({ qId, onBack }) {
                 onChange={e => setReplyText(e.target.value)}
                 placeholder="Escribe tu respuesta…"
                 style={{
-                  width: '100%', minHeight: 72, border: 'none', outline: 'none',
-                  resize: 'none', fontFamily: 'inherit',
-                  fontSize: 14, color: KUN.ink, fontWeight: 500,
-                  background: KUN.cardSoft, borderRadius: 12,
-                  padding: '10px 12px', boxSizing: 'border-box',
+                  width: '100%', minHeight: 72, border: `1.5px solid ${KUN.hair}`, outline: 'none',
+                  resize: 'none', fontFamily: COM_FB,
+                  fontSize: 14, color: KUN.ink, fontWeight: 400,
+                  background: '#fff', borderRadius: 14,
+                  padding: '12px 14px', boxSizing: 'border-box',
                   lineHeight: 1.5, marginBottom: 12,
                 }}
               />
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                paddingTop: 12, borderTop: `1px dashed ${KUN.divider}`,
+                paddingTop: 12, borderTop: `1px dashed ${KUN.hair}`,
               }}>
                 <div onClick={() => setReplyAnon(a => !a)} style={{
                   display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
                 }}>
                   <div style={{
                     width: 22, height: 22, borderRadius: 6,
-                    border: `1.5px solid ${replyAnon ? KUN.accent : KUN.inkFaint}`,
-                    background: replyAnon ? KUN.accent : '#fff',
+                    border: `1.5px solid ${replyAnon ? KUN.brick : KUN.inkFaint}`,
+                    background: replyAnon ? KUN.brick : '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'all .2s',
                   }}>
                     {replyAnon && KIcon.check('#fff')}
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
+                  <span style={{ fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
                     Responder anónimamente
                   </span>
                 </div>
                 <button onClick={handleReply} style={{
-                  padding: '9px 18px', borderRadius: 999, border: 'none',
-                  background: replyText.trim() ? KUN.accent : KUN.cardSoft,
+                  padding: '9px 18px', height: 36, borderRadius: 999, border: 'none',
+                  background: replyText.trim() ? KUN.brick : 'rgba(42,35,32,0.08)',
                   color: replyText.trim() ? '#fff' : KUN.inkMuted,
-                  fontFamily: 'inherit', fontSize: 13, fontWeight: 800,
+                  fontFamily: COM_FT, fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
                   cursor: replyText.trim() ? 'pointer' : 'default',
-                  boxShadow: replyText.trim() ? '0 4px 10px rgba(201,123,90,0.3)' : 'none',
                   transition: 'all .2s',
                 }}>Publicar</button>
               </div>
@@ -850,40 +854,40 @@ function ExperienceCard({ e }) {
   const [expanded, setExpanded] = React.useState(false);
   return (
     <div style={{
-      background: '#fff', borderRadius: 24, padding: 18, marginBottom: 10,
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 16px rgba(46,42,38,0.04)',
+      background: '#fff', borderRadius: 24, padding: 18, marginBottom: 12,
+      border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <ComAvatar name={e.author} color={e.color} size={40} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>
+          <div style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
             {e.author}
           </div>
-          <div style={{ fontSize: 11.5, color: KUN.inkMuted, fontWeight: 600, marginTop: 1 }}>
+          <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
             {e.role} · {e.time}
           </div>
         </div>
         <span style={{
-          padding: '4px 10px', borderRadius: 999,
-          background: KUN.sageSoft, color: KUN.sage,
-          fontSize: 10.5, fontWeight: 800, letterSpacing: 0.4,
+          padding: '5px 11px', borderRadius: 999,
+          background: KUN.apple, color: KUN.ink,
+          fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
           flexShrink: 0,
         }}>EXPERIENCIA</span>
       </div>
 
       <div style={{
-        fontSize: 14, color: KUN.ink, fontWeight: 500,
-        lineHeight: 1.55, textWrap: 'pretty',
+        fontFamily: COM_FB, fontSize: 14, color: KUN.ink, fontWeight: 400,
+        lineHeight: 1.6,
       }}>
         {e.short}
         {expanded && <span>{e.long}</span>}
       </div>
       {!expanded && e.long && (
         <span onClick={() => setExpanded(true)} style={{
-          display: 'inline-block', marginTop: 8,
-          fontSize: 13, fontWeight: 800, color: KUN.accent,
+          display: 'inline-block', marginTop: 10,
+          fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.brick,
           cursor: 'pointer', letterSpacing: -0.1,
-        }}>Mostrar más</span>
+        }}>Mostrar más →</span>
       )}
 
       <PostActions likes={e.likes} replies={e.replies} />
@@ -925,7 +929,7 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
 
   const sharedInputStyle = {
     width: '100%', border: 'none', outline: 'none', resize: 'none',
-    fontFamily: 'inherit', fontSize: 14, fontWeight: 500,
+    fontFamily: COM_FB, fontSize: 14, fontWeight: 400,
     color: KUN.ink, background: 'transparent', lineHeight: 1.5,
     boxSizing: 'border-box', padding: 0,
   };
@@ -933,7 +937,7 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 200,
-      background: 'rgba(46,42,38,0.4)',
+      background: 'rgba(42,35,32,0.4)',
       display: 'flex', alignItems: 'flex-end',
     }}>
       <div style={{
@@ -950,15 +954,15 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           marginBottom: 14,
         }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+          <div style={{ fontFamily: COM_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>
             Nueva publicación
           </div>
           <span onClick={onClose} style={{
-            fontSize: 13, fontWeight: 700, color: KUN.inkSoft, cursor: 'pointer',
+            fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.brick, cursor: 'pointer',
           }}>Cancelar</span>
         </div>
 
-        {/* Kind picker */}
+        {/* Kind picker — DS subtabs */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
           {[
             { id: 'question',   label: 'Pregunta' },
@@ -968,11 +972,11 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
             return (
               <div key={t.id} onClick={() => { setKind(t.id); setTitle(''); setBody(''); }} style={{
                 flex: 1, textAlign: 'center', cursor: 'pointer',
-                padding: '11px 6px', borderRadius: 999,
-                background: isA ? KUN.accent : '#fff',
+                padding: '10px 6px', borderRadius: 999,
+                background: isA ? KUN.brick : KUN.cardSoft,
                 color: isA ? '#fff' : KUN.inkSoft,
-                fontSize: 13, fontWeight: 800, letterSpacing: -0.1,
-                boxShadow: isA ? '0 4px 10px rgba(201,123,90,0.3)' : '0 1px 2px rgba(46,42,38,0.03)',
+                fontFamily: COM_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+                border: isA ? 'none' : `1px solid ${KUN.hair}`,
                 transition: 'all .2s',
               }}>{t.label}</div>
             );
@@ -981,8 +985,8 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
 
         {/* Form */}
         <div style={{
-          background: '#fff', borderRadius: 20, padding: 16, marginBottom: 14,
-          boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+          background: '#fff', borderRadius: 22, padding: 16, marginBottom: 14,
+          border: `1px solid ${KUN.hair}`,
           flex: 1, overflowY: 'auto',
         }}>
           {kind === 'question' && (
@@ -992,9 +996,10 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
               placeholder="Título de tu pregunta…"
               style={{
                 ...sharedInputStyle,
-                fontSize: 15, fontWeight: 700,
+                fontFamily: COM_FT,
+                fontSize: 15.5, fontWeight: 700, letterSpacing: -0.1,
                 paddingBottom: 14, marginBottom: 14,
-                borderBottom: `1px dashed ${KUN.divider}`,
+                borderBottom: `1px dashed ${KUN.hair}`,
               }}
             />
           )}
@@ -1015,34 +1020,33 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
         }}>
           <div style={{
             width: 22, height: 22, borderRadius: 6,
-            border: `1.5px solid ${anon ? KUN.accent : KUN.inkFaint}`,
-            background: anon ? KUN.accent : '#fff',
+            border: `1.5px solid ${anon ? KUN.brick : KUN.inkFaint}`,
+            background: anon ? KUN.brick : '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all .2s',
           }}>
             {anon && KIcon.check('#fff')}
           </div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
+          <span style={{ fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
             Publicar de forma anónima
           </span>
         </div>
 
         {posted ? (
           <div style={{
-            width: '100%', padding: '16px 18px', borderRadius: 18,
-            background: KUN.sageSoft,
+            width: '100%', padding: '16px 18px', borderRadius: 999,
+            background: KUN.apple,
             textAlign: 'center',
-            fontSize: 15, fontWeight: 800, color: KUN.sage,
-            letterSpacing: -0.2,
+            fontFamily: COM_FT, fontSize: 15, fontWeight: 700, color: KUN.ink,
+            letterSpacing: -0.1,
           }}>¡Publicado con éxito! 🎉</div>
         ) : (
           <button onClick={handlePublish} style={{
-            width: '100%', padding: '14px 18px', borderRadius: 18, border: 'none',
-            background: canPublish ? KUN.accent : KUN.cardSoft,
+            width: '100%', padding: '14px 18px', height: 50, borderRadius: 999, border: 'none',
+            background: canPublish ? KUN.brick : 'rgba(42,35,32,0.08)',
             color: canPublish ? '#fff' : KUN.inkMuted,
-            fontFamily: 'inherit', fontSize: 14.5, fontWeight: 800, letterSpacing: 0.1,
+            fontFamily: COM_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
             cursor: canPublish ? 'pointer' : 'default',
-            boxShadow: canPublish ? '0 8px 18px rgba(201,123,90,0.35)' : 'none',
             transition: 'all .2s',
           }}>Publicar</button>
         )}
@@ -1071,10 +1075,10 @@ function CommunityView({ onNew }) {
       {/* FAB nueva publicación */}
       <button onClick={() => onNew(sub)} style={{
         position: 'absolute', bottom: 14, right: 20,
-        width: 58, height: 58, borderRadius: 29, border: 'none',
-        background: KUN.accent, color: '#fff',
+        width: 58, height: 58, borderRadius: '50%', border: 'none',
+        background: KUN.brick, color: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 8px 18px rgba(201,123,90,0.4)', cursor: 'pointer',
+        boxShadow: '0 8px 18px rgba(240,116,62,0.40)', cursor: 'pointer',
         zIndex: 5,
       }}>
         {COM_ICONS.plus('#fff')}

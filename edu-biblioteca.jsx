@@ -1,5 +1,8 @@
-// Biblioteca screen body — search + chips + expandable topics.
+// Biblioteca screen body — search + chips + expandable topics. KUN DS v2 applied.
 // 10 cápsulas organizadas en 7 temas.
+
+const B_FT = 'Quicksand, sans-serif';
+const B_FB = 'Poppins, sans-serif';
 
 // Catálogo compartido de las 10 cápsulas
 const CAPSULAS = [
@@ -15,19 +18,31 @@ const CAPSULAS = [
   { id: 10, title: 'Cuidados al alta',                        dur: '6 min',  topic: 'Alta y hogar' },
 ];
 
-// Expose catalog globally for other screens
 window.CAPSULAS = CAPSULAS;
+
+// Color por tema — usa la paleta DS
+const TOPIC_COLOR = {
+  'Alimentación por sonda': KUN.sun,
+  'Lactancia':              KUN.apple,
+  'Prematuridad':           KUN.rosehip,
+  'Equipos y monitores':    KUN.clear,
+  'Método canguro':         KUN.viola,
+  'ECMO':                   KUN.clear,
+  'Alta y hogar':           KUN.apple,
+};
 
 function SearchField() {
   return (
     <div style={{ padding:'4px 20px 12px' }}>
       <div style={{
-        background:'#fff', borderRadius: 18, padding: '13px 16px',
+        background:'#fff', borderRadius: 16, padding: '12px 16px',
         display:'flex', alignItems:'center', gap: 10,
-        boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+        border: `1.5px solid ${KUN.hair}`,
       }}>
         {KIcon.search(KUN.inkMuted)}
-        <span style={{ fontSize: 14.5, color: KUN.inkMuted, fontWeight: 500, letterSpacing: -0.1 }}>
+        <span style={{
+          fontFamily: B_FB, fontSize: 14, color: KUN.inkMuted, fontWeight: 400, letterSpacing: 0.1,
+        }}>
           Buscar cápsulas…
         </span>
       </div>
@@ -52,9 +67,8 @@ function CategoryChips({ active, onChange }) {
               padding: '9px 16px', borderRadius: 999,
               background: isA ? KUN.ink : '#fff',
               color: isA ? '#fff' : KUN.inkSoft,
-              fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
-              boxShadow: isA ? 'none' : '0 1px 2px rgba(46,42,38,0.03)',
-              border: isA ? 'none' : `1px solid rgba(46,42,38,0.05)`,
+              fontFamily: B_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              border: isA ? 'none' : `1px solid ${KUN.hair}`,
               transition:'all .2s',
           }}>{c}</div>
         );
@@ -67,10 +81,10 @@ function CapsuleItem({ cap, onOpenCapsula }) {
   return (
     <div onClick={() => onOpenCapsula && onOpenCapsula(cap.id)}
       style={{ display:'flex', alignItems:'center', gap: 12, padding: '10px 4px', cursor:'pointer' }}>
-      <div style={{ width: 6, height: 6, borderRadius:'50%', background: KUN.accent, flexShrink: 0 }}/>
+      <div style={{ width: 6, height: 6, borderRadius:'50%', background: KUN.brick, flexShrink: 0 }}/>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: KUN.ink, letterSpacing: -0.1 }}>{cap.title}</div>
-        <div style={{ fontSize: 11.5, color: KUN.inkMuted, fontWeight: 600, marginTop: 1 }}>{cap.dur} · lectura</div>
+        <div style={{ fontFamily: B_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{cap.title}</div>
+        <div style={{ fontFamily: B_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>{cap.dur} · lectura</div>
       </div>
       {KIcon.chevRight(KUN.inkFaint)}
     </div>
@@ -79,42 +93,44 @@ function CapsuleItem({ cap, onOpenCapsula }) {
 
 function TopicRow({ icon, name, caps, defaultOpen, onOpenCapsula }) {
   const [open, setOpen] = React.useState(!!defaultOpen);
+  const tone = TOPIC_COLOR[name] || KUN.rosehip;
   return (
     <div style={{
       background: '#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10,
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+      border: `1px solid ${KUN.hair}`,
     }}>
       <div onClick={() => setOpen(o => !o)} style={{
         display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
       }}>
         <div style={{
-          width: 42, height: 42, borderRadius: 14,
-          background: open ? KUN.accentSoft : KUN.cardSoft,
+          width: 44, height: 44, borderRadius: 14,
+          background: tone,
           display:'flex', alignItems:'center', justifyContent:'center',
           flexShrink: 0, transition:'background .2s',
         }}>
-          {icon(open ? KUN.accentDeep : KUN.inkSoft)}
+          {icon(KUN.ink)}
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 15.5, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{name}</div>
-          <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2 }}>
+          <div style={{ fontFamily: B_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{name}</div>
+          <div style={{ fontFamily: B_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
             {caps.length === 1 ? '1 cápsula' : `${caps.length} cápsulas`}
           </div>
         </div>
         <div style={{
-          width: 30, height: 30, borderRadius:'50%',
-          background: open ? KUN.accent : 'transparent',
+          width: 32, height: 32, borderRadius:'50%',
+          background: open ? KUN.brick : KUN.cream,
+          border: open ? 'none' : `1px solid ${KUN.hair}`,
           display:'flex', alignItems:'center', justifyContent:'center',
           transition:'all .2s',
         }}>
-          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.inkSoft)}
+          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.brick)}
         </div>
       </div>
 
       {open && (
         <div style={{
           marginTop: 12, paddingTop: 12,
-          borderTop: `1px dashed ${KUN.divider}`,
+          borderTop: `1px dashed ${KUN.hair}`,
           display:'flex', flexDirection:'column', gap: 2,
         }}>
           {caps.map(cap => <CapsuleItem key={cap.id} cap={cap} onOpenCapsula={onOpenCapsula} />)}
@@ -137,7 +153,6 @@ function TopicList({ onOpenCapsula, activeCategory }) {
     { icon: KIcon.cat.prem,    name: 'Alta y hogar',           caps: byTopic('Alta y hogar') },
   ];
 
-  // Category chip → topic name mapping
   const chipToTopic = {
     'Lactancia': ['Lactancia', 'Alimentación por sonda'],
     'Prematuridad': ['Prematuridad'],
@@ -155,11 +170,14 @@ function TopicList({ onOpenCapsula, activeCategory }) {
   return (
     <div style={{ padding: '0 20px' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding: '0 8px 10px' }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6 }}>
-          {totalCaps} CÁPSULA{totalCaps !== 1 ? 'S' : ''}
+        <div style={{
+          fontFamily: B_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
+          letterSpacing: 1, textTransform:'uppercase',
+        }}>
+          {totalCaps} cápsula{totalCaps !== 1 ? 's' : ''}
         </div>
-        <div style={{ fontSize: 12, fontWeight: 700, color: KUN.accent, display:'flex', alignItems:'center', gap: 4 }}>
-          Ordenar {KIcon.chevDown(KUN.accent)}
+        <div style={{ fontFamily: B_FT, fontSize: 12.5, fontWeight: 700, color: KUN.brick, display:'flex', alignItems:'center', gap: 4 }}>
+          Ordenar {KIcon.chevDown(KUN.brick)}
         </div>
       </div>
       {topics.map((t, i) => (

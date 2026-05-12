@@ -1,21 +1,55 @@
 // Shared palette, icons, frame chrome and bottom nav for all KUN screens.
-// Loaded by KUN Educacion.html with <script type="text/babel" src="edu-shared.jsx">.
+// Loaded by index.html with <script type="text/babel" src="edu-shared.jsx">.
+//
+// Updated to KUN Design System v2:
+// - Brick (#F0743E) as primary accent
+// - Rosehip (#F6C3AE), Sun (#FDD848), Apple (#AAD59E), Clear (#9AB2D4), Viola (#CDBCDB) as supporting palette
+// - Quicksand for titles, Poppins for body
+// - Pill-shaped subtabs with individual rounded backgrounds (active Brick, inactive cream with soft border)
+
+const FONT_T = 'Quicksand, sans-serif';
+const FONT_B = 'Poppins, sans-serif';
 
 const KUN = {
-  bg:        '#FAF6F1',
-  card:      '#FFFFFF',
-  cardSoft:  '#F2EBE0',
-  ink:       '#2E2A26',
-  inkSoft:   '#6B6258',
-  inkMuted:  '#9A9087',
+  // ── Surfaces ─────────────────────────────────────────
+  bg:        '#FAF6F1', // cream — main surface
+  card:      '#FFFFFF', // paper
+  cardSoft:  '#F2EBE0', // soft cream for nested surfaces
+  cream:     '#FAF6F1',
+  paper:     '#FFFFFF',
+
+  // ── Ink (text) ───────────────────────────────────────
+  ink:       '#2A2320',
+  inkSoft:   '#5E544E',
+  inkMuted:  '#8B827C',
   inkFaint:  '#C5BCB1',
-  accent:    '#C97B5A',
-  accentSoft:'#F4E2D6',
-  accentDeep:'#A85F40',
-  sage:      '#7E9B86',
-  sageSoft:  '#E4ECE4',
-  divider:   'rgba(46,42,38,0.06)',
+  ink2:      '#5E544E',
+  ink3:      '#8B827C',
+
+  // ── DS palette ───────────────────────────────────────
+  brick:     '#F0743E',
+  rosehip:   '#F6C3AE',
+  sun:       '#FDD848',
+  apple:     '#AAD59E',
+  clear:     '#9AB2D4',
+  viola:     '#CDBCDB',
+
+  // ── Legacy aliases (kept for back-compat across screens) ─
+  accent:     '#F0743E', // → brick
+  accentSoft: '#F6C3AE', // → rosehip
+  accentDeep: '#C95A22', // deeper brick for shadows / hover
+  sage:       '#AAD59E', // → apple
+  sageSoft:   '#E4ECE4',
+
+  // ── Lines ────────────────────────────────────────────
+  divider:   'rgba(42,35,32,0.06)',
+  hair:      'rgba(42,35,32,0.10)',
+  hairSoft:  'rgba(42,35,32,0.06)',
   trackSoft: '#E8DFD2',
+
+  // ── Fonts (exposed for screens) ──────────────────────
+  fontT: FONT_T,
+  fontB: FONT_B,
 };
 
 // brand mark — kangaroo mother + joey
@@ -148,12 +182,61 @@ const KIcon = {
   },
 };
 
+// ─── DS Button helper ───────────────────────────────────────────
+// Exported so other screens can use the same pill style as the DS spec.
+function KBtn({ kind = 'primary', size = 'md', children, disabled = false, icon, full = false, onClick, style = {} }) {
+  const sizes = {
+    sm: { pad: '8px 14px', fs: 12,   h: 34 },
+    md: { pad: '11px 18px', fs: 13.5, h: 42 },
+    lg: { pad: '14px 22px', fs: 15,   h: 50 },
+  };
+  const s = sizes[size];
+  const palettes = {
+    primary:   { background: KUN.brick, color: '#fff', border: 'none' },
+    secondary: { background: 'transparent', color: KUN.ink, border: `1.5px solid ${KUN.ink}` },
+    ghost:     { background: 'transparent', color: KUN.brick, border: 'none' },
+    disabled:  { background: 'rgba(42,35,32,0.08)', color: KUN.inkMuted, border: 'none' },
+  };
+  const palette = disabled ? palettes.disabled : palettes[kind];
+  return (
+    <button onClick={disabled ? undefined : onClick} disabled={disabled} style={{
+      ...palette, padding: s.pad, borderRadius: 999, height: s.h,
+      fontFamily: FONT_T, fontWeight: 700, fontSize: s.fs,
+      display: 'inline-flex', alignItems: 'center', gap: 8,
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      width: full ? '100%' : 'auto', justifyContent: 'center',
+      ...style,
+    }}>
+      {children}
+      {icon}
+    </button>
+  );
+}
+
+// ─── DS Badge helper ─────────────────────────────────────────────
+function KBadge({ children, bg = KUN.sun, fg = KUN.ink, dot, outline }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '5px 11px', borderRadius: 999,
+      background: bg, color: fg,
+      border: outline ? `1px solid ${outline}` : 'none',
+      fontFamily: FONT_T, fontWeight: 700, fontSize: 11.5,
+      letterSpacing: '0.3px',
+    }}>
+      {dot && <span style={{ width: 6, height: 6, borderRadius: '50%', background: dot }}/>}
+      {children}
+    </span>
+  );
+}
+
 // status bar (light)
 function KStatusBar() {
   return (
     <div className="kun-status-bar" style={{
       display:'flex', justifyContent:'space-between', alignItems:'center',
       padding:'18px 32px 8px', position:'relative', zIndex: 10,
+      fontFamily: FONT_T,
     }}>
       <span style={{ fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>9:41</span>
       <div style={{ display:'flex', gap: 6, alignItems:'center' }}>
@@ -172,30 +255,31 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
       display:'flex', alignItems:'center', justifyContent:'space-between',
       padding:'8px 24px 6px',
     }}>
-      <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
+      <div style={{ display:'flex', alignItems:'center', gap: 10 }}>
         <img src="logo.png" alt="KUN" style={{
           width: 36, height: 36,
           objectFit: 'contain',
         }} />
-        <span style={{ fontSize: 22, fontWeight: 800, color: KUN.ink, letterSpacing: 1.4 }}>KUN</span>
+        <span style={{
+          fontFamily: FONT_T, fontSize: 22, fontWeight: 700,
+          color: KUN.ink, letterSpacing: 1.2,
+        }}>KUN</span>
       </div>
       <div style={{ display:'flex', gap: 8, alignItems:'center' }}>
         {onSettings && (
           <button onClick={onSettings} style={{
-            width: 40, height: 40, borderRadius: 20, border: 'none',
+            width: 40, height: 40, borderRadius: 20, border: `1px solid ${KUN.hair}`,
             background: '#fff',
             display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
             cursor:'pointer',
           }}>
             {KIcon.gear(KUN.ink)}
           </button>
         )}
         <button onClick={onBell} style={{
-          width: 40, height: 40, borderRadius: 20, border: 'none',
+          width: 40, height: 40, borderRadius: 20, border: `1px solid ${KUN.hair}`,
           background: '#fff',
           display:'flex', alignItems:'center', justifyContent:'center',
-          boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
           cursor:'pointer', position:'relative',
         }}>
           {KIcon.bell(KUN.ink)}
@@ -203,7 +287,7 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
             <span style={{
               position:'absolute', top: 8, right: 9,
               width: 8, height: 8, borderRadius: 4,
-              background: KUN.accent, border:'1.5px solid #fff',
+              background: KUN.brick, border:'1.5px solid #fff',
             }}/>
           )}
         </button>
@@ -212,7 +296,9 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
   );
 }
 
-// subtab bar — Camino / Personalizado / Biblioteca
+// ─── Subtabs ──────────────────────────────────────────────────
+// DS spec: cada pestaña con fondo redondeado individual, activa en Brick (#F0743E) con texto blanco,
+// inactivas con fondo crema y borde suave.
 function KSubTabs({ active, onChange }) {
   const tabs = [
     { id:'camino', label:'Camino' },
@@ -222,7 +308,7 @@ function KSubTabs({ active, onChange }) {
   return (
     <div style={{
       margin: '4px 20px 8px',
-      display:'flex', gap: 6,
+      display:'flex', gap: 8,
     }}>
       {tabs.map(t => {
         const isA = t.id === active;
@@ -232,13 +318,37 @@ function KSubTabs({ active, onChange }) {
             style={{
               flex: 1, textAlign:'center', cursor:'pointer',
               padding: '10px 6px', borderRadius: 999,
-              background: isA ? KUN.accent : '#fff',
+              background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
-              fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
-              border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
-              boxShadow: isA
-                ? '0 2px 8px rgba(201,123,90,0.28)'
-                : '0 1px 2px rgba(46,42,38,0.03)',
+              fontFamily: FONT_T, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              border: isA ? 'none' : `1px solid ${KUN.hair}`,
+              transition: 'all .2s',
+            }}>{t.label}</div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Generic version of subtabs (used by other screens like Vínculo)
+function KSubTabsGeneric({ tabs, active, onChange }) {
+  return (
+    <div style={{
+      margin: '4px 20px 8px',
+      display:'flex', gap: 8,
+    }}>
+      {tabs.map(t => {
+        const isA = t.id === active;
+        return (
+          <div key={t.id}
+            onClick={() => onChange && onChange(t.id)}
+            style={{
+              flex: 1, textAlign:'center', cursor:'pointer',
+              padding: '10px 6px', borderRadius: 999,
+              background: isA ? KUN.brick : KUN.cardSoft,
+              color: isA ? '#fff' : KUN.inkSoft,
+              fontFamily: FONT_T, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              border: isA ? 'none' : `1px solid ${KUN.hair}`,
               transition: 'all .2s',
             }}>{t.label}</div>
         );
@@ -267,32 +377,30 @@ function KBottomNav({ active = 'edu', onChange }) {
         borderRadius: 28,
         padding: '10px 8px',
         display:'flex', justifyContent:'space-around', alignItems:'center',
-        boxShadow: '0 4px 14px rgba(46,42,38,0.06), 0 1px 3px rgba(46,42,38,0.04)',
+        border: `1px solid ${KUN.hair}`,
+        boxShadow: '0 16px 32px rgba(42,35,32,0.06)',
       }}>
         {tabs.map(t => {
           const isActive = t.id === active;
-          const color = isActive ? KUN.accent : KUN.inkMuted;
+          const color = isActive ? KUN.brick : KUN.inkSoft;
           return (
             <div key={t.id}
               data-nav-tab={t.id}
               onClick={() => onChange && onChange(t.id)}
               style={{
-                display:'flex', flexDirection:'column', alignItems:'center', gap: 3,
-                padding: '6px 10px', minWidth: 60, position:'relative',
+                display:'flex', flexDirection:'column', alignItems:'center', gap: 4,
+                padding: '6px 12px', borderRadius: 18,
+                minWidth: 60, position:'relative',
                 cursor:'pointer',
+                background: isActive ? KUN.cream : 'transparent',
               }}>
-              {isActive && (
-                <div style={{
-                  position:'absolute', inset: 0,
-                  background: KUN.accentSoft, borderRadius: 18, opacity: 0.55,
-                }}/>
-              )}
               <div style={{ position:'relative', zIndex: 1 }}>
-                {t.icon(color, isActive)}
+                {t.icon(color, false)}
               </div>
               <div style={{
                 position:'relative', zIndex: 1,
-                fontSize: 11, fontWeight: isActive ? 700 : 600,
+                fontFamily: FONT_T,
+                fontSize: 11, fontWeight: isActive ? 700 : 500,
                 color, letterSpacing: 0.1,
               }}>{t.label}</div>
             </div>
@@ -309,7 +417,7 @@ function KHomeIndicator() {
       position:'absolute', bottom: 8, left: 0, right: 0,
       display:'flex', justifyContent:'center', pointerEvents:'none', zIndex: 100,
     }}>
-      <div style={{ width: 134, height: 5, borderRadius: 3, background:'rgba(46,42,38,0.28)' }}/>
+      <div style={{ width: 134, height: 5, borderRadius: 3, background:'rgba(42,35,32,0.28)' }}/>
     </div>
   );
 }
@@ -322,8 +430,8 @@ function KDevice({ children, label }) {
       background: KUN.bg,
       borderRadius: 54,
       position:'relative', overflow:'hidden',
-      boxShadow: '0 40px 80px rgba(46,42,38,0.18), 0 0 0 1px rgba(46,42,38,0.08)',
-      fontFamily: "'Nunito', system-ui, sans-serif",
+      boxShadow: '0 40px 80px rgba(42,35,32,0.18), 0 0 0 1px rgba(42,35,32,0.08)',
+      fontFamily: FONT_B,
       color: KUN.ink,
     }}>
       <div style={{
@@ -344,5 +452,7 @@ function KDevice({ children, label }) {
 }
 
 Object.assign(window, {
-  KUN, KIcon, KunMark, KStatusBar, KTopBar, KSubTabs, KBottomNav, KHomeIndicator, KDevice,
+  KUN, KIcon, KunMark, KStatusBar, KTopBar, KSubTabs, KSubTabsGeneric,
+  KBottomNav, KHomeIndicator, KDevice, KBtn, KBadge,
+  KFONT_T: FONT_T, KFONT_B: FONT_B,
 });

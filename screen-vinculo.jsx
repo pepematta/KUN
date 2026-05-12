@@ -1,5 +1,9 @@
 // Vínculo section — entry, Nuestro viaje, Cuentos y canciones.
-// Exposes: ScreenVinculo({ view, setView, recordings, addRecording })
+// Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs,
+// hairline cards, DS palette per category, decorative half-moon shapes.
+
+const V_FT = 'Quicksand, sans-serif';
+const V_FB = 'Poppins, sans-serif';
 
 const VINK_ICONS = {
   journey: (c) => (
@@ -58,62 +62,101 @@ const VINK_ICONS = {
       <path d="M11 4V18M4 11H18" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
     </svg>
   ),
-  moon: () => '🌙',
-  sun: () => '☀️',
-  spark: () => '✨',
 };
+
+// ── Decorative shapes (DS pattern) ────────────────────
+function VinkShapes() {
+  return (
+    <>
+      <div style={{
+        position:'absolute', top: -60, right: -80,
+        width: 200, height: 200, borderRadius:'50%',
+        background: KUN.rosehip, opacity: 0.18,
+        pointerEvents:'none', zIndex: 0,
+      }}/>
+      <div style={{
+        position:'absolute', bottom: 60, left: -100,
+        width: 220, height: 220, borderRadius:'50%',
+        background: KUN.viola, opacity: 0.16,
+        pointerEvents:'none', zIndex: 0,
+      }}/>
+    </>
+  );
+}
 
 // ── Entry ───────────────────────────────────────────────
 function VinkEntry({ onPick }) {
   return (
-    <div style={{ padding: '6px 20px 0' }}>
-      <div style={{ padding: '10px 4px 18px' }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4, lineHeight: 1.2, textWrap:'pretty' }}>
-          Acércate a Sofía,<br/>aunque no estés ahí.
-        </div>
-        <div style={{ fontSize: 14, color: KUN.inkSoft, fontWeight: 500, marginTop: 8, textWrap:'pretty' }}>
-          Construyan juntos una memoria de estos días.
-        </div>
-      </div>
+    <div style={{ position:'relative', padding: '6px 20px 0' }}>
+      <VinkShapes/>
 
-      <div onClick={() => onPick('journey')} style={{
-        background: KUN.accent, borderRadius: 30, padding: '24px 22px',
-        color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
-        marginBottom: 14,
-        boxShadow: '0 14px 30px rgba(201,123,90,0.22)',
-      }}>
-        <div style={{ position:'absolute', top:-40, right:-40, width: 160, height: 160, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
-        <div style={{
-          width: 56, height: 56, borderRadius: 18,
-          background:'rgba(255,255,255,0.18)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          marginBottom: 14, position:'relative',
-        }}>{VINK_ICONS.journey('#fff')}</div>
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.4, marginBottom: 4, position:'relative' }}>
-          Nuestro viaje
+      <div style={{ position:'relative', zIndex: 1 }}>
+        <div style={{ padding: '10px 4px 18px' }}>
+          <div style={{
+            fontFamily: V_FT, fontSize: 24, fontWeight: 700, color: KUN.ink,
+            letterSpacing: -0.4, lineHeight: 1.2,
+          }}>
+            Acércate a Sofía,<br/>aunque no estés ahí.
+          </div>
+          <div style={{
+            fontFamily: V_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400, marginTop: 8,
+            lineHeight: 1.5,
+          }}>
+            Construyan juntos una memoria de estos días.
+          </div>
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500, opacity: 0.92, position:'relative' }}>
-          Registra tus momentos
-        </div>
-      </div>
 
-      <div onClick={() => onPick('songs')} style={{
-        background:'#fff', borderRadius: 30, padding: '24px 22px',
-        cursor:'pointer', position:'relative', overflow:'hidden',
-        boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 8px 20px rgba(46,42,38,0.05)',
-      }}>
-        <div style={{ position:'absolute', top:-30, right:-30, width: 120, height: 120, borderRadius:'50%', background: KUN.sageSoft, opacity: 0.7 }}/>
-        <div style={{
-          width: 56, height: 56, borderRadius: 18,
-          background: KUN.sageSoft,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          marginBottom: 14, position:'relative',
-        }}>{VINK_ICONS.music(KUN.sage)}</div>
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink }}>
-          Cuentos y canciones
+        {/* Featured card — Nuestro viaje */}
+        <div onClick={() => onPick('journey')} style={{
+          background: KUN.brick, borderRadius: 30, padding: '24px 22px',
+          color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
+          marginBottom: 14,
+        }}>
+          <div style={{ position:'absolute', top:-40, right:-40, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
+          <div style={{ position:'absolute', bottom:-60, left:-30, width: 140, height: 140, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
+          <div style={{
+            width: 60, height: 60, borderRadius: 20,
+            background:'rgba(255,255,255,0.20)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            marginBottom: 16, position:'relative',
+          }}>{VINK_ICONS.journey('#fff')}</div>
+          <div style={{
+            fontFamily: V_FT, fontSize: 24, fontWeight: 700,
+            letterSpacing: -0.4, marginBottom: 4, position:'relative',
+          }}>
+            Nuestro viaje
+          </div>
+          <div style={{
+            fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, opacity: 0.92, position:'relative',
+          }}>
+            Registra tus momentos
+          </div>
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500, color: KUN.inkSoft, position:'relative' }}>
-          Tu voz y la música que la calma
+
+        {/* Standard card — Cuentos y canciones */}
+        <div onClick={() => onPick('songs')} style={{
+          background:'#fff', borderRadius: 30, padding: '24px 22px',
+          cursor:'pointer', position:'relative', overflow:'hidden',
+          border: `1px solid ${KUN.hair}`,
+        }}>
+          <div style={{ position:'absolute', top:-30, right:-30, width: 130, height: 130, borderRadius:'50%', background: KUN.apple, opacity: 0.40 }}/>
+          <div style={{
+            width: 60, height: 60, borderRadius: 20,
+            background: KUN.apple,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            marginBottom: 16, position:'relative',
+          }}>{VINK_ICONS.music(KUN.ink)}</div>
+          <div style={{
+            fontFamily: V_FT, fontSize: 22, fontWeight: 700,
+            letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
+          }}>
+            Cuentos y canciones
+          </div>
+          <div style={{
+            fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
+          }}>
+            Tu voz y la música que la calma
+          </div>
         </div>
       </div>
     </div>
@@ -125,11 +168,11 @@ function SubHeader({ title, onBack }) {
   return (
     <div style={{ display:'flex', alignItems:'center', gap: 12, padding: '4px 20px 14px' }}>
       <div onClick={onBack} style={{
-        width: 40, height: 40, borderRadius: 20, background: '#fff',
+        width: 40, height: 40, borderRadius: '50%', background: '#fff',
         display:'flex', alignItems:'center', justifyContent:'center',
-        boxShadow:'0 1px 2px rgba(46,42,38,0.04)', cursor:'pointer',
+        border: `1px solid ${KUN.hair}`, cursor:'pointer',
       }}>{VINK_ICONS.back(KUN.ink)}</div>
-      <div style={{ fontSize: 20, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+      <div style={{ fontFamily: V_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4 }}>
         {title}
       </div>
     </div>
@@ -143,42 +186,48 @@ function ActivityCard({ onOpenSheet, onOpenRecorder }) {
       margin: '0 20px 14px',
       background: '#fff', borderRadius: 26,
       padding: '18px 18px 16px',
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 8px 20px rgba(46,42,38,0.05)',
+      border: `1px solid ${KUN.hair}`,
       position:'relative', overflow:'hidden',
     }}>
       <div style={{
         display:'inline-flex', alignItems:'center', gap: 6,
-        padding: '4px 10px', borderRadius: 999,
-        background: KUN.accentSoft, color: KUN.accentDeep,
-        fontSize: 11, fontWeight: 800, letterSpacing: 0.6, marginBottom: 12,
+        padding: '5px 11px', borderRadius: 999,
+        background: KUN.sun, color: KUN.ink,
+        fontFamily: V_FT, fontSize: 11, fontWeight: 700, letterSpacing: 0.4, marginBottom: 12,
       }}>
         ACTIVIDAD DEL DÍA
       </div>
-      <div style={{ fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3, lineHeight: 1.25, textWrap:'pretty', marginBottom: 6 }}>
+      <div style={{
+        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink,
+        letterSpacing: -0.3, lineHeight: 1.25, marginBottom: 6,
+      }}>
         La mano de tu bebé junto a la tuya
       </div>
-      <div style={{ fontSize: 13, color: KUN.inkSoft, fontWeight: 500, lineHeight: 1.45, marginBottom: 14, textWrap:'pretty' }}>
+      <div style={{
+        fontFamily: V_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 400,
+        lineHeight: 1.55, marginBottom: 14,
+      }}>
         Toma una foto donde se vean sus deditos sobre tu mano, o cuéntale en voz qué sentiste al mirarlos.
       </div>
       <div style={{ display:'flex', gap: 8 }}>
         <button onClick={onOpenSheet} style={btnPrimary}>{VINK_ICONS.camera('#fff')}<span style={{ marginLeft: 6 }}>Subir foto</span></button>
-        <button onClick={onOpenSheet} style={btnGhost}>{VINK_ICONS.text(KUN.inkSoft)}</button>
-        <button onClick={onOpenRecorder} style={btnGhost}>{VINK_ICONS.mic(KUN.inkSoft)}</button>
+        <button onClick={onOpenSheet} style={btnGhost}>{VINK_ICONS.text(KUN.ink)}</button>
+        <button onClick={onOpenRecorder} style={btnGhost}>{VINK_ICONS.mic(KUN.ink)}</button>
       </div>
     </div>
   );
 }
 
 const btnPrimary = {
-  flex: 1, padding: '11px 14px', borderRadius: 14, border:'none',
-  background: KUN.accent, color:'#fff',
-  fontFamily:'inherit', fontSize: 13.5, fontWeight: 800, letterSpacing: 0.1,
+  flex: 1, padding: '11px 14px', height: 42, borderRadius: 999, border:'none',
+  background: KUN.brick, color:'#fff',
+  fontFamily: V_FT, fontSize: 13.5, fontWeight: 700, letterSpacing: -0.1,
   display:'flex', alignItems:'center', justifyContent:'center',
   cursor:'pointer',
 };
 const btnGhost = {
-  width: 44, height: 44, borderRadius: 14, border:'none',
-  background: KUN.cardSoft, color: KUN.inkSoft,
+  width: 42, height: 42, borderRadius: '50%', border: `1px solid ${KUN.hair}`,
+  background: '#fff', color: KUN.ink,
   display:'flex', alignItems:'center', justifyContent:'center',
   cursor:'pointer',
 };
@@ -190,9 +239,9 @@ function FeedSeparator({ label }) {
       padding: '6px 20px 14px',
     }}>
       <span style={{
-        padding: '4px 12px', borderRadius: 999,
+        padding: '5px 12px', borderRadius: 999,
         background: KUN.cardSoft, color: KUN.inkMuted,
-        fontSize: 11, fontWeight: 700, letterSpacing: 0.6,
+        fontFamily: V_FT, fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
       }}>{label}</span>
     </div>
   );
@@ -202,10 +251,10 @@ function Avatar({ name, color }) {
   const initial = name.charAt(0).toUpperCase();
   return (
     <div style={{
-      width: 36, height: 36, borderRadius: 18,
-      background: color, color:'#fff',
+      width: 36, height: 36, borderRadius: '50%',
+      background: color, color: KUN.ink,
       display:'flex', alignItems:'center', justifyContent:'center',
-      fontSize: 14, fontWeight: 800, flexShrink: 0,
+      fontFamily: V_FT, fontSize: 14, fontWeight: 700, flexShrink: 0,
     }}>{initial}</div>
   );
 }
@@ -219,46 +268,51 @@ function FeedEntry({ author, role, color, time, kind, content, isVoice, duration
       <Avatar name={author} color={color} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display:'flex', alignItems:'baseline', gap: 8, marginBottom: 4, paddingLeft: 4 }}>
-          <span style={{ fontSize: 13, fontWeight: 800, color: KUN.ink }}>{author}</span>
-          <span style={{ fontSize: 11, color: KUN.inkMuted, fontWeight: 600 }}>{role} · {time}</span>
+          <span style={{ fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.ink }}>{author}</span>
+          <span style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400 }}>{role} · {time}</span>
         </div>
         <div style={{
           background:'#fff', borderRadius: 20, borderTopLeftRadius: 6,
           padding: kind === 'photo' ? 6 : '12px 14px',
-          boxShadow:'0 1px 2px rgba(46,42,38,0.04)',
+          border: `1px solid ${KUN.hair}`,
         }}>
           {kind === 'photo' && (
             <>
               <div style={{
                 height: 150, borderRadius: 16,
-                background: `repeating-linear-gradient(135deg, ${KUN.accentSoft} 0 8px, #F8E9DD 8px 16px)`,
+                background: `repeating-linear-gradient(135deg, ${KUN.rosehip} 0 8px, #F8E9DD 8px 16px)`,
                 display:'flex', alignItems:'center', justifyContent:'center',
-                fontSize: 11, fontFamily:'ui-monospace, monospace', color: KUN.accentDeep,
-                fontWeight: 600, marginBottom: 8,
+                fontFamily: V_FB, fontSize: 11, color: KUN.ink,
+                fontWeight: 500, marginBottom: 8,
               }}>foto · abuela y Sofía</div>
-              <div style={{ fontSize: 14, color: KUN.ink, fontWeight: 500, padding: '0 8px 8px', lineHeight: 1.4 }}>
+              <div style={{
+                fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
+                padding: '0 8px 8px', lineHeight: 1.5,
+              }}>
                 {content}
               </div>
             </>
           )}
           {kind === 'text' && (
-            <div style={{ fontSize: 14, color: KUN.ink, fontWeight: 500, lineHeight: 1.45, textWrap:'pretty' }}>
+            <div style={{
+              fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400, lineHeight: 1.5,
+            }}>
               {content}
             </div>
           )}
           {kind === 'voice' && (
             <div style={{ display:'flex', alignItems:'center', gap: 10, minWidth: 180 }}>
               <div style={{
-                width: 36, height: 36, borderRadius: 18, background: KUN.accent,
+                width: 36, height: 36, borderRadius: '50%', background: KUN.brick,
                 display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
               }}>{VINK_ICONS.play('#fff', 12)}</div>
               <svg width="120" height="22" viewBox="0 0 120 22" style={{ flex: 1 }}>
                 {Array.from({length: 28}).map((_, i) => {
                   const h = 4 + Math.abs(Math.sin(i * 0.7 + (isVoice ? 1 : 0))) * 14;
-                  return <rect key={i} x={i * 4.2} y={(22 - h) / 2} width="2.4" height={h} rx="1.2" fill={KUN.accent} opacity={i < 10 ? 1 : 0.4}/>;
+                  return <rect key={i} x={i * 4.2} y={(22 - h) / 2} width="2.4" height={h} rx="1.2" fill={KUN.brick} opacity={i < 10 ? 1 : 0.4}/>;
                 })}
               </svg>
-              <span style={{ fontSize: 11, fontWeight: 700, color: KUN.inkMuted, flexShrink: 0 }}>
+              <span style={{ fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, flexShrink: 0 }}>
                 {duration || '0:34'}
               </span>
             </div>
@@ -271,14 +325,14 @@ function FeedEntry({ author, role, color, time, kind, content, isVoice, duration
 
 function AddEntrySheet({ onClose, onPickVoice }) {
   const opts = [
-    { id:'photo', label:'Subir foto',  desc:'Captura un momento del día',     icon: VINK_ICONS.camera, color: KUN.accent },
-    { id:'text',  label:'Escribir nota', desc:'Una palabra, una frase, lo que sientas', icon: VINK_ICONS.text,  color: KUN.sage },
-    { id:'voice', label:'Grabar voz', desc:'Háblale, léele o cántale a Sofía', icon: VINK_ICONS.mic,   color: KUN.accentDeep },
+    { id:'photo', label:'Subir foto',  desc:'Captura un momento del día',     icon: VINK_ICONS.camera, color: KUN.rosehip },
+    { id:'text',  label:'Escribir nota', desc:'Una palabra, una frase, lo que sientas', icon: VINK_ICONS.text,  color: KUN.apple },
+    { id:'voice', label:'Grabar voz', desc:'Háblale, léele o cántale a Sofía', icon: VINK_ICONS.mic,   color: KUN.viola },
   ];
   return (
     <div onClick={onClose} style={{
       position:'absolute', inset: 0, zIndex: 200,
-      background:'rgba(46,42,38,0.4)',
+      background:'rgba(42,35,32,0.4)',
       display:'flex', alignItems:'flex-end',
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
@@ -294,32 +348,32 @@ function AddEntrySheet({ onClose, onPickVoice }) {
           display:'flex', alignItems:'center', justifyContent:'space-between',
           marginBottom: 14,
         }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+          <div style={{ fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>
             Agregar al diario
           </div>
           <span onClick={onClose} style={{
-            fontSize: 13, fontWeight: 700, color: KUN.inkSoft, cursor:'pointer',
+            fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.brick, cursor:'pointer',
           }}>Cancelar</span>
         </div>
-        <div style={{ display:'flex', flexDirection:'column', gap: 8 }}>
+        <div style={{ display:'flex', flexDirection:'column', gap: 10 }}>
           {opts.map(o => (
             <div key={o.id}
               onClick={() => { if (o.id === 'voice') onPickVoice(); else onClose(); }}
               style={{
-                background:'#fff', borderRadius: 20, padding:'14px 16px',
+                background:'#fff', borderRadius: 22, padding:'14px 16px',
                 display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
-                boxShadow:'0 1px 2px rgba(46,42,38,0.03)',
+                border: `1px solid ${KUN.hair}`,
               }}>
               <div style={{
-                width: 44, height: 44, borderRadius: 14, background: KUN.cardSoft,
+                width: 46, height: 46, borderRadius: 14, background: o.color,
                 display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
-              }}>{o.icon(o.color)}</div>
+              }}>{o.icon(KUN.ink)}</div>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  fontSize: 15, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2,
+                  fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
                 }}>{o.label}</div>
                 <div style={{
-                  fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2,
+                  fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3,
                 }}>{o.desc}</div>
               </div>
               {KIcon.chevRight(KUN.inkFaint)}
@@ -344,18 +398,18 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
           <FeedSeparator label="HOY · DÍA 32" />
 
           <FeedEntry
-            author="Mamá" role="Mamá" color={KUN.accent} time="14:20"
+            author="Mamá" role="Mamá" color={KUN.rosehip} time="14:20"
             kind="text"
             content="Hoy te vi abrir los ojos por primera vez. No lo voy a olvidar nunca."
           />
           <FeedEntry
-            author="Papá" role="Papá" color={KUN.sage} time="11:45"
+            author="Papá" role="Papá" color={KUN.apple} time="11:45"
             kind="voice" duration="0:42"
           />
 
           {recordings && recordings.length > 0 && recordings.map((r, i) => (
             <FeedEntry key={i}
-              author="Mamá" role="Mamá · Voz para Sofía" color={KUN.accent}
+              author="Mamá" role="Mamá · Voz para Sofía" color={KUN.rosehip}
               time={r.time} kind="voice" duration={r.duration} isVoice
             />
           ))}
@@ -363,7 +417,7 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
           <FeedSeparator label="AYER · DÍA 31" />
 
           <FeedEntry
-            author="Abuela Rosa" role="Abuela" color="#B58E5F" time="Ayer 19:30"
+            author="Abuela Rosa" role="Abuela" color={KUN.sun} time="Ayer 19:30"
             kind="photo"
             content="Te esperamos con mucho amor 🧡"
           />
@@ -372,10 +426,10 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
         {/* FAB */}
         <button onClick={() => setSheet(true)} style={{
           position:'absolute', bottom: 14, right: 20,
-          width: 58, height: 58, borderRadius: 29, border:'none',
-          background: KUN.accent, color:'#fff',
+          width: 58, height: 58, borderRadius: '50%', border:'none',
+          background: KUN.brick, color:'#fff',
           display:'flex', alignItems:'center', justifyContent:'center',
-          boxShadow: '0 8px 18px rgba(201,123,90,0.4)', cursor:'pointer',
+          boxShadow: '0 8px 18px rgba(240,116,62,0.40)', cursor:'pointer',
           zIndex: 5,
         }}>
           {VINK_ICONS.plus('#fff')}
@@ -400,17 +454,17 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
 
 // ── Cuentos y canciones ─────────────────────────────────
 function MusicaTab() {
-  const [playing, setPlaying] = React.useState(null); // index
+  const [playing, setPlaying] = React.useState(null);
   const tracks = [
-    { icon:'🌙', name:'Para dormir',    desc:'Sonidos suaves y latidos',  dur:'12:30' },
-    { icon:'☀️', name:'Para despertar', desc:'Tonos cálidos y delicados', dur:'8:15'  },
-    { icon:'✨', name:'Para interactuar', desc:'Melodías estimulantes',   dur:'10:00' },
+    { icon:'🌙', name:'Para dormir',    desc:'Sonidos suaves y latidos',  dur:'12:30', color: KUN.viola },
+    { icon:'☀️', name:'Para despertar', desc:'Tonos cálidos y delicados', dur:'8:15',  color: KUN.sun   },
+    { icon:'✨', name:'Para interactuar', desc:'Melodías estimulantes',   dur:'10:00', color: KUN.rosehip },
   ];
   return (
     <>
       <div style={{
-        fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3,
-        padding: '4px 24px 14px', textWrap:'pretty',
+        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
+        padding: '4px 24px 14px',
       }}>
         ¿Qué necesita tu bebé ahora?
       </div>
@@ -422,49 +476,49 @@ function MusicaTab() {
             <div key={i} style={{
               background:'#fff', borderRadius: 22,
               padding: '14px 16px',
-              boxShadow:'0 1px 2px rgba(46,42,38,0.03)',
-              border: isOpen ? `2px solid ${KUN.accent}` : '2px solid transparent',
+              border: isOpen ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
               transition:'border .2s',
             }}>
               <div onClick={() => setPlaying(isOpen ? null : i)} style={{
                 display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
               }}>
                 <div style={{
-                  width: 52, height: 52, borderRadius: 18,
-                  background: isOpen ? KUN.accentSoft : KUN.cardSoft,
+                  width: 52, height: 52, borderRadius: 16,
+                  background: t.color,
                   display:'flex', alignItems:'center', justifyContent:'center',
                   fontSize: 24, flexShrink: 0,
                 }}>{t.icon}</div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>{t.name}</div>
-                  <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2 }}>
+                  <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{t.name}</div>
+                  <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
                     {t.desc} · {t.dur}
                   </div>
                 </div>
                 <div style={{
-                  width: 40, height: 40, borderRadius: 20,
-                  background: isOpen ? KUN.accent : KUN.cardSoft,
+                  width: 42, height: 42, borderRadius: '50%',
+                  background: isOpen ? KUN.brick : KUN.cream,
+                  border: isOpen ? 'none' : `1px solid ${KUN.hair}`,
                   display:'flex', alignItems:'center', justifyContent:'center',
                 }}>
                   {isOpen
                     ? VINK_ICONS.pause('#fff', 14)
-                    : VINK_ICONS.play(KUN.accent, 14)}
+                    : VINK_ICONS.play(KUN.brick, 14)}
                 </div>
               </div>
 
               {isOpen && (
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.divider}` }}>
-                  <div style={{ height: 6, borderRadius: 3, background: KUN.trackSoft, position:'relative', overflow:'hidden' }}>
-                    <div style={{ position:'absolute', top:0, left:0, height:'100%', width:'34%', background: KUN.accent, borderRadius: 3 }}/>
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
+                  <div style={{ height: 6, borderRadius: 999, background: 'rgba(42,35,32,0.08)', position:'relative', overflow:'hidden' }}>
+                    <div style={{ position:'absolute', top:0, left:0, height:'100%', width:'34%', background: KUN.brick, borderRadius: 999 }}/>
                     <div style={{
                       position:'absolute', top:'50%', left:'34%', transform:'translate(-50%, -50%)',
-                      width: 14, height: 14, borderRadius: 7, background:'#fff',
-                      boxShadow:'0 1px 3px rgba(46,42,38,0.25)',
+                      width: 14, height: 14, borderRadius: '50%', background:'#fff',
+                      boxShadow:'0 1px 3px rgba(42,35,32,0.25)',
                     }}/>
                   </div>
                   <div style={{
                     display:'flex', justifyContent:'space-between',
-                    fontSize: 11, fontWeight: 700, color: KUN.inkMuted, marginTop: 8,
+                    fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, marginTop: 8,
                   }}>
                     <span>4:14</span>
                     <span>{t.dur}</span>
@@ -502,46 +556,49 @@ function StoryRow({ story, onRecord }) {
   return (
     <div style={{
       background:'#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10,
-      boxShadow:'0 1px 2px rgba(46,42,38,0.03)',
+      border: `1px solid ${KUN.hair}`,
     }}>
       <div onClick={() => setOpen(o => !o)} style={{
         display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
       }}>
         <div style={{
-          width: 42, height: 42, borderRadius: 14,
-          background: open ? KUN.accentSoft : KUN.cardSoft,
+          width: 44, height: 44, borderRadius: 14,
+          background: KUN.viola,
           display:'flex', alignItems:'center', justifyContent:'center',
           flexShrink: 0, fontSize: 18,
         }}>📖</div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
-          <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600, marginTop: 2 }}>
+          <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
+          <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
             {open ? 'Toca el texto y léelo en voz alta' : 'Cuento corto · 2 min'}
           </div>
         </div>
-        <div style={{ width: 30, height: 30, borderRadius:'50%', background: open ? KUN.accent : 'transparent',
-          display:'flex', alignItems:'center', justifyContent:'center' }}>
-          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.inkSoft)}
+        <div style={{
+          width: 32, height: 32, borderRadius:'50%',
+          background: open ? KUN.brick : KUN.cream,
+          border: open ? 'none' : `1px solid ${KUN.hair}`,
+          display:'flex', alignItems:'center', justifyContent:'center',
+        }}>
+          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.brick)}
         </div>
       </div>
 
       {open && story.text && story.text !== '...' && (
-        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.divider}` }}>
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
           <div style={{
-            fontSize: 14, color: KUN.ink, fontWeight: 500,
-            lineHeight: 1.6, letterSpacing: -0.1, textWrap:'pretty',
-            background: KUN.cardSoft, borderRadius: 16, padding: 14,
+            fontFamily: V_FB, fontSize: 14, color: KUN.ink, fontWeight: 400,
+            lineHeight: 1.65, letterSpacing: 0.1,
+            background: KUN.cardSoft, borderRadius: 16, padding: 16,
           }}>
             {story.text}
           </div>
           <button onClick={onRecord} style={{
             width:'100%', marginTop: 12,
-            padding: '13px 16px', borderRadius: 16, border:'none',
-            background: KUN.accent, color:'#fff',
-            fontFamily:'inherit', fontSize: 14, fontWeight: 800,
+            padding: '12px 16px', height: 46, borderRadius: 999, border:'none',
+            background: KUN.brick, color:'#fff',
+            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
             display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
             cursor:'pointer',
-            boxShadow: '0 6px 14px rgba(201,123,90,0.3)',
           }}>
             {VINK_ICONS.mic('#fff')} Grabar mientras leo
           </button>
@@ -557,7 +614,7 @@ function VozTab({ recordings, onOpenRecorder }) {
   return (
     <>
       <div style={{
-        fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3,
+        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
         padding: '4px 24px 14px',
       }}>
         Tu voz para tu bebé
@@ -565,40 +622,49 @@ function VozTab({ recordings, onOpenRecorder }) {
 
       {/* Cuentos */}
       <div style={{ padding: '0 20px 6px' }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6, padding: '0 8px 8px' }}>
-          CUENTOS
+        <div style={{
+          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
+          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
+        }}>
+          Cuentos
         </div>
         {STORIES.map((s, i) => <StoryRow key={i} story={s} onRecord={onOpenRecorder}/>)}
       </div>
 
       {/* Canción */}
       <div style={{ padding: '14px 20px 6px' }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6, padding: '0 8px 8px' }}>
-          CANCIÓN
+        <div style={{
+          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
+          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
+        }}>
+          Canción
         </div>
         <div style={{
-          background: KUN.sageSoft, borderRadius: 22, padding: '16px 18px',
+          background: KUN.apple, borderRadius: 22, padding: '18px 20px',
         }}>
-          <div style={{ fontSize: 15, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>
+          <div style={{
+            fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
+          }}>
             Nana de la luna llena
           </div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: KUN.inkSoft, marginBottom: 12 }}>
+          <div style={{
+            fontFamily: V_FB, fontSize: 12, fontWeight: 400, color: KUN.inkSoft, marginBottom: 12,
+          }}>
             Letra para que la cantes a tu ritmo
           </div>
           <div style={{
-            background:'#fff', borderRadius: 16, padding: 14,
-            fontSize: 13.5, color: KUN.ink, fontWeight: 500, fontStyle:'italic',
-            lineHeight: 1.6, letterSpacing: -0.1, textWrap:'pretty', marginBottom: 12,
+            background:'#fff', borderRadius: 16, padding: 16,
+            fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400, fontStyle:'italic',
+            lineHeight: 1.7, marginBottom: 14,
           }}>
             {SONG_LYRICS}
           </div>
           <button onClick={onOpenRecorder} style={{
-            width:'100%', padding: '13px 16px', borderRadius: 16, border:'none',
-            background: KUN.accent, color:'#fff',
-            fontFamily:'inherit', fontSize: 14, fontWeight: 800,
+            width:'100%', padding: '12px 16px', height: 46, borderRadius: 999, border:'none',
+            background: KUN.brick, color:'#fff',
+            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
             display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
             cursor:'pointer',
-            boxShadow: '0 6px 14px rgba(201,123,90,0.3)',
           }}>
             {VINK_ICONS.mic('#fff')} Cantarle a mi bebé · Grabación libre
           </button>
@@ -607,40 +673,45 @@ function VozTab({ recordings, onOpenRecorder }) {
 
       {/* Grabaciones guardadas */}
       <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.6, padding: '0 8px 8px' }}>
-          GRABACIONES GUARDADAS
+        <div style={{
+          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
+          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
+        }}>
+          Grabaciones guardadas
         </div>
         {(!recordings || recordings.length === 0) ? (
           <div style={{
             background:'#fff', borderRadius: 22,
-            padding: '22px 18px', textAlign:'center',
+            padding: '24px 20px', textAlign:'center',
             border: `1.5px dashed ${KUN.inkFaint}`,
           }}>
-            <div style={{ fontSize: 30, marginBottom: 6 }}>🎙️</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
+            <div style={{ fontSize: 30, marginBottom: 8 }}>🎙️</div>
+            <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
               Aún no tienes grabaciones
             </div>
-            <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, lineHeight: 1.4, textWrap:'pretty' }}>
+            <div style={{
+              fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5,
+            }}>
               Cuando grabes algo, aparecerá aquí y en tu feed familiar.
             </div>
           </div>
         ) : (
-          <div style={{ display:'flex', flexDirection:'column', gap: 8 }}>
+          <div style={{ display:'flex', flexDirection:'column', gap: 10 }}>
             {recordings.map((r, i) => (
               <div key={i} style={{
                 background:'#fff', borderRadius: 18,
                 padding: '12px 14px',
                 display:'flex', alignItems:'center', gap: 12,
-                boxShadow:'0 1px 2px rgba(46,42,38,0.03)',
+                border: `1px solid ${KUN.hair}`,
               }}>
                 <div style={{
-                  width: 40, height: 40, borderRadius: 20,
-                  background: KUN.accent,
+                  width: 42, height: 42, borderRadius: '50%',
+                  background: KUN.brick,
                   display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
                 }}>{VINK_ICONS.play('#fff', 12)}</div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: KUN.ink }}>{r.name}</div>
-                  <div style={{ fontSize: 11, color: KUN.inkMuted, fontWeight: 600, marginTop: 1 }}>
+                  <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{r.name}</div>
+                  <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, marginTop: 2, letterSpacing: 0.2 }}>
                     {r.duration} · {r.time}
                   </div>
                 </div>
@@ -682,56 +753,55 @@ function Recorder({ onClose, onSave }) {
     }}>
       <div style={{ padding: '60px 20px 14px', display:'flex', alignItems:'center', gap: 12 }}>
         <div onClick={onClose} style={{
-          width: 40, height: 40, borderRadius: 20, background: '#fff',
+          width: 40, height: 40, borderRadius: '50%', background: '#fff',
           display:'flex', alignItems:'center', justifyContent:'center',
-          boxShadow:'0 1px 2px rgba(46,42,38,0.04)', cursor:'pointer',
+          border: `1px solid ${KUN.hair}`, cursor:'pointer',
         }}>{VINK_ICONS.back(KUN.ink)}</div>
-        <div style={{ fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+        <div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>
           Grabación
         </div>
       </div>
 
       <div style={{ flex: 1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding: 20 }}>
         <div style={{
-          fontSize: 14, color: KUN.inkSoft, fontWeight: 600, marginBottom: 16, textAlign:'center', textWrap:'pretty',
+          fontFamily: V_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400, marginBottom: 16, textAlign:'center',
         }}>
           {recording ? 'Estoy escuchando…' : 'Cuando estés lista, presiona el círculo'}
         </div>
         <div style={{
-          fontSize: 56, fontWeight: 800, color: KUN.ink,
+          fontFamily: V_FT, fontSize: 56, fontWeight: 700, color: KUN.ink,
           fontVariantNumeric:'tabular-nums', marginBottom: 32,
           letterSpacing: -1,
         }}>
           {fmt(seconds)}
         </div>
 
-        {/* waveform when recording */}
         <svg width="240" height="44" viewBox="0 0 240 44" style={{ marginBottom: 40 }}>
           {Array.from({length: 40}).map((_, i) => {
             const h = recording ? 6 + Math.abs(Math.sin(i * 0.6 + seconds * 0.3)) * 30 : 6;
-            return <rect key={i} x={i * 6} y={(44 - h) / 2} width="3" height={h} rx="1.5" fill={recording ? KUN.accent : KUN.inkFaint}/>;
+            return <rect key={i} x={i * 6} y={(44 - h) / 2} width="3" height={h} rx="1.5" fill={recording ? KUN.brick : KUN.inkFaint}/>;
           })}
         </svg>
 
         <button onClick={() => setRecording(r => !r)} style={{
-          width: 86, height: 86, borderRadius: 43, border:'none',
-          background: recording ? '#fff' : KUN.accent,
+          width: 86, height: 86, borderRadius: '50%', border:'none',
+          background: recording ? '#fff' : KUN.brick,
           boxShadow: recording
-            ? `0 0 0 6px ${KUN.accentSoft}, 0 8px 18px rgba(201,123,90,0.3)`
-            : '0 8px 18px rgba(201,123,90,0.4)',
+            ? `0 0 0 6px ${KUN.rosehip}, 0 8px 18px rgba(240,116,62,0.30)`
+            : '0 8px 18px rgba(240,116,62,0.40)',
           display:'flex', alignItems:'center', justifyContent:'center',
           cursor:'pointer',
         }}>
           {recording
-            ? <div style={{ width: 26, height: 26, borderRadius: 6, background: KUN.accent }}/>
-            : <div style={{ width: 30, height: 30, borderRadius: 15, background:'#fff' }}/>}
+            ? <div style={{ width: 26, height: 26, borderRadius: 6, background: KUN.brick }}/>
+            : <div style={{ width: 30, height: 30, borderRadius: '50%', background:'#fff' }}/>}
         </button>
 
         {seconds > 0 && !recording && (
           <button onClick={save} style={{
-            marginTop: 28, padding: '12px 24px', borderRadius: 999, border:'none',
+            marginTop: 28, padding: '12px 24px', height: 46, borderRadius: 999, border:'none',
             background: KUN.ink, color:'#fff',
-            fontFamily:'inherit', fontSize: 14, fontWeight: 800, cursor:'pointer',
+            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1, cursor:'pointer',
           }}>
             Guardar para Sofía
           </button>
@@ -749,10 +819,10 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
     <>
       <SubHeader title="Cuentos y canciones" onBack={onBack} />
 
-      {/* sub-subtabs */}
+      {/* sub-subtabs — DS pattern: pill shape, individual rounded, Brick activa, cream inactive con borde */}
       <div style={{
         margin: '0 20px 14px',
-        display:'flex', gap: 6,
+        display:'flex', gap: 8,
       }}>
         {[
           { id:'musica', label:'Música' },
@@ -763,13 +833,10 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
             <div key={t.id} onClick={() => setSub(t.id)} style={{
               flex: 1, textAlign:'center', cursor:'pointer',
               padding: '10px 6px', borderRadius: 999,
-              background: isA ? KUN.accent : '#fff',
+              background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
-              fontSize: 13, fontWeight: 700, letterSpacing: -0.1,
-              border: isA ? 'none' : '1px solid rgba(46,42,38,0.06)',
-              boxShadow: isA
-                ? '0 2px 8px rgba(201,123,90,0.28)'
-                : '0 1px 2px rgba(46,42,38,0.03)',
+              fontFamily: V_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              border: isA ? 'none' : `1px solid ${KUN.hair}`,
               transition:'all .2s',
             }}>{t.label}</div>
           );

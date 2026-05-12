@@ -1,54 +1,56 @@
-// Personalizado screen body (no device wrapper — used inside unified shell).
+// Personalizado screen body — KUN DS v2 applied (Quicksand titles, Poppins body, Brick CTAs).
+
+const P_FT = 'Quicksand, sans-serif';
+const P_FB = 'Poppins, sans-serif';
 
 function RecommendedHero({ onOpenCapsula }) {
   return (
     <div style={{
       margin: '6px 20px 0',
       borderRadius: 30,
-      background: KUN.accent,
-      padding: '20px 20px 18px',
+      background: KUN.brick,
+      padding: '22px 22px 20px',
       position:'relative', overflow:'hidden',
       color:'#fff',
-      boxShadow: '0 1px 2px rgba(46,42,38,0.04), 0 14px 30px rgba(201,123,90,0.22)',
     }}>
-      <div style={{ position:'absolute', top:-50, right:-60, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
-      <div style={{ position:'absolute', bottom:-70, left:-40, width: 160, height: 160, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
+      {/* Decorative shapes */}
+      <div style={{ position:'absolute', top:-60, right:-70, width: 200, height: 200, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
+      <div style={{ position:'absolute', bottom:-80, left:-50, width: 170, height: 170, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
 
       <div style={{
-        display:'inline-flex', alignItems:'center', gap: 5,
+        display:'inline-flex', alignItems:'center', gap: 6,
         padding: '5px 11px', borderRadius: 999,
-        background: 'rgba(255,255,255,0.22)', backdropFilter:'blur(6px)',
-        fontSize: 11, fontWeight: 800, letterSpacing: 0.6,
-        marginBottom: 14, position:'relative',
+        background: KUN.sun, color: KUN.ink,
+        fontFamily: P_FT, fontSize: 11, fontWeight: 700, letterSpacing: 0.4,
+        marginBottom: 16, position:'relative',
       }}>
-        {KIcon.spark('#fff')} NUEVO PARA TI
+        {KIcon.spark(KUN.ink)} NUEVO PARA TI
       </div>
 
       <div style={{ position:'relative' }}>
-        <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.85, marginBottom: 6, letterSpacing: 0.2 }}>
+        <div style={{ fontFamily: P_FB, fontSize: 12, fontWeight: 400, opacity: 0.9, marginBottom: 6, letterSpacing: 0.2 }}>
           Porque Sofía empezó a alimentarse por sonda
         </div>
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.4, lineHeight: 1.2, marginBottom: 10, textWrap:'pretty' }}>
+        <div style={{ fontFamily: P_FT, fontSize: 22, fontWeight: 700, letterSpacing: -0.4, lineHeight: 1.2, marginBottom: 10 }}>
           Tu bebé empezó a alimentarse por sonda
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.45, opacity: 0.92, marginBottom: 18, textWrap:'pretty' }}>
+        <div style={{ fontFamily: P_FB, fontSize: 13.5, fontWeight: 400, lineHeight: 1.55, opacity: 0.92, marginBottom: 18 }}>
           Aprende qué es la sonda nasogástrica y cómo puedes acompañar este proceso.
         </div>
 
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 12 }}>
-          <div style={{ display:'flex', alignItems:'center', gap: 8, fontSize: 13, fontWeight: 600, opacity: 0.9 }}>
+          <div style={{ display:'flex', alignItems:'center', gap: 8, fontFamily: P_FB, fontSize: 12.5, fontWeight: 500, opacity: 0.9 }}>
             <span>4 min</span>
             <span style={{ width: 3, height: 3, borderRadius:'50%', background:'#fff', opacity:0.7 }}/>
             <span>Lectura + audio</span>
           </div>
           <button onClick={onOpenCapsula} style={{
-            padding: '11px 20px', borderRadius: 999, border:'none',
-            background:'#fff', color: KUN.accentDeep,
-            fontFamily:'inherit', fontSize: 13, fontWeight: 800, letterSpacing: 0.1,
-            display:'flex', alignItems:'center', gap: 6, cursor:'pointer',
-            boxShadow: '0 4px 10px rgba(46,42,38,0.15)',
+            padding: '10px 18px', height: 42, borderRadius: 999, border:'none',
+            background:'#fff', color: KUN.ink,
+            fontFamily: P_FT, fontSize: 13.5, fontWeight: 700, letterSpacing: -0.1,
+            display:'inline-flex', alignItems:'center', gap: 6, cursor:'pointer',
           }}>
-            Empezar {KIcon.arrow(KUN.accentDeep)}
+            Empezar {KIcon.arrow(KUN.ink)}
           </button>
         </div>
       </div>
@@ -78,44 +80,46 @@ function HistorySection({ completedCapsulas, quizResults, onOpenCapsula, onGoToB
   }).filter(Boolean);
   const items = [...newItems, ...base.filter(b => !newItems.some(n => n.title === b.title))];
   return (
-    <div style={{ margin: '22px 0 0' }}>
-      <div style={{ padding: '0 28px 10px', display:'flex', alignItems:'flex-end', justifyContent:'space-between' }}>
+    <div style={{ margin: '24px 0 0' }}>
+      <div style={{ padding: '0 28px 12px', display:'flex', alignItems:'flex-end', justifyContent:'space-between' }}>
         <div>
-          <div style={{ fontSize: 17, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
+          <div style={{ fontFamily: P_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
             Vuelve cuando quieras
           </div>
-          <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, marginTop: 2 }}>
+          <div style={{ fontFamily: P_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
             Lo que ya viste, siempre disponible
           </div>
         </div>
-        <span onClick={onGoToBiblio} style={{ fontSize: 12, color: KUN.accent, fontWeight: 700, cursor: 'pointer' }}>Ver todo</span>
+        <span onClick={onGoToBiblio} style={{
+          fontFamily: P_FT, fontSize: 12.5, color: KUN.brick, fontWeight: 700, cursor: 'pointer',
+        }}>Ver todo →</span>
       </div>
 
-      <div style={{ display:'flex', flexDirection:'column', gap: 8, padding: '0 20px' }}>
+      <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px' }}>
         {items.map((it, i) => (
           <div key={i} onClick={() => it.id && onOpenCapsula && onOpenCapsula(it.id)} style={{
-            background: '#fff', borderRadius: 20, padding: '14px 16px',
+            background: '#fff', borderRadius: 22, padding: '14px 16px',
             display:'flex', alignItems:'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(46,42,38,0.03)', cursor: it.id ? 'pointer' : 'default',
+            border: `1px solid ${KUN.hair}`, cursor: it.id ? 'pointer' : 'default',
           }}>
             <div style={{
-              width: 46, height: 46, borderRadius: 14, background: KUN.cardSoft,
+              width: 46, height: 46, borderRadius: 14, background: KUN.apple,
               display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
             }}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M3.5 8.2L6.5 11L12.5 4.8" stroke={KUN.inkMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3.5 8.2L6.5 11L12.5 4.8" stroke={KUN.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
-                fontSize: 14.5, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2,
-                marginBottom: 3, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
+                fontFamily: P_FT, fontSize: 14.5, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
+                marginBottom: 4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
               }}>{it.title}</div>
-              <div style={{ display:'flex', alignItems:'center', gap: 8, fontSize: 12, color: KUN.inkMuted, fontWeight: 600 }}>
+              <div style={{ display:'flex', alignItems:'center', gap: 8, fontFamily: P_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400 }}>
                 <span style={{
                   padding: '2px 8px', borderRadius: 999,
-                  background: KUN.sageSoft, color: KUN.sage,
-                  fontSize: 10, fontWeight: 800, letterSpacing: 0.3,
+                  background: KUN.apple, color: KUN.ink,
+                  fontFamily: P_FT, fontSize: 10, fontWeight: 700, letterSpacing: 0.3,
                 }}>VISTA</span>
                 <span>{it.dur}</span>
                 <span style={{ width: 3, height: 3, borderRadius:'50%', background: KUN.inkFaint }}/>
@@ -125,10 +129,10 @@ function HistorySection({ completedCapsulas, quizResults, onOpenCapsula, onGoToB
                     <span style={{ width: 3, height: 3, borderRadius:'50%', background: KUN.inkFaint }}/>
                     <span style={{
                       padding: '2px 8px', borderRadius: 999,
-                      background: KUN.accentSoft, color: KUN.accentDeep,
-                      fontSize: 10, fontWeight: 800, letterSpacing: 0.3,
+                      background: KUN.rosehip, color: KUN.ink,
+                      fontFamily: P_FT, fontSize: 10, fontWeight: 700, letterSpacing: 0.3,
                     }}>
-                      REPASO COMPLETADO
+                      REPASO
                     </span>
                   </>
                 )}

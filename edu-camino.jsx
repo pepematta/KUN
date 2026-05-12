@@ -1,5 +1,8 @@
 // Camino — serpentine path with capsules positioned on a true sinuous curve.
-// The path is a single continuous SVG curve; stations sit at sampled points along it.
+// Applies KUN Design System v2.
+
+const C_FT = 'Quicksand, sans-serif';
+const C_FB = 'Poppins, sans-serif';
 
 function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
   const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -8,45 +11,47 @@ function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
   return (
     <div style={{ padding: '4px 24px 14px' }}>
       <div style={{
-        fontSize: 22, fontWeight: 700, color: KUN.ink,
+        fontFamily: C_FT, fontSize: 22, fontWeight: 700, color: KUN.ink,
         letterSpacing: -0.4, lineHeight: 1.2, marginBottom: 14,
-        textWrap:'pretty',
       }}>
         Sigamos juntos, <span style={{
-          fontStyle: 'italic', color: KUN.accent, fontWeight: 700,
+          fontStyle: 'italic', color: KUN.brick, fontWeight: 700,
         }}>{displayName}</span>
       </div>
 
       <div style={{
-        background: '#fff', borderRadius: 20,
-        padding: '14px 16px',
-        boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 16px rgba(46,42,38,0.04)',
+        background: '#fff', borderRadius: 22,
+        padding: '16px 18px',
+        border: `1px solid ${KUN.hair}`,
       }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom: 8 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 1 }}>
-            TU CAMINO
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom: 10 }}>
+          <span style={{
+            fontFamily: C_FB, fontSize: 10.5, fontWeight: 500,
+            color: KUN.brick, letterSpacing: 1, textTransform:'uppercase',
+          }}>
+            Tu camino
           </span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: KUN.ink }}>
-            {completedCount} <span style={{ color: KUN.inkMuted, fontWeight: 600 }}>de {totalCount}</span>
+          <span style={{ fontFamily: C_FT, fontSize: 13, fontWeight: 700, color: KUN.ink }}>
+            {completedCount} <span style={{ fontFamily: C_FB, color: KUN.inkMuted, fontWeight: 500 }}>de {totalCount}</span>
           </span>
         </div>
         <div style={{
-          height: 6, borderRadius: 3, background: KUN.trackSoft,
+          height: 8, borderRadius: 999, background: 'rgba(42,35,32,0.07)',
           position:'relative', overflow:'hidden',
         }}>
           <div style={{
             position:'absolute', top:0, left:0, height:'100%',
             width: `${pct}%`,
-            background: KUN.accent, borderRadius: 3,
+            background: KUN.brick, borderRadius: 999,
             transition: 'width 0.4s ease',
           }}/>
         </div>
         <div style={{
-          marginTop: 10, display:'flex', alignItems:'center', gap: 8,
-          fontSize: 13, color: KUN.inkSoft, fontWeight: 600,
+          marginTop: 12, display:'flex', alignItems:'center', gap: 8,
+          fontFamily: C_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400,
         }}>
-          <span style={{ width: 8, height: 8, borderRadius:'50%', background: KUN.accent }}/>
-          Pilar 1 · <span style={{ color: KUN.ink, fontWeight: 700 }}>Cuerpo y cuidados de {displayBaby}</span>
+          <span style={{ width: 8, height: 8, borderRadius:'50%', background: KUN.brick }}/>
+          Pilar 1 · <span style={{ fontFamily: C_FT, color: KUN.ink, fontWeight: 700 }}>Cuerpo y cuidados de {displayBaby}</span>
         </div>
       </div>
     </div>
@@ -57,16 +62,16 @@ function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
 function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   let dotBg, dotContent, titleColor, durColor, durBold;
   if (state === 'done') {
-    dotBg = KUN.accent;
+    dotBg = KUN.brick;
     dotContent = KIcon.check('#fff');
     titleColor = KUN.inkMuted; durColor = KUN.inkMuted; durBold = false;
   } else if (state === 'active') {
-    dotBg = KUN.accent;
+    dotBg = KUN.brick;
     dotContent = KIcon.play('#fff');
-    titleColor = KUN.ink; durColor = KUN.accent; durBold = true;
+    titleColor = KUN.ink; durColor = KUN.brick; durBold = true;
   } else {
     dotBg = '#fff';
-    dotContent = <span style={{ fontSize: 14, fontWeight: 700, color: KUN.inkFaint }}>{num}</span>;
+    dotContent = <span style={{ fontFamily: C_FT, fontSize: 14, fontWeight: 700, color: KUN.inkFaint }}>{num}</span>;
     titleColor = KUN.inkMuted; durColor = KUN.inkMuted; durBold = false;
   }
   const dotSize = state === 'active' ? 54 : 44;
@@ -77,10 +82,9 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   const cardLeft = side === 'right' ? cx + dotSize/2 + gap : cx - dotSize/2 - gap - cardW;
 
   const cardBg = state === 'active' ? '#fff' : (state === 'done' ? '#FBF8F4' : 'transparent');
-  const cardShadow = state === 'active'
-    ? '0 2px 4px rgba(46,42,38,0.04), 0 10px 24px rgba(201,123,90,0.18)'
-    : (state === 'done' ? '0 1px 2px rgba(46,42,38,0.03)' : 'none');
-  const cardBorder = state === 'next' ? `1.5px dashed ${KUN.inkFaint}` : 'none';
+  const cardBorder = state === 'next'
+    ? `1.5px dashed ${KUN.inkFaint}`
+    : (state === 'active' || state === 'done' ? `1px solid ${KUN.hair}` : 'none');
 
   return (
     <>
@@ -92,8 +96,8 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
         background: dotBg,
         border: state === 'next' ? `2px solid ${KUN.inkFaint}` : 'none',
         boxShadow: state === 'active'
-          ? `0 0 0 6px ${KUN.accentSoft}, 0 6px 14px rgba(201,123,90,0.3)`
-          : (state === 'done' ? '0 2px 6px rgba(168,95,64,0.25)' : 'none'),
+          ? `0 0 0 6px ${KUN.rosehip}, 0 6px 14px rgba(240,116,62,0.30)`
+          : 'none',
         display:'flex', alignItems:'center', justifyContent:'center',
         zIndex: 2,
       }}>
@@ -111,19 +115,20 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
         borderRadius: 18,
         padding: '12px 14px',
         textAlign: side === 'right' ? 'left' : 'right',
-        boxShadow: cardShadow,
         opacity: state === 'next' ? 0.85 : 1,
         boxSizing: 'border-box',
         cursor: onClick && state !== 'next' ? 'pointer' : 'default',
       }}>
         <div style={{
+          fontFamily: C_FT,
           fontSize: state === 'active' ? 14.5 : 13.5,
-          fontWeight: state === 'active' ? 700 : 600,
+          fontWeight: 700,
           color: titleColor, letterSpacing: -0.2,
-          lineHeight: 1.25, marginBottom: 4, textWrap:'pretty',
+          lineHeight: 1.3, marginBottom: 5,
         }}>{title}</div>
         <div style={{
-          fontSize: 11.5, fontWeight: durBold ? 700 : 600,
+          fontFamily: C_FB,
+          fontSize: 11.5, fontWeight: durBold ? 600 : 500,
           color: durColor, letterSpacing: 0.1,
         }}>{dur}</div>
       </div>
@@ -143,7 +148,6 @@ function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
     { num:4, title:'Tu bebé empezó a alimentarse por sonda', dur:'4 min', x: 312, y: 410, side:'left',  capId: 1 },
   ];
 
-  // Compute state: first uncompleted = active, before it = done, after it = next
   let foundActive = false;
   const stations = stationDefs.map(s => {
     if (completed.includes(s.capId)) {
@@ -156,7 +160,6 @@ function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
     return { ...s, state: 'next', dur: `Pronto · ${s.dur}` };
   });
 
-  // Build a serpentine path that passes through all station centers.
   const buildSeg = (a, b) => {
     const dy = (b.y - a.y);
     const c1x = a.x + (b.x - a.x) * 0.05;
@@ -166,8 +169,6 @@ function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
     return `C ${c1x} ${c1y}, ${c2x} ${c2y}, ${b.x} ${b.y}`;
   };
 
-  // Solid path: from first station up to and including the active station
-  // Dashed path: from active station to the end
   const activeIdx = stations.findIndex(s => s.state === 'active');
   const splitIdx = activeIdx >= 0 ? activeIdx : stations.length - 1;
 
@@ -192,7 +193,7 @@ function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
         viewBox={`0 0 ${W} ${totalH}`}
         style={{ position:'absolute', top: 0, left: 0, pointerEvents:'none' }}
       >
-        <path d={solidD} fill="none" stroke={KUN.accent} strokeWidth="3" strokeLinecap="round" opacity="0.85"/>
+        <path d={solidD} fill="none" stroke={KUN.brick} strokeWidth="3" strokeLinecap="round" opacity="0.85"/>
         {dashedD && <path d={dashedD} fill="none" stroke={KUN.inkFaint} strokeWidth="3" strokeLinecap="round" strokeDasharray="4 8"/>}
       </svg>
       {stations.map((st, i) => (
@@ -207,15 +208,37 @@ function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
   );
 }
 
+// Decorative half-moon shapes (low opacity, recortadas)
+function CaminoShapes() {
+  return (
+    <>
+      <div style={{
+        position:'absolute', top: 30, right: -90,
+        width: 180, height: 180, borderRadius:'50%',
+        background: KUN.rosehip, opacity: 0.16,
+        pointerEvents:'none', zIndex: 0,
+      }}/>
+      <div style={{
+        position:'absolute', top: 380, left: -90,
+        width: 200, height: 200, borderRadius:'50%',
+        background: KUN.viola, opacity: 0.18,
+        pointerEvents:'none', zIndex: 0,
+      }}/>
+    </>
+  );
+}
+
 function ScreenCamino({ onOpenCapsula, completedCapsulas, parentName, babyName }) {
-  // Count how many of the 4 camino capsules are done
   const caminoCapIds = [3, 4, 2, 1];
   const completedCount = (completedCapsulas || []).filter(id => caminoCapIds.includes(id)).length;
   return (
-    <>
-      <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} parentName={parentName} babyName={babyName} />
-      <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} babyName={babyName} />
-    </>
+    <div style={{ position:'relative' }}>
+      <CaminoShapes/>
+      <div style={{ position:'relative', zIndex: 1 }}>
+        <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} parentName={parentName} babyName={babyName} />
+        <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} babyName={babyName} />
+      </div>
+    </div>
   );
 }
 
