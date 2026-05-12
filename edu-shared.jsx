@@ -96,9 +96,12 @@ const KIcon = {
     </svg>
   ),
   book: (c, filled) => (
-    <svg width="24" height="24" viewBox="0 0 26 26" fill={filled ? c : 'none'}>
-      <path d="M5 5C5 4.4 5.4 4 6 4H12V21H6C5.4 21 5 20.6 5 20V5Z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
-      <path d="M21 5C21 4.4 20.6 4 20 4H14V21H20C20.6 21 21 20.6 21 20V5Z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none">
+      {/* mortarboard / graduation cap */}
+      <path d="M13 5L3 10L13 15L23 10L13 5Z" stroke={c} strokeWidth="1.8" strokeLinejoin="round" fill={filled ? c : 'none'}/>
+      <path d="M7 12.5V18C7 18 9.5 20.5 13 20.5C16.5 20.5 19 18 19 18V12.5" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M23 10V15.5" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <circle cx="23" cy="16.5" r="1" fill={c}/>
     </svg>
   ),
   heart: (c) => (
