@@ -56,7 +56,7 @@ function RecommendedHero({ onOpenCapsula }) {
   );
 }
 
-function HistorySection({ completedCapsulas, onOpenCapsula, onGoToBiblio }) {
+function HistorySection({ completedCapsulas, quizResults, onOpenCapsula, onGoToBiblio }) {
   const base = [
     { id: 3, title: 'Cómo se ve tu bebé hoy',      dur: '3 min', when: 'Hace 2 días' },
     { id: 4, title: 'Entender los monitores',       dur: '5 min', when: 'Hace 5 días' },
@@ -68,7 +68,13 @@ function HistorySection({ completedCapsulas, onOpenCapsula, onGoToBiblio }) {
     const cap = lib[id];
     if (!cap) return null;
     const catalogEntry = capCatalog.find(c => c.id === id);
-    return { id, title: catalogEntry?.title || cap.headerTitle, dur: cap.dur.toLowerCase(), when: 'Hoy' };
+    return {
+      id,
+      title: catalogEntry?.title || cap.headerTitle,
+      dur: cap.dur.toLowerCase(),
+      when: 'Hoy',
+      quiz: quizResults?.[id],
+    };
   }).filter(Boolean);
   const items = [...newItems, ...base.filter(b => !newItems.some(n => n.title === b.title))];
   return (
@@ -114,6 +120,18 @@ function HistorySection({ completedCapsulas, onOpenCapsula, onGoToBiblio }) {
                 <span>{it.dur}</span>
                 <span style={{ width: 3, height: 3, borderRadius:'50%', background: KUN.inkFaint }}/>
                 <span>{it.when}</span>
+                {it.quiz?.answered && (
+                  <>
+                    <span style={{ width: 3, height: 3, borderRadius:'50%', background: KUN.inkFaint }}/>
+                    <span style={{
+                      padding: '2px 8px', borderRadius: 999,
+                      background: KUN.accentSoft, color: KUN.accentDeep,
+                      fontSize: 10, fontWeight: 800, letterSpacing: 0.3,
+                    }}>
+                      REPASO COMPLETADO
+                    </span>
+                  </>
+                )}
               </div>
             </div>
             {KIcon.chevRight(KUN.inkFaint)}
@@ -124,12 +142,13 @@ function HistorySection({ completedCapsulas, onOpenCapsula, onGoToBiblio }) {
   );
 }
 
-function ScreenPersonalizado({ onOpenCapsula, completedCapsulas, onGoToBiblio }) {
+function ScreenPersonalizado({ onOpenCapsula, completedCapsulas, quizResults, onGoToBiblio }) {
   return (
     <>
       <RecommendedHero onOpenCapsula={() => onOpenCapsula && onOpenCapsula(1)} />
       <HistorySection
         completedCapsulas={completedCapsulas}
+        quizResults={quizResults}
         onOpenCapsula={onOpenCapsula}
         onGoToBiblio={onGoToBiblio}
       />

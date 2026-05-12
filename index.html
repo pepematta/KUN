@@ -58,7 +58,7 @@
 <script type="text/babel" src="edu-biblioteca.jsx?v=5"></script>
 <script type="text/babel" src="screen-vinculo.jsx?v=6"></script>
 <script type="text/babel" src="screen-comunidad.jsx?v=6"></script>
-<script type="text/babel" src="screen-capsula.jsx?v=5"></script>
+<script type="text/babel" src="screen-capsula.jsx?v=6"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -357,6 +357,7 @@ function Prototype() {
   const [lactarioOpen,        setLactarioOpen]        = useState(false);
   const [lactarioReservation, setLactarioReservation] = useState(null);
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
+  const [quizResults, setQuizResults] = useState({});
   // Tracks where the user was before opening a capsule, so we can return there
   const [capsuleSource, setCapsuleSource] = useState({ tab: 'edu', sub: 'camino' });
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
@@ -407,10 +408,19 @@ function Prototype() {
     setTab('edu');
     setEduSub('perso');
   };
+  const saveQuizResult = (result) => {
+    setQuizResults(prev => ({
+      ...prev,
+      [capsuleId]: {
+        ...result,
+        answeredAt: new Date().toISOString(),
+      },
+    }));
+  };
 
   const renderEdu = () => {
     if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} parentName={parentName} babyName={babyName} />;
-    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} onGoToBiblio={() => goToEdu('biblio')} />;
+    if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} quizResults={quizResults} onGoToBiblio={() => goToEdu('biblio')} />;
     return <ScreenBiblioteca onOpenCapsula={openCapsula} />;
   };
 
@@ -420,6 +430,8 @@ function Prototype() {
       capsuleId={capsuleId}
       onBack={closeCapsula}
       onComplete={completeCapsula}
+      quizResult={quizResults[capsuleId]}
+      onQuizAnswer={saveQuizResult}
       onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}
     />;
   } else if (tab === 'home' && lactarioOpen) {

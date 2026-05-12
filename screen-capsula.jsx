@@ -510,6 +510,323 @@ const CAP_LIBRARY = {
 // Exponer catálogo globalmente para otros screens
 window.CAP_LIBRARY = CAP_LIBRARY;
 
+const CAP_QUIZZES = {
+  1: {
+    prompt: '¿Para qué ayuda la sonda nasogástrica mientras tu bebé madura?',
+    options: [
+      {
+        text: 'A que reciba leche sin gastar tanta energía en succionar',
+        correct: true,
+        feedback: 'Muy bien. La sonda es un apoyo temporal para que tu bebé pueda alimentarse y crecer mientras gana fuerza y coordinación.',
+      },
+      {
+        text: 'A reemplazar siempre la lactancia de forma permanente',
+        correct: false,
+        feedback: 'Tiene sentido que pueda sentirse así, pero la sonda suele ser un puente temporal. La idea es acompañar a tu bebé hasta que esté listo para pecho o mamadera.',
+      },
+      {
+        text: 'A evitar que necesite compañía durante la alimentación',
+        correct: false,
+        feedback: 'Tu presencia sigue importando mucho. Hablarle suavemente o acompañarlo durante la alimentación puede calmarlo y fortalecer el vínculo.',
+      },
+    ],
+  },
+  2: {
+    prompt: '¿Qué efecto puede tener el método canguro en tu bebé?',
+    options: [
+      {
+        text: 'Ayudar a regular temperatura, respiración y vínculo',
+        correct: true,
+        feedback: 'Muy bien. El piel con piel puede estabilizar el cuerpo de tu bebé y también crear un momento de cercanía para ambos.',
+      },
+      {
+        text: 'Solo sirve cuando el bebé ya está completamente estable',
+        correct: false,
+        feedback: 'Es una duda muy común. Muchas veces se puede empezar antes de una estabilidad completa, siempre con autorización y guía del equipo de salud.',
+      },
+      {
+        text: 'Debe hacerlo solamente la mamá',
+        correct: false,
+        feedback: 'No pasa nada: esta idea aparece mucho. Mamá y papá pueden practicarlo si el equipo lo permite; ambos pueden entregar calma y calor.',
+      },
+    ],
+  },
+  3: {
+    prompt: 'Si ves piel delgada, lanugo o proporciones distintas, ¿qué puede significar?',
+    options: [
+      {
+        text: 'Que muchas de esas características son esperables en prematuros',
+        correct: true,
+        feedback: 'Exacto. Su cuerpo sigue desarrollándose y muchas cosas que impactan al principio son parte de esta etapa.',
+      },
+      {
+        text: 'Que necesariamente algo está mal',
+        correct: false,
+        feedback: 'Es comprensible preocuparse al verlo distinto. Aun así, piel delgada, lanugo y movimientos inmaduros pueden ser normales para su edad gestacional.',
+      },
+      {
+        text: 'Que los cables y tubos no tienen una función clara',
+        correct: false,
+        feedback: 'Puede ser abrumador ver tantos dispositivos. Cada uno tiene un propósito: vigilar, alimentar o ayudar a respirar cuando tu bebé lo necesita.',
+      },
+    ],
+  },
+  4: {
+    prompt: 'Cuando suena una alarma del monitor, ¿qué es lo más seguro?',
+    options: [
+      {
+        text: 'Mantener la calma y llamar al equipo si hace falta',
+        correct: true,
+        feedback: 'Muy bien. No toda alarma es una emergencia, y el equipo sabe interpretar cuándo actuar.',
+      },
+      {
+        text: 'Ajustar sensores o cables por cuenta propia',
+        correct: false,
+        feedback: 'La intención de ayudar es muy natural, pero es mejor no manipular los monitores. Llama a la enfermera para que revise con seguridad.',
+      },
+      {
+        text: 'Asumir que siempre es una emergencia grave',
+        correct: false,
+        feedback: 'Es normal asustarse con el sonido. A veces la alarma aparece por movimiento o un sensor suelto; observa a tu bebé y pide apoyo al equipo.',
+      },
+    ],
+  },
+  5: {
+    prompt: 'En el método canguro, ¿qué postura ayuda a cuidar la vía aérea?',
+    options: [
+      {
+        text: 'Bebé vertical, cabeza hacia un lado y un poco extendida',
+        correct: true,
+        feedback: 'Muy bien. Esa postura ayuda a que respire cómodo y seguro durante el contacto piel con piel.',
+      },
+      {
+        text: 'Bebé completamente horizontal sobre el pecho',
+        correct: false,
+        feedback: 'Buena pregunta para repasar. En canguro se busca una posición vertical, con la cabeza girada y ligeramente extendida para proteger la respiración.',
+      },
+      {
+        text: 'Bebé con la cara hundida contra el pecho',
+        correct: false,
+        feedback: 'Es importante corregirlo con calma. La nariz y boca deben quedar libres; pide ayuda al equipo para acomodarlo sin miedo.',
+      },
+    ],
+  },
+  6: {
+    prompt: '¿Qué puede ayudar a estimular la producción de leche?',
+    options: [
+      {
+        text: 'Extracción frecuente y contacto piel con piel cuando se pueda',
+        correct: true,
+        feedback: 'Muy bien. La frecuencia y el contacto con tu bebé pueden apoyar la producción. Y si baja, no significa que hayas fallado.',
+      },
+      {
+        text: 'Esperar muchas horas para juntar más leche',
+        correct: false,
+        feedback: 'Es una idea comprensible, pero suele ayudar más extraer con frecuencia. Tu cuerpo responde al estímulo repetido.',
+      },
+      {
+        text: 'Culparte si la producción cambia',
+        correct: false,
+        feedback: 'Nada de culpa aquí. El estrés y el cansancio influyen mucho; pedir apoyo de lactancia también es parte del cuidado.',
+      },
+    ],
+  },
+  7: {
+    prompt: 'Mientras tu bebé usa sonda, ¿qué puede apoyar su aprendizaje para alimentarse?',
+    options: [
+      {
+        text: 'Acercarlo al pecho y usar succión no nutritiva si el equipo lo autoriza',
+        correct: true,
+        feedback: 'Muy bien. Esos momentos pueden ayudar a asociar el pecho con calma, olor, contacto y alimentación.',
+      },
+      {
+        text: 'Pensar que la lactancia ya no será posible',
+        correct: false,
+        feedback: 'Es normal sentir esa preocupación. La sonda no cierra la puerta a la lactancia; muchas veces acompaña el proceso mientras el bebé madura.',
+      },
+      {
+        text: 'Forzarlo a succionar aunque se canse',
+        correct: false,
+        feedback: 'La paciencia es clave. Si se cansa, no es falta de ganas: está aprendiendo y necesita pausas seguras.',
+      },
+    ],
+  },
+  8: {
+    prompt: '¿Cómo conviene mirar el desarrollo de un bebé prematuro?',
+    options: [
+      {
+        text: 'Según su edad corregida y su propio ritmo',
+        correct: true,
+        feedback: 'Exacto. La edad corregida ayuda a entender mejor sus avances sin exigirle como si hubiese nacido a término.',
+      },
+      {
+        text: 'Comparándolo siempre con bebés nacidos a término',
+        correct: false,
+        feedback: 'Es muy humano comparar, pero puede generar presión. Tu bebé tiene su propio calendario y merece ser mirado desde ahí.',
+      },
+      {
+        text: 'Esperando que todos los hitos lleguen al mismo tiempo',
+        correct: false,
+        feedback: 'Cada avance puede llegar con ritmos distintos. Lo importante es observar tendencias y consultar dudas con el equipo.',
+      },
+    ],
+  },
+  9: {
+    prompt: '¿Qué rol cumple la ECMO cuando se indica?',
+    options: [
+      {
+        text: 'Apoyar temporalmente corazón y pulmones mientras el cuerpo se estabiliza',
+        correct: true,
+        feedback: 'Muy bien. La ECMO es un soporte avanzado y temporal para dar tiempo a que el cuerpo de tu bebé se recupere.',
+      },
+      {
+        text: 'Curar por sí sola la enfermedad de base',
+        correct: false,
+        feedback: 'Es fácil pensarlo así por lo compleja que se ve. En realidad, la ECMO sostiene al cuerpo mientras otros tratamientos y la recuperación hacen su parte.',
+      },
+      {
+        text: 'Eliminar la importancia de tu presencia',
+        correct: false,
+        feedback: 'Tu presencia sigue teniendo valor. Aunque el contacto sea limitado, tu voz y cercanía pueden acompañar a tu bebé.',
+      },
+    ],
+  },
+  10: {
+    prompt: 'Antes y después del alta, ¿qué es importante recordar?',
+    options: [
+      {
+        text: 'Preparar un ambiente tranquilo y conocer señales de alerta',
+        correct: true,
+        feedback: 'Muy bien. El alta es un logro, y tener claridad sobre cuidados y señales de alerta ayuda a llegar a casa con más calma.',
+      },
+      {
+        text: 'Recibir muchas visitas para celebrar de inmediato',
+        correct: false,
+        feedback: 'La celebración puede esperar un poco. Al principio suele ayudar un ambiente tranquilo, con pocos estímulos y más descanso.',
+      },
+      {
+        text: 'Evitar consultar para no molestar al equipo',
+        correct: false,
+        feedback: 'Consultar no molesta. Si notas dificultad para respirar, cambios de color, fiebre o rechazo a alimentarse, pide orientación o atención.',
+      },
+    ],
+  },
+};
+
+function CapsuleQuiz({ quiz, selected, onSelect, celebrating }) {
+  const selectedOption = selected !== null ? quiz.options[selected] : null;
+  const correctIndex = quiz.options.findIndex(option => option.correct);
+
+  return (
+    <div style={{
+      background: '#fff', borderRadius: 22, padding: 16,
+      boxShadow: '0 1px 2px rgba(46,42,38,0.03)',
+      marginBottom: 12,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        marginBottom: 10,
+      }}>
+        <div style={{
+          width: 34, height: 34, borderRadius: 17,
+          background: KUN.sageSoft,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          {CI.star(KUN.sage)}
+        </div>
+        <div>
+          <div style={{
+            fontSize: 12, fontWeight: 800, color: KUN.accentDeep,
+            letterSpacing: 0.5, textTransform: 'uppercase',
+          }}>Repaso amable</div>
+          <div style={{
+            fontSize: 12.5, fontWeight: 600, color: KUN.inkMuted,
+            marginTop: 1,
+          }}>No es una prueba: es una pausa para reforzar.</div>
+        </div>
+      </div>
+
+      <div style={{
+        fontSize: 16, fontWeight: 800, color: KUN.ink,
+        letterSpacing: -0.2, lineHeight: 1.35, marginBottom: 12,
+        textWrap: 'pretty',
+      }}>{quiz.prompt}</div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {quiz.options.map((option, i) => {
+          const isSelected = selected === i;
+          const showCorrect = selected !== null && option.correct;
+          return (
+            <button key={i} onClick={() => onSelect(i)} style={{
+              width: '100%', border: `1px solid ${isSelected ? KUN.accent : showCorrect ? KUN.sage : KUN.divider}`,
+              background: isSelected ? KUN.accentSoft : showCorrect ? KUN.sageSoft : KUN.cardSoft,
+              color: KUN.ink, borderRadius: 16, padding: '12px 13px',
+              display: 'flex', alignItems: 'center', gap: 10,
+              fontFamily: 'inherit', textAlign: 'left', cursor: 'pointer',
+              transition: 'background .2s, border .2s',
+            }}>
+              <span style={{
+                width: 24, height: 24, borderRadius: 12,
+                background: isSelected ? KUN.accent : showCorrect ? KUN.sage : '#fff',
+                color: (isSelected || showCorrect) ? '#fff' : KUN.inkMuted,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, fontSize: 12, fontWeight: 900,
+              }}>
+                {showCorrect || (isSelected && option.correct) ? '✓' : String.fromCharCode(65 + i)}
+              </span>
+              <span style={{
+                fontSize: 13.5, fontWeight: 700, lineHeight: 1.35,
+                textWrap: 'pretty',
+              }}>{option.text}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {selectedOption && (
+        <div style={{
+          marginTop: 12, borderRadius: 16, padding: '12px 14px',
+          background: selectedOption.correct ? KUN.sageSoft : '#FFF6EF',
+          color: KUN.inkSoft, fontSize: 13.5, fontWeight: 600,
+          lineHeight: 1.5, textWrap: 'pretty',
+        }}>
+          <strong style={{ color: KUN.ink }}>
+            {selectedOption.correct ? 'Vas muy bien. ' : 'Vamos paso a paso. '}
+          </strong>
+          {selectedOption.feedback}
+          {!selectedOption.correct && (
+            <div style={{ marginTop: 8, color: KUN.ink }}>
+              La respuesta que buscamos es: {quiz.options[correctIndex].text}.
+            </div>
+          )}
+        </div>
+      )}
+
+      {selectedOption && (
+        <div style={{
+          marginTop: 10,
+          borderRadius: 999,
+          padding: '9px 12px',
+          background: celebrating ? KUN.accent : KUN.cardSoft,
+          color: celebrating ? '#fff' : KUN.accentDeep,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          fontSize: 12.5,
+          fontWeight: 800,
+          letterSpacing: 0.1,
+          transition: 'background .25s, color .25s',
+        }}>
+          {KIcon.check(celebrating ? '#fff' : KUN.accentDeep)}
+          Repaso completado
+        </div>
+      )}
+    </div>
+  );
+}
+
 const CAP_TOTAL_PAGES = 5;
 
 // ── Flecha izquierda ──────────────────────────────────────────────────────────
@@ -553,11 +870,13 @@ function CapRight({ onClick, visible }) {
 }
 
 // ── Pantalla principal ────────────────────────────────────────────────────────
-function ScreenCapsula({ capsuleId, onBack, onComplete, onPublishForum }) {
+function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer, onPublishForum }) {
   const [idx, setIdx] = React.useState(0);
   const [question, setQuestion] = React.useState('');
   const [published, setPublished] = React.useState(false);
   const [celebrating, setCelebrating] = React.useState(false);
+  const [quizAnswer, setQuizAnswer] = React.useState(quizResult?.selectedIndex ?? null);
+  const [quizCelebrating, setQuizCelebrating] = React.useState(false);
 
   // Reset state when capsuleId changes
   React.useEffect(() => {
@@ -565,9 +884,12 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, onPublishForum }) {
     setQuestion('');
     setPublished(false);
     setCelebrating(false);
-  }, [capsuleId]);
+    setQuizAnswer(quizResult?.selectedIndex ?? null);
+    setQuizCelebrating(false);
+  }, [capsuleId, quizResult?.selectedIndex]);
 
   const capsule = CAP_LIBRARY[capsuleId] || CAP_LIBRARY[1];
+  const quiz = CAP_QUIZZES[capsuleId] || CAP_QUIZZES[1];
   const pages = capsule.pages;
   const page = pages[idx];
   const isFirst = idx === 0;
@@ -580,6 +902,21 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, onPublishForum }) {
     if (!question.trim()) return;
     setPublished(true);
     if (onPublishForum) onPublishForum();
+  };
+
+  const handleQuizSelect = (selectedIndex) => {
+    const selectedOption = quiz.options[selectedIndex];
+    setQuizAnswer(selectedIndex);
+    setQuizCelebrating(true);
+    if (onQuizAnswer) {
+      onQuizAnswer({
+        answered: true,
+        selectedIndex,
+        isCorrect: !!selectedOption?.correct,
+        correctIndex: quiz.options.findIndex(option => option.correct),
+      });
+    }
+    setTimeout(() => setQuizCelebrating(false), 1400);
   };
 
   const handleComplete = () => {
@@ -793,6 +1130,24 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, onPublishForum }) {
                   </button>
                 </>
               )}
+            </div>
+
+            <CapsuleQuiz
+              quiz={quiz}
+              selected={quizAnswer}
+              onSelect={handleQuizSelect}
+              celebrating={quizCelebrating}
+            />
+
+            <div style={{
+              margin: '-2px 4px 10px',
+              fontSize: 12.5,
+              fontWeight: 700,
+              color: KUN.inkMuted,
+              lineHeight: 1.4,
+              textAlign: 'center',
+            }}>
+              Puedes responder el repaso o marcar la cápsula como completada ahora.
             </div>
 
             {/* Botón completar */}
