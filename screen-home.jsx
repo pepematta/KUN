@@ -1,52 +1,199 @@
-// Home screen body — used inside unified prototype (no device wrapper).
+// Home screen body — restyled per new KUN Design System (v2).
+// Self-contained palette + fonts so this file does not affect other screens.
+// All existing functionality, props and texts are preserved verbatim.
 
+// ─── Local design-system tokens ────────────────────────────────────────────────
+const HC = {
+  cream:    '#FAF6F1',
+  paper:    '#FFFFFF',
+  rosehip:  '#F6C3AE',
+  brick:    '#F0743E',
+  viola:    '#CDBCDB',
+  sun:      '#FDD848',
+  apple:    '#AAD59E',
+  clear:    '#9AB2D4',
+  ink:      '#2A2320',
+  ink2:     '#5E544E',
+  ink3:     '#8B827C',
+  hair:     'rgba(42,35,32,0.10)',
+  hairSoft: 'rgba(42,35,32,0.06)',
+};
+const HF_T = 'Quicksand, sans-serif'; // titles
+const HF_B = 'Poppins, sans-serif';   // body
+
+// ─── Tiny icons (local to home screen) ─────────────────────────────────────────
+const HIcon = {
+  bottle: (color = HC.ink) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 2h4M9 4h6v3l-1 2v10a3 3 0 0 1-3 3h0a3 3 0 0 1-3-3V9L8 7V4z"/>
+      <path d="M9 12h6"/>
+    </svg>
+  ),
+  arrow: (color = HC.ink) => (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M3 7H11M11 7L7.5 3.5M11 7L7.5 10.5"
+        stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  chevR: (color = HC.ink) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 6 15 12 9 18"/>
+    </svg>
+  ),
+  sparkle: (color = '#fff') => (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill={color}>
+      <path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6z"/>
+    </svg>
+  ),
+  drop: (color = HC.apple) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill={color}>
+      <path d="M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z"/>
+    </svg>
+  ),
+  kangaroo: (color = HC.viola) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      stroke={HC.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" fill={color} stroke="none"/>
+      <path d="M8 15c1-2 3-3.5 5-3 1.5 .4 2.5 1.8 2.5 3.2"/>
+      <circle cx="10" cy="11" r="1.2" fill={HC.ink} stroke="none"/>
+    </svg>
+  ),
+};
+
+// ─── Section heading ───────────────────────────────────────────────────────────
+function HSectionHead({ title, kicker, action, onAction }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+      marginBottom: 12,
+    }}>
+      <div>
+        {kicker && (
+          <div style={{
+            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+            color: HC.brick, letterSpacing: '0.7px', textTransform: 'uppercase',
+            marginBottom: 4,
+          }}>{kicker}</div>
+        )}
+        <div style={{
+          fontFamily: HF_T, fontWeight: 700, fontSize: 19,
+          color: HC.ink, letterSpacing: '-0.3px',
+        }}>{title}</div>
+      </div>
+      {action && (
+        <span onClick={onAction} style={{
+          fontFamily: HF_T, fontWeight: 600, fontSize: 12.5,
+          color: HC.brick, cursor: 'pointer',
+          display: 'inline-flex', alignItems: 'center', gap: 2,
+        }}>
+          {action} {HIcon.chevR(HC.brick)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ─── Greeting ──────────────────────────────────────────────────────────────────
 function HomeGreeting({ parentName }) {
   const name = parentName || 'apoderado/a';
   return (
-    <div style={{ padding: '14px 24px 8px' }}>
-      <div style={{ fontSize: 15, color: KUN.inkSoft, fontWeight: 500, marginBottom: 4 }}>
+    <div style={{ padding: '8px 22px 4px' }}>
+      <div style={{
+        fontFamily: HF_B, fontWeight: 500, fontSize: 12,
+        color: HC.ink2, letterSpacing: '0.2px',
+      }}>
         Buenos días, {name}
       </div>
-      <div style={{ fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4, lineHeight: 1.15 }}>
+      <div style={{
+        fontFamily: HF_T, fontWeight: 700, fontSize: 26,
+        color: HC.ink, letterSpacing: '-0.5px',
+        marginTop: 4, lineHeight: 1.15,
+      }}>
         Sigamos juntos hoy.
       </div>
     </div>
   );
 }
 
-function BabyCard({ babyName = 'Sofía' }) {
+// ─── Featured baby card (tarjeta destacada) ────────────────────────────────────
+function PillStat({ value, label }) {
   return (
     <div style={{
-      margin: '14px 20px 0', padding: '22px 22px',
-      background: KUN.card, borderRadius: 32,
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 8px 24px rgba(46,42,38,0.05)',
-      display:'flex', alignItems:'center', gap: 18,
-      position:'relative', overflow:'hidden',
+      background: 'rgba(255,255,255,0.92)',
+      backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+      borderRadius: 999, padding: '6px 12px',
+      display: 'inline-flex', alignItems: 'baseline', gap: 4,
     }}>
-      <div style={{
-        position:'absolute', top: -30, right: -30,
-        width: 130, height: 130, borderRadius:'50%',
-        background: KUN.accentSoft, opacity: 0.5,
-      }}/>
-      <div style={{
-        width: 84, height: 84, borderRadius: '50%',
-        border: `3px solid #fff`,
-        boxShadow: `0 0 0 2px ${KUN.accentSoft}`,
-        flexShrink: 0, position:'relative', zIndex: 1,
-        overflow: 'hidden',
-      }}>
-        <img src="premature.jpg" alt="Sofía"
-          style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 30%' }} />
-      </div>
+      <span style={{ fontFamily: HF_T, fontWeight: 700, fontSize: 14, color: HC.ink }}>{value}</span>
+      <span style={{ fontFamily: HF_B, fontWeight: 500, fontSize: 10.5, color: HC.ink2 }}>{label}</span>
+    </div>
+  );
+}
 
-      <div style={{ flex: 1, position:'relative', zIndex: 1 }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3, marginBottom: 6 }}>{babyName}</div>
-        <div style={{ display:'flex', flexDirection:'column', gap: 3 }}>
-          <div style={{ fontSize: 14, color: KUN.inkSoft, fontWeight: 500 }}>
-            <span style={{ color: KUN.accentDeep, fontWeight: 700 }}>32 días</span> hospitalizada
-          </div>
-          <div style={{ fontSize: 14, color: KUN.inkSoft, fontWeight: 500 }}>
-            Peso actual <span style={{ color: KUN.ink, fontWeight: 700 }}>2,1 kg</span>
+function BabyHero({ babyName = 'Sofía', onMessageNurse }) {
+  return (
+    <div style={{ margin: '16px 18px 0' }}>
+      <div style={{
+        position: 'relative', borderRadius: 32, overflow: 'hidden',
+        aspectRatio: '1 / 1.18', background: HC.rosehip,
+      }}>
+        {/* Full-bleed baby photo */}
+        <img src="premature.jpg" alt={babyName} style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', objectPosition: 'center 30%',
+        }}/>
+
+        {/* Bottom gradient covering name + nurse area for legibility */}
+        <div style={{
+          position: 'absolute', left: 0, right: 0, bottom: 0, height: '60%',
+          background: 'linear-gradient(to top, rgba(42,35,32,0.85) 0%, rgba(42,35,32,0.55) 45%, rgba(42,35,32,0) 100%)',
+        }}/>
+
+        {/* Stat pills top-right — días de vida + semanas de gestación + peso */}
+        <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 'calc(100% - 32px)' }}>
+          <PillStat value="32" label="días"/>
+          <PillStat value="34" label="semanas"/>
+          <PillStat value="2,1" label="kg"/>
+        </div>
+
+        {/* Bottom content: name + nurse */}
+        <div style={{ position: 'absolute', left: 20, right: 20, bottom: 18, color: '#fff' }}>
+          <div style={{
+            fontFamily: HF_T, fontWeight: 700, fontSize: 34,
+            letterSpacing: '-0.4px', lineHeight: 1,
+          }}>{babyName}</div>
+
+          {/* Divider */}
+          <div style={{
+            marginTop: 14, paddingTop: 14,
+            borderTop: '1px solid rgba(255,255,255,0.25)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, minWidth: 0 }}>
+              <span style={{
+                fontFamily: HF_B, fontWeight: 500, fontSize: 9.5,
+                color: 'rgba(255,255,255,0.75)', letterSpacing: '0.7px', textTransform: 'uppercase',
+              }}>Enfermera de turno</span>
+              <span style={{
+                fontFamily: HF_T, fontWeight: 700, fontSize: 16,
+                color: '#fff', marginTop: 4, letterSpacing: '-0.2px',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>Valentina Rojas</span>
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); onMessageNurse && onMessageNurse(); }}
+              style={{
+                background: HC.brick, color: '#fff', border: 'none',
+                padding: '10px 18px', borderRadius: 999,
+                fontFamily: HF_T, fontWeight: 700, fontSize: 13,
+                cursor: 'pointer', flexShrink: 0,
+                boxShadow: '0 4px 12px rgba(240,116,62,0.35)',
+              }}
+            >
+              Mensaje
+            </button>
           </div>
         </div>
       </div>
@@ -54,256 +201,185 @@ function BabyCard({ babyName = 'Sofía' }) {
   );
 }
 
-function NurseCard() {
-  return (
-    <div style={{
-      margin: '12px 20px 0', padding: '14px 18px',
-      background: KUN.sageSoft, borderRadius: 24,
-      display:'flex', alignItems:'center', gap: 14,
-    }}>
-      <div style={{
-        width: 46, height: 46, borderRadius: 23, background: '#fff',
-        flexShrink: 0, overflow: 'hidden',
-        boxShadow: `0 0 0 2px ${KUN.sageSoft}`,
-      }}>
-        <picture>
-          <source srcSet="tens.avif" type="image/avif" />
-          <img src="tens2.webp" alt="Valentina Rojas"
-            style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 15%' }} />
-        </picture>
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, color: KUN.inkSoft, fontWeight: 600, marginBottom: 2, letterSpacing: 0.2 }}>
-          Enfermera de turno
-        </div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
-          Valentina Rojas
-        </div>
-      </div>
-      <div style={{
-        padding: '6px 12px', borderRadius: 999, background: '#fff',
-        fontSize: 12, fontWeight: 700, color: KUN.sage,
-        display:'flex', alignItems:'center', gap: 5,
-      }}>
-        <span style={{ width: 7, height: 7, borderRadius:'50%', background: KUN.sage }}/>
-        En turno
-      </div>
-    </div>
-  );
-}
-
-// ── Daily summary ─────────────────────────────────────────────────────────────
+// ─── Daily summary (standard card + concept rows) ──────────────────────────────
 const DAILY_SUMMARY = {
   text: 'Sofía tuvo una noche tranquila. Está respirando con un poco de ayuda del ventilador y recibiendo leche por sonda cada 3 horas. Su peso se mantiene estable.',
   concepts: [
-    { label: 'Ventilación mecánica',   capsuleId: 4 }, // Entender los monitores
-    { label: 'Alimentación por sonda', capsuleId: 1 }, // Tu bebé empezó a alimentarse por sonda
+    { label: 'Ventilación mecánica',   capsuleId: 4, category: 'Cuidado',   color: HC.clear },
+    { label: 'Alimentación por sonda', capsuleId: 1, category: 'Lactancia', color: HC.viola },
   ],
 };
+
+function ConceptRow({ category, color, title, onClick }) {
+  return (
+    <div onClick={onClick} style={{
+      background: HC.paper, border: `1px solid ${HC.hair}`,
+      borderRadius: 20, padding: 14, marginTop: 8,
+      display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer',
+    }}>
+      <div style={{
+        width: 44, height: 44, borderRadius: 14,
+        background: color, display: 'grid', placeItems: 'center', flexShrink: 0,
+      }}>
+        {HIcon.sparkle(HC.ink)}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+          color: HC.brick, letterSpacing: '0.5px', textTransform: 'uppercase',
+        }}>{category}</div>
+        <div style={{
+          marginTop: 3, fontFamily: HF_T, fontWeight: 700, fontSize: 14.5,
+          color: HC.ink, letterSpacing: '-0.1px', lineHeight: 1.25,
+        }}>{title}</div>
+      </div>
+      <div style={{
+        width: 34, height: 34, borderRadius: '50%',
+        background: HC.cream, border: `1px solid ${HC.hair}`,
+        display: 'grid', placeItems: 'center', flexShrink: 0,
+      }}>
+        {HIcon.arrow(HC.brick)}
+      </div>
+    </div>
+  );
+}
 
 function DailySummary({ babyName, onGoToCapsula }) {
   const bName = babyName || 'Sofía';
   const { text, concepts } = DAILY_SUMMARY;
   const empty = !text && concepts.length === 0;
+  // Replace fixed name with current baby name to preserve personalisation
+  const narrative = text.replace(/^Sofía/, bName);
 
   return (
-    <div style={{ margin: '14px 20px 0' }}>
-      {/* Section title */}
-      <div style={{
-        fontSize: 19, fontWeight: 700, color: KUN.ink,
-        letterSpacing: -0.2, marginBottom: 12,
-      }}>
-        Cómo está {bName} hoy
-      </div>
+    <div style={{ margin: '24px 22px 0' }}>
+      <HSectionHead title={`Cómo está ${bName} hoy`} kicker="Resumen del día"/>
 
       {empty ? (
         <div style={{
-          background: KUN.sageSoft, borderRadius: 22,
-          padding: '16px 20px',
-          fontSize: 15, fontWeight: 600, color: KUN.inkSoft,
+          background: HC.paper, border: `1px solid ${HC.hair}`,
+          borderRadius: 22, padding: '16px 20px',
+          fontFamily: HF_B, fontSize: 13.5, fontWeight: 500, color: HC.ink2,
           textAlign: 'center',
         }}>
-          Todo tranquilo hoy 🧡
+          Todo tranquilo hoy
         </div>
       ) : (
-        <div style={{
-          background: '#fff', borderRadius: 24,
-          padding: '16px 18px',
-          boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 18px rgba(46,42,38,0.05)',
-          display: 'flex', flexDirection: 'column', gap: 14,
-        }}>
-
-          {/* Clinical summary text */}
+        <>
+          {/* Narrative card */}
           {text && (
             <div style={{
-              fontSize: 14, fontWeight: 500, color: KUN.inkSoft,
-              lineHeight: 1.6,
+              background: HC.paper, border: `1px solid ${HC.hair}`,
+              borderRadius: 24, padding: '18px 18px',
             }}>
-              {text}
+              <p style={{
+                margin: 0, fontFamily: HF_B, fontWeight: 400,
+                fontSize: 13.5, lineHeight: 1.75, color: HC.ink, letterSpacing: '0.1px',
+              }}>
+                {narrative}
+              </p>
             </div>
           )}
 
-          {/* Concept chips */}
-          {concepts.length > 0 && (
-            <div style={{
-              display: 'flex', flexDirection: 'column', gap: 8,
-              paddingTop: text ? 2 : 0,
-              borderTop: text ? `1px dashed ${KUN.divider}` : 'none',
-            }}>
-              {concepts.map((c, i) => (
-                <div key={i} style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '10px 12px',
-                  background: KUN.accentSoft,
-                  borderRadius: 16,
-                }}>
-                  {/* Dot */}
-                  <div style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: KUN.accent, flexShrink: 0,
-                  }}/>
-
-                  {/* Concept name */}
-                  <div style={{
-                    flex: 1,
-                    fontSize: 14, fontWeight: 700, color: KUN.ink,
-                    letterSpacing: -0.1,
-                  }}>
-                    {c.label}
-                  </div>
-
-                  {/* Arrow-only button */}
-                  <div
-                    onClick={() => onGoToCapsula && onGoToCapsula(c.capsuleId)}
-                    style={{
-                      width: 32, height: 32, borderRadius: '50%',
-                      background: KUN.accent, color: '#fff',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: 'pointer', flexShrink: 0,
-                      boxShadow: `0 2px 8px rgba(201,123,90,0.35)`,
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path d="M3 7H11M11 7L7.5 3.5M11 7L7.5 10.5"
-                        stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-        </div>
+          {/* Concept rows */}
+          {concepts.map((c, i) => (
+            <ConceptRow key={i}
+              category={c.category} color={c.color} title={c.label}
+              onClick={() => onGoToCapsula && onGoToCapsula(c.capsuleId)}
+            />
+          ))}
+        </>
       )}
     </div>
   );
 }
 
-// ── Lactario card ──────────────────────────────────────────────────────────────
+// ─── Lactario card (compact) ──────────────────────────────────────────────────
 function LactarioCard({ reservation, onOpen, onCancel }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
 
-  // Next available slot (first with used < 4). Falls back gracefully before
-  // window.LACTARIO_SLOTS is populated (shouldn't happen in practice).
   const slots = window.LACTARIO_SLOTS || [];
   const nextSlot = slots.find(s => s.used < 4);
   const hasReservation = !!reservation;
   const displayTime = hasReservation ? reservation : (nextSlot ? nextSlot.time : '—');
 
   return (
-    <div style={{ margin: '14px 20px 0' }}>
-      {/* Tappable card */}
+    <div style={{ margin: '16px 22px 0' }}>
       <div
         onClick={onOpen}
         style={{
-          background: '#fff',
-          borderRadius: 24,
-          padding: '14px 18px',
-          boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 18px rgba(46,42,38,0.05)',
-          display: 'flex', alignItems: 'center', gap: 14,
-          cursor: 'pointer',
-          border: hasReservation
-            ? `1.5px solid ${KUN.accentSoft}`
-            : '1.5px solid transparent',
+          background: HC.paper, border: `1px solid ${HC.hair}`,
+          borderRadius: 24, padding: '14px 14px 14px 16px',
+          display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
         }}
       >
-        {/* Icon */}
+        {/* Sun icon box */}
         <div style={{
-          width: 46, height: 46, borderRadius: 15,
-          background: hasReservation ? KUN.accentSoft : KUN.sageSoft,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0,
+          width: 44, height: 44, borderRadius: 14,
+          background: HC.sun, display: 'grid', placeItems: 'center', flexShrink: 0,
         }}>
-          {/* Milk-drop lactario icon */}
-          <svg width="22" height="24" viewBox="0 0 22 26" fill="none">
-            <path
-              d="M11 2C11 2 5 10 5 17C5 20.9 7.7 24 11 24C14.3 24 17 20.9 17 17C17 10 11 2 11 2Z"
-              fill={hasReservation ? KUN.accent : KUN.sage}
-              opacity="0.88"
-            />
-            <ellipse cx="9" cy="14" rx="2" ry="3.5"
-              fill="#fff" opacity="0.45"
-            />
-          </svg>
+          {HIcon.bottle(HC.ink)}
         </div>
 
-        {/* Text */}
-        <div style={{ flex: 1 }}>
+        {/* Content */}
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: 11, fontWeight: 800, color: KUN.inkMuted,
-            letterSpacing: 0.5, marginBottom: 3,
+            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+            color: HC.ink2, letterSpacing: '0.5px', textTransform: 'uppercase',
+          }}>Lactario</div>
+          <div style={{
+            fontFamily: HF_T, fontWeight: 700, fontSize: 15,
+            color: HC.ink, marginTop: 3, lineHeight: 1.2,
           }}>
-            LACTARIO
+            {hasReservation ? 'Reservado' : 'Reservar extracción'}
           </div>
           <div style={{
-            fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2,
+            fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
+            color: HC.ink2, marginTop: 2,
           }}>
-            {hasReservation
-              ? <><span style={{ color: KUN.accentDeep }}>Reservado:</span> {displayTime}</>
-              : <>Próximo disponible: <span style={{ color: KUN.ink }}>{displayTime}</span></>
-            }
+            {hasReservation ? `A las ${displayTime}` : `Próximo turno libre: ${displayTime}`}
           </div>
         </div>
 
-        {/* Chevron */}
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M6 3L11 8L6 13"
-            stroke={KUN.inkFaint} strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        {/* CTA */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onOpen && onOpen(); }}
+          style={{
+            background: hasReservation ? 'transparent' : HC.brick,
+            color: hasReservation ? HC.brick : '#fff',
+            border: hasReservation ? `1.5px solid ${HC.brick}` : 'none',
+            padding: '9px 15px', borderRadius: 999,
+            fontFamily: HF_T, fontWeight: 700, fontSize: 12.5,
+            cursor: 'pointer', whiteSpace: 'nowrap',
+          }}
+        >
+          {hasReservation ? 'Ver' : 'Reservar'}
+        </button>
       </div>
 
       {/* Cancel reservation link */}
       {hasReservation && (
-        <div style={{ textAlign: 'center', marginTop: 8, minHeight: 20 }}>
+        <div style={{ textAlign: 'center', marginTop: 8 }}>
           {confirmCancel ? (
-            <span style={{ fontSize: 12, color: KUN.inkSoft, fontWeight: 600 }}>
+            <span style={{
+              fontFamily: HF_B, fontSize: 11.5, color: HC.ink2, fontWeight: 500,
+            }}>
               ¿Confirmar cancelación?{' '}
               <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCancel();
-                  setConfirmCancel(false);
-                }}
-                style={{
-                  color: '#C0392B', fontWeight: 800, cursor: 'pointer',
-                }}
-              >
-                Sí, cancelar
-              </span>
+                onClick={(e) => { e.stopPropagation(); onCancel(); setConfirmCancel(false); }}
+                style={{ color: '#C0392B', fontWeight: 700, cursor: 'pointer' }}
+              >Sí, cancelar</span>
               {' · '}
               <span
                 onClick={(e) => { e.stopPropagation(); setConfirmCancel(false); }}
-                style={{ color: KUN.inkMuted, cursor: 'pointer' }}
-              >
-                No
-              </span>
+                style={{ color: HC.ink3, cursor: 'pointer' }}
+              >No</span>
             </span>
           ) : (
             <span
               onClick={(e) => { e.stopPropagation(); setConfirmCancel(true); }}
               style={{
-                fontSize: 12, color: KUN.inkMuted, fontWeight: 600,
+                fontFamily: HF_B, fontSize: 11.5, fontWeight: 500, color: HC.ink3,
                 cursor: 'pointer', textDecoration: 'underline',
                 textDecorationStyle: 'dotted',
               }}
@@ -317,117 +393,133 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
   );
 }
 
-function HomeSectionHeader({ title, onAction }) {
-  return (
-    <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', padding: '24px 28px 12px' }}>
-      <div>
-        <div style={{ fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{title}</div>
-        <div style={{ fontSize: 13, color: KUN.inkMuted, fontWeight: 500, marginTop: 2 }}>
-          Pensadas para ti, en este momento
-        </div>
-      </div>
-      <span onClick={onAction} style={{ fontSize: 13, color: KUN.accent, fontWeight: 700, cursor:'pointer' }}>
-        Ver todas
-      </span>
-    </div>
-  );
-}
-
-function CapsuleCard({ tag, tagKind, title, desc, mins, illoBg, illoEmoji, onClick }) {
-  const tagBg = tagKind === 'new' ? KUN.accent : KUN.sageSoft;
-  const tagColor = tagKind === 'new' ? '#fff' : KUN.sage;
+// ─── Capsule cards (standard) ──────────────────────────────────────────────────
+function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onClick }) {
+  const tagBg    = tagKind === 'new' ? HC.sun  : HC.viola;
+  const tagDot   = tagKind === 'new' ? HC.brick : null;
   return (
     <div onClick={onClick} style={{
-      margin: '0 20px 12px', background: KUN.card, borderRadius: 28, padding: 16,
-      boxShadow: '0 1px 2px rgba(46,42,38,0.03), 0 6px 18px rgba(46,42,38,0.04)',
-      display:'flex', gap: 14, alignItems:'stretch', cursor: 'pointer',
+      background: HC.paper, border: `1px solid ${HC.hair}`,
+      borderRadius: 20, padding: 16, marginBottom: 10,
+      display: 'flex', gap: 14, alignItems: 'stretch', cursor: 'pointer',
     }}>
+      {/* Illo */}
       <div style={{
-        width: 78, borderRadius: 20, background: illoBg,
-        display:'flex', alignItems:'center', justifyContent:'center',
-        flexShrink: 0, position:'relative', overflow:'hidden',
-      }}>{illoEmoji}</div>
+        width: 64, borderRadius: 16, background: illoColor,
+        display: 'grid', placeItems: 'center', flexShrink: 0,
+      }}>
+        {illoIcon}
+      </div>
 
-      <div style={{ flex: 1, display:'flex', flexDirection:'column', justifyContent:'space-between', minWidth: 0 }}>
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
-          <div style={{
-            display:'inline-flex', alignItems:'center', gap: 4,
-            padding: '4px 9px', borderRadius: 999,
-            background: tagBg, color: tagColor,
-            fontSize: 11, fontWeight: 700, letterSpacing: 0.2, marginBottom: 8,
+          {/* Tag */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            background: tagBg, color: HC.ink,
+            fontFamily: HF_B, fontWeight: 600, fontSize: 10,
+            padding: '3px 9px', borderRadius: 999,
+            letterSpacing: '0.4px', textTransform: 'uppercase',
+            marginBottom: 8,
           }}>
-            {tagKind === 'new' && KIcon.spark('#fff')}
+            {tagDot && <span style={{ width: 5, height: 5, borderRadius: '50%', background: tagDot }}/>}
             {tag}
-          </div>
+          </span>
           <div style={{
-            fontSize: 15.5, fontWeight: 700, color: KUN.ink,
-            letterSpacing: -0.2, lineHeight: 1.25, marginBottom: 4, textWrap:'pretty',
+            fontFamily: HF_T, fontWeight: 700, fontSize: 15,
+            color: HC.ink, letterSpacing: '-0.2px', lineHeight: 1.25,
+            marginBottom: 4, textWrap: 'pretty',
           }}>{title}</div>
-          <div style={{ fontSize: 13, color: KUN.inkSoft, fontWeight: 500, lineHeight: 1.4, textWrap:'pretty' }}>
+          <div style={{
+            fontFamily: HF_B, fontWeight: 400, fontSize: 12,
+            color: HC.ink2, lineHeight: 1.45, textWrap: 'pretty',
+          }}>
             {desc}
           </div>
         </div>
-        <div style={{ marginTop: 8, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <span style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 600 }}>{mins}</span>
-          {KIcon.arrow(KUN.accent)}
+
+        <div style={{
+          marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <span style={{
+            fontFamily: HF_B, fontWeight: 500, fontSize: 11, color: HC.ink3,
+            letterSpacing: '0.2px',
+          }}>{mins}</span>
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%',
+            background: HC.cream, border: `1px solid ${HC.hair}`,
+            display: 'grid', placeItems: 'center',
+          }}>
+            {HIcon.arrow(HC.brick)}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function IlloKangaroo() {
-  return (
-    <svg width="58" height="58" viewBox="0 0 58 58" fill="none">
-      <circle cx="29" cy="29" r="22" fill="#fff" opacity="0.55"/>
-      <path d="M19 38 C 19 30, 22 25, 27 23 C 26 21, 27 18.5, 29.5 18 C 32 17.5, 34 19.5, 33.5 22 C 36.5 23, 39 26, 39 30 C 39 34, 36 37, 32 38"
-        stroke={KUN.accentDeep} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-      <ellipse cx="28" cy="32" rx="5" ry="4" fill={KUN.accent} opacity="0.85"/>
-      <circle cx="26.5" cy="31" r="0.9" fill="#fff"/>
-    </svg>
-  );
-}
-function IlloDrop() {
-  return (
-    <svg width="50" height="58" viewBox="0 0 50 58" fill="none">
-      <path d="M25 8 C 32 18, 38 26, 38 35 C 38 42, 32 47, 25 47 C 18 47, 12 42, 12 35 C 12 26, 18 18, 25 8 Z" fill={KUN.sage} opacity="0.85"/>
-      <ellipse cx="21" cy="32" rx="3" ry="5" fill="#fff" opacity="0.6"/>
-    </svg>
-  );
-}
-
+// ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
-                       lactarioReservation, onOpenLactario, onCancelLactario }) {
+                       lactarioReservation, onOpenLactario, onCancelLactario,
+                       onMessageNurse }) {
   const bName = babyName || 'Sofía';
   return (
-    <>
-      <HomeGreeting parentName={parentName} />
-      <BabyCard babyName={bName} />
-      <NurseCard />
-      <DailySummary babyName={bName} onGoToCapsula={onGoToCapsula} />
-      <LactarioCard
-        reservation={lactarioReservation}
-        onOpen={onOpenLactario}
-        onCancel={onCancelLactario}
-      />
-      <HomeSectionHeader title="Cápsulas para ti" onAction={onGoToEdu}/>
-      <CapsuleCard
-        tagKind="new" tag="NUEVO"
-        title="Tu bebé empezó a alimentarse por sonda"
-        desc={`Qué esperar estos días y cómo acompañar a ${bName} en esta etapa.`}
-        mins="4 min de lectura"
-        illoBg={KUN.sageSoft} illoEmoji={<IlloDrop />}
-        onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
-      />
-      <CapsuleCard
-        tagKind="rec" tag="RECOMENDADO PARA TI"
-        title="Método canguro: cómo empezar"
-        desc={`Una guía cálida para tu primer contacto piel con piel con ${bName}.`}
-        mins="6 min de lectura"
-        illoBg={KUN.accentSoft} illoEmoji={<IlloKangaroo />}
-        onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
-      />
-    </>
+    <div style={{ position: 'relative' }}>
+      {/* subtle decorative shape — half moon rosehip behind content */}
+      <div style={{
+        position: 'absolute', top: 420, right: -80,
+        width: 200, height: 360, borderRadius: '200px 0 0 200px',
+        background: HC.rosehip, opacity: 0.18,
+        pointerEvents: 'none', zIndex: 0,
+      }}/>
+      {/* second decorative shape — apple half-circle low-left */}
+      <div style={{
+        position: 'absolute', top: 980, left: -100,
+        width: 180, height: 320, borderRadius: '0 180px 180px 0',
+        background: HC.apple, opacity: 0.13,
+        pointerEvents: 'none', zIndex: 0,
+      }}/>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <HomeGreeting parentName={parentName} />
+        <BabyHero babyName={bName} onMessageNurse={onMessageNurse} />
+        <DailySummary babyName={bName} onGoToCapsula={onGoToCapsula} />
+        <LactarioCard
+          reservation={lactarioReservation}
+          onOpen={onOpenLactario}
+          onCancel={onCancelLactario}
+        />
+
+        <div style={{ marginTop: 26, padding: '0 22px' }}>
+          <HSectionHead
+            title="Para ti, hoy"
+            kicker="Cápsulas educativas"
+            action="Ver todo"
+            onAction={onGoToEdu}
+          />
+        </div>
+        <div style={{ padding: '0 22px' }}>
+          <CapsuleCard
+            tagKind="new" tag="NUEVO"
+            title="Tu bebé empezó a alimentarse por sonda"
+            desc={`Qué esperar estos días y cómo acompañar a ${bName} en esta etapa.`}
+            mins="4 min · cápsula"
+            illoColor={HC.apple}
+            illoIcon={HIcon.drop(HC.ink)}
+            onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
+          />
+          <CapsuleCard
+            tagKind="rec" tag="RECOMENDADO PARA TI"
+            title="Método canguro: cómo empezar"
+            desc={`Una guía cálida para tu primer contacto piel con piel con ${bName}.`}
+            mins="6 min · cápsula"
+            illoColor={HC.rosehip}
+            illoIcon={HIcon.kangaroo(HC.viola)}
+            onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 

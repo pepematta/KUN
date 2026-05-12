@@ -10,7 +10,7 @@
 <title>KUN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&family=Quicksand:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
     margin: 0; padding: 0;
@@ -52,7 +52,7 @@
 <script type="text/babel" src="screen-auth.jsx?v=5"></script>
 <script type="text/babel" src="screen-tour.jsx?v=2"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=4"></script>
-<script type="text/babel" src="screen-home.jsx?v=8"></script>
+<script type="text/babel" src="screen-home.jsx?v=11"></script>
 <script type="text/babel" src="edu-camino.jsx?v=5"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=5"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=5"></script>
@@ -448,6 +448,7 @@ function Prototype() {
       lactarioReservation={lactarioReservation}
       onOpenLactario={() => setLactarioOpen(true)}
       onCancelLactario={() => setLactarioReservation(null)}
+      onMessageNurse={() => setTab('comm')}
     />;
   } else if (tab === 'edu') {
     hasSubtabs = true;
