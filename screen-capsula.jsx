@@ -877,7 +877,8 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
   const [quizAnswer, setQuizAnswer] = React.useState(quizResult?.selectedIndex ?? null);
   const [quizCelebrating, setQuizCelebrating] = React.useState(false);
 
-  // Reset state when capsuleId changes
+  // Reset state only when capsuleId changes (not when quiz result prop updates —
+  // that would re-trigger on every answer selection and jump back to page 1).
   React.useEffect(() => {
     setIdx(0);
     setQuestion('');
@@ -885,7 +886,7 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
     setCelebrating(false);
     setQuizAnswer(quizResult?.selectedIndex ?? null);
     setQuizCelebrating(false);
-  }, [capsuleId, quizResult?.selectedIndex]);
+  }, [capsuleId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const capsule = CAP_LIBRARY[capsuleId] || CAP_LIBRARY[1];
   const quiz = CAP_QUIZZES[capsuleId] || CAP_QUIZZES[1];
