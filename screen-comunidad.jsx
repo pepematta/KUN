@@ -69,6 +69,13 @@ const COM_ICONS = {
       <path d="M21 5C21 4.4 20.6 4 20 4H14V21H20C20.6 21 21 20.6 21 20V5Z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
     </svg>
   ),
+  dots: (c) => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="4" r="1.5" fill={c}/>
+      <circle cx="10" cy="10" r="1.5" fill={c}/>
+      <circle cx="10" cy="16" r="1.5" fill={c}/>
+    </svg>
+  ),
 };
 
 // ── Avatar reutilizable ─────────────────────────────────
@@ -527,6 +534,175 @@ function ChatThread({ profId, onBack }) {
 // ║                    COMUNIDAD                          ║
 // ╚══════════════════════════════════════════════════════╝
 
+// ╔══════════════════════════════════════════════════════╗
+// ║                    COMUNIDAD                          ║
+// ╚══════════════════════════════════════════════════════╝
+
+// ── Menú de acciones (3 puntos) ─────────────────────────
+function PostActionsMenu({ isOwn, onReport, onEdit, onDelete }) {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div onClick={() => setOpen(!open)} style={{
+        cursor: 'pointer', padding: '6px 4px',
+      }}>{COM_ICONS.dots(KUN.inkMuted)}</div>
+
+      {open && (
+        <div style={{
+          position: 'absolute', top: 32, right: 0, zIndex: 100,
+          background: '#fff', borderRadius: 12, border: `1px solid ${KUN.hair}`,
+          boxShadow: '0 4px 12px rgba(42,35,32,0.12)',
+          minWidth: 160,
+          overflow: 'hidden',
+        }}>
+          {isOwn ? (
+            <>
+              <div onClick={() => { onEdit && onEdit(); setOpen(false); }} style={{
+                padding: '12px 16px', cursor: 'pointer',
+                fontFamily: COM_FB, fontSize: 14, fontWeight: 500, color: KUN.ink,
+                borderBottom: `1px solid ${KUN.hair}`,
+                transition: 'background .2s',
+              }} onMouseEnter={e => e.target.style.background = KUN.cardSoft} onMouseLeave={e => e.target.style.background = '#fff'}>
+                Editar
+              </div>
+              <div onClick={() => { onDelete && onDelete(); setOpen(false); }} style={{
+                padding: '12px 16px', cursor: 'pointer',
+                fontFamily: COM_FB, fontSize: 14, fontWeight: 500, color: '#D94F3D',
+              }} onMouseEnter={e => e.target.style.background = KUN.cardSoft} onMouseLeave={e => e.target.style.background = '#fff'}>
+                Eliminar
+              </div>
+            </>
+          ) : (
+            <div onClick={() => { onReport && onReport(); setOpen(false); }} style={{
+              padding: '12px 16px', cursor: 'pointer',
+              fontFamily: COM_FB, fontSize: 14, fontWeight: 500, color: '#D94F3D',
+            }} onMouseEnter={e => e.target.style.background = KUN.cardSoft} onMouseLeave={e => e.target.style.background = '#fff'}>
+              Reportar
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Modal de reporte ────────────────────────────────────
+function ReportPostModal({ onClose, onSubmit }) {
+  const [reason, setReason] = React.useState('');
+  const [submitted, setSubmitted] = React.useState(false);
+
+  const reasons = [
+    { value: 'inappropriate', label: 'Contenido inapropiado' },
+    { value: 'spam', label: 'Spam' },
+    { value: 'harassment', label: 'Acoso' },
+    { value: 'misinformation', label: 'Desinformación' },
+    { value: 'other', label: 'Otro' },
+  ];
+
+  const handleSubmit = () => {
+    if (!reason) return;
+    onSubmit && onSubmit(reason);
+    setSubmitted(true);
+    setTimeout(onClose, 1800);
+  };
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 200,
+      background: 'rgba(42,35,32,0.4)',
+      display: 'flex', alignItems: 'flex-end',
+    }}>
+      <div style={{
+        width: '100%', background: KUN.bg,
+        borderTopLeftRadius: 28, borderTopRightRadius: 28,
+        padding: '14px 20px 28px',
+        maxHeight: '88%', display: 'flex', flexDirection: 'column',
+      }}>
+        <div style={{
+          width: 44, height: 5, borderRadius: 3, background: KUN.inkFaint,
+          margin: '0 auto 14px',
+        }} />
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          marginBottom: 14,
+        }}>
+          <div style={{ fontFamily: COM_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>
+            Reportar publicación
+          </div>
+          <span onClick={onClose} style={{
+            fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.brick, cursor: 'pointer',
+          }}>Cancelar</span>
+        </div>
+
+        {submitted ? (
+          <div style={{
+            flex: 1, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: 12,
+          }}>
+            <div style={{ fontSize: 48 }}>✓</div>
+            <div style={{ fontFamily: COM_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, textAlign: 'center' }}>
+              Reporte enviado
+            </div>
+            <div style={{
+              fontFamily: COM_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400,
+              textAlign: 'center', lineHeight: 1.5, maxWidth: 280,
+            }}>
+              Gracias por ayudarnos. Tu reporte será revisado por nuestro equipo.
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={{
+              flex: 1, overflow: 'auto', marginBottom: 16,
+            }}>
+              <div style={{
+                fontFamily: COM_FB, fontSize: 12.5, color: KUN.inkMuted, fontWeight: 500,
+                marginBottom: 12, letterSpacing: 0.3, textTransform: 'uppercase',
+              }}>
+                ¿Por qué reportas?
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {reasons.map(r => (
+                  <div key={r.value} onClick={() => setReason(r.value)} style={{
+                    background: reason === r.value ? KUN.accentSoft : '#fff',
+                    border: `1.5px solid ${reason === r.value ? KUN.brick : KUN.hair}`,
+                    borderRadius: 14, padding: '14px 16px',
+                    cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    transition: 'all .2s',
+                  }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: 6,
+                      border: `1.5px solid ${reason === r.value ? KUN.brick : KUN.hair}`,
+                      background: reason === r.value ? KUN.brick : '#fff',
+                    }} />
+                    <span style={{
+                      fontFamily: COM_FB, fontSize: 14, fontWeight: 500,
+                      color: reason === r.value ? KUN.ink : KUN.inkSoft,
+                    }}>
+                      {r.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button onClick={handleSubmit} style={{
+              width: '100%', padding: '14px 18px', height: 50, borderRadius: 999, border: 'none',
+              background: reason ? KUN.brick : 'rgba(42,35,32,0.08)',
+              color: reason ? '#fff' : KUN.inkMuted,
+              fontFamily: COM_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
+              cursor: reason ? 'pointer' : 'default',
+              transition: 'all .2s',
+            }}>Enviar reporte</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CommunityInnerTabs({ active, onChange }) {
   const tabs = [
     { id: 'questions',   label: 'Preguntas' },
@@ -620,7 +796,7 @@ const QUESTIONS = [
   },
 ];
 
-function QuestionCard({ q, onOpen }) {
+function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete }) {
   return (
     <div onClick={() => onOpen(q.id)} style={{
       background: '#fff', borderRadius: 24, padding: 18,
@@ -628,22 +804,33 @@ function QuestionCard({ q, onOpen }) {
       border: q.fresh ? `2px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
       boxShadow: q.fresh ? '0 8px 18px rgba(240,116,62,0.16)' : 'none',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-        <ComAvatar name={q.author} color={q.authorColor} size={40} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
-          }}>{q.author}</div>
-          <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
-            {q.role} · {q.time}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+          <ComAvatar name={q.author} color={q.authorColor} size={40} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
+            }}>{q.author}</div>
+            <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
+              {q.role} · {q.time}
+            </div>
           </div>
         </div>
-        <span style={{
-          padding: '5px 11px', borderRadius: 999,
-          background: KUN.sun, color: KUN.ink,
-          fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
-          flexShrink: 0,
-        }}>PREGUNTA</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <span style={{
+            padding: '5px 11px', borderRadius: 999,
+            background: KUN.sun, color: KUN.ink,
+            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
+          }}>PREGUNTA</span>
+          <div onClick={e => e.stopPropagation()}>
+            <PostActionsMenu
+              isOwn={q.author === currentUser}
+              onReport={() => onReport && onReport(q.id)}
+              onEdit={() => onEdit && onEdit(q.id)}
+              onDelete={() => onDelete && onDelete(q.id)}
+            />
+          </div>
+        </div>
       </div>
 
       <div style={{
@@ -855,29 +1042,40 @@ const EXPERIENCES = [
   },
 ];
 
-function ExperienceCard({ e }) {
+function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete }) {
   const [expanded, setExpanded] = React.useState(false);
   return (
     <div style={{
       background: '#fff', borderRadius: 24, padding: 18, marginBottom: 12,
       border: `1px solid ${KUN.hair}`,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-        <ComAvatar name={e.author} color={e.color} size={40} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
-            {e.author}
-          </div>
-          <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
-            {e.role} · {e.time}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+          <ComAvatar name={e.author} color={e.color} size={40} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
+              {e.author}
+            </div>
+            <div style={{ fontFamily: COM_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>
+              {e.role} · {e.time}
+            </div>
           </div>
         </div>
-        <span style={{
-          padding: '5px 11px', borderRadius: 999,
-          background: KUN.apple, color: KUN.ink,
-          fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
-          flexShrink: 0,
-        }}>EXPERIENCIA</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <span style={{
+            padding: '5px 11px', borderRadius: 999,
+            background: KUN.apple, color: KUN.ink,
+            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
+          }}>EXPERIENCIA</span>
+          <div onClick={e => e.stopPropagation()}>
+            <PostActionsMenu
+              isOwn={e.author === currentUser}
+              onReport={() => onReport && onReport(e.id)}
+              onEdit={() => onEdit && onEdit(e.id)}
+              onDelete={() => onDelete && onDelete(e.id)}
+            />
+          </div>
+        </div>
       </div>
 
       <div style={{
@@ -900,18 +1098,37 @@ function ExperienceCard({ e }) {
   );
 }
 
-function QuestionsFeed({ onOpen, questions }) {
+function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDelete }) {
   return (
     <div style={{ padding: '0 20px' }}>
-      {(questions || QUESTIONS).map(q => <QuestionCard key={q.id} q={q} onOpen={onOpen} />)}
+      {(questions || QUESTIONS).map(q => (
+        <QuestionCard
+          key={q.id}
+          q={q}
+          onOpen={onOpen}
+          currentUser={currentUser}
+          onReport={onReport}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      ))}
     </div>
   );
 }
 
-function ExperiencesFeed() {
+function ExperiencesFeed({ currentUser, onReport, onEdit, onDelete }) {
   return (
     <div style={{ padding: '0 20px' }}>
-      {EXPERIENCES.map(e => <ExperienceCard key={e.id} e={e} />)}
+      {EXPERIENCES.map(e => (
+        <ExperienceCard
+          key={e.id}
+          e={e}
+          currentUser={currentUser}
+          onReport={onReport}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      ))}
     </div>
   );
 }
@@ -1060,7 +1277,7 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   );
 }
 
-function CommunityView({ onNew, questions, focusQuestionId }) {
+function CommunityView({ onNew, questions, focusQuestionId, currentUser, onReport, onEdit, onDelete }) {
   const [sub, setSub] = React.useState('questions');
   const [openQ, setOpenQ] = React.useState(null);
 
@@ -1078,8 +1295,8 @@ function CommunityView({ onNew, questions, focusQuestionId }) {
       <div style={{ paddingBottom: 100 }}>
         <CommunityInnerTabs active={sub} onChange={setSub} />
         {sub === 'questions'
-          ? <QuestionsFeed onOpen={setOpenQ} questions={questions} />
-          : <ExperiencesFeed />}
+          ? <QuestionsFeed onOpen={setOpenQ} questions={questions} currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} />
+          : <ExperiencesFeed currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} />}
       </div>
 
       {/* FAB nueva publicación */}
@@ -1101,18 +1318,28 @@ function CommunityView({ onNew, questions, focusQuestionId }) {
 // ║                  PUBLIC ENTRY                         ║
 // ╚══════════════════════════════════════════════════════╝
 
-function ScreenComunidad({ initialTab = 'chat', focusQuestionId = null, questions = [] }) {
+function ScreenComunidad({ initialTab = 'chat', focusQuestionId = null, questions = [], currentUser = '' }) {
   const mergedQuestions = [...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id))];
-  const [tab, setTab] = React.useState(initialTab); // chat | community
-  const [chatView, setChatView] = React.useState('list'); // list | new | thread
+  const [tab, setTab] = React.useState(initialTab);
+  const [chatView, setChatView] = React.useState('list');
   const [activeChat, setActiveChat] = React.useState(null);
-  const [newPost, setNewPost] = React.useState(null); // null | 'question' | 'experience'
+  const [newPost, setNewPost] = React.useState(null);
+  const [reportingPostId, setReportingPostId] = React.useState(null);
 
   React.useEffect(() => {
     setTab(initialTab);
     setChatView('list');
     setActiveChat(null);
   }, [initialTab, focusQuestionId]);
+
+  const handleReport = (postId) => {
+    setReportingPostId(postId);
+  };
+
+  const handleReportSubmit = (reason) => {
+    console.log(`Post ${reportingPostId} reportado por: ${reason}`);
+    setReportingPostId(null);
+  };
 
   return (
     <>
@@ -1149,6 +1376,10 @@ function ScreenComunidad({ initialTab = 'chat', focusQuestionId = null, question
         <CommunityView
           questions={mergedQuestions}
           focusQuestionId={focusQuestionId}
+          currentUser={currentUser}
+          onReport={handleReport}
+          onEdit={() => {}}
+          onDelete={() => {}}
           onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')}
         />
       )}
@@ -1157,6 +1388,13 @@ function ScreenComunidad({ initialTab = 'chat', focusQuestionId = null, question
         <NewPostSheet
           defaultKind={newPost}
           onClose={() => setNewPost(null)}
+        />
+      )}
+
+      {reportingPostId && (
+        <ReportPostModal
+          onClose={() => setReportingPostId(null)}
+          onSubmit={handleReportSubmit}
         />
       )}
     </>
