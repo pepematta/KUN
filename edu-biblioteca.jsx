@@ -4,8 +4,9 @@
 const B_FT = 'Quicksand, sans-serif';
 const B_FB = 'Poppins, sans-serif';
 
-// Catálogo compartido de las 10 cápsulas
-const CAPSULAS = [
+// Catálogo compartido de las cápsulas. El personal de salud puede reemplazarlo
+// desde el editor clínico guardado en localStorage.
+const DEFAULT_CAPSULAS = [
   { id: 1,  title: 'Tu bebé empezó a alimentarse por sonda', dur: '4 min',  topic: 'Alimentación por sonda' },
   { id: 2,  title: 'Método canguro: cómo empezar',           dur: '6 min',  topic: 'Método canguro' },
   { id: 3,  title: 'Cómo se ve tu bebé hoy',                 dur: '3 min',  topic: 'Prematuridad' },
@@ -17,6 +18,17 @@ const CAPSULAS = [
   { id: 9,  title: 'Qué es la ECMO',                          dur: '4 min',  topic: 'ECMO' },
   { id: 10, title: 'Cuidados al alta',                        dur: '6 min',  topic: 'Alta y hogar' },
 ];
+
+const CAPSULAS = (() => {
+  try {
+    const stored = JSON.parse(localStorage.getItem('kun_staff_capsules_v1') || 'null');
+    return Array.isArray(stored) && stored.length
+      ? stored.map(c => ({ id: c.id, title: c.title, dur: c.dur || '4 min', topic: c.topic || 'Prematuridad' }))
+      : DEFAULT_CAPSULAS;
+  } catch {
+    return DEFAULT_CAPSULAS;
+  }
+})();
 
 window.CAPSULAS = CAPSULAS;
 

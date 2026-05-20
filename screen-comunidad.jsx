@@ -1,4 +1,4 @@
-// Comunidad section — Chat (privado con profesionales) y Comunidad (preguntas + experiencias entre padres).
+// Comunidad section — foro de preguntas + experiencias entre familias.
 // Exposes: ScreenComunidad()
 
 const COM_ICONS = {
@@ -539,7 +539,7 @@ function ChatThread({ profId, onBack }) {
 // ╚══════════════════════════════════════════════════════╝
 
 // ── Menú de acciones (3 puntos) ─────────────────────────
-function PostActionsMenu({ isOwn, onReport, onEdit, onDelete }) {
+function PostActionsMenu({ isOwn, onReport, onEdit, onDelete, moderationMode }) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -556,7 +556,14 @@ function PostActionsMenu({ isOwn, onReport, onEdit, onDelete }) {
           minWidth: 160,
           overflow: 'hidden',
         }}>
-          {isOwn ? (
+          {moderationMode ? (
+            <div onClick={() => { onDelete && onDelete(); setOpen(false); }} style={{
+              padding: '12px 16px', cursor: 'pointer',
+              fontFamily: COM_FB, fontSize: 14, fontWeight: 500, color: '#D94F3D',
+            }} onMouseEnter={e => e.target.style.background = KUN.cardSoft} onMouseLeave={e => e.target.style.background = '#fff'}>
+              Dar de baja
+            </div>
+          ) : isOwn ? (
             <>
               <div onClick={() => { onEdit && onEdit(); setOpen(false); }} style={{
                 padding: '12px 16px', cursor: 'pointer',
@@ -616,7 +623,7 @@ function ReportPostModal({ onClose, onSubmit }) {
       <div style={{
         width: '100%', background: KUN.bg,
         borderTopLeftRadius: 28, borderTopRightRadius: 28,
-        padding: '14px 20px 28px',
+        padding: '14px 20px 110px',
         maxHeight: '88%', display: 'flex', flexDirection: 'column',
       }}>
         <div style={{
@@ -690,6 +697,7 @@ function ReportPostModal({ onClose, onSubmit }) {
 
             <button onClick={handleSubmit} style={{
               width: '100%', padding: '14px 18px', height: 50, borderRadius: 999, border: 'none',
+              position: 'sticky', bottom: 82, zIndex: 5,
               background: reason ? KUN.brick : 'rgba(42,35,32,0.08)',
               color: reason ? '#fff' : KUN.inkMuted,
               fontFamily: COM_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
@@ -710,7 +718,7 @@ function CommunityInnerTabs({ active, onChange }) {
   ];
   return (
     <div style={{
-      margin: '0 20px 14px', display: 'flex', gap: 8,
+      margin: '4px 20px 14px', display: 'flex', gap: 8,
     }}>
       {tabs.map(t => {
         const isA = t.id === active;
@@ -796,7 +804,7 @@ const QUESTIONS = [
   },
 ];
 
-function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete }) {
+function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, moderationMode }) {
   return (
     <div onClick={() => onOpen(q.id)} style={{
       background: '#fff', borderRadius: 24, padding: 18,
@@ -828,6 +836,7 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete }) {
               onReport={() => onReport && onReport(q.id)}
               onEdit={() => onEdit && onEdit(q.id)}
               onDelete={() => onDelete && onDelete(q.id)}
+              moderationMode={moderationMode}
             />
           </div>
         </div>
@@ -847,6 +856,23 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete }) {
         fontFamily: COM_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400,
         lineHeight: 1.6,
       }}>{q.text}</div>
+
+      {q.staffAnswer && (
+        <div style={{
+          marginTop: 12, padding: 12, borderRadius: 16,
+          background: KUN.sageSoft, border: `1px solid ${KUN.hair}`,
+        }}>
+          <span style={{
+            display: 'inline-flex', padding: '5px 10px', borderRadius: 999,
+            background: KUN.apple, color: KUN.ink,
+            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700,
+          }}>PERSONAL MÉDICO</span>
+          <div style={{
+            fontFamily: COM_FB, fontSize: 13, color: KUN.ink, fontWeight: 400,
+            lineHeight: 1.55, marginTop: 8,
+          }}>{q.staffAnswer}</div>
+        </div>
+      )}
 
       <PostActions likes={q.likes} replies={q.replies} />
     </div>
@@ -902,6 +928,22 @@ function QuestionThread({ qId, onBack, questions }) {
             fontFamily: COM_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400,
             lineHeight: 1.6,
           }}>{q.text}</div>
+          {q.staffAnswer && (
+            <div style={{
+              marginTop: 12, padding: 12, borderRadius: 16,
+              background: KUN.sageSoft, border: `1px solid ${KUN.hair}`,
+            }}>
+              <span style={{
+                display: 'inline-flex', padding: '5px 10px', borderRadius: 999,
+                background: KUN.apple, color: KUN.ink,
+                fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700,
+              }}>PERSONAL MÉDICO</span>
+              <div style={{
+                fontFamily: COM_FB, fontSize: 13, color: KUN.ink, fontWeight: 400,
+                lineHeight: 1.55, marginTop: 8,
+              }}>{q.staffAnswer}</div>
+            </div>
+          )}
           <PostActions likes={q.likes} replies={q.replies} />
         </div>
 
@@ -911,10 +953,10 @@ function QuestionThread({ qId, onBack, questions }) {
           fontFamily: COM_FB, fontSize: 11, fontWeight: 500,
           color: KUN.inkMuted, letterSpacing: 1, textTransform: 'uppercase',
         }}>
-          {q.answers.length} {q.answers.length === 1 ? 'respuesta' : 'respuestas'}
+          {(q.answers || []).length} {(q.answers || []).length === 1 ? 'respuesta' : 'respuestas'}
         </div>
 
-        {q.answers.length === 0 ? (
+        {(q.answers || []).length === 0 ? (
           <div style={{
             background: '#fff', borderRadius: 22,
             padding: '24px 20px', textAlign: 'center',
@@ -931,7 +973,7 @@ function QuestionThread({ qId, onBack, questions }) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
-            {q.answers.map((a, i) => (
+            {(q.answers || []).map((a, i) => (
               <div key={i} style={{
                 background: '#fff', borderRadius: 22, padding: '14px 16px',
                 border: `1px solid ${KUN.hair}`,
@@ -954,7 +996,9 @@ function QuestionThread({ qId, onBack, questions }) {
                       color: a.anonymous ? KUN.inkMuted : KUN.ink,
                       letterSpacing: -0.1, fontStyle: a.anonymous ? 'italic' : 'normal',
                     }}>{a.author}</div>
-                    <div style={{ fontFamily: COM_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, letterSpacing: 0.2 }}>{a.time}</div>
+                    <div style={{ fontFamily: COM_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, letterSpacing: 0.2 }}>
+                      {a.staff ? 'Personal médico · ' : ''}{a.time}
+                    </div>
                   </div>
                 </div>
                 <div style={{
@@ -1042,7 +1086,7 @@ const EXPERIENCES = [
   },
 ];
 
-function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete }) {
+function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderationMode }) {
   const [expanded, setExpanded] = React.useState(false);
   return (
     <div style={{
@@ -1073,6 +1117,7 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete }) {
               onReport={() => onReport && onReport(e.id)}
               onEdit={() => onEdit && onEdit(e.id)}
               onDelete={() => onDelete && onDelete(e.id)}
+              moderationMode={moderationMode}
             />
           </div>
         </div>
@@ -1098,7 +1143,7 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete }) {
   );
 }
 
-function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDelete }) {
+function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDelete, moderationMode }) {
   return (
     <div style={{ padding: '0 20px' }}>
       {(questions || QUESTIONS).map(q => (
@@ -1110,13 +1155,14 @@ function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDel
           onReport={onReport}
           onEdit={onEdit}
           onDelete={onDelete}
+          moderationMode={moderationMode}
         />
       ))}
     </div>
   );
 }
 
-function ExperiencesFeed({ currentUser, onReport, onEdit, onDelete }) {
+function ExperiencesFeed({ currentUser, onReport, onEdit, onDelete, moderationMode }) {
   return (
     <div style={{ padding: '0 20px' }}>
       {EXPERIENCES.map(e => (
@@ -1127,6 +1173,7 @@ function ExperiencesFeed({ currentUser, onReport, onEdit, onDelete }) {
           onReport={onReport}
           onEdit={onEdit}
           onDelete={onDelete}
+          moderationMode={moderationMode}
         />
       ))}
     </div>
@@ -1277,13 +1324,13 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   );
 }
 
-function CommunityView({ onNew, questions, focusQuestionId, currentUser, onReport, onEdit, onDelete }) {
+function CommunityView({ onNew, questions, focusQuestionId, currentUser, onReport, onEdit, onDelete, moderationMode, allowNew = true }) {
   const [sub, setSub] = React.useState('questions');
   const [openQ, setOpenQ] = React.useState(null);
 
   React.useEffect(() => {
     setSub('questions');
-    setOpenQ(null);
+    setOpenQ(focusQuestionId || null);
   }, [focusQuestionId]);
 
   if (openQ) {
@@ -1295,12 +1342,12 @@ function CommunityView({ onNew, questions, focusQuestionId, currentUser, onRepor
       <div style={{ paddingBottom: 100 }}>
         <CommunityInnerTabs active={sub} onChange={setSub} />
         {sub === 'questions'
-          ? <QuestionsFeed onOpen={setOpenQ} questions={questions} currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} />
-          : <ExperiencesFeed currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} />}
+          ? <QuestionsFeed onOpen={setOpenQ} questions={questions} currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} moderationMode={moderationMode} />
+          : <ExperiencesFeed currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} moderationMode={moderationMode} />}
       </div>
 
       {/* FAB nueva publicación */}
-      <button onClick={() => onNew(sub)} style={{
+      {allowNew && <button onClick={() => onNew(sub)} style={{
         position: 'absolute', bottom: 14, right: 20,
         width: 58, height: 58, borderRadius: '50%', border: 'none',
         background: KUN.brick, color: '#fff',
@@ -1309,7 +1356,7 @@ function CommunityView({ onNew, questions, focusQuestionId, currentUser, onRepor
         zIndex: 5,
       }}>
         {COM_ICONS.plus('#fff')}
-      </button>
+      </button>}
     </div>
   );
 }
@@ -1318,71 +1365,38 @@ function CommunityView({ onNew, questions, focusQuestionId, currentUser, onRepor
 // ║                  PUBLIC ENTRY                         ║
 // ╚══════════════════════════════════════════════════════╝
 
-function ScreenComunidad({ initialTab = 'chat', focusQuestionId = null, questions = [], currentUser = '' }) {
-  const mergedQuestions = [...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id))];
-  const [tab, setTab] = React.useState(initialTab);
-  const [chatView, setChatView] = React.useState('list');
-  const [activeChat, setActiveChat] = React.useState(null);
+function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser = '', onReportSubmit, moderationMode = false, onModerateRemove, allowNew = true, hiddenIds = [] }) {
+  const mergedQuestions = [...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id))]
+    .filter(q => !hiddenIds.includes(q.id));
   const [newPost, setNewPost] = React.useState(null);
   const [reportingPostId, setReportingPostId] = React.useState(null);
-
-  React.useEffect(() => {
-    setTab(initialTab);
-    setChatView('list');
-    setActiveChat(null);
-  }, [initialTab, focusQuestionId]);
+  const [reportingPostTitle, setReportingPostTitle] = React.useState('');
 
   const handleReport = (postId) => {
+    const post = mergedQuestions.find(q => q.id === postId);
     setReportingPostId(postId);
+    setReportingPostTitle(post?.title || 'Entrada del foro');
   };
 
   const handleReportSubmit = (reason) => {
+    onReportSubmit && onReportSubmit({ postId: reportingPostId, postTitle: reportingPostTitle, reason });
     console.log(`Post ${reportingPostId} reportado por: ${reason}`);
     setReportingPostId(null);
   };
 
   return (
     <>
-      <ComTopTabs active={tab} onChange={(t) => {
-        setTab(t);
-        setChatView('list');
-        setActiveChat(null);
-      }} />
-
-      {tab === 'chat' && (
-        <>
-          {chatView === 'list' && (
-            <ChatList
-              onOpenChat={(id) => { setActiveChat(id); setChatView('thread'); }}
-              onNew={() => setChatView('new')}
-            />
-          )}
-          {chatView === 'new' && (
-            <NewConversation
-              onBack={() => setChatView('list')}
-              onPick={(id) => { setActiveChat(id); setChatView('thread'); }}
-            />
-          )}
-          {chatView === 'thread' && activeChat && (
-            <ChatThread
-              profId={activeChat}
-              onBack={() => { setChatView('list'); setActiveChat(null); }}
-            />
-          )}
-        </>
-      )}
-
-      {tab === 'community' && (
-        <CommunityView
-          questions={mergedQuestions}
-          focusQuestionId={focusQuestionId}
-          currentUser={currentUser}
-          onReport={handleReport}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')}
-        />
-      )}
+      <CommunityView
+        questions={mergedQuestions}
+        focusQuestionId={focusQuestionId}
+        currentUser={currentUser}
+        onReport={handleReport}
+        onEdit={() => {}}
+        onDelete={onModerateRemove || (() => {})}
+        onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')}
+        moderationMode={moderationMode}
+        allowNew={allowNew}
+      />
 
       {newPost && (
         <NewPostSheet

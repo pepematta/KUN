@@ -1,4 +1,4 @@
-// Acerquémonos section — entry, Diario de vida, Actividades con mi güagüa.
+// Vínculo section — entry, Diario de vida, Actividades con mi hijo.
 // Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs,
 // hairline cards, DS palette per category, decorative half-moon shapes.
 
@@ -133,7 +133,7 @@ function VinkEntry({ onPick }) {
           </div>
         </div>
 
-        {/* Standard card — Actividades con mi güagüa */}
+        {/* Standard card — Actividades con mi hijo */}
         <div onClick={() => onPick('songs')} style={{
           background:'#fff', borderRadius: 30, padding: '24px 22px',
           cursor:'pointer', position:'relative', overflow:'hidden',
@@ -150,7 +150,7 @@ function VinkEntry({ onPick }) {
             fontFamily: V_FT, fontSize: 22, fontWeight: 700,
             letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
           }}>
-            Actividades con mi güagüa
+            Actividades con mi hijo
           </div>
           <div style={{
             fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
@@ -452,7 +452,7 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
   );
 }
 
-// ── Actividades con mi güagüa ─────────────────────────────────
+// ── Actividades con mi hijo ─────────────────────────────────
 function MusicaTab() {
   const [playing, setPlaying] = React.useState(null);
   const tracks = [
@@ -817,7 +817,7 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
 
   return (
     <div style={{ overflowX:'hidden', maxWidth:'100%' }}>
-      <SubHeader title="Actividades con mi güagüa" onBack={onBack} />
+      <SubHeader title="Actividades con mi hijo" onBack={onBack} />
 
       {/* sub-subtabs — DS pattern: pill shape, individual rounded, Brick activa, cream inactive con borde */}
       <div style={{

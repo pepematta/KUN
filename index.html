@@ -48,17 +48,18 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="edu-shared.jsx?v=9"></script>
-<script type="text/babel" src="screen-auth.jsx?v=8"></script>
+<script type="text/babel" src="edu-shared.jsx?v=10"></script>
+<script type="text/babel" src="screen-auth.jsx?v=9"></script>
 <script type="text/babel" src="screen-tour.jsx?v=3"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=4"></script>
 <script type="text/babel" src="screen-home.jsx?v=14"></script>
 <script type="text/babel" src="edu-camino.jsx?v=7"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=6"></script>
-<script type="text/babel" src="edu-biblioteca.jsx?v=7"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=9"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=9"></script>
+<script type="text/babel" src="edu-biblioteca.jsx?v=8"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=10"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=11"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=9"></script>
+<script type="text/babel" src="screen-staff.jsx?v=2"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -138,7 +139,17 @@ const NOTIF_GLYPH = {
   ),
 };
 
-function NotificationsPanel({ onClose }) {
+function NotificationsPanel({ onClose, recommendations = [] }) {
+  const items = [
+    ...recommendations.map(r => ({
+      kind: 'capsule',
+      title: 'Cápsula recomendada por el equipo',
+      desc: r.title,
+      time: 'Nueva',
+      color: KUN.brick,
+    })),
+    ...NOTIFICATIONS,
+  ];
   return (
     <div style={{
       position:'absolute', inset: 0, zIndex: 200,
@@ -160,13 +171,13 @@ function NotificationsPanel({ onClose }) {
             Notificaciones
           </div>
           <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, marginTop: 2, letterSpacing: 0.2 }}>
-            {NOTIFICATIONS.length} nuevas hoy
+            {items.length} nuevas hoy
           </div>
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY:'auto', padding: '0 20px 30px' }}>
-        {NOTIFICATIONS.map((it, i) => (
+        {items.map((it, i) => (
           <div key={i} style={{
             background:'#fff', borderRadius: 22, padding: '14px 16px',
             marginBottom: 10, display:'flex', gap: 14, alignItems:'flex-start',
@@ -365,14 +376,39 @@ function Prototype() {
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
   const [quizResults, setQuizResults] = useState({});
   const [forumQuestions, setForumQuestions] = useState([]);
-  const [communityStart, setCommunityStart] = useState({ tab: 'chat', focusQuestionId: null });
+  const [communityStart, setCommunityStart] = useState({ focusQuestionId: null });
+  const [forumReports, setForumReports] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('kun_forum_reports_v1') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const [clinicalRecommendations, setClinicalRecommendations] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('kun_clinical_recommendations_v1') || '{}');
+    } catch {
+      return {};
+    }
+  });
   // Tracks where the user was before opening a capsule, so we can return there
   const [capsuleSource, setCapsuleSource] = useState({ tab: 'edu', sub: 'camino' });
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
 
+  const clinicalBabies = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('kun_staff_babies_v1') || '[]');
+    } catch {
+      return [];
+    }
+  })();
+  const linkedClinicalBaby = clinicalBabies.find(b => b.occupied && b.rut === authData?.rut);
+
   // Derived names (with fallbacks)
   const parentName = authData?.parentName || '';
-  const babyName   = authData?.babyName   || 'Sofía';
+  const babyName   = linkedClinicalBaby?.babyName || authData?.babyName || 'Sofía';
+  const childLabel = linkedClinicalBaby?.sex === 'f' ? 'hija' : 'hijo';
+  const parentRecommendations = clinicalRecommendations[authData?.rut] || [];
 
   const saveSettings = ({ parentName: pn, babyName: bn }) => {
     const updated = { ...authData, parentName: pn, babyName: bn };
@@ -384,6 +420,48 @@ function Prototype() {
     if (typeof window.KAuth !== 'undefined') window.KAuth.clear();
     setAuthData(null);
     setSettingsOpen(false);
+  };
+
+  const saveClinicalRecommendations = (next) => {
+    setClinicalRecommendations(next);
+    try { localStorage.setItem('kun_clinical_recommendations_v1', JSON.stringify(next)); } catch {}
+  };
+
+  const handleRecommendCapsule = (baby, cap) => {
+    if (!baby?.rut || !cap?.id) return;
+    const existing = clinicalRecommendations[baby.rut] || [];
+    const nextForRut = [
+      { id: cap.id, title: cap.title, topic: cap.topic, recommendedAt: Date.now(), babyName: baby.babyName },
+      ...existing.filter(item => item.id !== cap.id),
+    ];
+    saveClinicalRecommendations({ ...clinicalRecommendations, [baby.rut]: nextForRut });
+  };
+
+  const handleStaffAnswerQuestion = (questionId, text) => {
+    setForumQuestions(prev => prev.map(q => q.id === questionId ? {
+      ...q,
+      staffAnswer: text,
+      answers: [
+        ...(q.answers || []),
+        { author: 'Equipo KUN', role: 'Personal médico', color: KUN.apple, text, time: 'Ahora', staff: true },
+      ],
+    } : q));
+  };
+
+  const handleStaffRemoveQuestion = (questionId) => {
+    setForumQuestions(prev => prev.filter(q => q.id !== questionId));
+  };
+
+  const saveForumReports = (next) => {
+    setForumReports(next);
+    try { localStorage.setItem('kun_forum_reports_v1', JSON.stringify(next)); } catch {}
+  };
+
+  const handleParentReportSubmit = (report) => {
+    saveForumReports([
+      { ...report, id: `report-${Date.now()}`, createdAt: Date.now() },
+      ...forumReports,
+    ]);
   };
 
   // Called when user completes or skips the tour — saves flag per user
@@ -440,7 +518,7 @@ function Prototype() {
       answers: [],
       fresh: true,
     }, ...prev]);
-    setCommunityStart({ tab: 'community', focusQuestionId: id });
+    setCommunityStart({ focusQuestionId: id });
     setCapsulaOpen(false);
     setTab('comm');
   };
@@ -497,17 +575,17 @@ function Prototype() {
     />;
   } else {
     body = <ScreenComunidad
-      initialTab={communityStart.tab}
       focusQuestionId={communityStart.focusQuestionId}
       questions={forumQuestions}
       currentUser={parentName}
+      onReportSubmit={handleParentReportSubmit}
     />;
   }
 
   const screenLabel =
     tab === 'home' ? '01 Inicio'
-    : tab === 'edu' ? `02 Educación · ${eduSub === 'camino' ? 'Cuidados básicos' : eduSub === 'perso' ? 'Especial para mi güagüa' : 'Aprender más'}`
-    : tab === 'bond' ? `03 Acerquémonos · ${bondView === 'entry' ? 'Inicio' : bondView === 'journey' ? 'Diario de vida' : 'Actividades con mi güagüa'}`
+    : tab === 'edu' ? `02 Educación · ${eduSub === 'camino' ? 'Cuidados básicos' : eduSub === 'perso' ? `Especial para mi ${childLabel}` : 'Aprender más'}`
+    : tab === 'bond' ? `03 Vínculo · ${bondView === 'entry' ? 'Inicio' : bondView === 'journey' ? 'Diario de vida' : 'Actividades con mi hijo'}`
     : '04 Comunidad';
 
   return (
@@ -529,13 +607,23 @@ function Prototype() {
 
       {!authData ? (
         <ScreenAuth onAuthenticated={setAuthData} />
+      ) : authData.role === 'staff' ? (
+        <ScreenStaffApp
+          authData={authData}
+          onLogout={handleLogout}
+          parentQuestions={forumQuestions}
+          forumReports={forumReports}
+          onAnswerQuestion={handleStaffAnswerQuestion}
+          onRemoveQuestion={handleStaffRemoveQuestion}
+          onRecommendCapsule={handleRecommendCapsule}
+        />
       ) : (
         <>
           <div className="kun-content-wrap" style={{
             height:'calc(100% - 50px)', overflow:'hidden',
             display:'flex', flexDirection:'column',
           }}>
-            <KTopBar onBell={() => setNotifOpen(true)} hasNotif onSettings={() => setSettingsOpen(true)} />
+            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={parentRecommendations.length > 0 || NOTIFICATIONS.length > 0} onSettings={() => setSettingsOpen(true)} />
             {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
             <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub + (lactarioOpen ? '-lact' : ''))} style={{
               flex: 1,
@@ -555,11 +643,11 @@ function Prototype() {
             onChange={(t) => { setCapsulaOpen(false); setTab(t); }}
           />
 
-          {notifOpen    && <NotificationsPanel onClose={() => setNotifOpen(false)} />}
+          {notifOpen    && <NotificationsPanel recommendations={parentRecommendations} onClose={() => setNotifOpen(false)} />}
           {settingsOpen && <SettingsPanel authData={authData} onSave={saveSettings} onClose={() => setSettingsOpen(false)} onLogout={handleLogout} />}
 
           {/* Welcome tour — overlaid on top of the real app so nav is visible through cutout */}
-          {!tourDone && typeof window.ScreenTour === 'function' && (
+          {authData.role !== 'staff' && !tourDone && typeof window.ScreenTour === 'function' && (
             <ScreenTour
               onDone={handleTourDone}
               onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
@@ -599,6 +687,7 @@ function Prototype() {
     typeof window.ScreenVinculo === 'function' &&
     typeof window.ScreenComunidad === 'function' &&
     typeof window.ScreenCapsula === 'function' &&
+    typeof window.ScreenStaffApp === 'function' &&
     typeof window.KUN !== 'undefined'
   ) {
     ReactDOM.createRoot(document.getElementById('root')).render(<Prototype />);

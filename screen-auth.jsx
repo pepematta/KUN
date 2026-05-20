@@ -229,7 +229,29 @@ function RoleSelectView({ onPick }) {
   );
 }
 
-function WorkerComingSoonView({ onBack }) {
+function WorkerLoginView({ onBack, onSubmit }) {
+  const stored = KAuth.load();
+  const [email, setEmail] = React.useState(stored?.role === 'staff' ? (stored.email || '') : '');
+  const [pass, setPass] = React.useState('');
+  const [err, setErr] = React.useState('');
+  const existingStaff = stored?.role === 'staff' && stored?.password;
+  const valid = isValidEmail(email) && pass.length >= 6;
+  const handle = () => {
+    if (!valid) return setErr('Ingresa correo institucional y una contraseña de al menos 6 caracteres.');
+    if (existingStaff && stored.email === email.trim() && stored.password !== pass) {
+      return setErr('La contraseña no es correcta.');
+    }
+    setErr('');
+    onSubmit({
+      role: 'staff',
+      email: email.trim(),
+      password: pass,
+      staffName: email.split('@')[0] || 'Personal de salud',
+      sessionActive: true,
+      createdAt: stored?.createdAt || Date.now(),
+    });
+  };
+
   return (
     <>
       <AuthShapes/>
@@ -238,39 +260,52 @@ function WorkerComingSoonView({ onBack }) {
       </div>
       <div style={{
         position:'relative', zIndex: 1,
-        flex: 1, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '20px 32px 60px', textAlign: 'center', gap: 14,
+        padding: '18px 28px 0',
       }}>
+        <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
+          Ingresa como personal de salud
+        </div>
+        <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+          Acceso para editar fichas UCIN, lactario, cápsulas educativas y foro de familias.
+        </div>
+      </div>
+      <div style={{ position:'relative', zIndex: 1, padding: '26px 28px 0' }}>
+        <div style={labelStyle}>Correo institucional</div>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="nombre@hospital.cl"
+          autoComplete="email"
+          autoFocus
+          style={inputStyle}
+        />
+        <div style={{ height: 14 }} />
+        <div style={labelStyle}>Contraseña</div>
+        <input
+          type="password"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && valid && handle()}
+          placeholder={existingStaff ? 'Tu contraseña' : 'Crea una contraseña'}
+          style={inputStyle}
+        />
+        {err && (
+          <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>
+        )}
         <div style={{
-          width: 96, height: 96, borderRadius: 32,
-          background: KUN.apple,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginTop: 14, padding: '12px 14px', borderRadius: 16,
+          background: KUN.cardSoft, fontFamily: A_FB, fontSize: 12,
+          color: KUN.inkSoft, lineHeight: 1.45,
         }}>
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-            <path d="M9 4H15V8H9V4Z" stroke={KUN.ink} strokeWidth="1.8" strokeLinejoin="round"/>
-            <path d="M5 8H19V20C19 20.6 18.6 21 18 21H6C5.4 21 5 20.6 5 20V8Z" stroke={KUN.ink} strokeWidth="1.8" strokeLinejoin="round"/>
-            <path d="M12 12V17M9.5 14.5H14.5" stroke={KUN.ink} strokeWidth="1.8" strokeLinecap="round"/>
-          </svg>
+          {existingStaff ? 'Usa la contraseña registrada para este perfil.' : 'En este prototipo, el primer ingreso crea la contraseña del perfil clínico.'}
         </div>
-        <div style={{ fontFamily: A_FT, fontSize: 24, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>
-          Versión para profesionales
-        </div>
-        <div style={{
-          fontFamily: A_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400,
-          lineHeight: 1.6, maxWidth: 280,
-        }}>
-          Estamos trabajando en una experiencia diseñada para enfermeras, matronas y médicos que acompañan en UCIN.
-        </div>
-        <div style={{
-          marginTop: 4, padding: '6px 14px', borderRadius: 999,
-          background: KUN.sun, fontFamily: A_FT, fontSize: 11, fontWeight: 700, color: KUN.ink,
-          letterSpacing: 0.6,
-        }}>PRÓXIMAMENTE</div>
-        <div onClick={onBack} style={{
-          marginTop: 14, fontFamily: A_FT, fontSize: 14, fontWeight: 700,
-          color: KUN.brick, cursor: 'pointer',
-        }}>Volver</div>
+      </div>
+      <div style={{ flex: 1 }}/>
+      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
+        <PrimaryButton onClick={handle} disabled={!valid}>
+          Entrar a KUN Salud
+        </PrimaryButton>
       </div>
     </>
   );
@@ -591,7 +626,15 @@ function ScreenAuth({ onAuthenticated }) {
           else setView('rut');
         }} />
       )}
-      {view === 'worker' && <WorkerComingSoonView onBack={() => setView('role')} />}
+      {view === 'worker' && (
+        <WorkerLoginView
+          onBack={() => setView('role')}
+          onSubmit={(data) => {
+            KAuth.save(data);
+            onAuthenticated(data);
+          }}
+        />
+      )}
       {view === 'rut' && (
         <RutEntryView
           initial={pendingRut}

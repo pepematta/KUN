@@ -303,9 +303,19 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
 // DS spec: cada pestaña con fondo redondeado individual, activa en Brick (#F0743E) con texto blanco,
 // inactivas con fondo crema y borde suave.
 function KSubTabs({ active, onChange }) {
+  const childLabel = (() => {
+    try {
+      const auth = JSON.parse(localStorage.getItem('kun_auth_v1') || 'null');
+      const babies = JSON.parse(localStorage.getItem('kun_staff_babies_v1') || '[]');
+      const linked = babies.find(b => b.occupied && b.rut === auth?.rut);
+      return linked?.sex === 'f' ? 'hija' : 'hijo';
+    } catch {
+      return 'hijo';
+    }
+  })();
   const tabs = [
     { id:'camino', label:'Cuidados básicos' },
-    { id:'perso',  label:'Especial para mi güagüa' },
+    { id:'perso',  label:`Especial para mi ${childLabel}` },
     { id:'biblio', label:'Aprender más' },
   ];
   return (
@@ -367,7 +377,7 @@ function KBottomNav({ active = 'edu', onChange }) {
   const tabs = [
     { id: 'home',  label: 'Inicio',    icon: KIcon.home },
     { id: 'edu',   label: 'Educación', icon: KIcon.book },
-    { id: 'bond',  label: 'Acerquémonos', icon: KIcon.heart },
+    { id: 'bond',  label: 'Vínculo', icon: KIcon.heart },
     { id: 'comm',  label: 'Comunidad', icon: KIcon.people },
   ];
   return (
