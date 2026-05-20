@@ -1,7 +1,7 @@
-# Handoff: KUN — Prototipo funcional (Inicio · Educación · Vínculo · Comunidad)
+# Handoff: KUN — Prototipo funcional (Inicio · Educación · Acerquémonos · Comunidad)
 
 ## Overview
-KUN es una app móvil para padres de recién nacidos hospitalizados en la UCIN. Su objetivo es acompañar a los padres con información clínica adaptada, facilitar el vínculo con su bebé a distancia y conectarlos con otras familias. Este paquete entrega el **prototipo funcional unificado** con tres secciones implementadas (Inicio, Educación, Vínculo) más placeholder para Comunidad, todas conectadas por una barra de navegación inferior compartida.
+KUN es una app móvil para padres de recién nacidos hospitalizados en la UCIN. Su objetivo es acompañar a los padres con información clínica adaptada, facilitar el vínculo con su bebé a distancia y conectarlos con otras familias. Este paquete entrega el **prototipo funcional unificado** con tres secciones implementadas (Inicio, Educación, Acerquémonos) más placeholder para Comunidad, todas conectadas por una barra de navegación inferior compartida.
 
 ## About the Design Files
 Los archivos en este bundle son **referencias de diseño creadas en HTML/JSX (React+Babel via CDN)** — un prototipo que muestra la apariencia y comportamiento previstos, **no código de producción para copiar directamente**. La tarea es **recrear estos diseños en el entorno del codebase destino** (React Native, Swift/SwiftUI, Flutter, React web, etc.) usando sus patrones, design tokens, navegación y librerías establecidas. Si no existe un entorno aún, elegir el framework apropiado (recomendado: React Native o Flutter por ser app móvil) e implementar allí.
@@ -57,11 +57,11 @@ trackSoft   #E8DFD2   // fondo de progress bars
 
 ## Navegación
 
-**Tab bar inferior** (`KBottomNav`): cuatro tabs — Inicio (home), Educación (book), Vínculo (heart), Comunidad (people). Tab activa: ícono y label en terracota sobre pill `accentSoft` con opacidad 0.55.
+**Tab bar inferior** (`KBottomNav`): cuatro tabs — Inicio (home), Educación (book), Acerquémonos (heart), Comunidad (people). Tab activa: ícono y label en terracota sobre pill `accentSoft` con opacidad 0.55.
 
-**Subtabs Educación** (`KSubTabs`): pill blanco con tres segmentos — Camino, Personalizado, Biblioteca. Segmento activo: pill terracota sólido sobre fondo blanco.
+**Subtabs Educación** (`KSubTabs`): pill blanco con tres segmentos — Cuidados básicos, Especial para mi güagüa, Aprender más. Segmento activo: pill terracota sólido sobre fondo blanco.
 
-**Subtabs Cuentos y canciones** (en Vínculo): mismo patrón con dos segmentos — Música, Voz.
+**Subtabs Actividades con mi güagüa** (en Acerquémonos): mismo patrón con dos segmentos — Música, Voz.
 
 ## Screens
 
@@ -70,15 +70,15 @@ trackSoft   #E8DFD2   // fondo de progress bars
 - **Saludo**: "Buenos días, Mateo" + "Sigamos juntos hoy."
 - **BabyCard**: card 32px radius con foto circular 84px (placeholder rayado), nombre "Sofía" 22/700, "32 días hospitalizada" (32 días en accentDeep/700), "Peso actual 2,1 kg". Blob `accentSoft` decorativo arriba derecha.
 - **NurseCard**: card sageSoft, ícono enfermera, "Enfermera de turno" / "Valentina Rojas", badge "En turno" con punto sage.
-- **SectionHeader** "Cápsulas para ti" con subtítulo y "Ver todas" (linkea a Educación · Personalizado).
+- **SectionHeader** "Cápsulas para ti" con subtítulo y "Ver todas" (linkea a Educación · Especial para mi güagüa).
 - **CapsuleCards** ×2:
   - "Tu bebé empezó a alimentarse por sonda" — tag NUEVO (accent), illustration drop sage.
   - "Método canguro: cómo empezar" — tag RECOMENDADO PARA TI (sageSoft), illustration kangaroo.
-  - Click → Educación · Personalizado.
+  - Click → Educación · Especial para mi güagüa.
 
 ### 02 · Educación
 
-#### Camino (`edu-camino.jsx`)
+#### Cuidados básicos (`edu-camino.jsx`)
 - Saludo "Sigamos juntos, *mamá de Sofía*" (mamá... en cursiva accent).
 - Card progreso: "TU CAMINO 2 de 4", barra 50% terracota, "Pilar 1 · Cuerpo y cuidados".
 - **Path serpenteante**: SVG 390×{altura calc} con cubic Bézier. 4 estaciones en zig-zag (x=78 / x=312 alternando). Línea sólida terracota 3px hasta la estación activa; luego dashed `4 8` color inkFaint.
@@ -87,13 +87,13 @@ trackSoft   #E8DFD2   // fondo de progress bars
 
 Datos: "Cómo se ve tu bebé hoy" (done 3min), "Entender los monitores" (done 5min), "Tocar y contener con calma" (active "Continúa aquí · 4 min"), "Cambios de pañal en incubadora" (next "Pronto").
 
-#### Personalizado (`edu-personalizado.jsx`)
+#### Especial para mi güagüa (`edu-personalizado.jsx`)
 - Hero terracota con tag "NUEVO PARA TI" + spark, contexto "Porque Sofía empezó a alimentarse por sonda", título 22/800, descripción, "4 min · Lectura + audio", botón blanco "Empezar".
 - Sección "Vuelve cuando quieras" con 3 history cards: badge VISTA (sage), título, duración, fecha.
 
-#### Biblioteca (`edu-biblioteca.jsx`)
+#### Aprender más (`edu-biblioteca.jsx`)
 - Search field placeholder "Buscar cápsulas…".
-- Chips horizontales: Todo (activo, ink negro), Lactancia, Prematuridad, Equipos y monitores, Vínculo, Alta y hogar.
+- Chips horizontales: Todo (activo, ink negro), Lactancia, Prematuridad, Equipos y monitores, Acerquémonos, Alta y hogar.
 - Header "18 TEMAS" + "Ordenar".
 - Lista de TopicRow (acordeón, click toggle):
   - Lactancia (abierto): Producción de leche, Lactancia con sonda.
@@ -102,15 +102,15 @@ Datos: "Cómo se ve tu bebé hoy" (done 3min), "Entender los monitores" (done 5m
   - Método canguro (abierto): Primeros pasos, Posición correcta.
 - Topic abierto: ícono sobre `accentSoft`, chevron en círculo terracota; subtopics con bullet 6px terracota.
 
-### 03 · Vínculo (`screen-vinculo.jsx` → `ScreenVinculo`)
+### 03 · Acerquémonos (`screen-vinculo.jsx` → `ScreenVinculo`)
 Estado interno: `view` = `entry | journey | songs`. Estado compartido con app: array `recordings` y función `addRecording`.
 
 #### Entry
 - Headline "Acércate a Sofía, aunque no estés ahí." + "Construyan juntos una memoria de estos días."
-- Card terracota grande: "Nuestro viaje · Registra tus momentos" con icon journey 56px en glass interior.
-- Card blanco: "Cuentos y canciones · Tu voz y la música que la calma" con icon music sage.
+- Card terracota grande: "Diario de vida · Registra tus momentos" con icon journey 56px en glass interior.
+- Card blanco: "Actividades con mi güagüa · Tu voz y la música que la calma" con icon music sage.
 
-#### Nuestro viaje
+#### Diario de vida
 - **ActivityCard** fija arriba: tag "ACTIVIDAD DEL DÍA", título "La mano de tu bebé junto a la tuya", descripción, fila de botones: "Subir foto" (primary terracota) + ghost cuadrado de texto + ghost de mic.
 - **Feed** con separadores ("HOY · DÍA 32" / "AYER · DÍA 31") y entradas estilo chat:
   - Avatar circular 36px con inicial.
@@ -120,7 +120,7 @@ Estado interno: `view` = `entry | journey | songs`. Estado compartido con app: a
 - Las entradas de `recordings` se insertan como burbujas voice de Mamá.
 - **FAB** terracota 58px en bottom-right del scroll.
 
-#### Cuentos y canciones
+#### Actividades con mi güagüa
 Subtabs Música / Voz.
 
 **Música**: título "¿Qué necesita tu bebé ahora?". Tres cards con emoji icon, nombre, descripción + duración, botón play/pausa circular. Card abierta: borde 2px terracota, mini-reproductor con barra de progreso 34% + thumb 14px y timestamps.
@@ -153,11 +153,11 @@ Prototype state:
   recordings: Array<{ name, duration, time }>          (compartido voz↔feed)
 
 Transitions:
-  - Home capsule click       → tab='edu', eduSub='perso'
-  - Home "Ver todas" click   → tab='edu', eduSub='perso'
+  - Home capsule click       → tab='edu', eduSub='perso' (Educación · Especial para mi güagüa)
+  - Home "Ver todas" click   → tab='edu', eduSub='perso' (Educación · Especial para mi güagüa)
   - Bottom nav click         → setTab(id); if (id==='bond') no reset bondView
-  - Vínculo entry pick       → setBondView('journey'|'songs')
-  - Vínculo back button      → setBondView('entry')
+  - Acerquémonos entry pick  → setBondView('journey'|'songs')
+  - Acerquémonos back button → setBondView('entry')
   - Recorder save            → addRecording(r); recording entry shows in journey feed AND in voz "Grabaciones guardadas"
   - Library topic click      → toggle open
   - Library chip click       → highlight (currently visual only)

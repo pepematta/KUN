@@ -97,7 +97,7 @@ function HSectionHead({ title, kicker, action, onAction }) {
 
 // ─── Greeting ──────────────────────────────────────────────────────────────────
 function HomeGreeting({ parentName }) {
-  const name = parentName || 'apoderado/a';
+  const name = parentName || 'padre/madre';
   return (
     <div style={{ padding: '8px 22px 4px' }}>
       <div style={{
@@ -118,21 +118,35 @@ function HomeGreeting({ parentName }) {
 }
 
 // ─── Featured baby card (tarjeta destacada) ────────────────────────────────────
-function PillStat({ value, label }) {
+function PillStat({ value, label, onClick }) {
   return (
-    <div style={{
+    <div onClick={onClick} style={{
       background: 'rgba(255,255,255,0.92)',
       backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
       borderRadius: 999, padding: '6px 12px',
       display: 'inline-flex', alignItems: 'baseline', gap: 4,
+      maxWidth: '100%',
+      cursor: onClick ? 'pointer' : 'default',
     }}>
       <span style={{ fontFamily: HF_T, fontWeight: 700, fontSize: 14, color: HC.ink }}>{value}</span>
-      <span style={{ fontFamily: HF_B, fontWeight: 500, fontSize: 10.5, color: HC.ink2 }}>{label}</span>
+      <span style={{ fontFamily: HF_B, fontWeight: 500, fontSize: 10.5, color: HC.ink2, whiteSpace: 'nowrap' }}>{label}</span>
     </div>
   );
 }
 
 function BabyHero({ babyName = 'Sofía', onMessageNurse }) {
+  const [ageInfo, setAgeInfo] = React.useState(null);
+  const info = ageInfo === 'chrono'
+    ? {
+        title: 'Semanas cronológicas',
+        text: 'Son las semanas que han pasado desde que tu guagüita nació.',
+      }
+    : ageInfo === 'corrected'
+      ? {
+          title: 'Semanas corregidas',
+          text: 'Es la edad calculada según la fecha en que debería haber nacido. Ayuda a mirar su desarrollo con más justicia si nació antes de tiempo.',
+        }
+      : null;
   return (
     <div style={{ margin: '16px 18px 0' }}>
       <div style={{
@@ -151,12 +165,45 @@ function BabyHero({ babyName = 'Sofía', onMessageNurse }) {
           background: 'linear-gradient(to top, rgba(42,35,32,0.85) 0%, rgba(42,35,32,0.55) 45%, rgba(42,35,32,0) 100%)',
         }}/>
 
-        {/* Stat pills top-right — días de vida + semanas de gestación + peso */}
+        {/* Stat pills top-right — edad cronológica + edad corregida */}
         <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 'calc(100% - 32px)' }}>
-          <PillStat value="32" label="días"/>
-          <PillStat value="34" label="semanas"/>
-          <PillStat value="2,1" label="kg"/>
+          <PillStat value="34" label="sem. cronológicas" onClick={() => setAgeInfo('chrono')} />
+          <PillStat value="32" label="sem. corregidas" onClick={() => setAgeInfo('corrected')} />
         </div>
+
+        {info && (
+          <div onClick={() => setAgeInfo(null)} style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(42,35,32,0.34)',
+            display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+            padding: '72px 16px 0',
+            boxSizing: 'border-box',
+          }}>
+            <div onClick={(e) => e.stopPropagation()} style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.96)',
+              borderRadius: 20,
+              padding: '16px 18px',
+              boxSizing: 'border-box',
+              border: `1px solid ${HC.hair}`,
+              boxShadow: '0 10px 28px rgba(42,35,32,0.18)',
+            }}>
+              <div style={{
+                fontFamily: HF_T, fontSize: 16, fontWeight: 700,
+                color: HC.ink, letterSpacing: '-0.2px', marginBottom: 6,
+              }}>{info.title}</div>
+              <div style={{
+                fontFamily: HF_B, fontSize: 12.5, fontWeight: 400,
+                color: HC.ink2, lineHeight: 1.5,
+              }}>{info.text}</div>
+              <div onClick={() => setAgeInfo(null)} style={{
+                marginTop: 10,
+                fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
+                color: HC.brick, cursor: 'pointer',
+              }}>Entendido</div>
+            </div>
+          </div>
+        )}
 
         {/* Bottom content: name + nurse */}
         <div style={{ position: 'absolute', left: 20, right: 20, bottom: 18, color: '#fff' }}>
@@ -210,7 +257,7 @@ const DAILY_SUMMARY = {
   ],
 };
 
-function ConceptRow({ category, color, title, onClick }) {
+function ConceptRow({ category, color, title, onClick, completed }) {
   return (
     <div onClick={onClick} style={{
       background: HC.paper, border: `1px solid ${HC.hair}`,
@@ -238,16 +285,16 @@ function ConceptRow({ category, color, title, onClick }) {
         background: HC.cream, border: `1px solid ${HC.hair}`,
         display: 'grid', placeItems: 'center', flexShrink: 0,
       }}>
-        {HIcon.arrow(HC.brick)}
+        {completed ? KIcon.check(HC.brick) : HIcon.arrow(HC.brick)}
       </div>
     </div>
   );
 }
 
-function DailySummary({ babyName, onGoToCapsula }) {
+function DailySummary({ babyName }) {
   const bName = babyName || 'Sofía';
-  const { text, concepts } = DAILY_SUMMARY;
-  const empty = !text && concepts.length === 0;
+  const { text } = DAILY_SUMMARY;
+  const empty = !text;
   // Replace fixed name with current baby name to preserve personalisation
   const narrative = text.replace(/^Sofía/, bName);
 
@@ -281,15 +328,24 @@ function DailySummary({ babyName, onGoToCapsula }) {
             </div>
           )}
 
-          {/* Concept rows */}
-          {concepts.map((c, i) => (
-            <ConceptRow key={i}
-              category={c.category} color={c.color} title={c.label}
-              onClick={() => onGoToCapsula && onGoToCapsula(c.capsuleId)}
-            />
-          ))}
         </>
       )}
+    </div>
+  );
+}
+
+function SummaryCapsules({ onGoToCapsula, completedCapsulas }) {
+  const completed = completedCapsulas || [];
+  return (
+    <div style={{ margin: '18px 22px 0' }}>
+      <HSectionHead title="Cuidado y lactancia" kicker="Cápsulas del resumen" />
+      {DAILY_SUMMARY.concepts.map((c, i) => (
+        <ConceptRow key={i}
+          category={c.category} color={c.color} title={c.label}
+          completed={completed.includes(c.capsuleId)}
+          onClick={() => onGoToCapsula && onGoToCapsula(c.capsuleId)}
+        />
+      ))}
     </div>
   );
 }
@@ -394,9 +450,10 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
 }
 
 // ─── Capsule cards (standard) ──────────────────────────────────────────────────
-function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onClick }) {
+function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onClick, completed }) {
   const tagBg    = tagKind === 'new' ? HC.sun  : HC.viola;
   const tagDot   = tagKind === 'new' ? HC.brick : null;
+  const displayTag = completed ? 'COMPLETADA' : tag;
   return (
     <div onClick={onClick} style={{
       background: HC.paper, border: `1px solid ${HC.hair}`,
@@ -422,8 +479,9 @@ function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onC
             letterSpacing: '0.4px', textTransform: 'uppercase',
             marginBottom: 8,
           }}>
-            {tagDot && <span style={{ width: 5, height: 5, borderRadius: '50%', background: tagDot }}/>}
-            {tag}
+            {completed && KIcon.check(HC.ink)}
+            {!completed && tagDot && <span style={{ width: 5, height: 5, borderRadius: '50%', background: tagDot }}/>}
+            {displayTag}
           </span>
           <div style={{
             fontFamily: HF_T, fontWeight: 700, fontSize: 15,
@@ -450,7 +508,7 @@ function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onC
             background: HC.cream, border: `1px solid ${HC.hair}`,
             display: 'grid', placeItems: 'center',
           }}>
-            {HIcon.arrow(HC.brick)}
+            {completed ? KIcon.check(HC.brick) : HIcon.arrow(HC.brick)}
           </div>
         </div>
       </div>
@@ -461,10 +519,11 @@ function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onC
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        lactarioReservation, onOpenLactario, onCancelLactario,
-                       onMessageNurse }) {
+                       onMessageNurse, completedCapsulas }) {
+  const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%' }}>
       {/* subtle decorative shape — half moon rosehip behind content */}
       <div style={{
         position: 'absolute', top: 420, right: -80,
@@ -483,14 +542,15 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       <div style={{ position: 'relative', zIndex: 1 }}>
         <HomeGreeting parentName={parentName} />
         <BabyHero babyName={bName} onMessageNurse={onMessageNurse} />
-        <DailySummary babyName={bName} onGoToCapsula={onGoToCapsula} />
+        <DailySummary babyName={bName} />
         <LactarioCard
           reservation={lactarioReservation}
           onOpen={onOpenLactario}
           onCancel={onCancelLactario}
         />
+        <SummaryCapsules onGoToCapsula={onGoToCapsula} completedCapsulas={completed} />
 
-        <div style={{ marginTop: 26, padding: '0 22px' }}>
+        <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
             title="Para ti, hoy"
             kicker="Cápsulas educativas"
@@ -498,7 +558,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             onAction={onGoToEdu}
           />
         </div>
-        <div style={{ padding: '0 22px' }}>
+        <div style={{ padding: '0 22px', boxSizing: 'border-box' }}>
           <CapsuleCard
             tagKind="new" tag="NUEVO"
             title="Tu bebé empezó a alimentarse por sonda"
@@ -506,6 +566,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             mins="4 min · cápsula"
             illoColor={HC.apple}
             illoIcon={HIcon.drop(HC.ink)}
+            completed={completed.includes(1)}
             onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
           />
           <CapsuleCard
@@ -515,6 +576,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             mins="6 min · cápsula"
             illoColor={HC.rosehip}
             illoIcon={HIcon.kangaroo(HC.viola)}
+            completed={completed.includes(2)}
             onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
           />
         </div>

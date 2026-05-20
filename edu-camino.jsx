@@ -6,7 +6,7 @@ const C_FB = 'Poppins, sans-serif';
 
 function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
   const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-  const displayName = parentName || 'apoderado/a';
+  const displayName = parentName || 'padre/madre';
   const displayBaby = babyName || 'tu bebé';
   return (
     <div style={{ padding: '4px 24px 14px' }}>
@@ -89,7 +89,9 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   return (
     <>
       {/* dot */}
-      <div style={{
+      <div
+        onClick={onClick && state !== 'next' ? onClick : undefined}
+        style={{
         position:'absolute',
         left: cx - dotSize/2, top: cy - dotSize/2,
         width: dotSize, height: dotSize, borderRadius:'50%',
@@ -99,6 +101,7 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
           ? `0 0 0 6px ${KUN.rosehip}, 0 6px 14px rgba(240,116,62,0.30)`
           : 'none',
         display:'flex', alignItems:'center', justifyContent:'center',
+        cursor: onClick && state !== 'next' ? 'pointer' : 'default',
         zIndex: 2,
       }}>
         {dotContent}

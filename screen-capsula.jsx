@@ -901,7 +901,13 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
   const handlePublish = () => {
     if (!question.trim()) return;
     setPublished(true);
-    if (onPublishForum) onPublishForum();
+    if (onPublishForum) {
+      onPublishForum({
+        text: question.trim(),
+        capsuleId,
+        capsuleTitle: capsule.headerTitle,
+      });
+    }
   };
 
   const handleQuizSelect = (selectedIndex) => {

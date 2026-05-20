@@ -77,13 +77,24 @@ function CategoryChips({ active, onChange }) {
   );
 }
 
-function CapsuleItem({ cap, onOpenCapsula }) {
+function CapsuleItem({ cap, onOpenCapsula, completed }) {
   return (
     <div onClick={() => onOpenCapsula && onOpenCapsula(cap.id)}
       style={{ display:'flex', alignItems:'center', gap: 12, padding: '10px 4px', cursor:'pointer' }}>
-      <div style={{ width: 6, height: 6, borderRadius:'50%', background: KUN.brick, flexShrink: 0 }}/>
+      <div style={{
+        width: completed ? 18 : 6, height: completed ? 18 : 6, borderRadius:'50%',
+        background: completed ? KUN.apple : KUN.brick, flexShrink: 0,
+        display:'flex', alignItems:'center', justifyContent:'center',
+      }}>
+        {completed && KIcon.check(KUN.ink)}
+      </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: B_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{cap.title}</div>
+        {completed && (
+          <div style={{ fontFamily: B_FT, fontSize: 10.5, color: KUN.brick, fontWeight: 700, marginTop: 3, letterSpacing: 0.4, textTransform: 'uppercase' }}>
+            Completada
+          </div>
+        )}
         <div style={{ fontFamily: B_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>{cap.dur} · lectura</div>
       </div>
       {KIcon.chevRight(KUN.inkFaint)}
@@ -91,7 +102,7 @@ function CapsuleItem({ cap, onOpenCapsula }) {
   );
 }
 
-function TopicRow({ icon, name, caps, defaultOpen, onOpenCapsula }) {
+function TopicRow({ icon, name, caps, defaultOpen, onOpenCapsula, completedCapsulas }) {
   const [open, setOpen] = React.useState(!!defaultOpen);
   const tone = TOPIC_COLOR[name] || KUN.rosehip;
   return (
@@ -133,14 +144,21 @@ function TopicRow({ icon, name, caps, defaultOpen, onOpenCapsula }) {
           borderTop: `1px dashed ${KUN.hair}`,
           display:'flex', flexDirection:'column', gap: 2,
         }}>
-          {caps.map(cap => <CapsuleItem key={cap.id} cap={cap} onOpenCapsula={onOpenCapsula} />)}
+          {caps.map(cap => (
+            <CapsuleItem
+              key={cap.id}
+              cap={cap}
+              onOpenCapsula={onOpenCapsula}
+              completed={(completedCapsulas || []).includes(cap.id)}
+            />
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-function TopicList({ onOpenCapsula, activeCategory }) {
+function TopicList({ onOpenCapsula, activeCategory, completedCapsulas }) {
   const byTopic = (topicName) => CAPSULAS.filter(c => c.topic === topicName);
 
   const allTopics = [
@@ -181,19 +199,25 @@ function TopicList({ onOpenCapsula, activeCategory }) {
         </div>
       </div>
       {topics.map((t, i) => (
-        <TopicRow key={t.name} {...t} defaultOpen={activeCategory !== 'Todo' || i === 0} onOpenCapsula={onOpenCapsula} />
+        <TopicRow
+          key={t.name}
+          {...t}
+          defaultOpen={activeCategory !== 'Todo' || i === 0}
+          onOpenCapsula={onOpenCapsula}
+          completedCapsulas={completedCapsulas}
+        />
       ))}
     </div>
   );
 }
 
-function ScreenBiblioteca({ onOpenCapsula }) {
+function ScreenBiblioteca({ onOpenCapsula, completedCapsulas }) {
   const [activeCategory, setActiveCategory] = React.useState('Todo');
   return (
     <>
       <SearchField />
       <CategoryChips active={activeCategory} onChange={setActiveCategory} />
-      <TopicList onOpenCapsula={onOpenCapsula} activeCategory={activeCategory} />
+      <TopicList onOpenCapsula={onOpenCapsula} activeCategory={activeCategory} completedCapsulas={completedCapsulas} />
     </>
   );
 }

@@ -1,4 +1,4 @@
-// Vínculo section — entry, Nuestro viaje, Cuentos y canciones.
+// Acerquémonos section — entry, Diario de vida, Actividades con mi güagüa.
 // Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs,
 // hairline cards, DS palette per category, decorative half-moon shapes.
 
@@ -87,7 +87,7 @@ function VinkShapes() {
 // ── Entry ───────────────────────────────────────────────
 function VinkEntry({ onPick }) {
   return (
-    <div style={{ position:'relative', padding: '6px 20px 0' }}>
+    <div style={{ position:'relative', padding: '6px 20px 0', overflowX: 'hidden', maxWidth: '100%', boxSizing: 'border-box' }}>
       <VinkShapes/>
 
       <div style={{ position:'relative', zIndex: 1 }}>
@@ -106,7 +106,7 @@ function VinkEntry({ onPick }) {
           </div>
         </div>
 
-        {/* Featured card — Nuestro viaje */}
+        {/* Featured card — Diario de vida */}
         <div onClick={() => onPick('journey')} style={{
           background: KUN.brick, borderRadius: 30, padding: '24px 22px',
           color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
@@ -124,7 +124,7 @@ function VinkEntry({ onPick }) {
             fontFamily: V_FT, fontSize: 24, fontWeight: 700,
             letterSpacing: -0.4, marginBottom: 4, position:'relative',
           }}>
-            Nuestro viaje
+            Diario de vida
           </div>
           <div style={{
             fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, opacity: 0.92, position:'relative',
@@ -133,7 +133,7 @@ function VinkEntry({ onPick }) {
           </div>
         </div>
 
-        {/* Standard card — Cuentos y canciones */}
+        {/* Standard card — Actividades con mi güagüa */}
         <div onClick={() => onPick('songs')} style={{
           background:'#fff', borderRadius: 30, padding: '24px 22px',
           cursor:'pointer', position:'relative', overflow:'hidden',
@@ -150,7 +150,7 @@ function VinkEntry({ onPick }) {
             fontFamily: V_FT, fontSize: 22, fontWeight: 700,
             letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
           }}>
-            Cuentos y canciones
+            Actividades con mi güagüa
           </div>
           <div style={{
             fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
@@ -179,7 +179,7 @@ function SubHeader({ title, onBack }) {
   );
 }
 
-// ── Nuestro viaje ───────────────────────────────────────
+// ── Diario de vida ───────────────────────────────────────
 function ActivityCard({ onOpenSheet, onOpenRecorder }) {
   return (
     <div style={{
@@ -391,8 +391,8 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
 
   return (
     <>
-      <SubHeader title="Nuestro viaje" onBack={onBack} />
-      <div style={{ position:'relative', height:'100%' }}>
+      <SubHeader title="Diario de vida" onBack={onBack} />
+      <div style={{ position:'relative', height:'100%', overflowX:'hidden', maxWidth:'100%' }}>
         <div style={{ paddingBottom: 100 }}>
           <ActivityCard onOpenSheet={() => setSheet(true)} onOpenRecorder={() => setRecording(true)} />
           <FeedSeparator label="HOY · DÍA 32" />
@@ -452,7 +452,7 @@ function NuestroViaje({ onBack, recordings, addRecording }) {
   );
 }
 
-// ── Cuentos y canciones ─────────────────────────────────
+// ── Actividades con mi güagüa ─────────────────────────────────
 function MusicaTab() {
   const [playing, setPlaying] = React.useState(null);
   const tracks = [
@@ -816,8 +816,8 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
   const [recording, setRecording] = React.useState(false);
 
   return (
-    <>
-      <SubHeader title="Cuentos y canciones" onBack={onBack} />
+    <div style={{ overflowX:'hidden', maxWidth:'100%' }}>
+      <SubHeader title="Actividades con mi güagüa" onBack={onBack} />
 
       {/* sub-subtabs — DS pattern: pill shape, individual rounded, Brick activa, cream inactive con borde */}
       <div style={{
@@ -851,7 +851,7 @@ function CuentosCanciones({ onBack, recordings, addRecording }) {
         onClose={() => setRecording(false)}
         onSave={addRecording}
       />}
-    </>
+    </div>
   );
 }
 

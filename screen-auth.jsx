@@ -1,5 +1,5 @@
-// Auth — role selection (apoderado vs. trabajador de salud)
-// + RUT + password flow for parents. Session persists in localStorage
+// Auth — role selection (padre/madre vs. trabajador de salud)
+// + newborn RUT + password flow for parents. Session persists in localStorage
 // under key kun_auth_v1; once logged in, the app skips this screen.
 //
 // Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs,
@@ -18,7 +18,14 @@ const KAuth = {
     try { localStorage.setItem(AUTH_KEY, JSON.stringify(data)); } catch {}
   },
   clear() {
-    try { localStorage.removeItem(AUTH_KEY); } catch {}
+    try {
+      const raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      localStorage.setItem(AUTH_KEY, JSON.stringify({ ...data, sessionActive: false }));
+    } catch {
+      try { localStorage.removeItem(AUTH_KEY); } catch {}
+    }
   },
 };
 window.KAuth = KAuth;
@@ -44,6 +51,9 @@ function formatRut(value) {
 function isValidRut(rut) {
   const clean = String(rut || '').replace(/[^0-9kK]/g, '');
   return clean.length >= 8;
+}
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
 }
 
 // ── Shared UI ───────────────────────────────────────
@@ -154,7 +164,7 @@ function RoleSelectView({ onPick }) {
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: A_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
-              Soy apoderado
+              Soy padre/madre
             </div>
             <div style={{ fontFamily: A_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 3, lineHeight: 1.45 }}>
               Mamá, papá o cuidador del bebé
@@ -276,14 +286,14 @@ function RutEntryView({ onContinue, onBack, initial }) {
         <AuthBack onBack={onBack} />
         <div style={{ padding: '18px 28px 0' }}>
           <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Ingresa tu RUT
+            Ingresa el RUT de tu recién nacido
           </div>
           <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Lo usamos para identificarte y proteger tu información.
+            Usaremos el RUT de tu hijo/a para encontrar su cuenta y proteger su información.
           </div>
         </div>
         <div style={{ padding: '28px 28px 0' }}>
-          <div style={labelStyle}>RUT</div>
+          <div style={labelStyle}>RUT del recién nacido</div>
           <input
             value={rut}
             onChange={(e) => setRut(formatRut(e.target.value))}
@@ -309,13 +319,16 @@ function RutEntryView({ onContinue, onBack, initial }) {
 function CreatePasswordView({ rut, onSubmit, onBack }) {
   const [pass, setPass] = React.useState('');
   const [confirm, setConfirm] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [err, setErr] = React.useState('');
-  const valid = pass.length >= 6 && pass === confirm;
+  const mismatch = pass.length > 0 && confirm.length > 0 && pass !== confirm;
+  const valid = pass.length >= 6 && pass === confirm && isValidEmail(email);
   const handle = () => {
     if (pass.length < 6) return setErr('La contraseña debe tener al menos 6 caracteres.');
     if (pass !== confirm) return setErr('Las contraseñas no coinciden.');
+    if (!isValidEmail(email)) return setErr('Ingresa un correo válido para recuperar tu contraseña.');
     setErr('');
-    onSubmit(pass);
+    onSubmit(pass, email.trim());
   };
   return (
     <>
@@ -327,7 +340,7 @@ function CreatePasswordView({ rut, onSubmit, onBack }) {
             Crea tu contraseña
           </div>
           <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Es la primera vez que ingresas con <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span>. Elige una contraseña fácil de recordar.
+            Es la primera vez que ingresas con el RUT <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span>. Elige una contraseña y deja un correo de respaldo.
           </div>
         </div>
         <div style={{ padding: '24px 28px 0' }}>
@@ -343,6 +356,23 @@ function CreatePasswordView({ rut, onSubmit, onBack }) {
             type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && valid && handle()}
             placeholder="Repítela aquí"
+            style={{
+              ...inputStyle,
+              borderColor: mismatch ? '#D14B3A' : KUN.hair,
+            }}
+          />
+          {mismatch && (
+            <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>
+              Las contraseñas no coinciden.
+            </div>
+          )}
+          <div style={{ height: 14 }} />
+          <div style={labelStyle}>Correo de respaldo</div>
+          <input
+            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && valid && handle()}
+            placeholder="correo@ejemplo.cl"
+            autoComplete="email"
             style={inputStyle}
           />
           {err && (
@@ -374,10 +404,10 @@ function LoginPasswordView({ rut, expectedPassword, onSubmit, onBack, onForgot }
         <AuthBack onBack={onBack} />
         <div style={{ padding: '18px 28px 0' }}>
           <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Hola de nuevo
+            Ya tienes una cuenta
           </div>
           <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Ingresa tu contraseña para <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span>.
+            El RUT <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span> ya está registrado. Ingresa tu contraseña para continuar.
           </div>
         </div>
         <div style={{ padding: '24px 28px 0' }}>
@@ -407,12 +437,146 @@ function LoginPasswordView({ rut, expectedPassword, onSubmit, onBack, onForgot }
   );
 }
 
+function ForgotEmailView({ rut, backupEmail, onBack, onSendCode }) {
+  const [email, setEmail] = React.useState('');
+  const [err, setErr] = React.useState('');
+  const canContinue = isValidEmail(email);
+  const handle = () => {
+    if (!canContinue) return setErr('Ingresa un correo válido.');
+    if (backupEmail && email.trim().toLowerCase() !== backupEmail.toLowerCase()) {
+      return setErr('Ese correo no coincide con el correo de respaldo registrado.');
+    }
+    setErr('');
+    onSendCode(email.trim());
+  };
+  return (
+    <>
+      <AuthShapes/>
+      <div style={{ position:'relative', zIndex: 1 }}>
+        <AuthBack onBack={onBack} />
+        <div style={{ padding: '18px 28px 0' }}>
+          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
+            Recupera tu contraseña
+          </div>
+          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+            Escribe el correo de respaldo asociado al RUT <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span>. Te enviaremos un código para restablecerla.
+          </div>
+        </div>
+        <div style={{ padding: '24px 28px 0' }}>
+          <div style={labelStyle}>Correo de respaldo</div>
+          <input
+            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && canContinue && handle()}
+            placeholder="correo@ejemplo.cl" autoFocus autoComplete="email"
+            style={inputStyle}
+          />
+          {err && <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>}
+        </div>
+      </div>
+      <div style={{ flex: 1 }}/>
+      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
+        <PrimaryButton onClick={handle} disabled={!canContinue}>
+          Enviar código
+        </PrimaryButton>
+      </div>
+    </>
+  );
+}
+
+function RecoveryCodeView({ email, code, onBack, onVerified }) {
+  const [typed, setTyped] = React.useState('');
+  const [err, setErr] = React.useState('');
+  const handle = () => {
+    if (typed.trim() !== code) return setErr('El código no coincide.');
+    setErr('');
+    onVerified();
+  };
+  return (
+    <>
+      <AuthShapes/>
+      <div style={{ position:'relative', zIndex: 1 }}>
+        <AuthBack onBack={onBack} />
+        <div style={{ padding: '18px 28px 0' }}>
+          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
+            Ingresa el código
+          </div>
+          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+            En este prototipo, el código enviado a <span style={{ fontWeight: 600, color: KUN.ink }}>{email}</span> es <span style={{ fontWeight: 700, color: KUN.brick }}>{code}</span>.
+          </div>
+        </div>
+        <div style={{ padding: '24px 28px 0' }}>
+          <div style={labelStyle}>Código de recuperación</div>
+          <input
+            value={typed} onChange={(e) => setTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            onKeyDown={(e) => e.key === 'Enter' && typed.length === 6 && handle()}
+            placeholder="123456" inputMode="numeric" autoFocus
+            style={{ ...inputStyle, fontFamily: A_FT, fontSize: 20, fontWeight: 700, letterSpacing: 4, textAlign: 'center' }}
+          />
+          {err && <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>}
+        </div>
+      </div>
+      <div style={{ flex: 1 }}/>
+      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
+        <PrimaryButton onClick={handle} disabled={typed.length !== 6}>
+          Verificar código
+        </PrimaryButton>
+      </div>
+    </>
+  );
+}
+
+function ResetPasswordView({ onBack, onSubmit }) {
+  const [pass, setPass] = React.useState('');
+  const [confirm, setConfirm] = React.useState('');
+  const [err, setErr] = React.useState('');
+  const valid = pass.length >= 6 && pass === confirm;
+  const handle = () => {
+    if (pass.length < 6) return setErr('La contraseña debe tener al menos 6 caracteres.');
+    if (pass !== confirm) return setErr('Las contraseñas no coinciden.');
+    setErr('');
+    onSubmit(pass);
+  };
+  return (
+    <>
+      <AuthShapes/>
+      <div style={{ position:'relative', zIndex: 1 }}>
+        <AuthBack onBack={onBack} />
+        <div style={{ padding: '18px 28px 0' }}>
+          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
+            Crea una nueva contraseña
+          </div>
+          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+            Usa una clave nueva para volver a entrar a KUN.
+          </div>
+        </div>
+        <div style={{ padding: '24px 28px 0' }}>
+          <div style={labelStyle}>Nueva contraseña</div>
+          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Mínimo 6 caracteres" autoFocus style={inputStyle} />
+          <div style={{ height: 14 }} />
+          <div style={labelStyle}>Confirma tu contraseña</div>
+          <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && valid && handle()} placeholder="Repítela aquí" style={inputStyle} />
+          {err && <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>}
+        </div>
+      </div>
+      <div style={{ flex: 1 }}/>
+      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
+        <PrimaryButton onClick={handle} disabled={!valid}>
+          Guardar nueva contraseña
+        </PrimaryButton>
+      </div>
+    </>
+  );
+}
+
 // ── Main entry ──────────────────────────────────────
 function ScreenAuth({ onAuthenticated }) {
   const stored = KAuth.load();
   const [view, setView] = React.useState('role');
   const [pendingRut, setPendingRut] = React.useState(stored?.rut || '');
   const [storedPass, setStoredPass] = React.useState(stored?.password || null);
+  const [backupEmail, setBackupEmail] = React.useState(stored?.backupEmail || '');
+  const [recoveryCode, setRecoveryCode] = React.useState('');
+  const [recoveryEmail, setRecoveryEmail] = React.useState('');
 
   return (
     <div style={{
@@ -437,6 +601,7 @@ function ScreenAuth({ onAuthenticated }) {
             const existing = KAuth.load();
             if (existing && existing.rut === rut && existing.password) {
               setStoredPass(existing.password);
+              setBackupEmail(existing.backupEmail || '');
               setView('login-pass');
             } else {
               setView('create-pass');
@@ -448,9 +613,9 @@ function ScreenAuth({ onAuthenticated }) {
         <CreatePasswordView
           rut={pendingRut}
           onBack={() => setView('rut')}
-          onSubmit={(pass) => {
+          onSubmit={(pass, email) => {
             const data = {
-              role: 'parent', rut: pendingRut, password: pass,
+              role: 'parent', rut: pendingRut, password: pass, backupEmail: email,
               sessionActive: true, createdAt: Date.now(),
             };
             KAuth.save(data);
@@ -464,14 +629,49 @@ function ScreenAuth({ onAuthenticated }) {
           expectedPassword={storedPass}
           onBack={() => setView('rut')}
           onForgot={() => {
-            // For prototype: clears stored auth so a new password can be set
-            KAuth.clear();
-            setStoredPass(null);
-            setView('create-pass');
+            setView('forgot-email');
           }}
           onSubmit={() => {
             const existing = KAuth.load() || {};
             const data = { ...existing, sessionActive: true };
+            KAuth.save(data);
+            onAuthenticated(data);
+          }}
+        />
+      )}
+      {view === 'forgot-email' && (
+        <ForgotEmailView
+          rut={pendingRut}
+          backupEmail={backupEmail}
+          onBack={() => setView('login-pass')}
+          onSendCode={(email) => {
+            setRecoveryEmail(email);
+            setRecoveryCode(String(Math.floor(100000 + Math.random() * 900000)));
+            setView('recovery-code');
+          }}
+        />
+      )}
+      {view === 'recovery-code' && (
+        <RecoveryCodeView
+          email={recoveryEmail}
+          code={recoveryCode}
+          onBack={() => setView('forgot-email')}
+          onVerified={() => setView('reset-pass')}
+        />
+      )}
+      {view === 'reset-pass' && (
+        <ResetPasswordView
+          onBack={() => setView('recovery-code')}
+          onSubmit={(pass) => {
+            const existing = KAuth.load() || {};
+            const data = {
+              ...existing,
+              role: 'parent',
+              rut: pendingRut,
+              password: pass,
+              backupEmail: existing.backupEmail || recoveryEmail,
+              sessionActive: true,
+            };
             KAuth.save(data);
             onAuthenticated(data);
           }}

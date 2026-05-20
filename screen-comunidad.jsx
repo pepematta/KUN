@@ -625,7 +625,8 @@ function QuestionCard({ q, onOpen }) {
     <div onClick={() => onOpen(q.id)} style={{
       background: '#fff', borderRadius: 24, padding: 18,
       marginBottom: 12, cursor: 'pointer',
-      border: `1px solid ${KUN.hair}`,
+      border: q.fresh ? `2px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
+      boxShadow: q.fresh ? '0 8px 18px rgba(240,116,62,0.16)' : 'none',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <ComAvatar name={q.author} color={q.authorColor} size={40} />
@@ -665,11 +666,15 @@ function QuestionCard({ q, onOpen }) {
   );
 }
 
-function QuestionThread({ qId, onBack }) {
-  const q = QUESTIONS.find(x => x.id === qId);
+function QuestionThread({ qId, onBack, questions }) {
+  const q = (questions || QUESTIONS).find(x => x.id === qId) || QUESTIONS.find(x => x.id === qId);
   const [replyAnon, setReplyAnon] = React.useState(false);
   const [replyText, setReplyText] = React.useState('');
   const [replyPosted, setReplyPosted] = React.useState(false);
+
+  if (!q) {
+    return <CommunityView questions={questions} onNew={() => {}} />;
+  }
 
   const handleReply = () => {
     if (!replyText.trim()) return;
@@ -895,10 +900,10 @@ function ExperienceCard({ e }) {
   );
 }
 
-function QuestionsFeed({ onOpen }) {
+function QuestionsFeed({ onOpen, questions }) {
   return (
     <div style={{ padding: '0 20px' }}>
-      {QUESTIONS.map(q => <QuestionCard key={q.id} q={q} onOpen={onOpen} />)}
+      {(questions || QUESTIONS).map(q => <QuestionCard key={q.id} q={q} onOpen={onOpen} />)}
     </div>
   );
 }
@@ -1055,12 +1060,17 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   );
 }
 
-function CommunityView({ onNew }) {
+function CommunityView({ onNew, questions, focusQuestionId }) {
   const [sub, setSub] = React.useState('questions');
   const [openQ, setOpenQ] = React.useState(null);
 
+  React.useEffect(() => {
+    setSub('questions');
+    setOpenQ(null);
+  }, [focusQuestionId]);
+
   if (openQ) {
-    return <QuestionThread qId={openQ} onBack={() => setOpenQ(null)} />;
+    return <QuestionThread qId={openQ} questions={questions} onBack={() => setOpenQ(null)} />;
   }
 
   return (
@@ -1068,7 +1078,7 @@ function CommunityView({ onNew }) {
       <div style={{ paddingBottom: 100 }}>
         <CommunityInnerTabs active={sub} onChange={setSub} />
         {sub === 'questions'
-          ? <QuestionsFeed onOpen={setOpenQ} />
+          ? <QuestionsFeed onOpen={setOpenQ} questions={questions} />
           : <ExperiencesFeed />}
       </div>
 
@@ -1091,11 +1101,18 @@ function CommunityView({ onNew }) {
 // ║                  PUBLIC ENTRY                         ║
 // ╚══════════════════════════════════════════════════════╝
 
-function ScreenComunidad() {
-  const [tab, setTab] = React.useState('chat'); // chat | community
+function ScreenComunidad({ initialTab = 'chat', focusQuestionId = null, questions = [] }) {
+  const mergedQuestions = [...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id))];
+  const [tab, setTab] = React.useState(initialTab); // chat | community
   const [chatView, setChatView] = React.useState('list'); // list | new | thread
   const [activeChat, setActiveChat] = React.useState(null);
   const [newPost, setNewPost] = React.useState(null); // null | 'question' | 'experience'
+
+  React.useEffect(() => {
+    setTab(initialTab);
+    setChatView('list');
+    setActiveChat(null);
+  }, [initialTab, focusQuestionId]);
 
   return (
     <>
@@ -1129,7 +1146,11 @@ function ScreenComunidad() {
       )}
 
       {tab === 'community' && (
-        <CommunityView onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')} />
+        <CommunityView
+          questions={mergedQuestions}
+          focusQuestionId={focusQuestionId}
+          onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')}
+        />
       )}
 
       {newPost && (

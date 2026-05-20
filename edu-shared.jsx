@@ -304,9 +304,9 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
 // inactivas con fondo crema y borde suave.
 function KSubTabs({ active, onChange }) {
   const tabs = [
-    { id:'camino', label:'Camino' },
-    { id:'perso',  label:'Personalizado' },
-    { id:'biblio', label:'Biblioteca' },
+    { id:'camino', label:'Cuidados básicos' },
+    { id:'perso',  label:'Especial para mi güagüa' },
+    { id:'biblio', label:'Aprender más' },
   ];
   return (
     <div style={{
@@ -323,7 +323,9 @@ function KSubTabs({ active, onChange }) {
               padding: '10px 6px', borderRadius: 999,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
-              fontFamily: FONT_T, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              fontFamily: FONT_T, fontSize: 12.5, fontWeight: 700, letterSpacing: 0.1,
+              lineHeight: 1.15, minHeight: 30,
+              display:'flex', alignItems:'center', justifyContent:'center',
               border: isA ? 'none' : `1px solid ${KUN.hair}`,
               transition: 'all .2s',
             }}>{t.label}</div>
@@ -365,7 +367,7 @@ function KBottomNav({ active = 'edu', onChange }) {
   const tabs = [
     { id: 'home',  label: 'Inicio',    icon: KIcon.home },
     { id: 'edu',   label: 'Educación', icon: KIcon.book },
-    { id: 'bond',  label: 'Vínculo',   icon: KIcon.heart },
+    { id: 'bond',  label: 'Acerquémonos', icon: KIcon.heart },
     { id: 'comm',  label: 'Comunidad', icon: KIcon.people },
   ];
   return (

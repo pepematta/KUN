@@ -48,17 +48,17 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="edu-shared.jsx?v=8"></script>
-<script type="text/babel" src="screen-auth.jsx?v=6"></script>
+<script type="text/babel" src="edu-shared.jsx?v=9"></script>
+<script type="text/babel" src="screen-auth.jsx?v=8"></script>
 <script type="text/babel" src="screen-tour.jsx?v=3"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=4"></script>
-<script type="text/babel" src="screen-home.jsx?v=11"></script>
-<script type="text/babel" src="edu-camino.jsx?v=6"></script>
+<script type="text/babel" src="screen-home.jsx?v=14"></script>
+<script type="text/babel" src="edu-camino.jsx?v=7"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=6"></script>
-<script type="text/babel" src="edu-biblioteca.jsx?v=6"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=7"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=7"></script>
-<script type="text/babel" src="screen-capsula.jsx?v=8"></script>
+<script type="text/babel" src="edu-biblioteca.jsx?v=7"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=9"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=8"></script>
+<script type="text/babel" src="screen-capsula.jsx?v=9"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -100,7 +100,7 @@ const NOTIFICATIONS = [
   { kind:'shift',     title:'Valentina Rojas inició su turno', desc:'Está cuidando a Sofía esta mañana.', time:'Hace 10 min', color: KUN.sage },
   { kind:'capsule',   title:'Nueva cápsula para ti',           desc:'Método canguro: cómo empezar.',     time:'Hace 1 h',    color: KUN.accent },
   { kind:'message',   title:'Mensaje de Juanita',              desc:'Te mando un artículo que te podría servir.', time:'Hace 2 h', color: KUN.sage },
-  { kind:'progress',  title:'Camino actualizado',              desc:'Completaste "Entender los monitores".',     time:'Ayer', color: KUN.accent },
+  { kind:'progress',  title:'Cuidados básicos actualizado',    desc:'Completaste "Entender los monitores".',     time:'Ayer', color: KUN.accent },
   { kind:'community', title:'Nueva pregunta en Comunidad',     desc:'Mariana preguntó sobre lactancia materna.', time:'Ayer', color: '#7AA8B8' },
 ];
 
@@ -279,7 +279,7 @@ function SettingsPanel({ authData, onSave, onClose, onLogout }) {
           </div>
 
           <div>
-            <label style={labelStyle}>RUT</label>
+            <label style={labelStyle}>RUT DEL RECIÉN NACIDO</label>
             <div style={{
               padding: '14px 16px', borderRadius: 16,
               background: KUN.cardSoft,
@@ -325,7 +325,7 @@ function SettingsPanel({ authData, onSave, onClose, onLogout }) {
             <div>
               <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 15, fontWeight: 700, color: '#D94F3D' }}>Cerrar sesión</div>
               <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, marginTop: 1, letterSpacing: 0.2 }}>
-                RUT {authData?.rut}
+                RUT recién nacido {authData?.rut}
               </div>
             </div>
           </div>
@@ -364,6 +364,8 @@ function Prototype() {
   const [lactarioReservation, setLactarioReservation] = useState(null);
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
   const [quizResults, setQuizResults] = useState({});
+  const [forumQuestions, setForumQuestions] = useState([]);
+  const [communityStart, setCommunityStart] = useState({ tab: 'chat', focusQuestionId: null });
   // Tracks where the user was before opening a capsule, so we can return there
   const [capsuleSource, setCapsuleSource] = useState({ tab: 'edu', sub: 'camino' });
   const addRecording = (r) => setRecordings(prev => [r, ...prev]);
@@ -390,6 +392,11 @@ function Prototype() {
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
     setTourDone(true);
+    setCapsulaOpen(false);
+    setLactarioOpen(false);
+    setTab('home');
+    setEduSub('camino');
+    setBondView('entry');
   };
 
   const goToEdu = (sub = 'camino') => {
@@ -407,12 +414,35 @@ function Prototype() {
     setTab(capsuleSource.tab);
     if (capsuleSource.tab === 'edu') setEduSub(capsuleSource.sub);
   };
+  const markCapsulaCompleted = (id = capsuleId) => {
+    setCompletedCapsulas(prev => [id, ...prev.filter(doneId => doneId !== id)]);
+  };
   const completeCapsula = () => {
-    setCompletedCapsulas(prev => [capsuleId, ...prev.filter(id => id !== capsuleId)]);
+    markCapsulaCompleted();
     setCapsulaOpen(false);
-    // After completing, always go to Personalizado so user sees it in historial
-    setTab('edu');
-    setEduSub('perso');
+    setTab(capsuleSource.tab);
+    if (capsuleSource.tab === 'edu') setEduSub(capsuleSource.sub);
+  };
+  const publishCapsulaQuestion = ({ text, capsuleTitle, capsuleId: publishedCapsuleId }) => {
+    const id = `capsula-${publishedCapsuleId || capsuleId}-${Date.now()}`;
+    markCapsulaCompleted(publishedCapsuleId || capsuleId);
+    setForumQuestions(prev => [{
+      id,
+      author: parentName || 'Tú',
+      authorColor: KUN.rosehip,
+      role: `Familia de ${babyName || 'tu guagüa'}`,
+      category: 'Cápsula educativa',
+      title: `Duda sobre ${capsuleTitle || 'esta cápsula'}`,
+      text,
+      time: 'Ahora',
+      likes: 0,
+      replies: 0,
+      answers: [],
+      fresh: true,
+    }, ...prev]);
+    setCommunityStart({ tab: 'community', focusQuestionId: id });
+    setCapsulaOpen(false);
+    setTab('comm');
   };
   const saveQuizResult = (result) => {
     setQuizResults(prev => ({
@@ -427,7 +457,7 @@ function Prototype() {
   const renderEdu = () => {
     if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} parentName={parentName} babyName={babyName} />;
     if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} quizResults={quizResults} onGoToBiblio={() => goToEdu('biblio')} />;
-    return <ScreenBiblioteca onOpenCapsula={openCapsula} />;
+    return <ScreenBiblioteca onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} />;
   };
 
   let body, hasSubtabs = false;
@@ -438,7 +468,7 @@ function Prototype() {
       onComplete={completeCapsula}
       quizResult={quizResults[capsuleId]}
       onQuizAnswer={saveQuizResult}
-      onPublishForum={() => { setCapsulaOpen(false); setTab('comm'); }}
+      onPublishForum={publishCapsulaQuestion}
     />;
   } else if (tab === 'home' && lactarioOpen) {
     body = <ScreenLactario
@@ -452,6 +482,7 @@ function Prototype() {
       onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula}
       parentName={parentName} babyName={babyName}
       lactarioReservation={lactarioReservation}
+      completedCapsulas={completedCapsulas}
       onOpenLactario={() => setLactarioOpen(true)}
       onCancelLactario={() => setLactarioReservation(null)}
       onMessageNurse={() => setTab('comm')}
@@ -465,13 +496,17 @@ function Prototype() {
       recordings={recordings} addRecording={addRecording}
     />;
   } else {
-    body = <ScreenComunidad />;
+    body = <ScreenComunidad
+      initialTab={communityStart.tab}
+      focusQuestionId={communityStart.focusQuestionId}
+      questions={forumQuestions}
+    />;
   }
 
   const screenLabel =
     tab === 'home' ? '01 Inicio'
-    : tab === 'edu' ? `02 Educación · ${eduSub === 'camino' ? 'Camino' : eduSub === 'perso' ? 'Personalizado' : 'Biblioteca'}`
-    : tab === 'bond' ? `03 Vínculo · ${bondView === 'entry' ? 'Inicio' : bondView === 'journey' ? 'Nuestro viaje' : 'Cuentos y canciones'}`
+    : tab === 'edu' ? `02 Educación · ${eduSub === 'camino' ? 'Cuidados básicos' : eduSub === 'perso' ? 'Especial para mi güagüa' : 'Aprender más'}`
+    : tab === 'bond' ? `03 Acerquémonos · ${bondView === 'entry' ? 'Inicio' : bondView === 'journey' ? 'Diario de vida' : 'Actividades con mi güagüa'}`
     : '04 Comunidad';
 
   return (
@@ -504,6 +539,7 @@ function Prototype() {
             <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub + (lactarioOpen ? '-lact' : ''))} style={{
               flex: 1,
               overflow: capsulaOpen ? 'hidden' : 'auto',
+              overflowX: 'hidden',
               paddingBottom: capsulaOpen ? 0 : 120,
               display: capsulaOpen ? 'flex' : undefined,
               flexDirection: capsulaOpen ? 'column' : undefined,
