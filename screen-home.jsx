@@ -358,43 +358,44 @@ function MilkBottleMeter({ reserved = 120, needed = 180 }) {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-      <div style={{
-        position: 'relative',
-        width: 38, height: 82,
-        border: `2px solid ${HC.ink}`,
-        borderRadius: '12px 12px 16px 16px',
-        background: '#fff',
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: -2, left: 9,
-          width: 16, height: 10,
-          border: `2px solid ${HC.ink}`,
-          borderBottom: 'none',
-          borderRadius: '8px 8px 0 0',
-          background: '#fff',
-          zIndex: 2,
-        }}/>
-        <div style={{
-          position: 'absolute',
-          left: 0, right: 0, bottom: 0,
-          height: `${pct}%`,
-          background: needsMore ? HC.sun : HC.apple,
-          transition: 'height .2s ease',
-        }}/>
-        {[25, 50, 75].map(mark => (
-          <div key={mark} style={{
-            position: 'absolute',
-            left: 5,
-            bottom: `${mark}%`,
-            width: 8,
-            height: 1,
-            background: 'rgba(42,35,32,0.35)',
-          }}/>
+      <svg width="64" height="92" viewBox="0 0 96 132" style={{ flexShrink: 0, overflow: 'visible' }}>
+        <defs>
+          <clipPath id="homeMilkBottleBody">
+            <path d="M26 48C25 39 30 32 41 28C51 24 58 20 59 11C60 5 64 2 70 3C76 4 79 9 77 15C75 22 78 27 87 34C94 40 96 48 91 57L86 113C84 124 74 129 55 129H45C25 129 15 120 14 101L12 64C11 55 16 49 26 48Z" />
+          </clipPath>
+        </defs>
+        <path
+          d="M44 29C55 24 61 20 62 11C63 5 67 1 73 3C79 5 82 10 79 17C77 23 80 28 88 35C96 42 99 51 93 61H28C25 47 29 36 44 29Z"
+          fill="#F0B43D"
+        />
+        <path
+          d="M23 48H90C97 48 101 54 100 62C99 69 95 73 88 73H25C16 73 10 69 10 61C10 53 15 48 23 48Z"
+          fill="#44D0A7"
+        />
+        {[25, 38, 51, 64, 77].map((x) => (
+          <path key={x} d={`M${x}46L${x - 1}74`} stroke="#171638" strokeWidth="6" strokeLinecap="round" />
         ))}
-      </div>
+        <g clipPath="url(#homeMilkBottleBody)">
+          <rect x="8" y="38" width="88" height="94" fill="#DDEFE8" />
+          <rect
+            x="8"
+            y={38 + (94 * (100 - pct)) / 100}
+            width="88"
+            height={(94 * pct) / 100}
+            fill={needsMore ? '#F8D96A' : '#BFE4C0'}
+            opacity="0.82"
+          />
+        </g>
+        <path
+          d="M26 48C25 39 30 32 41 28C51 24 58 20 59 11C60 5 64 2 70 3C76 4 79 9 77 15C75 22 78 27 87 34C94 40 96 48 91 57L86 113C84 124 74 129 55 129H45C25 129 15 120 14 101L12 64C11 55 16 49 26 48Z"
+          fill="none"
+          stroke="rgba(42,35,32,0.04)"
+          strokeWidth="1"
+        />
+        {[62, 79, 96, 113].map((y) => (
+          <path key={y} d={`M5 ${y}H33`} stroke="#171638" strokeWidth="6" strokeLinecap="round" />
+        ))}
+      </svg>
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
