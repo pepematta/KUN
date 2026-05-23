@@ -351,13 +351,89 @@ function SummaryCapsules({ onGoToCapsula, completedCapsulas }) {
 }
 
 // ─── Lactario card (compact) ──────────────────────────────────────────────────
+function MilkBottleMeter({ reserved = 120, needed = 180 }) {
+  const total = Math.max(needed, 1);
+  const pct = Math.max(0, Math.min(100, Math.round((reserved / total) * 100)));
+  const needsMore = reserved < needed;
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
+      <div style={{
+        position: 'relative',
+        width: 38, height: 82,
+        border: `2px solid ${HC.ink}`,
+        borderRadius: '12px 12px 16px 16px',
+        background: '#fff',
+        overflow: 'hidden',
+        flexShrink: 0,
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: -2, left: 9,
+          width: 16, height: 10,
+          border: `2px solid ${HC.ink}`,
+          borderBottom: 'none',
+          borderRadius: '8px 8px 0 0',
+          background: '#fff',
+          zIndex: 2,
+        }}/>
+        <div style={{
+          position: 'absolute',
+          left: 0, right: 0, bottom: 0,
+          height: `${pct}%`,
+          background: needsMore ? HC.sun : HC.apple,
+          transition: 'height .2s ease',
+        }}/>
+        {[25, 50, 75].map(mark => (
+          <div key={mark} style={{
+            position: 'absolute',
+            left: 5,
+            bottom: `${mark}%`,
+            width: 8,
+            height: 1,
+            background: 'rgba(42,35,32,0.35)',
+          }}/>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', gap: 10,
+          fontFamily: HF_B, fontSize: 11.5, color: HC.ink2,
+        }}>
+          <span>Reservada</span>
+          <strong style={{ color: HC.ink }}>{reserved} ml</strong>
+        </div>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', gap: 10,
+          marginTop: 3,
+          fontFamily: HF_B, fontSize: 11.5, color: HC.ink2,
+        }}>
+          <span>Necesita</span>
+          <strong style={{ color: HC.ink }}>{needed} ml</strong>
+        </div>
+        <div style={{
+          marginTop: 7,
+          fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
+          color: needsMore ? HC.brick : '#3D9156',
+          lineHeight: 1.25,
+        }}>
+          {needsMore ? 'Se necesita que la madre vaya a dejar mas leche.' : 'Leche suficiente por ahora.'}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LactarioCard({ reservation, onOpen, onCancel }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
 
   const slots = window.LACTARIO_SLOTS || [];
   const nextSlot = slots.find(s => s.used < 4);
-  const hasReservation = !!reservation;
-  const displayTime = hasReservation ? reservation : (nextSlot ? nextSlot.time : '—');
+  const reservations = Array.isArray(reservation) ? reservation : (reservation ? [reservation] : []);
+  const hasReservation = reservations.length > 0;
+  const displayTime = hasReservation ? reservations[0] : (nextSlot ? nextSlot.time : '—');
+  const dailyMax = window.LACTARIO_MAX_DAILY || 4;
 
   return (
     <div style={{ margin: '16px 22px 0' }}>
@@ -365,7 +441,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
         onClick={onOpen}
         style={{
           background: HC.paper, border: `1px solid ${HC.hair}`,
-          borderRadius: 24, padding: '14px 14px 14px 16px',
+          borderRadius: '24px 24px 0 0', padding: '14px 14px 14px 16px',
           display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
         }}
       >
@@ -393,7 +469,9 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
             fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
             color: HC.ink2, marginTop: 2,
           }}>
-            {hasReservation ? `A las ${displayTime}` : `Próximo turno libre: ${displayTime}`}
+            {hasReservation
+              ? `${reservations.length}/${dailyMax} turnos hoy · primero ${displayTime}`
+              : `Próximo turno libre: ${displayTime}`}
           </div>
         </div>
 
@@ -413,6 +491,18 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
         </button>
       </div>
 
+      <div style={{
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderTop: 'none',
+        borderRadius: '0 0 24px 24px',
+        marginTop: -1,
+        padding: '14px 16px 16px',
+      }}>
+        <div style={{ height: 1, background: HC.hairSoft, marginBottom: 2 }}/>
+        <MilkBottleMeter reserved={120} needed={180} />
+      </div>
+
       {/* Cancel reservation link */}
       {hasReservation && (
         <div style={{ textAlign: 'center', marginTop: 8 }}>
@@ -422,7 +512,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
             }}>
               ¿Confirmar cancelación?{' '}
               <span
-                onClick={(e) => { e.stopPropagation(); onCancel(); setConfirmCancel(false); }}
+                onClick={(e) => { e.stopPropagation(); onCancel(displayTime); setConfirmCancel(false); }}
                 style={{ color: '#C0392B', fontWeight: 700, cursor: 'pointer' }}
               >Sí, cancelar</span>
               {' · '}

@@ -15,7 +15,7 @@ const DEFAULT_CAPSULAS = [
   { id: 6,  title: 'Producción de leche materna',             dur: '5 min',  topic: 'Lactancia' },
   { id: 7,  title: 'Lactancia con sonda',                     dur: '4 min',  topic: 'Lactancia' },
   { id: 8,  title: 'Etapas del desarrollo prematuro',         dur: '5 min',  topic: 'Prematuridad' },
-  { id: 9,  title: 'Qué es la ECMO',                          dur: '4 min',  topic: 'ECMO' },
+  { id: 9,  title: 'Qué es el ECMO',                          dur: '4 min',  topic: 'ECMO' },
   { id: 10, title: 'Cuidados al alta',                        dur: '6 min',  topic: 'Alta y hogar' },
 ];
 

@@ -26,7 +26,7 @@ const STAFF_INITIAL_CAPSULES = [
   { id: 1, title: 'Tu bebe empezo a alimentarse por sonda', topic: 'Alimentacion por sonda', dur: '4 min', status: 'publicada', text: 'Explica que es una sonda y como acompanar este proceso.', instructions: 'Revisar antes de primera alimentacion enteral.', media: '', quiz: 'La sonda ayuda a alimentar cuando el bebe aun no succiona.' },
   { id: 2, title: 'Metodo canguro: como empezar', topic: 'Metodo canguro', dur: '6 min', status: 'publicada', text: 'Guia para iniciar contacto piel con piel.', instructions: 'Validar estabilidad con enfermeria.', media: '', quiz: 'El metodo canguro puede hacerlo mama o papa.' },
   { id: 4, title: 'Entender los monitores', topic: 'Equipos y monitores', dur: '5 min', status: 'publicada', text: 'Describe saturacion, frecuencia cardiaca y alarmas.', instructions: 'No manipular sensores sin equipo clinico.', media: '', quiz: 'No todas las alarmas significan urgencia.' },
-  { id: 9, title: 'Que es la ECMO', topic: 'ECMO', dur: '4 min', status: 'publicada', text: 'Introduccion simple a soporte ECMO.', instructions: 'Recomendar solo si aplica a la ficha clinica.', media: '', quiz: 'ECMO es soporte avanzado temporal.' },
+  { id: 9, title: 'Que es el ECMO', topic: 'ECMO', dur: '4 min', status: 'publicada', text: 'Introduccion simple a soporte ECMO.', instructions: 'Recomendar solo si aplica a la ficha clinica.', media: '', quiz: 'ECMO es soporte avanzado temporal.' },
 ];
 
 const STAFF_DEVICE_OPTIONS = ['CPAP', 'Ventilacion mecanica', 'Sonda orogastrica', 'Via central', 'Via arterial', 'ECMO', 'Monitor multiparametro'];

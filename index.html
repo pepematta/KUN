@@ -51,13 +51,13 @@
 <script type="text/babel" src="edu-shared.jsx?v=10"></script>
 <script type="text/babel" src="screen-auth.jsx?v=9"></script>
 <script type="text/babel" src="screen-tour.jsx?v=3"></script>
-<script type="text/babel" src="screen-lactario.jsx?v=4"></script>
-<script type="text/babel" src="screen-home.jsx?v=14"></script>
+<script type="text/babel" src="screen-lactario.jsx?v=5"></script>
+<script type="text/babel" src="screen-home.jsx?v=15"></script>
 <script type="text/babel" src="edu-camino.jsx?v=7"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=6"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=8"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=10"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=11"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=14"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=12"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=9"></script>
 <script type="text/babel" src="screen-staff.jsx?v=2"></script>
 </head>
@@ -98,12 +98,19 @@ function PlaceholderScreen({ title, subtitle, icon }) {
 }
 
 const NOTIFICATIONS = [
-  { kind:'shift',     title:'Valentina Rojas inició su turno', desc:'Está cuidando a Sofía esta mañana.', time:'Hace 10 min', color: KUN.sage },
-  { kind:'capsule',   title:'Nueva cápsula para ti',           desc:'Método canguro: cómo empezar.',     time:'Hace 1 h',    color: KUN.accent },
-  { kind:'message',   title:'Mensaje de Juanita',              desc:'Te mando un artículo que te podría servir.', time:'Hace 2 h', color: KUN.sage },
-  { kind:'progress',  title:'Cuidados básicos actualizado',    desc:'Completaste "Entender los monitores".',     time:'Ayer', color: KUN.accent },
-  { kind:'community', title:'Nueva pregunta en Comunidad',     desc:'Mariana preguntó sobre lactancia materna.', time:'Ayer', color: '#7AA8B8' },
+  { kind:'shift',     title:'Valentina Rojas inició su turno', desc:'Está cuidando a Sofía esta mañana.', time:'Hace 10 min', color: KUN.sage, target:{ tab:'home' } },
+  { kind:'capsule',   title:'Nueva cápsula para ti',           desc:'Método canguro: cómo empezar.',     time:'Hace 1 h',    color: KUN.accent, target:{ capsuleId: 2 } },
+  { kind:'message',   title:'Mensaje de Juanita',              desc:'Te mando un artículo que te podría servir.', time:'Hace 2 h', color: KUN.sage, target:{ capsuleId: 1 } },
+  { kind:'progress',  title:'Cuidados básicos actualizado',    desc:'Completaste "Entender los monitores".',     time:'Ayer', color: KUN.accent, target:{ tab:'edu', eduSub:'camino' } },
+  { kind:'community', title:'Respondieron tu pregunta',         desc:'Carla respondió en tu hilo del foro.', time:'Nueva', color: '#7AA8B8', target:{ tab:'comm', questionId:'q1' } },
+  { kind:'community', title:'Nueva pregunta en Comunidad',     desc:'Mariana preguntó sobre lactancia materna.', time:'Ayer', color: '#7AA8B8', target:{ tab:'comm' } },
 ];
+
+function minutesBeforeLabel(minutes) {
+  if (Number(minutes) === 60) return '1 hora antes';
+  if (Number(minutes) === 120) return '2 horas antes';
+  return `${minutes} min antes`;
+}
 
 const NOTIF_GLYPH = {
   shift:     (c) => (
@@ -139,14 +146,23 @@ const NOTIF_GLYPH = {
   ),
 };
 
-function NotificationsPanel({ onClose, recommendations = [] }) {
+function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactarioReservations = [], lactarioReminderMinutes = 60 }) {
   const items = [
+    ...lactarioReservations.map(time => ({
+      kind: 'message',
+      title: 'Recordatorio de reserva en lactario',
+      desc: `Tienes un turno ${time}. Te avisaremos ${minutesBeforeLabel(lactarioReminderMinutes)}.`,
+      time: 'Programado',
+      color: KUN.sage,
+      target: { tab: 'home', lactario: true },
+    })),
     ...recommendations.map(r => ({
-      kind: 'capsule',
-      title: 'Cápsula recomendada por el equipo',
-      desc: r.title,
-      time: 'Nueva',
-      color: KUN.brick,
+      kind: r.kind || 'capsule',
+      title: r.title || 'Cápsula recomendada por el equipo',
+      desc: r.desc || r.title,
+      time: r.time || 'Nueva',
+      color: r.color || KUN.brick,
+      target: r.target || { capsuleId: r.id },
     })),
     ...NOTIFICATIONS,
   ];
@@ -178,7 +194,7 @@ function NotificationsPanel({ onClose, recommendations = [] }) {
 
       <div style={{ flex: 1, overflowY:'auto', padding: '0 20px 30px' }}>
         {items.map((it, i) => (
-          <div key={i} style={{
+          <div key={i} onClick={() => onOpenItem && onOpenItem(it)} style={{
             background:'#fff', borderRadius: 22, padding: '14px 16px',
             marginBottom: 10, display:'flex', gap: 14, alignItems:'flex-start',
             border: `1px solid ${KUN.hair}`,
@@ -212,12 +228,15 @@ function NotificationsPanel({ onClose, recommendations = [] }) {
   );
 }
 
-function SettingsPanel({ authData, onSave, onClose, onLogout }) {
+function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMinutes = 60, onReminderChange }) {
   const [parentName, setParentName] = React.useState(authData?.parentName || '');
   const [babyName,   setBabyName]   = React.useState(authData?.babyName   || '');
+  const [familyRole, setFamilyRole] = React.useState(authData?.familyRole || 'parent');
+  const [reminder, setReminder] = React.useState(String(lactarioReminderMinutes || 60));
 
   const handleSave = () => {
-    onSave({ parentName: parentName.trim(), babyName: babyName.trim() });
+    onReminderChange && onReminderChange(Number(reminder));
+    onSave({ parentName: parentName.trim(), babyName: babyName.trim(), familyRole });
     onClose();
   };
 
@@ -301,6 +320,35 @@ function SettingsPanel({ authData, onSave, onClose, onLogout }) {
               {authData?.rut || '—'}
             </div>
           </div>
+
+          <div>
+            <label style={labelStyle}>PARENTESCO</label>
+            <select
+              style={inputStyle}
+              value={familyRole}
+              onChange={e => setFamilyRole(e.target.value)}
+            >
+              <option value="parent">Mamá / Papá</option>
+              <option value="abuela">Abuela</option>
+              <option value="abuelo">Abuelo</option>
+              <option value="family">Otro familiar</option>
+              <option value="external">Invitado externo</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={labelStyle}>RECORDATORIO LACTARIO</label>
+            <select
+              style={inputStyle}
+              value={reminder}
+              onChange={e => setReminder(e.target.value)}
+            >
+              <option value="15">15 min antes</option>
+              <option value="30">30 min antes</option>
+              <option value="60">1 hora antes</option>
+              <option value="120">2 horas antes</option>
+            </select>
+          </div>
         </div>
 
         {/* Save button */}
@@ -365,17 +413,25 @@ function Prototype() {
 
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
-  const [bondView, setBondView] = useState('entry'); // entry | journey | songs
+  const [bondView, setBondView] = useState('entry'); // entry | journey | activities
   const [recordings, setRecordings] = useState([]);
   const [notifOpen, setNotifOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [capsulaOpen, setCapsulaOpen] = useState(false);
   const [capsuleId, setCapsuleId] = useState(1);
   const [lactarioOpen,        setLactarioOpen]        = useState(false);
-  const [lactarioReservation, setLactarioReservation] = useState(null);
+  const [lactarioReservation, setLactarioReservation] = useState([]);
+  const [lactarioReminderMinutes, setLactarioReminderMinutesState] = useState(() => {
+    try {
+      return Number(localStorage.getItem('kun_lactario_reminder_minutes_v1') || 60);
+    } catch {
+      return 60;
+    }
+  });
   const [completedCapsulas, setCompletedCapsulas] = useState([]);
   const [quizResults, setQuizResults] = useState({});
   const [forumQuestions, setForumQuestions] = useState([]);
+  const [forumReplyNotifications, setForumReplyNotifications] = useState([]);
   const [communityStart, setCommunityStart] = useState({ focusQuestionId: null });
   const [forumReports, setForumReports] = useState(() => {
     try {
@@ -410,8 +466,48 @@ function Prototype() {
   const childLabel = linkedClinicalBaby?.sex === 'f' ? 'hija' : 'hijo';
   const parentRecommendations = clinicalRecommendations[authData?.rut] || [];
 
-  const saveSettings = ({ parentName: pn, babyName: bn }) => {
-    const updated = { ...authData, parentName: pn, babyName: bn };
+  const setLactarioReminderMinutes = (minutes) => {
+    setLactarioReminderMinutesState(minutes);
+    try { localStorage.setItem('kun_lactario_reminder_minutes_v1', String(minutes)); } catch {}
+  };
+
+  const scheduleLactarioReminder = (time) => {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
+    const [start] = time.split(' - ');
+    const [hh, mm] = start.split(':').map(Number);
+    const target = new Date();
+    target.setHours(hh, mm, 0, 0);
+    target.setMinutes(target.getMinutes() - lactarioReminderMinutes);
+    const delay = target.getTime() - Date.now();
+    if (delay <= 0 || delay > 24 * 60 * 60 * 1000) return;
+    window.setTimeout(() => {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        new Notification('Reserva de lactario', { body: `Tu turno ${time} comienza pronto.` });
+      }
+    }, delay);
+  };
+
+  const reserveLactarioSlot = (time) => {
+    setLactarioReservation(prev => {
+      const current = Array.isArray(prev) ? prev : (prev ? [prev] : []);
+      if (current.includes(time) || current.length >= 4) return current;
+      return [...current, time];
+    });
+    scheduleLactarioReminder(time);
+  };
+
+  const cancelLactarioSlot = (time) => {
+    setLactarioReservation(prev => {
+      const current = Array.isArray(prev) ? prev : (prev ? [prev] : []);
+      if (!time) return [];
+      return current.filter(slot => slot !== time);
+    });
+  };
+
+  const saveSettings = ({ parentName: pn, babyName: bn, familyRole }) => {
+    const updated = { ...authData, parentName: pn, babyName: bn, familyRole };
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
   };
@@ -438,6 +534,7 @@ function Prototype() {
   };
 
   const handleStaffAnswerQuestion = (questionId, text) => {
+    const question = forumQuestions.find(q => q.id === questionId);
     setForumQuestions(prev => prev.map(q => q.id === questionId ? {
       ...q,
       staffAnswer: text,
@@ -446,6 +543,18 @@ function Prototype() {
         { author: 'Equipo KUN', role: 'Personal médico', color: KUN.apple, text, time: 'Ahora', staff: true },
       ],
     } : q));
+    setForumReplyNotifications(prev => [
+      {
+        id: `reply-${questionId}-${Date.now()}`,
+        kind: 'community',
+        title: 'Respondieron tu pregunta',
+        desc: question?.title || 'El equipo respondio en el foro.',
+        time: 'Nueva',
+        color: '#7AA8B8',
+        target: { tab: 'comm', questionId },
+      },
+      ...prev,
+    ]);
   };
 
   const handleStaffRemoveQuestion = (questionId) => {
@@ -532,6 +641,40 @@ function Prototype() {
     }));
   };
 
+  const openNotificationItem = (item) => {
+    const target = item?.target || {};
+    setNotifOpen(false);
+    setSettingsOpen(false);
+    setCapsulaOpen(false);
+    setLactarioOpen(false);
+
+    if (target.capsuleId) {
+      setCapsuleSource({ tab: 'edu', sub: 'biblio' });
+      setCapsuleId(target.capsuleId);
+      setCapsulaOpen(true);
+      setTab('edu');
+      setEduSub('biblio');
+      return;
+    }
+    if (target.tab === 'edu') {
+      setTab('edu');
+      setEduSub(target.eduSub || 'camino');
+      return;
+    }
+    if (target.tab === 'comm') {
+      if (target.questionId) setCommunityStart({ focusQuestionId: target.questionId });
+      setTab('comm');
+      return;
+    }
+    if (target.tab === 'bond') {
+      setTab('bond');
+      setBondView(target.bondView || 'entry');
+      return;
+    }
+    setTab('home');
+    if (target.lactario) setLactarioOpen(true);
+  };
+
   const renderEdu = () => {
     if (eduSub === 'camino') return <ScreenCamino onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} parentName={parentName} babyName={babyName} />;
     if (eduSub === 'perso')  return <ScreenPersonalizado onOpenCapsula={openCapsula} completedCapsulas={completedCapsulas} quizResults={quizResults} onGoToBiblio={() => goToEdu('biblio')} />;
@@ -551,9 +694,10 @@ function Prototype() {
   } else if (tab === 'home' && lactarioOpen) {
     body = <ScreenLactario
       reservation={lactarioReservation}
-      onReserve={(time) => setLactarioReservation(time)}
-      onCancel={() => setLactarioReservation(null)}
+      onReserve={reserveLactarioSlot}
+      onCancel={cancelLactarioSlot}
       onBack={() => setLactarioOpen(false)}
+      reminderMinutes={lactarioReminderMinutes}
     />;
   } else if (tab === 'home') {
     body = <ScreenHome
@@ -562,7 +706,7 @@ function Prototype() {
       lactarioReservation={lactarioReservation}
       completedCapsulas={completedCapsulas}
       onOpenLactario={() => setLactarioOpen(true)}
-      onCancelLactario={() => setLactarioReservation(null)}
+      onCancelLactario={cancelLactarioSlot}
       onMessageNurse={() => setTab('comm')}
     />;
   } else if (tab === 'edu') {
@@ -572,6 +716,7 @@ function Prototype() {
     body = <ScreenVinculo
       view={bondView} setView={setBondView}
       recordings={recordings} addRecording={addRecording}
+      canEditDiary={authData.role === 'parent' && (authData.familyRole || 'parent') === 'parent'}
     />;
   } else {
     body = <ScreenComunidad
@@ -623,7 +768,7 @@ function Prototype() {
             height:'calc(100% - 50px)', overflow:'hidden',
             display:'flex', flexDirection:'column',
           }}>
-            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={parentRecommendations.length > 0 || NOTIFICATIONS.length > 0} onSettings={() => setSettingsOpen(true)} />
+            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={parentRecommendations.length > 0 || lactarioReservation.length > 0 || NOTIFICATIONS.length > 0} onSettings={() => setSettingsOpen(true)} />
             {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
             <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub + (lactarioOpen ? '-lact' : ''))} style={{
               flex: 1,
@@ -643,8 +788,21 @@ function Prototype() {
             onChange={(t) => { setCapsulaOpen(false); setTab(t); }}
           />
 
-          {notifOpen    && <NotificationsPanel recommendations={parentRecommendations} onClose={() => setNotifOpen(false)} />}
-          {settingsOpen && <SettingsPanel authData={authData} onSave={saveSettings} onClose={() => setSettingsOpen(false)} onLogout={handleLogout} />}
+          {notifOpen    && <NotificationsPanel
+            recommendations={[...forumReplyNotifications, ...parentRecommendations]}
+            lactarioReservations={Array.isArray(lactarioReservation) ? lactarioReservation : (lactarioReservation ? [lactarioReservation] : [])}
+            lactarioReminderMinutes={lactarioReminderMinutes}
+            onOpenItem={openNotificationItem}
+            onClose={() => setNotifOpen(false)}
+          />}
+          {settingsOpen && <SettingsPanel
+            authData={authData}
+            onSave={saveSettings}
+            onClose={() => setSettingsOpen(false)}
+            onLogout={handleLogout}
+            lactarioReminderMinutes={lactarioReminderMinutes}
+            onReminderChange={setLactarioReminderMinutes}
+          />}
 
           {/* Welcome tour — overlaid on top of the real app so nav is visible through cutout */}
           {authData.role !== 'staff' && !tourDone && typeof window.ScreenTour === 'function' && (

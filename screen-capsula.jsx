@@ -421,14 +421,14 @@ const CAP_LIBRARY = {
     ],
   },
 
-  // ── 9 · Qué es la ECMO ──────────────────────────────────────────────────────
+  // ── 9 · Qué es el ECMO ──────────────────────────────────────────────────────
   9: {
     headerTitle: 'ECMO',
     dur: '4 MIN',
     pages: [
       {
         num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Qué es la ECMO?',
+        title: '¿Qué es el ECMO?',
         icon: () => CI.ecmo(KUN.sage),
         text: 'ECMO significa oxigenación por membrana extracorpórea. Es una máquina que asume temporalmente el trabajo del corazón y los pulmones de tu bebé, permitiendo que estos órganos descansen y se recuperen. Es un tratamiento de soporte avanzado, no una cura en sí mismo.',
       },
@@ -448,13 +448,13 @@ const CAP_LIBRARY = {
         num: 4, kind: 'text', accent: KUN.accentSoft,
         title: '¿Qué puedes hacer tú?',
         icon: () => CI.heart(KUN.accent),
-        text: 'Con la ECMO, el contacto físico directo es muy limitado. Sin embargo, tu presencia sigue siendo importante. Hablarle en voz baja, poner tu mano cerca de él con autorización del equipo y simplemente estar ahí tiene un valor real para tu bebé y para ti.',
+        text: 'Con el ECMO, el contacto físico directo es muy limitado. Sin embargo, tu presencia sigue siendo importante. Hablarle en voz baja, poner tu mano cerca de él con autorización del equipo y simplemente estar ahí tiene un valor real para tu bebé y para ti.',
       },
       {
         num: 5, kind: 'summary',
         title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'La ECMO asume el trabajo del corazón y pulmones.', sub: 'Temporalmente, para que los órganos se recuperen.' },
+          { headline: 'El ECMO asume el trabajo del corazón y pulmones.', sub: 'Temporalmente, para que los órganos se recuperen.' },
           { headline: 'Es una medida de soporte, no una cura.', sub: 'Apoya al cuerpo mientras se estabiliza.' },
           { headline: 'Tu presencia sigue siendo valiosa.', sub: 'Tu voz y cercanía importan, incluso con limitaciones.' },
         ],
@@ -672,17 +672,17 @@ const CAP_QUIZZES = {
     ],
   },
   9: {
-    prompt: '¿Qué rol cumple la ECMO cuando se indica?',
+    prompt: '¿Qué rol cumple el ECMO cuando se indica?',
     options: [
       {
         text: 'Apoyar temporalmente corazón y pulmones mientras el cuerpo se estabiliza',
         correct: true,
-        feedback: 'Muy bien. La ECMO es un soporte avanzado y temporal para dar tiempo a que el cuerpo de tu bebé se recupere.',
+        feedback: 'Muy bien. El ECMO es un soporte avanzado y temporal para dar tiempo a que el cuerpo de tu bebé se recupere.',
       },
       {
         text: 'Curar por sí sola la enfermedad de base',
         correct: false,
-        feedback: 'Es fácil pensarlo así por lo compleja que se ve. En realidad, la ECMO sostiene al cuerpo mientras otros tratamientos y la recuperación hacen su parte.',
+        feedback: 'Es fácil pensarlo así por lo complejo que se ve. En realidad, el ECMO sostiene al cuerpo mientras otros tratamientos y la recuperación hacen su parte.',
       },
       {
         text: 'Eliminar la importancia de tu presencia',

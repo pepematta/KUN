@@ -2,20 +2,26 @@
 // Exposes: ScreenLactario({ reservation, onReserve, onCancel, onBack })
 // Also exposes: window.LACTARIO_SLOTS (used by LactarioCard in screen-home.jsx)
 
-const LACTARIO_SLOTS = [
-  { time: '7:00 AM',  used: 1 },
-  { time: '8:00 AM',  used: 4 },
-  { time: '9:00 AM',  used: 2 },
-  { time: '10:00 AM', used: 0 },
-  { time: '11:00 AM', used: 3 },
-  { time: '12:00 PM', used: 4 },
-  { time: '1:00 PM',  used: 1 },
-  { time: '2:00 PM',  used: 0 },
-  { time: '3:00 PM',  used: 2 },
-  { time: '4:00 PM',  used: 0 },
-  { time: '5:00 PM',  used: 1 },
-];
+const LACTARIO_MAX_DAILY = 4;
+const LACTARIO_SLOT_MINUTES = 40;
+const LACTARIO_SLOTS = (() => {
+  const slots = [];
+  const start = 8 * 60 + 30;
+  const end = 18 * 60 + 30;
+  const seededUse = [1, 3, 0, 2, 4, 1, 0, 2, 3, 0, 1, 4, 2, 0, 1];
+  const fmt = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+
+  for (let minutes = start, i = 0; minutes + LACTARIO_SLOT_MINUTES <= end; minutes += LACTARIO_SLOT_MINUTES, i += 1) {
+    const h1 = Math.floor(minutes / 60);
+    const m1 = minutes % 60;
+    const h2 = Math.floor((minutes + LACTARIO_SLOT_MINUTES) / 60);
+    const m2 = (minutes + LACTARIO_SLOT_MINUTES) % 60;
+    slots.push({ time: `${fmt(h1, m1)} - ${fmt(h2, m2)}`, used: seededUse[i] || 0 });
+  }
+  return slots;
+})();
 window.LACTARIO_SLOTS = LACTARIO_SLOTS;
+window.LACTARIO_MAX_DAILY = LACTARIO_MAX_DAILY;
 
 const LACT_CAP       = 4;
 const LACT_GREEN_BG  = '#EBF5EE';
@@ -23,8 +29,8 @@ const LACT_GREEN     = '#3D9156';
 const LACT_YELLOW_BG = '#FFF6E0';
 const LACT_YELLOW    = '#B8860B';
 
-function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCancel }) {
-  const full       = slot.used >= LACT_CAP;
+function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCancel, dailyLimitReached }) {
+  const full = slot.used >= LACT_CAP;
   const borderColor = isReserved
     ? KUN.accent
     : (isExpanded && !full ? KUN.accent : 'transparent');
@@ -45,9 +51,7 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
         transition: 'all .18s',
       }}
     >
-      {/* Row header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        {/* Status dot */}
         <div style={{
           width: 10, height: 10, borderRadius: '50%',
           background: isReserved ? KUN.accent : (full ? LACT_YELLOW : LACT_GREEN),
@@ -57,8 +61,7 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
             : (full ? `0 0 0 3px ${LACT_YELLOW_BG}` : `0 0 0 3px ${LACT_GREEN_BG}`),
         }} />
 
-        {/* Time + badge */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
           <span style={{ fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
             {slot.time}
           </span>
@@ -66,14 +69,13 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
             <span style={{
               fontSize: 11, fontWeight: 800, color: KUN.accentDeep,
               background: '#fff', padding: '2px 8px', borderRadius: 999,
-              letterSpacing: 0.2,
+              letterSpacing: 0.2, whiteSpace: 'nowrap',
             }}>
               Tu reserva
             </span>
           )}
         </div>
 
-        {/* Capacity pill */}
         <div style={{
           padding: '4px 10px', borderRadius: 999,
           background: isReserved ? '#fff' : (full ? LACT_YELLOW_BG : LACT_GREEN_BG),
@@ -84,7 +86,6 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
         </div>
       </div>
 
-      {/* Cancel — always visible on reserved row */}
       {isReserved && (
         <div style={{
           marginTop: 10, paddingTop: 10,
@@ -104,7 +105,6 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
         </div>
       )}
 
-      {/* Expanded body — available slot */}
       {isExpanded && !isReserved && (
         <div style={{
           marginTop: 12, paddingTop: 12,
@@ -115,7 +115,14 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
               fontSize: 13, fontWeight: 600, color: LACT_YELLOW,
               textAlign: 'center', padding: '4px 0',
             }}>
-              Este horario está completo. Elige otro bloque.
+              Este horario esta completo. Elige otro bloque.
+            </div>
+          ) : dailyLimitReached ? (
+            <div style={{
+              fontSize: 13, fontWeight: 600, color: KUN.accentDeep,
+              textAlign: 'center', padding: '4px 0',
+            }}>
+              Ya tomaste el maximo de 4 turnos diarios.
             </div>
           ) : (
             <button
@@ -139,17 +146,18 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
   );
 }
 
-function ScreenLactario({ reservation, onReserve, onCancel, onBack }) {
+function ScreenLactario({ reservation, onReserve, onCancel, onBack, reminderMinutes = 60 }) {
   const [expandedIdx, setExpandedIdx] = React.useState(null);
-  const [slots, setSlots] = React.useState(
-    LACTARIO_SLOTS.map(s => ({ ...s }))
-  );
+  const [slots, setSlots] = React.useState(LACTARIO_SLOTS.map(s => ({ ...s })));
+  const reservations = Array.isArray(reservation) ? reservation : (reservation ? [reservation] : []);
+  const dailyLimitReached = reservations.length >= LACTARIO_MAX_DAILY;
 
   const handleToggle = (idx) => {
     setExpandedIdx(prev => (prev === idx ? null : idx));
   };
 
   const handleConfirm = (time, idx) => {
+    if (dailyLimitReached || reservations.includes(time)) return;
     setExpandedIdx(null);
     setSlots(prev => prev.map((s, i) =>
       i === idx ? { ...s, used: Math.min(s.used + 1, LACT_CAP) } : s
@@ -157,9 +165,15 @@ function ScreenLactario({ reservation, onReserve, onCancel, onBack }) {
     onReserve(time);
   };
 
+  const handleCancel = (time, idx) => {
+    setSlots(prev => prev.map((s, i) =>
+      i === idx ? { ...s, used: Math.max(s.used - 1, 0) } : s
+    ));
+    onCancel(time);
+  };
+
   return (
     <>
-      {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '4px 20px 14px',
@@ -184,8 +198,7 @@ function ScreenLactario({ reservation, onReserve, onCancel, onBack }) {
         </div>
       </div>
 
-      {/* Active reservation banner — only shown when there's a booking */}
-      {reservation && (
+      {reservations.length > 0 && (
         <div style={{
           margin: '0 20px 14px',
           background: KUN.sageSoft, borderRadius: 18,
@@ -193,12 +206,16 @@ function ScreenLactario({ reservation, onReserve, onCancel, onBack }) {
           fontSize: 14, fontWeight: 700, color: KUN.sage,
           textAlign: 'center', lineHeight: 1.4,
         }}>
-          Reservaste el bloque de las {reservation} 🧡
+          {reservations.length === 1
+            ? `Reservaste el bloque ${reservations[0]}`
+            : `Tienes ${reservations.length} turnos reservados hoy`}<br/>
+          <span style={{ fontWeight: 600 }}>
+            Recordatorio configurado {reminderMinutes} min antes.
+          </span>
         </div>
       )}
 
-      {/* Legend */}
-      <div style={{ display: 'flex', gap: 16, padding: '0 24px 12px' }}>
+      <div style={{ display: 'flex', gap: 16, padding: '0 24px 12px', flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: LACT_GREEN }}/>
           <span style={{ fontSize: 12, fontWeight: 600, color: KUN.inkMuted }}>Con cupos</span>
@@ -207,22 +224,40 @@ function ScreenLactario({ reservation, onReserve, onCancel, onBack }) {
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: LACT_YELLOW }}/>
           <span style={{ fontSize: 12, fontWeight: 600, color: KUN.inkMuted }}>Completo (4/4)</span>
         </div>
+        <div style={{ marginLeft: 'auto', fontSize: 12, fontWeight: 700, color: KUN.accentDeep }}>
+          {reservations.length}/{LACTARIO_MAX_DAILY} turnos diarios
+        </div>
       </div>
 
-      {/* Slot list */}
       <div style={{ padding: '0 20px 32px' }}>
         {slots.map((slot, i) => (
           <SlotRow
             key={i}
             slot={slot}
             idx={i}
-            isReserved={reservation === slot.time}
+            isReserved={reservations.includes(slot.time)}
             isExpanded={expandedIdx === i}
             onToggle={handleToggle}
             onConfirm={handleConfirm}
-            onCancel={onCancel}
+            onCancel={() => handleCancel(slot.time, i)}
+            dailyLimitReached={dailyLimitReached}
           />
         ))}
+        <div style={{
+          marginTop: 10,
+          background: '#fff',
+          border: `1px solid ${KUN.divider}`,
+          borderRadius: 18,
+          padding: '14px 16px',
+          fontSize: 12.5,
+          lineHeight: 1.55,
+          color: KUN.inkMuted,
+          fontWeight: 500,
+          textAlign: 'center',
+        }}>
+          El lactario se cierra por aseo terminal de 19:00 a 20:00 hrs.<br/>
+          Por favor respetar horarios para no importunar a nadie. Muchas gracias.
+        </div>
       </div>
     </>
   );

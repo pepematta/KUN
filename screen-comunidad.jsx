@@ -765,7 +765,10 @@ function PostActions({ likes, replies, onReply }) {
           {replies}
         </span>
       </div>
-      <div onClick={(e) => e.stopPropagation()} style={{
+      <div onClick={(e) => {
+        e.stopPropagation();
+        if (navigator.share) navigator.share({ title: 'KUN Comunidad', text: 'Mira esta conversación del foro KUN.' }).catch(() => {});
+      }} style={{
         display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
         marginLeft: 'auto',
       }}>
@@ -776,6 +779,130 @@ function PostActions({ likes, replies, onReply }) {
 }
 
 // ── Preguntas ───────────────────────────────────────────
+function PhotoPreview({ label = 'Foto adjunta' }) {
+  return (
+    <div style={{
+      marginTop: 12,
+      height: 140,
+      borderRadius: 18,
+      background: `linear-gradient(135deg, ${KUN.rosehip}, ${KUN.apple})`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: `1px solid ${KUN.hair}`,
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        background: 'rgba(255,255,255,0.82)',
+        borderRadius: 999,
+        padding: '7px 12px',
+        fontFamily: COM_FT,
+        fontSize: 12,
+        fontWeight: 700,
+        color: KUN.ink,
+      }}>
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function ReplyThreadItem({ answer, depth = 0 }) {
+  const [showReply, setShowReply] = React.useState(false);
+  const [text, setText] = React.useState('');
+  const [children, setChildren] = React.useState(answer.children || []);
+
+  const send = () => {
+    if (!text.trim()) return;
+    setChildren(prev => [...prev, {
+      author: 'Tú',
+      color: KUN.rosehip,
+      text: text.trim(),
+      time: 'Ahora',
+      likes: 0,
+      children: [],
+    }]);
+    setText('');
+    setShowReply(false);
+  };
+
+  return (
+    <div style={{ marginLeft: depth ? 24 : 0, position: 'relative' }}>
+      {depth > 0 && (
+        <div style={{ position: 'absolute', left: -14, top: -10, bottom: 10, width: 2, background: KUN.hair }}/>
+      )}
+      <div style={{
+        background: '#fff', borderRadius: 22, padding: '14px 16px',
+        border: `1px solid ${KUN.hair}`,
+        marginBottom: 10,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+          {answer.anonymous ? (
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: KUN.cardSoft,
+              border: `1px solid ${KUN.hair}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.inkMuted,
+            }}>?</div>
+          ) : (
+            <ComAvatar name={answer.author} color={answer.color} size={32} />
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: COM_FT, fontSize: 13, fontWeight: 700,
+              color: answer.anonymous ? KUN.inkMuted : KUN.ink,
+              letterSpacing: -0.1, fontStyle: answer.anonymous ? 'italic' : 'normal',
+            }}>{answer.author}</div>
+            <div style={{ fontFamily: COM_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, letterSpacing: 0.2 }}>
+              {answer.staff ? 'Personal médico · ' : ''}{answer.time}
+            </div>
+          </div>
+        </div>
+        <div style={{
+          fontFamily: COM_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
+          lineHeight: 1.6,
+        }}>{answer.text}</div>
+        {answer.photo && <PhotoPreview label="Foto en respuesta" />}
+        <PostActions likes={answer.likes || 0} replies={children.length} onReply={() => setShowReply(v => !v)} />
+        {showReply && (
+          <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+            <input
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="Responder al hilo..."
+              style={{
+                flex: 1, minWidth: 0,
+                border: `1px solid ${KUN.hair}`,
+                borderRadius: 999,
+                padding: '10px 12px',
+                fontFamily: COM_FB,
+                fontSize: 12.5,
+                outline: 'none',
+              }}
+            />
+            <button onClick={send} style={{
+              border: 'none',
+              borderRadius: 999,
+              padding: '0 14px',
+              background: text.trim() ? KUN.brick : KUN.cardSoft,
+              color: text.trim() ? '#fff' : KUN.inkMuted,
+              fontFamily: COM_FT,
+              fontWeight: 700,
+              cursor: text.trim() ? 'pointer' : 'default',
+            }}>
+              Enviar
+            </button>
+          </div>
+        )}
+      </div>
+      {children.map((child, i) => (
+        <ReplyThreadItem key={i} answer={child} depth={depth + 1} />
+      ))}
+    </div>
+  );
+}
+
 const QUESTIONS = [
   {
     id: 'q1',
@@ -857,6 +984,8 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
         lineHeight: 1.6,
       }}>{q.text}</div>
 
+      {q.photo && <PhotoPreview label="Foto en la pregunta" />}
+
       {q.staffAnswer && (
         <div style={{
           marginTop: 12, padding: 12, borderRadius: 16,
@@ -928,6 +1057,8 @@ function QuestionThread({ qId, onBack, questions }) {
             fontFamily: COM_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400,
             lineHeight: 1.6,
           }}>{q.text}</div>
+          {q.photo && <PhotoPreview label="Foto en la pregunta" />}
+
           {q.staffAnswer && (
             <div style={{
               marginTop: 12, padding: 12, borderRadius: 16,
@@ -1005,6 +1136,18 @@ function QuestionThread({ qId, onBack, questions }) {
                   fontFamily: COM_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
                   lineHeight: 1.6,
                 }}>{a.text}</div>
+                {a.photo && <PhotoPreview label="Foto en respuesta" />}
+                <PostActions likes={a.likes || 0} replies={(a.children || []).length} />
+                {(a.children || []).map((child, childIdx) => (
+                  <div key={childIdx} style={{
+                    marginTop: 10,
+                    marginLeft: 22,
+                    paddingLeft: 12,
+                    borderLeft: `2px solid ${KUN.hair}`,
+                  }}>
+                    <ReplyThreadItem answer={child} depth={1} />
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -1082,7 +1225,7 @@ const EXPERIENCES = [
     short: 'El proceso más largo de mi vida empezó un día 17 de enero del 2025 🩵 Aún no termina pero ya casi lo logramos 🥹 Ya casi se acaban las vueltas de chequeos.',
     long: ' Sin imaginarlo, antes de tiempo, estás ahí con el miedo inundándote y con la casi nula posibilidad de escuchar llorar a tu bebé, de abrazarlo, darle un beso y llevarlo contigo…',
     time: 'Hace 2 h',
-    likes: 47, replies: 9,
+    likes: 47, replies: 9, photo: true,
   },
 ];
 
@@ -1130,6 +1273,7 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
         {e.short}
         {expanded && <span>{e.long}</span>}
       </div>
+      {e.photo && <PhotoPreview label="Foto de la experiencia" />}
       {!expanded && e.long && (
         <span onClick={() => setExpanded(true)} style={{
           display: 'inline-block', marginTop: 10,
@@ -1187,6 +1331,7 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   const [posted, setPosted] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [body, setBody] = React.useState('');
+  const [hasPhoto, setHasPhoto] = React.useState(false);
 
   const canPublish = kind === 'question' ? (title.trim() && body.trim()) : body.trim();
 
@@ -1212,8 +1357,8 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
       <div style={{
         width: '100%', background: KUN.bg,
         borderTopLeftRadius: 28, borderTopRightRadius: 28,
-        padding: '14px 20px 28px',
-        maxHeight: '88%', display: 'flex', flexDirection: 'column',
+        padding: '14px 20px 112px',
+        maxHeight: 'calc(100% - 8px)', display: 'flex', flexDirection: 'column',
       }}>
         <div style={{
           width: 44, height: 5, borderRadius: 3, background: KUN.inkFaint,
@@ -1281,7 +1426,28 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
             rows={5}
             style={{ ...sharedInputStyle }}
           />
+          {hasPhoto && <PhotoPreview label="Foto lista para publicar" />}
         </div>
+
+        <button onClick={() => setHasPhoto(p => !p)} style={{
+          width: '100%',
+          padding: '11px 14px',
+          borderRadius: 999,
+          border: `1px solid ${KUN.hair}`,
+          background: hasPhoto ? KUN.sageSoft : '#fff',
+          color: KUN.ink,
+          fontFamily: COM_FT,
+          fontSize: 13,
+          fontWeight: 700,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          marginBottom: 12,
+          cursor: 'pointer',
+        }}>
+          {COM_ICONS.image(KUN.ink)} {hasPhoto ? 'Quitar foto' : 'Agregar foto'}
+        </button>
 
         <div onClick={() => setAnon(a => !a)} style={{
           display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
