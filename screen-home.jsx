@@ -291,44 +291,65 @@ function ConceptRow({ category, color, title, onClick, completed }) {
   );
 }
 
-function DailySummary({ babyName }) {
+function DailySummary({ babyName, babyStatus, onEditStatus }) {
   const bName = babyName || 'Sofía';
-  const { text } = DAILY_SUMMARY;
-  const empty = !text;
-  // Replace fixed name with current baby name to preserve personalisation
-  const narrative = text.replace(/^Sofía/, bName);
+  const hasStatus = babyStatus && (
+    babyStatus.lugar || babyStatus.temperatura || babyStatus.respiracion ||
+    (babyStatus.alimentacion && babyStatus.alimentacion.length > 0) ||
+    (babyStatus.accesos && babyStatus.accesos.length > 0) ||
+    (babyStatus.diagnosticos && babyStatus.diagnosticos.length > 0)
+  );
 
   return (
     <div style={{ margin: '24px 22px 0' }}>
-      <HSectionHead title={`Cómo está ${bName} hoy`} kicker="Resumen del día"/>
+      {/* Custom header row with pencil button */}
+      <div style={{
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        marginBottom: 12,
+      }}>
+        <div>
+          <div style={{
+            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+            color: HC.brick, letterSpacing: '0.7px', textTransform: 'uppercase',
+            marginBottom: 4,
+          }}>Resumen del día</div>
+          <div style={{
+            fontFamily: HF_T, fontWeight: 700, fontSize: 19,
+            color: HC.ink, letterSpacing: '-0.3px',
+          }}>{`Cómo está ${bName} hoy`}</div>
+        </div>
+        {onEditStatus && (
+          <button onClick={onEditStatus} style={{
+            width: 34, height: 34, borderRadius: '50%',
+            background: '#fff', border: `1px solid ${HC.hair}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', flexShrink: 0,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z"
+                stroke={HC.brick} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+      </div>
 
-      {empty ? (
+      {hasStatus ? (() => {
+        const StatusNarrative = window.BabyStatusNarrative;
+        return StatusNarrative
+          ? <StatusNarrative status={babyStatus} babyName={bName} onEdit={onEditStatus} />
+          : null;
+      })() : (
         <div style={{
           background: HC.paper, border: `1px solid ${HC.hair}`,
-          borderRadius: 22, padding: '16px 20px',
-          fontFamily: HF_B, fontSize: 13.5, fontWeight: 500, color: HC.ink2,
-          textAlign: 'center',
+          borderRadius: 24, padding: '18px 18px',
         }}>
-          Todo tranquilo hoy
+          <p style={{
+            margin: 0, fontFamily: HF_B, fontWeight: 400,
+            fontSize: 13.5, lineHeight: 1.75, color: HC.ink, letterSpacing: '0.1px',
+          }}>
+            {DAILY_SUMMARY.text.replace(/^Sofía/, bName)}
+          </p>
         </div>
-      ) : (
-        <>
-          {/* Narrative card */}
-          {text && (
-            <div style={{
-              background: HC.paper, border: `1px solid ${HC.hair}`,
-              borderRadius: 24, padding: '18px 18px',
-            }}>
-              <p style={{
-                margin: 0, fontFamily: HF_B, fontWeight: 400,
-                fontSize: 13.5, lineHeight: 1.75, color: HC.ink, letterSpacing: '0.1px',
-              }}>
-                {narrative}
-              </p>
-            </div>
-          )}
-
-        </>
       )}
     </div>
   );
@@ -584,7 +605,7 @@ function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onC
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        lactarioReservation, onOpenLactario, onCancelLactario,
-                       onMessageNurse, completedCapsulas }) {
+                       onMessageNurse, completedCapsulas, babyStatus, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
   return (
@@ -607,7 +628,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       <div style={{ position: 'relative', zIndex: 1 }}>
         <HomeGreeting parentName={parentName} />
         <BabyHero babyName={bName} onMessageNurse={onMessageNurse} />
-        <DailySummary babyName={bName} />
+        <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
         <LactarioCard
           reservation={lactarioReservation}
           onOpen={onOpenLactario}
