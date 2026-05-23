@@ -355,47 +355,21 @@ function MilkBottleMeter({ reserved = 120, needed = 180 }) {
   const total = Math.max(needed, 1);
   const pct = Math.max(0, Math.min(100, Math.round((reserved / total) * 100)));
   const needsMore = reserved < needed;
+  const bottleLevel = Math.max(0, Math.min(5, Math.round((pct / 100) * 5)));
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-      <svg width="64" height="92" viewBox="0 0 96 132" style={{ flexShrink: 0, overflow: 'visible' }}>
-        <defs>
-          <clipPath id="homeMilkBottleBody">
-            <path d="M26 48C25 39 30 32 41 28C51 24 58 20 59 11C60 5 64 2 70 3C76 4 79 9 77 15C75 22 78 27 87 34C94 40 96 48 91 57L86 113C84 124 74 129 55 129H45C25 129 15 120 14 101L12 64C11 55 16 49 26 48Z" />
-          </clipPath>
-        </defs>
-        <path
-          d="M44 29C55 24 61 20 62 11C63 5 67 1 73 3C79 5 82 10 79 17C77 23 80 28 88 35C96 42 99 51 93 61H28C25 47 29 36 44 29Z"
-          fill="#F0B43D"
-        />
-        <path
-          d="M23 48H90C97 48 101 54 100 62C99 69 95 73 88 73H25C16 73 10 69 10 61C10 53 15 48 23 48Z"
-          fill="#44D0A7"
-        />
-        {[25, 38, 51, 64, 77].map((x) => (
-          <path key={x} d={`M${x}46L${x - 1}74`} stroke="#171638" strokeWidth="6" strokeLinecap="round" />
-        ))}
-        <g clipPath="url(#homeMilkBottleBody)">
-          <rect x="8" y="38" width="88" height="94" fill="#DDEFE8" />
-          <rect
-            x="8"
-            y={38 + (94 * (100 - pct)) / 100}
-            width="88"
-            height={(94 * pct) / 100}
-            fill={needsMore ? '#F8D96A' : '#BFE4C0'}
-            opacity="0.82"
-          />
-        </g>
-        <path
-          d="M26 48C25 39 30 32 41 28C51 24 58 20 59 11C60 5 64 2 70 3C76 4 79 9 77 15C75 22 78 27 87 34C94 40 96 48 91 57L86 113C84 124 74 129 55 129H45C25 129 15 120 14 101L12 64C11 55 16 49 26 48Z"
-          fill="none"
-          stroke="rgba(42,35,32,0.04)"
-          strokeWidth="1"
-        />
-        {[62, 79, 96, 113].map((y) => (
-          <path key={y} d={`M5 ${y}H33`} stroke="#171638" strokeWidth="6" strokeLinecap="round" />
-        ))}
-      </svg>
+      <img
+        src={`assets/mamadera-${bottleLevel}.svg?v=2`}
+        alt={`${pct}% de leche reservada`}
+        style={{
+          width: 64,
+          height: 116,
+          objectFit: 'contain',
+          flexShrink: 0,
+          display: 'block',
+        }}
+      />
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
