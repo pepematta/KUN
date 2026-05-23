@@ -79,60 +79,126 @@ const BABY_STATUS_CATS = [
 window.BABY_STATUS_CATS = BABY_STATUS_CATS;
 
 // ─── generateBabyStatusSegments ─────────────────────────────────────────────
+// Lowercases the first letter of a label, except for acronyms and proper compound names.
+function lcLabel(str) {
+  const keep = ['UCI', 'CPAP', 'PICC', 'Intermedio A', 'Intermedio B'];
+  if (keep.includes(str)) return str;
+  return str.charAt(0).toLowerCase() + str.slice(1);
+}
+
 function generateBabyStatusSegments(status, babyName) {
   const name = babyName || 'Sofía';
-  const segments = [];
+  const segs = [];
+  const push  = (text) => segs.push({ text });
+  const chip  = (label, color) => segs.push({ chip: label, chipColor: color });
 
-  if (status.lugar) {
-    segments.push({ text: `${name} está en ` });
-    segments.push({ chip: status.lugar, chipColor: 'apple' });
-    segments.push({ text: '. ' });
-  }
+  // ── Lugar + Temperatura (combined sentence) ─────────────────────────────────
+  if (status.lugar === 'Alta') {
+    push(`${name} ya está en casa. ¡Un gran paso para toda la familia! `);
+  } else if (status.lugar) {
+    const lugar = status.lugar;
+    const temp  = status.temperatura;
+    const intro = (lugar === 'UCI' || lugar === 'Intermedio B') ? `${name} está en ` : `${name} se encuentra en `;
+    push(intro); chip(lugar, 'apple');
 
-  if (status.temperatura) {
-    segments.push({ text: 'Mantiene su temperatura en ' });
-    segments.push({ chip: status.temperatura, chipColor: 'clear' });
-    segments.push({ text: '. ' });
-  }
-
-  if (status.respiracion) {
-    if (status.respiracion === 'Respiración natural') {
-      segments.push({ text: 'Respira de forma natural. ' });
+    if (lugar === 'UCI') {
+      if (temp === 'Incubadora')             { push(', protegida en su '); chip('incubadora', 'clear'); push('. '); }
+      else if (temp === 'Cuna de calor radiante') { push(', bajo una '); chip('cuna de calor radiante', 'clear'); push('. '); }
+      else push('. ');
+    } else if (lugar === 'Intermedio A') {
+      if (temp === 'Incubadora')             { push(', descansando en su '); chip('incubadora', 'clear'); push('. '); }
+      else if (temp === 'Cuna de calor radiante') { push(', bajo una '); chip('cuna de calor radiante', 'clear'); push('. '); }
+      else if (temp === 'Cuna abierta')      { push(', descansando en su '); chip('cuna abierta', 'clear'); push('. '); }
+      else push('. ');
+    } else if (lugar === 'Intermedio B') {
+      if (temp === 'Incubadora')             { push(', en su '); chip('incubadora', 'clear'); push('. '); }
+      else if (temp === 'Cuna de calor radiante') { push(', bajo una '); chip('cuna de calor radiante', 'clear'); push('. '); }
+      else if (temp === 'Cuna abierta')      { push(', ya en su '); chip('cuna abierta', 'clear'); push('. '); }
+      else push('. ');
     } else {
-      segments.push({ text: 'Respira con ayuda de ' });
-      segments.push({ chip: status.respiracion, chipColor: 'clear' });
-      segments.push({ text: '. ' });
+      push('. ');
     }
   }
 
+  // ── Respiración ─────────────────────────────────────────────────────────────
+  if (status.respiracion) {
+    const r = status.respiracion;
+    if (r === 'Respiración natural') {
+      push('Respira de forma autónoma, sin necesidad de apoyo adicional. ');
+    } else if (r === 'Cánula nasal') {
+      push('Respira con el apoyo de una '); chip('cánula nasal', 'clear'); push(', que le entrega un poco de oxígeno extra. ');
+    } else if (r === 'CPAP') {
+      push('Usa '); chip('CPAP', 'clear'); push(', un dispositivo que la ayuda a mantener sus pulmones abiertos mientras respira por sí sola. ');
+    } else if (r === 'Ventilación mecánica') {
+      push('Por ahora respira con ayuda de un '); chip('ventilador mecánico', 'clear'); push(', que hace el trabajo mientras sus pulmones maduran. ');
+    }
+  }
+
+  // ── Alimentación ─────────────────────────────────────────────────────────────
   if (status.alimentacion && status.alimentacion.length > 0) {
-    segments.push({ text: 'Se alimenta por ' });
-    status.alimentacion.forEach((item, idx) => {
-      if (idx > 0) segments.push({ text: ' y ' });
-      segments.push({ chip: item, chipColor: 'clear' });
-    });
-    segments.push({ text: '. ' });
+    const al       = status.alimentacion;
+    const hasPecho = al.includes('Pecho directo');
+    const hasMam   = al.includes('Mamadera');
+    const hasNaso  = al.includes('Sonda nasogástrica');
+    const hasOro   = al.includes('Sonda orogástrica');
+    const hasParent= al.includes('Nutrición parenteral');
+    const hasSonda = hasNaso || hasOro;
+    const sondaLbl = hasNaso ? 'sonda nasogástrica' : 'sonda orogástrica';
+
+    if (al.length === 1) {
+      if (hasPecho)   { push('Se alimenta directamente del '); chip('pecho directo', 'clear'); push('. '); }
+      else if (hasMam){ push('Recibe su leche en '); chip('mamadera', 'clear'); push('. '); }
+      else if (hasNaso){ push('Recibe su alimentación por '); chip('sonda nasogástrica', 'clear'); push(', un tubito que llega hasta su estómago por la nariz. '); }
+      else if (hasOro) { push('Recibe su alimentación por '); chip('sonda orogástrica', 'clear'); push(', un tubito que llega hasta su estómago por la boca. '); }
+      else if (hasParent){ push('Recibe sus nutrientes directamente por la '); chip('nutrición parenteral', 'clear'); push(', mientras su sistema digestivo madura. '); }
+    } else if (al.length === 2) {
+      if (hasPecho && hasSonda) {
+        push('Se alimenta combinando el '); chip('pecho directo', 'clear'); push(' con '); chip(sondaLbl, 'clear'); push(', para asegurarse de recibir todo lo que necesita. ');
+      } else if (hasMam && hasSonda) {
+        push('Recibe su leche en '); chip('mamadera', 'clear'); push(' y por '); chip(sondaLbl, 'clear'); push(', según lo que necesita en cada momento. ');
+      } else if (hasSonda && hasParent) {
+        push('Recibe su alimentación por '); chip(sondaLbl, 'clear'); push(' y también '); chip('nutrición parenteral', 'clear'); push(' por la vía. ');
+      } else {
+        push('Se alimenta de varias formas según sus necesidades del momento: ');
+        al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
+        push('. ');
+      }
+    } else {
+      push('Se alimenta de varias formas según sus necesidades del momento: ');
+      al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
+      push('. ');
+    }
   }
 
+  // ── Accesos vasculares ───────────────────────────────────────────────────────
   if (status.accesos && status.accesos.length > 0) {
-    segments.push({ text: 'Tiene acceso vascular mediante ' });
-    status.accesos.forEach((item, idx) => {
-      if (idx > 0) segments.push({ text: ' y ' });
-      segments.push({ chip: item, chipColor: 'viola' });
-    });
-    segments.push({ text: '. ' });
+    const ac = status.accesos;
+    if (ac.length === 1) {
+      const a = ac[0];
+      if (a === 'Vía periférica')        { push('Tiene una '); chip('vía periférica', 'viola'); push(' para recibir sus medicamentos y fluidos. '); }
+      else if (a === 'PICC')             { push('Tiene un '); chip('PICC', 'viola'); push(', un catéter fino que le permite recibir medicamentos y nutrición de forma segura. '); }
+      else if (a === 'Catéter umbilical'){ push('Tiene un '); chip('catéter umbilical', 'viola'); push(', colocado en el cordón, para sus tratamientos. '); }
+      else if (a === 'Catéter venoso central'){ push('Tiene un '); chip('catéter venoso central', 'viola'); push(' para sus medicamentos y nutrición. '); }
+    } else {
+      push('Tiene ');
+      ac.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'viola'); });
+      push(' para recibir sus medicamentos y fluidos. ');
+    }
   }
 
+  // ── Diagnósticos ─────────────────────────────────────────────────────────────
   if (status.diagnosticos && status.diagnosticos.length > 0) {
-    segments.push({ text: 'Sus diagnósticos incluyen ' });
-    status.diagnosticos.forEach((item, idx) => {
-      if (idx > 0) segments.push({ text: ', ' });
-      segments.push({ chip: item, chipColor: 'viola' });
-    });
-    segments.push({ text: '. ' });
+    const dx = status.diagnosticos;
+    if (dx.length === 1) {
+      push('Su diagnóstico es '); chip(lcLabel(dx[0]), 'viola'); push('. ');
+    } else {
+      push('Sus diagnósticos incluyen ');
+      dx.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'viola'); });
+      push('. ');
+    }
   }
 
-  return segments;
+  return segs;
 }
 window.generateBabyStatusSegments = generateBabyStatusSegments;
 
