@@ -123,7 +123,7 @@ const labelStyle = {
 };
 
 // ── Views ───────────────────────────────────────────
-function RoleSelectView({ onPick }) {
+function RoleSelectView({ onPick, onTerms }) {
   return (
     <>
       <AuthShapes/>
@@ -222,10 +222,78 @@ function RoleSelectView({ onPick }) {
           fontFamily: A_FB, fontSize: 12, color: KUN.inkMuted, fontWeight: 400, lineHeight: 1.5,
         }}>
           Al continuar aceptas nuestros<br/>
-          <span style={{ color: KUN.brick, fontWeight: 600 }}>Términos y Política de privacidad</span>.
+          <button onClick={onTerms} style={{
+            border: 'none', background: 'transparent', padding: 0,
+            color: KUN.brick, fontWeight: 700, fontFamily: A_FB, fontSize: 12,
+            cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 2,
+          }}>Términos y Política de privacidad</button>.
         </div>
       </div>
     </>
+  );
+}
+
+function TermsView({ onBack }) {
+  const sections = [
+    ['1. Identificacion del servicio', 'KUN es una plataforma de acompanamiento, educacion, organizacion y vinculo para familias con bebes hospitalizados, y una herramienta de apoyo para equipos de salud. Sus funciones pueden incluir informacion educativa, reservas de lactario, diario familiar, comunidad entre usuarios, capsulas y recomendaciones.'],
+    ['2. Aceptacion de los terminos', 'Al ingresar, registrarse o utilizar KUN, el usuario declara haber leido y aceptado estos Terminos y Condiciones, junto con la Politica de Privacidad aplicable. Si no esta de acuerdo, debe abstenerse de utilizar la plataforma.'],
+    ['3. Usuarios autorizados', 'La plataforma puede ser utilizada por madres, padres, cuidadores, familiares autorizados y personal de salud habilitado. Algunas funciones pueden estar restringidas segun el tipo de usuario, el vinculo con el bebe o los permisos definidos por la institucion.'],
+    ['4. Uso adecuado de la aplicacion', 'El usuario se compromete a utilizar KUN de manera responsable, respetuosa y conforme a su finalidad. No esta permitido subir, compartir o difundir contenido falso, ofensivo, discriminatorio, ilegal, amenazante, invasivo de la privacidad de terceros o que pueda afectar la seguridad, dignidad o bienestar de otros usuarios.'],
+    ['5. Informacion medica y limites del servicio', 'KUN entrega informacion educativa y de acompanamiento. La plataforma no reemplaza la evaluacion, diagnostico, indicacion, tratamiento ni seguimiento realizado por el equipo medico tratante. Ante cualquier duda sobre la salud, evolucion o tratamiento del bebe, el usuario debe consultar directamente al personal de salud correspondiente.'],
+    ['6. Contenido educativo y recomendaciones', 'Las capsulas, materiales educativos y recomendaciones disponibles en KUN tienen fines informativos y de apoyo. Aunque puedan estar relacionadas con la situacion del bebe, no constituyen una indicacion clinica individual ni sustituyen las instrucciones entregadas por el equipo tratante.'],
+    ['7. Comunidad y foro', 'La seccion Comunidad permite que usuarios compartan experiencias, preguntas y apoyo entre pares. Red Salud UC CHRISTUS no se hace responsable por la informacion compartida por usuarios en esta seccion. Las respuestas entregadas por otros padres, madres o familiares no estan respaldadas, validadas ni confirmadas por UC CHRISTUS, por lo que no deben considerarse informacion medica oficial, diagnostico, indicacion clinica ni recomendacion profesional.'],
+    ['8. Diario, fotos, audios y recuerdos', 'El usuario puede cargar textos, imagenes, audios u otros recuerdos en el diario o secciones de vinculo. Al hacerlo, declara contar con los derechos o autorizaciones necesarias para compartir dicho contenido y acepta que sea utilizado dentro de KUN para las funciones propias de la plataforma.'],
+    ['9. Privacidad y datos personales', 'KUN puede tratar datos personales y, eventualmente, datos sensibles asociados a salud, identificacion, vinculo familiar, uso de la plataforma y contenidos cargados por el usuario. El tratamiento de estos datos debe realizarse conforme a la legislacion aplicable y a la Politica de Privacidad, donde se informa que datos se recopilan, con que finalidad, como se resguardan y con quienes podrian compartirse.'],
+    ['10. Cuenta y seguridad', 'El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso y de informar cualquier uso no autorizado de su cuenta. KUN podra implementar medidas de seguridad, verificacion o restriccion de acceso cuando sea necesario para proteger a los usuarios y la plataforma.'],
+    ['11. Moderacion y suspension', 'KUN podra moderar, ocultar, eliminar contenido o suspender el acceso de usuarios cuando exista incumplimiento de estos terminos, uso indebido de la plataforma, riesgo para otros usuarios o vulneracion de normas institucionales o legales.'],
+    ['12. Propiedad intelectual', 'El diseno, marca, funcionalidades, textos, capsulas, materiales educativos y demas contenidos propios de KUN pertenecen a sus respectivos titulares. El contenido cargado por usuarios seguira perteneciendo a quien lo proporciona, sin perjuicio de la autorizacion necesaria para visualizarlo y utilizarlo dentro de la plataforma.'],
+    ['13. Cambios en el servicio', 'KUN podra modificar, actualizar, suspender o eliminar funciones, contenidos o estos Terminos y Condiciones cuando sea necesario. Cuando corresponda, se informara a los usuarios sobre cambios relevantes.'],
+    ['14. Legislacion aplicable y contacto', 'Estos terminos se regiran por la legislacion chilena, en lo que corresponda. Para dudas sobre el uso de la plataforma, privacidad o estos terminos, el usuario podra contactar al canal de soporte definido por KUN o por la institucion correspondiente.'],
+  ];
+  return (
+    <div style={{ position:'absolute', inset: 0, zIndex: 80, background: KUN.bg, display:'flex', flexDirection:'column' }}>
+      <div style={{ padding: '58px 20px 12px', display:'flex', alignItems:'center', gap: 12 }}>
+        <div onClick={onBack} style={{
+          width: 40, height: 40, borderRadius: 20, background: '#fff',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          border: `1px solid ${KUN.hair}`, cursor:'pointer', flexShrink: 0,
+        }}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12 4L6 10L12 16" stroke={KUN.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div style={{ fontFamily: A_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>
+            Terminos y condiciones
+          </div>
+          <div style={{ fontFamily: A_FB, fontSize: 12, color: KUN.inkMuted, marginTop: 2 }}>
+            KUN · Red Salud UC CHRISTUS
+          </div>
+        </div>
+      </div>
+      <div style={{ flex: 1, overflowY:'auto', padding: '0 20px 30px' }}>
+        <div style={{
+          background:'#fff', borderRadius: 22, padding: 16,
+          border: `1px solid ${KUN.hair}`, marginBottom: 12,
+          fontFamily: A_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.55,
+        }}>
+          Este documento es una version base para informar el uso de KUN. Para implementacion real con pacientes y datos de salud, debe ser revisado y aprobado por las areas legales, clinicas y de privacidad correspondientes.
+        </div>
+        {sections.map(([title, text]) => (
+          <div key={title} style={{
+            background:'#fff', borderRadius: 20, padding: '15px 16px',
+            border: `1px solid ${KUN.hair}`, marginBottom: 10,
+          }}>
+            <div style={{ fontFamily: A_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink, marginBottom: 7, letterSpacing: -0.1 }}>
+              {title}
+            </div>
+            <div style={{ fontFamily: A_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.58 }}>
+              {text}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -624,7 +692,10 @@ function ScreenAuth({ onAuthenticated }) {
         <RoleSelectView onPick={(role) => {
           if (role === 'worker') setView('worker');
           else setView('rut');
-        }} />
+        }} onTerms={() => setView('terms')} />
+      )}
+      {view === 'terms' && (
+        <TermsView onBack={() => setView('role')} />
       )}
       {view === 'worker' && (
         <WorkerLoginView

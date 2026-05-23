@@ -376,8 +376,8 @@ function KSubTabsGeneric({ tabs, active, onChange }) {
 function KBottomNav({ active = 'edu', onChange }) {
   const tabs = [
     { id: 'home',  label: 'Inicio',    icon: KIcon.home },
-    { id: 'edu',   label: 'Educación', icon: KIcon.book },
     { id: 'bond',  label: 'Vínculo', icon: KIcon.heart },
+    { id: 'edu',   label: 'Educación', icon: KIcon.book },
     { id: 'comm',  label: 'Comunidad', icon: KIcon.people },
   ];
   return (

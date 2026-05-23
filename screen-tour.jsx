@@ -61,7 +61,7 @@ const STEPS = [
   {
     type:     'nav',
     tabIndex: 3,
-    bubble:   'Puedes hablar con las enfermeras y psicólogas, y conectarte con otros papás y mamás que están viviendo lo mismo que tú.',
+    bubble:   'En Comunidad puedes conectarte con otros papás y mamás que están viviendo algo parecido. Recuerda que sus respuestas no están respaldadas por UC CHRISTUS y pueden contener información errónea; ante dudas médicas, consulta al equipo de salud.',
     btn:      'Siguiente',
   },
   {

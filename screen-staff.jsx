@@ -25,8 +25,14 @@ const STAFF_INITIAL_LACTARIO = [
 const STAFF_INITIAL_CAPSULES = [
   { id: 1, title: 'Tu bebe empezo a alimentarse por sonda', topic: 'Alimentacion por sonda', dur: '4 min', status: 'publicada', text: 'Explica que es una sonda y como acompanar este proceso.', instructions: 'Revisar antes de primera alimentacion enteral.', media: '', quiz: 'La sonda ayuda a alimentar cuando el bebe aun no succiona.' },
   { id: 2, title: 'Metodo canguro: como empezar', topic: 'Metodo canguro', dur: '6 min', status: 'publicada', text: 'Guia para iniciar contacto piel con piel.', instructions: 'Validar estabilidad con enfermeria.', media: '', quiz: 'El metodo canguro puede hacerlo mama o papa.' },
+  { id: 3, title: 'Como se ve tu bebe hoy', topic: 'Prematuridad', dur: '3 min', status: 'publicada', text: 'Ayuda a la familia a reconocer cambios normales en el aspecto del bebe hospitalizado.', instructions: 'Usar como apoyo para explicar edema, coloracion y postura.', media: '', quiz: 'Los cambios del aspecto pueden ser parte de la evolucion esperada.' },
   { id: 4, title: 'Entender los monitores', topic: 'Equipos y monitores', dur: '5 min', status: 'publicada', text: 'Describe saturacion, frecuencia cardiaca y alarmas.', instructions: 'No manipular sensores sin equipo clinico.', media: '', quiz: 'No todas las alarmas significan urgencia.' },
+  { id: 5, title: 'Posicion correcta en el canguro', topic: 'Metodo canguro', dur: '4 min', status: 'publicada', text: 'Explica postura segura para realizar metodo canguro.', instructions: 'Validar estabilidad antes de iniciar contacto piel con piel.', media: '', quiz: 'La posicion debe permitir respirar comodo y estar contenido.' },
+  { id: 6, title: 'Produccion de leche materna', topic: 'Lactancia', dur: '5 min', status: 'publicada', text: 'Consejos basicos para apoyar la produccion de leche durante la hospitalizacion.', instructions: 'Reforzar extraccion frecuente e hidratacion segun indicacion local.', media: '', quiz: 'La extraccion regular ayuda a mantener la produccion.' },
+  { id: 7, title: 'Lactancia con sonda', topic: 'Lactancia', dur: '4 min', status: 'publicada', text: 'Explica como la alimentacion por sonda puede convivir con el avance hacia lactancia.', instructions: 'Ajustar segun tolerancia enteral y plan clinico.', media: '', quiz: 'La sonda puede ser una etapa temporal de apoyo.' },
+  { id: 8, title: 'Etapas del desarrollo prematuro', topic: 'Prematuridad', dur: '5 min', status: 'publicada', text: 'Describe hitos y ritmos esperables en bebes prematuros.', instructions: 'Usar edad corregida para orientar expectativas familiares.', media: '', quiz: 'La edad corregida ayuda a mirar el desarrollo con mas justicia.' },
   { id: 9, title: 'Que es el ECMO', topic: 'ECMO', dur: '4 min', status: 'publicada', text: 'Introduccion simple a soporte ECMO.', instructions: 'Recomendar solo si aplica a la ficha clinica.', media: '', quiz: 'ECMO es soporte avanzado temporal.' },
+  { id: 10, title: 'Cuidados al alta', topic: 'Alta y hogar', dur: '6 min', status: 'publicada', text: 'Primeros cuidados y senales de alerta para preparar el regreso a casa.', instructions: 'Complementar siempre con indicaciones del alta clinica.', media: '', quiz: 'El alta requiere seguir controles e indicaciones del equipo.' },
 ];
 
 const STAFF_DEVICE_OPTIONS = ['CPAP', 'Ventilacion mecanica', 'Sonda orogastrica', 'Via central', 'Via arterial', 'ECMO', 'Monitor multiparametro'];
@@ -35,6 +41,15 @@ const STAFF_TRAIT_OPTIONS = ['Prematuridad', 'Lactancia', 'Alimentacion por sond
 function loadStaffState(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key) || 'null') || fallback; }
   catch { return fallback; }
+}
+function loadStaffCapsules() {
+  const stored = loadStaffState('kun_staff_capsules_v1', []);
+  if (!Array.isArray(stored) || stored.length === 0) return STAFF_INITIAL_CAPSULES;
+  const byId = new Map(stored.map(c => [c.id, c]));
+  STAFF_INITIAL_CAPSULES.forEach(c => {
+    if (!byId.has(c.id)) byId.set(c.id, c);
+  });
+  return Array.from(byId.values());
 }
 function saveStaffState(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
@@ -403,7 +418,7 @@ function staffTextKey(value) {
 function StaffCategoryChips({ active, onChange }) {
   const chips = ['Todo', 'Lactancia', 'Prematuridad', 'Metodo canguro', 'ECMO', 'Alta y hogar'];
   return (
-    <div style={{ display: 'flex', gap: 8, padding: '0 0 18px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+    <div style={{ display: 'flex', gap: 8, padding: '0 20px 18px', overflowX: 'auto', scrollbarWidth: 'none' }}>
       {chips.map(c => {
         const isA = c === active;
         return (
@@ -424,10 +439,13 @@ function StaffCategoryChips({ active, onChange }) {
 function StaffCapsuleItem({ cap, onOpen }) {
   return (
     <div onClick={() => onOpen(cap.id)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 4px', cursor: 'pointer' }}>
-      <div style={{ width: 7, height: 7, borderRadius: '50%', background: cap.status === 'publicada' ? KUN.apple : KUN.brick, flexShrink: 0 }} />
+      <div style={{ width: 6, height: 6, borderRadius: '50%', background: KUN.brick, flexShrink: 0 }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: STAFF_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{cap.title}</div>
-        <div style={{ fontFamily: STAFF_FB, fontSize: 11.5, color: KUN.inkSoft, marginTop: 2 }}>{cap.dur || '4 min'} · {cap.status || 'borrador'}</div>
+        <div style={{ fontFamily: STAFF_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400, marginTop: 2 }}>{cap.dur || '4 min'} · lectura</div>
+      </div>
+      <div style={{ fontFamily: STAFF_FT, fontSize: 10.5, fontWeight: 700, color: cap.status === 'publicada' ? '#3D9156' : KUN.brick, background: cap.status === 'publicada' ? KUN.sageSoft : KUN.rosehip, borderRadius: 999, padding: '4px 8px', flexShrink: 0 }}>
+        {cap.status === 'publicada' ? 'Editar' : 'Borrador'}
       </div>
       {KIcon.chevRight(KUN.inkFaint)}
     </div>
@@ -495,14 +513,16 @@ function StaffEducation({ capsules, setCapsules, askConfirm }) {
   const totalCaps = topics.reduce((sum, t) => sum + t.caps.length, 0);
 
   return (
-    <div style={{ padding: '0 18px 120px' }}>
+    <div style={{ padding: '0 0 120px' }}>
       <button onClick={create} style={{ position: 'absolute', right: 22, bottom: 112, width: 58, height: 58, borderRadius: '50%', border: 'none', background: KUN.brick, color: '#fff', fontFamily: STAFF_FT, fontSize: 30, fontWeight: 700, cursor: 'pointer', zIndex: 20 }}>+</button>
-      <div style={{ background: '#fff', borderRadius: 16, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, border: `1.5px solid ${KUN.hair}`, marginBottom: 12 }}>
-        {KIcon.search(KUN.inkMuted)}
-        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar capsulas..." style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontFamily: STAFF_FB, fontSize: 14, color: KUN.ink }} />
+      <div style={{ padding: '4px 20px 12px' }}>
+        <div style={{ background: '#fff', borderRadius: 16, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, border: `1.5px solid ${KUN.hair}` }}>
+          {KIcon.search(KUN.inkMuted)}
+          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar capsulas..." style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontFamily: STAFF_FB, fontSize: 14, color: KUN.ink }} />
+        </div>
       </div>
       <StaffCategoryChips active={activeCategory} onChange={setActiveCategory} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px 10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px 10px' }}>
         <div style={{ fontFamily: STAFF_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform: 'uppercase' }}>
           {totalCaps} capsula{totalCaps !== 1 ? 's' : ''}
         </div>
@@ -510,13 +530,23 @@ function StaffEducation({ capsules, setCapsules, askConfirm }) {
           Ordenar {KIcon.chevDown(KUN.brick)}
         </div>
       </div>
-      {topics.length ? topics.map((t, i) => (
-        <StaffTopicRow key={t.name} topic={t} caps={t.caps} defaultOpen={activeCategory !== 'Todo' || i === 0} onOpenCapsule={setDetailId} />
-      )) : (
-        <div style={{ background: '#fff', borderRadius: 22, padding: 18, border: `1px solid ${KUN.hair}`, fontFamily: STAFF_FB, color: KUN.inkSoft }}>
-          No hay capsulas para esta busqueda.
+      <div style={{ padding: '0 20px' }}>
+        {topics.length ? topics.map((t, i) => (
+          <StaffTopicRow key={t.name} topic={t} caps={t.caps} defaultOpen={activeCategory !== 'Todo' || i === 0} onOpenCapsule={setDetailId} />
+        )) : (
+          <div style={{ background: '#fff', borderRadius: 22, padding: 18, border: `1px solid ${KUN.hair}`, fontFamily: STAFF_FB, color: KUN.inkSoft }}>
+            No hay capsulas para esta busqueda.
+          </div>
+        )}
+        <div style={{ height: 16 }} />
+        <button onClick={create} style={{
+          width: '100%', border: `1.5px dashed ${KUN.brick}`, background: '#fff',
+          color: KUN.brick, borderRadius: 22, padding: '14px 16px',
+          fontFamily: STAFF_FT, fontSize: 14, fontWeight: 700, cursor: 'pointer',
+        }}>
+          + Nueva capsula educativa
+        </button>
         </div>
-      )}
     </div>
   );
 }
@@ -580,7 +610,7 @@ function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = []
   const [reportsOpen, setReportsOpen] = React.useState(false);
   const [babies, setBabiesState] = React.useState(() => loadStaffState('kun_staff_babies_v1', STAFF_INITIAL_BABIES));
   const [lactarioSlots, setLactarioSlotsState] = React.useState(() => loadStaffState('kun_staff_lactario_v1', STAFF_INITIAL_LACTARIO));
-  const [capsules, setCapsulesState] = React.useState(() => loadStaffState('kun_staff_capsules_v1', STAFF_INITIAL_CAPSULES));
+  const [capsules, setCapsulesState] = React.useState(() => loadStaffCapsules());
 
   const askConfirm = (title, text, action) => setConfirm({ title, text, action });
   const setBabies = (next) => { setBabiesState(next); saveStaffState('kun_staff_babies_v1', next); };
