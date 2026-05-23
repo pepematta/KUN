@@ -51,15 +51,15 @@
 <script type="text/babel" src="edu-shared.jsx?v=10"></script>
 <script type="text/babel" src="screen-auth.jsx?v=9"></script>
 <script type="text/babel" src="screen-tour.jsx?v=3"></script>
-<script type="text/babel" src="screen-lactario.jsx?v=5"></script>
+<script type="text/babel" src="screen-lactario.jsx?v=6"></script>
 <script type="text/babel" src="screen-home.jsx?v=15"></script>
 <script type="text/babel" src="edu-camino.jsx?v=7"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=6"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=8"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=14"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=17"></script>
 <script type="text/babel" src="screen-comunidad.jsx?v=12"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=9"></script>
-<script type="text/babel" src="screen-staff.jsx?v=2"></script>
+<script type="text/babel" src="screen-staff.jsx?v=3"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -716,6 +716,7 @@ function Prototype() {
     body = <ScreenVinculo
       view={bondView} setView={setBondView}
       recordings={recordings} addRecording={addRecording}
+      babyName={babyName}
       canEditDiary={authData.role === 'parent' && (authData.familyRole || 'parent') === 'parent'}
     />;
   } else {

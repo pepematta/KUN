@@ -8,7 +8,7 @@ const LACTARIO_SLOTS = (() => {
   const slots = [];
   const start = 8 * 60 + 30;
   const end = 18 * 60 + 30;
-  const seededUse = [1, 3, 0, 2, 4, 1, 0, 2, 3, 0, 1, 4, 2, 0, 1];
+  const seededUse = [1, 3, 0, 2, 3, 1, 0, 2, 3, 0, 1, 3, 2, 0, 1];
   const fmt = (h, m) => `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 
   for (let minutes = start, i = 0; minutes + LACTARIO_SLOT_MINUTES <= end; minutes += LACTARIO_SLOT_MINUTES, i += 1) {
@@ -23,7 +23,7 @@ const LACTARIO_SLOTS = (() => {
 window.LACTARIO_SLOTS = LACTARIO_SLOTS;
 window.LACTARIO_MAX_DAILY = LACTARIO_MAX_DAILY;
 
-const LACT_CAP       = 4;
+const LACT_CAP       = 3;
 const LACT_GREEN_BG  = '#EBF5EE';
 const LACT_GREEN     = '#3D9156';
 const LACT_YELLOW_BG = '#FFF6E0';

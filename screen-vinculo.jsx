@@ -85,7 +85,8 @@ function VinkShapes() {
 }
 
 // ── Entry ───────────────────────────────────────────────
-function VinkEntry({ onPick }) {
+function VinkEntry({ onPick, babyName = 'Sofía' }) {
+  const childName = babyName || 'tu bebé';
   return (
     <div style={{ position:'relative', padding: '6px 20px 0', overflowX: 'hidden', maxWidth: '100%', boxSizing: 'border-box' }}>
       <VinkShapes/>
@@ -96,7 +97,7 @@ function VinkEntry({ onPick }) {
             fontFamily: V_FT, fontSize: 24, fontWeight: 700, color: KUN.ink,
             letterSpacing: -0.4, lineHeight: 1.2,
           }}>
-            Acércate a Sofía,<br/>aunque no estés ahí.
+            Acércate a {childName}
           </div>
           <div style={{
             fontFamily: V_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400, marginTop: 8,
@@ -332,7 +333,7 @@ function Avatar({ name, color }) {
   );
 }
 
-function FeedEntry({ author, role, color, time, kind, content, isVoice, duration }) {
+function FeedEntry({ author, role, color, time, kind, content, imageSrc, isVoice, duration }) {
   return (
     <div style={{
       margin: '0 20px 12px',
@@ -351,19 +352,28 @@ function FeedEntry({ author, role, color, time, kind, content, isVoice, duration
         }}>
           {kind === 'photo' && (
             <>
-              <div style={{
-                height: 150, borderRadius: 16,
-                background: `repeating-linear-gradient(135deg, ${KUN.rosehip} 0 8px, #F8E9DD 8px 16px)`,
-                display:'flex', alignItems:'center', justifyContent:'center',
-                fontFamily: V_FB, fontSize: 11, color: KUN.ink,
-                fontWeight: 500, marginBottom: 8,
-              }}>foto · abuela y Sofía</div>
-              <div style={{
-                fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
-                padding: '0 8px 8px', lineHeight: 1.5,
-              }}>
-                {content}
-              </div>
+              {imageSrc ? (
+                <img src={imageSrc} alt="" style={{
+                  width: '100%', height: 150, borderRadius: 16,
+                  objectFit: 'cover', display: 'block', marginBottom: content ? 8 : 0,
+                }} />
+              ) : (
+                <div style={{
+                  height: 150, borderRadius: 16,
+                  background: `repeating-linear-gradient(135deg, ${KUN.rosehip} 0 8px, #F8E9DD 8px 16px)`,
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  fontFamily: V_FB, fontSize: 11, color: KUN.ink,
+                  fontWeight: 500, marginBottom: 8,
+                }}>foto · abuela y Sofía</div>
+              )}
+              {content && (
+                <div style={{
+                  fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
+                  padding: '0 8px 8px', lineHeight: 1.5,
+                }}>
+                  {content}
+                </div>
+              )}
             </>
           )}
           {kind === 'text' && (
@@ -396,7 +406,7 @@ function FeedEntry({ author, role, color, time, kind, content, isVoice, duration
   );
 }
 
-function AddEntrySheet({ onClose, onPickVoice }) {
+function AddEntrySheet({ onClose, onPickPhoto, onPickText, onPickVoice }) {
   const opts = [
     { id:'photo', label:'Subir foto',  desc:'Captura un momento del día',     icon: VINK_ICONS.camera, color: KUN.rosehip },
     { id:'text',  label:'Escribir nota', desc:'Una palabra, una frase, lo que sientas', icon: VINK_ICONS.text,  color: KUN.apple },
@@ -431,7 +441,12 @@ function AddEntrySheet({ onClose, onPickVoice }) {
         <div style={{ display:'flex', flexDirection:'column', gap: 10 }}>
           {opts.map(o => (
             <div key={o.id}
-              onClick={() => { if (o.id === 'voice') onPickVoice(); else onClose(); }}
+              onClick={() => {
+                if (o.id === 'voice') onPickVoice();
+                else if (o.id === 'text') onPickText();
+                else if (o.id === 'photo') onPickPhoto();
+                else onClose();
+              }}
               style={{
                 background:'#fff', borderRadius: 22, padding:'14px 16px',
                 display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
@@ -466,24 +481,26 @@ const DIARY_PHOTOS = [
 
 const DIARY_TEXT = 'Hoy fuimos orem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut pulvinar ante, nec cursus lorem. Donec tellus nisl, tincidunt ut risus nec, dignissim sollicitudin mauris.';
 const DIARY = {
-  bg: '#fff',
-  panel: '#D9D9D9',
-  panelDark: '#BCBCBC',
-  audio: '#7D7B7B',
-  icon: '#ACACAC',
-  nav: '#F3F3F3',
-  ink: '#111',
-  muted: '#777',
-  overlay: '#595959',
+  bg: KUN.bg,
+  panel: '#fff',
+  panelDark: KUN.sun,
+  audio: KUN.brick,
+  icon: KUN.inkMuted,
+  nav: KUN.cardSoft,
+  ink: KUN.ink,
+  muted: KUN.inkMuted,
+  overlay: KUN.inkSoft,
 };
+const DIARY_ENTRIES_KEY = 'kun_diary_entries_v1';
 
 function DiaryIconButton({ children, onClick, muted = false }) {
   return (
     <button onClick={onClick} style={{
-      width: 40, height: 40, borderRadius: '50%', border: 'none',
-      background: muted ? DIARY.panel : DIARY.audio,
+      width: 40, height: 40, borderRadius: '50%', border: `1px solid ${KUN.hair}`,
+      background: muted ? '#fff' : DIARY.audio,
       display:'flex', alignItems:'center', justifyContent:'center',
       cursor:'pointer', color: muted ? DIARY.muted : '#fff', flexShrink: 0,
+      boxShadow: muted ? 'none' : '0 8px 18px rgba(240,116,62,0.24)',
     }}>
       {children}
     </button>
@@ -493,30 +510,31 @@ function DiaryIconButton({ children, onClick, muted = false }) {
 function DiaryAudioBar({ duration = '01:09', compact = false }) {
   return (
     <div style={{
-      height: compact ? 38 : 38, borderRadius: 10, background: DIARY.audio,
+      height: compact ? 38 : 42, borderRadius: 999, background: '#fff',
       display:'flex', alignItems:'center', gap: 8,
       padding: '0 10px', boxSizing:'border-box',
-      color:'#fff', minWidth: 0,
+      color: KUN.ink, minWidth: 0,
+      border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{
         width: compact ? 22 : 24, height: compact ? 22 : 24, borderRadius:'50%',
-        background: DIARY.panel, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+        background: KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
       }}>
-        <div style={{ width: compact ? 8 : 9, height: compact ? 8 : 9, borderRadius:'50%', background:'#F1F1F1' }}/>
+        <div style={{ width: compact ? 8 : 9, height: compact ? 8 : 9, borderRadius:'50%', background: KUN.brick }}/>
       </div>
       <div style={{
         width: compact ? 22 : 24, height: compact ? 22 : 24, borderRadius:'50%',
-        background: DIARY.panel, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+        background: KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
       }}>
         {VINK_ICONS.play('#fff', compact ? 9 : 11)}
       </div>
       <svg viewBox="0 0 112 24" style={{ flex: 1, height: compact ? 20 : 24, minWidth: 58 }}>
         {Array.from({length: 32}).map((_, i) => {
           const h = 5 + Math.abs(Math.sin(i * 0.78)) * 15;
-          return <rect key={i} x={i * 3.5} y={(24 - h) / 2} width="2" height={h} rx="1" fill="#fff" opacity={0.9}/>;
+          return <rect key={i} x={i * 3.5} y={(24 - h) / 2} width="2" height={h} rx="1" fill={KUN.brick} opacity={i < 20 ? 0.9 : 0.32}/>;
         })}
       </svg>
-      <span style={{ fontFamily: V_FB, fontSize: compact ? 12 : 13, fontWeight: 400, color:'#fff', flexShrink:0 }}>
+      <span style={{ fontFamily: V_FT, fontSize: compact ? 12 : 13, fontWeight: 700, color: KUN.inkMuted, flexShrink:0 }}>
         {duration}
       </span>
     </div>
@@ -526,14 +544,15 @@ function DiaryAudioBar({ duration = '01:09', compact = false }) {
 function DiaryPhotoCount({ count }) {
   return (
     <div style={{
-      height: 20, minWidth: 36, borderRadius: 999, background: DIARY.audio,
+      height: 22, minWidth: 38, borderRadius: 999, background: KUN.cardSoft,
       color:'#fff', display:'inline-flex', alignItems:'center', justifyContent:'center',
       gap: 4, padding:'0 7px', boxSizing:'border-box', fontFamily: V_FB, fontSize: 12,
-      fontWeight: 400,
+      fontWeight: 600, color: KUN.ink,
+      border: `1px solid ${KUN.hair}`,
     }}>
       <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-        <rect x="2.5" y="3.5" width="13" height="11" rx="1.5" stroke="#fff" strokeWidth="1.4"/>
-        <path d="M4.5 12L7.4 9.2L9.4 11.1L11.3 8.8L14 12" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+        <rect x="2.5" y="3.5" width="13" height="11" rx="1.5" stroke={KUN.brick} strokeWidth="1.4"/>
+        <path d="M4.5 12L7.4 9.2L9.4 11.1L11.3 8.8L14 12" stroke={KUN.brick} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
       {count}
     </div>
@@ -543,37 +562,39 @@ function DiaryPhotoCount({ count }) {
 function DiaryListEntry({ title, text, photos = [], photoCount = 5, audioCount = 2, onOpen }) {
   return (
     <div onClick={onOpen} style={{
-      margin: '0 16px 32px', background: DIARY.panel, borderRadius: 10,
-      height: 107, padding: '12px 10px 10px 16px',
+      margin: '0 20px 14px', background: '#fff', borderRadius: 22,
+      minHeight: 112, padding: '14px 12px 14px 16px',
       display:'grid', gridTemplateColumns:'1fr 90px', gap: 10,
       cursor:'pointer', boxSizing:'border-box',
+      border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: V_FB, fontSize: 15, fontWeight: 700, color: DIARY.ink, marginBottom: 2 }}>
+        <div style={{ fontFamily: V_FT, fontSize: 15.5, fontWeight: 700, color: DIARY.ink, marginBottom: 4, letterSpacing: -0.1 }}>
           {title}
         </div>
-        <div style={{ fontFamily: V_FB, fontSize: 10.5, color: DIARY.ink, lineHeight: 1.22, maxHeight: 48, overflow:'hidden' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 11.5, color: KUN.inkSoft, lineHeight: 1.35, maxHeight: 48, overflow:'hidden' }}>
           {text}
         </div>
-        <div style={{ display:'flex', gap: 4, marginTop: 8 }}>
+        <div style={{ display:'flex', gap: 6, marginTop: 10 }}>
           <DiaryPhotoCount count={photoCount}/>
           <div style={{
-            height: 20, minWidth: 42, borderRadius: 999, background: DIARY.audio,
-            color:'#fff', display:'inline-flex', alignItems:'center', justifyContent:'center',
+            height: 22, minWidth: 42, borderRadius: 999, background: KUN.cardSoft,
+            color: KUN.ink, display:'inline-flex', alignItems:'center', justifyContent:'center',
             gap: 3, padding:'0 7px', boxSizing:'border-box', fontFamily: V_FB, fontSize: 12,
+            border: `1px solid ${KUN.hair}`,
           }}>
             <svg width="18" height="12" viewBox="0 0 54 20">
               {Array.from({length: 12}).map((_, i) => (
-                <rect key={i} x={i * 4.4} y={3 + (i % 3)} width="2.4" height={14 - (i % 3) * 2} rx="1" fill="#fff"/>
+                <rect key={i} x={i * 4.4} y={3 + (i % 3)} width="2.4" height={14 - (i % 3) * 2} rx="1" fill={KUN.brick}/>
               ))}
             </svg>
-            <span style={{ color:'#fff' }}>{audioCount}</span>
+            <span>{audioCount}</span>
           </div>
         </div>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gridTemplateRows:'1fr 1fr', gap: 4, height: 76, alignSelf:'center' }}>
         {photos.slice(0, 4).map((p, i) => (
-          <div key={i} style={{ position:'relative', overflow:'hidden', borderRadius: 4, background: DIARY.panel }}>
+          <div key={i} style={{ position:'relative', overflow:'hidden', borderRadius: 10, background: KUN.cardSoft }}>
             <img src={p} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
             {i === 3 && photoCount > 4 && (
               <div style={{ position:'absolute', inset:0, background:'rgba(89,89,89,0.8)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily: V_FB, fontSize: 15, fontWeight: 500 }}>
@@ -587,7 +608,99 @@ function DiaryListEntry({ title, text, photos = [], photoCount = 5, audioCount =
   );
 }
 
-function DiaryListView({ onOpenDay, onOpenAdd, canEditDiary }) {
+function NoteEditorSheet({ onClose, onSave }) {
+  const [text, setText] = React.useState('');
+  const [tone, setTone] = React.useState(KUN.rosehip);
+  const [category, setCategory] = React.useState('Momento');
+  const colors = [KUN.rosehip, KUN.sun, KUN.apple, KUN.clear, KUN.viola];
+  const categories = ['Momento', 'Avance', 'Emocion', 'Cuidado'];
+  const save = () => {
+    const clean = text.trim();
+    if (!clean) return;
+    onSave({
+      id: Date.now(),
+      kind: 'text',
+      author: 'Mamá',
+      role: category,
+      color: tone,
+      time: 'Ahora',
+      content: clean,
+    });
+    onClose();
+  };
+  return (
+    <div style={{ position:'absolute', inset: 0, zIndex: 220, background: 'rgba(42,35,32,0.34)', display:'flex', alignItems:'flex-end' }}>
+      <div style={{ width:'100%', background: KUN.bg, borderTopLeftRadius: 28, borderTopRightRadius: 28, padding:'14px 20px 30px', boxSizing:'border-box' }}>
+        <div style={{ width: 44, height: 5, borderRadius: 3, background: KUN.inkFaint, margin:'0 auto 16px' }} />
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 14 }}>
+          <div>
+            <div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Nueva nota</div>
+            <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkMuted, marginTop: 2 }}>Se guardará en el diario de hoy</div>
+          </div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.brick, cursor:'pointer' }}>Cancelar</button>
+        </div>
+        <textarea
+          autoFocus
+          value={text}
+          onChange={e => setText(e.target.value)}
+          placeholder="Escribe lo que quieres recordar..."
+          style={{
+            width:'100%', minHeight: 154, resize:'none', boxSizing:'border-box',
+            border: `1.5px solid ${KUN.hair}`, borderRadius: 22, background:'#fff',
+            padding: '16px 16px', outline:'none',
+            fontFamily: V_FB, fontSize: 15, color: KUN.ink, lineHeight: 1.55,
+          }}
+        />
+        <div style={{ marginTop: 16, background:'#fff', borderRadius: 22, border: `1px solid ${KUN.hair}`, padding: 14 }}>
+          <div style={diarySectionLabel}>Color de la nota</div>
+          <div style={{ display:'flex', gap: 9, marginBottom: 16 }}>
+            {colors.map(c => (
+              <button key={c} onClick={() => setTone(c)} style={{
+                width: 28, height: 28, borderRadius:'50%', background: c,
+                border: tone === c ? `2px solid ${KUN.ink}` : '2px solid #fff',
+                boxShadow: `0 0 0 1px ${KUN.hair}`, cursor:'pointer',
+              }} />
+            ))}
+          </div>
+          <div style={diarySectionLabel}>Categoría</div>
+          <div style={{ display:'flex', flexWrap:'wrap', gap: 8 }}>
+            {categories.map(c => {
+              const active = category === c;
+              return (
+                <button key={c} onClick={() => setCategory(c)} style={{
+                  border: active ? 'none' : `1px solid ${KUN.hair}`,
+                  background: active ? KUN.brick : KUN.cardSoft,
+                  color: active ? '#fff' : KUN.inkSoft,
+                  borderRadius: 999, padding: '8px 12px',
+                  fontFamily: V_FT, fontSize: 12.5, fontWeight: 700, cursor:'pointer',
+                }}>{c}</button>
+              );
+            })}
+          </div>
+        </div>
+        <button onClick={save} disabled={!text.trim()} style={{
+          width:'100%', marginTop: 14, height: 48, borderRadius: 999, border:'none',
+          background: text.trim() ? KUN.brick : 'rgba(42,35,32,0.10)',
+          color: text.trim() ? '#fff' : KUN.inkMuted,
+          fontFamily: V_FT, fontSize: 15, fontWeight: 700,
+          cursor: text.trim() ? 'pointer' : 'not-allowed',
+        }}>Guardar nota</button>
+      </div>
+    </div>
+  );
+}
+
+const diarySectionLabel = {
+  fontFamily: V_FB,
+  fontSize: 11,
+  fontWeight: 600,
+  color: KUN.inkMuted,
+  letterSpacing: 0.7,
+  textTransform: 'uppercase',
+  marginBottom: 8,
+};
+
+function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntries = [] }) {
   const entries = [
     { title:'juh', date:'HOY - 20 Junio 2026', photoCount:5, audioCount:2, photos:['premature.jpg','tens2.webp','tens.avif','premature.jpg'] },
     { title:'akgsdli', date:'AYER - 19 Junio 2026', photoCount:4, audioCount:2, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'] },
@@ -596,38 +709,42 @@ function DiaryListView({ onOpenDay, onOpenAdd, canEditDiary }) {
   ];
   return (
     <div style={{ minHeight:'100%', background: DIARY.bg, paddingBottom: 96 }}>
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'20px 16px 22px' }}>
-        <h1 style={{ margin:0, fontFamily: V_FB, fontSize: 29, fontWeight: 800, color:'#000', letterSpacing: 0, lineHeight:1 }}>
+      <div style={{ display:'grid', gridTemplateColumns:'42px 1fr auto', alignItems:'center', gap: 10, padding:'8px 20px 18px' }}>
+        <DiaryIconButton onClick={onBack} muted>{VINK_ICONS.back(KUN.ink)}</DiaryIconButton>
+        <h1 style={{ margin:0, fontFamily: V_FT, fontSize: 24, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4, lineHeight:1 }}>
           Diario de vida
         </h1>
-        <div style={{ height: 42, borderRadius:999, background: DIARY.panel, display:'flex', alignItems:'center', gap: 18, padding:'0 18px' }}>
+        <div style={{ height: 42, borderRadius:999, background: '#fff', border: `1px solid ${KUN.hair}`, display:'flex', alignItems:'center', gap: 16, padding:'0 14px' }}>
           <button disabled={!canEditDiary} onClick={onOpenAdd} style={{ border:'none', background:'transparent', padding:0, cursor: canEditDiary ? 'pointer' : 'not-allowed', opacity: canEditDiary ? 1 : 0.45, height: 34, display:'flex', alignItems:'center' }}>
-            {VINK_ICONS.plus('#111')}
+            {VINK_ICONS.plus(KUN.brick)}
           </button>
-          {KIcon.search('#777')}
+          {KIcon.search(KUN.inkMuted)}
         </div>
       </div>
 
       {!canEditDiary && <ReadOnlyDiaryNotice />}
-      <div style={{ fontFamily: V_FB, fontSize: 18, fontWeight: 800, color:'#000', padding:'0 16px 10px' }}>
+      <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform:'uppercase', padding:'0 24px 10px' }}>
         Recuerdos
       </div>
-      <div style={{ display:'flex', gap: 15, overflowX:'auto', padding:'0 16px 56px', scrollSnapType:'x mandatory' }}>
+      <div style={{ display:'flex', gap: 12, overflowX:'auto', padding:'0 20px 28px', scrollSnapType:'x mandatory' }}>
         {DIARY_PHOTOS.map((item, i) => (
-          <div key={i} onClick={onOpenDay} style={{ width: 166, height: 112, borderRadius: 15, overflow:'hidden', position:'relative', flexShrink:0, cursor:'pointer', scrollSnapAlign:'start', background: DIARY.panel }}>
+          <div key={i} onClick={onOpenDay} style={{ width: 166, height: 112, borderRadius: 18, overflow:'hidden', position:'relative', flexShrink:0, cursor:'pointer', scrollSnapAlign:'start', background: KUN.cardSoft, border: `1px solid ${KUN.hair}` }}>
             <img src={item.src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
             <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, rgba(0,0,0,0) 28%, rgba(0,0,0,0.42) 100%)' }}/>
             <div style={{ position:'absolute', left:16, right: 14, bottom:13, color:'#fff' }}>
-              <div style={{ fontFamily: V_FB, fontSize: 16, fontWeight: 800, lineHeight:1.05 }}>{item.title}</div>
+              <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, lineHeight:1.05 }}>{item.title}</div>
               <div style={{ fontFamily: V_FB, fontSize: 12, fontWeight: 400, marginTop: 6 }}>{item.date}</div>
             </div>
           </div>
         ))}
       </div>
 
-      <div style={{ fontFamily: V_FB, fontSize: 18, fontWeight: 800, color:'#000', padding:'0 16px 4px' }}>
+      <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform:'uppercase', padding:'0 24px 10px' }}>
         Entradas
       </div>
+      {diaryEntries.map((entry) => (
+        <FeedEntry key={entry.id} {...entry} />
+      ))}
       {entries.map((entry) => (
         <React.Fragment key={entry.date}>
           <div style={{ textAlign:'center', fontFamily: V_FB, fontSize: 16, fontWeight: 400, color:'#777', margin:'0 0 8px' }}>
@@ -640,68 +757,91 @@ function DiaryListView({ onOpenDay, onOpenAdd, canEditDiary }) {
   );
 }
 
-function DiaryNote({ title = 'Nota', time = '10:32 AM', strong, tall = false }) {
+function DiaryNote({ title = 'Nota', time = '10:32 AM', content, strong, tall = false }) {
   return (
-    <div style={{ background: strong ? DIARY.panelDark : DIARY.panel, borderRadius: 10, padding: strong ? '14px 14px' : '12px 14px', boxSizing:'border-box', minHeight: tall ? 155 : 'auto', height: tall ? 155 : (strong ? 62 : 150), overflow:'hidden' }}>
+    <div style={{
+      background: strong ? KUN.sun : '#fff',
+      borderRadius: 20,
+      padding: strong ? '14px 14px' : '14px 15px',
+      boxSizing:'border-box',
+      minHeight: tall ? 155 : 'auto',
+      height: tall ? 155 : (strong ? 'auto' : 150),
+      overflow:'hidden',
+      border: `1px solid ${KUN.hair}`,
+    }}>
       <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', gap: 10, marginBottom: strong ? 0 : 2 }}>
-        <div style={{ fontFamily: V_FB, fontSize: strong ? 18 : 15, fontWeight: 800, lineHeight: 1.05, color: DIARY.ink }}>
+        <div style={{ fontFamily: V_FT, fontSize: strong ? 16 : 15, fontWeight: 700, lineHeight: 1.15, color: DIARY.ink }}>
           {title}
         </div>
-        <div style={{ fontFamily: V_FB, fontSize: 13, fontWeight: 400, color: DIARY.muted, flexShrink:0 }}>{time}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 11.5, fontWeight: 700, color: DIARY.muted, flexShrink:0 }}>{time}</div>
       </div>
       {!strong && (
-        <div style={{ fontFamily: V_FB, fontSize: 6.6, lineHeight: 1.17, color: DIARY.ink }}>
-          Hoy fuimos orem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel blandit diam. Donec tellus nisl, tincidunt ut risus nec, dignissim sollicitudin mauris. Praesent porta ex in pharetra viverra. Nunc rutrum nisl nec scelerisque ultricies. Nunc congue tortor lectus, quis ultrices est aliquam sed. Suspendisse molestie enim et dui porttitor, non ornare nunc porta. Pellentesque gravida malesuada neque, a lacinia metus lacinia ac. Curabitur porta, ex non varius maximus, elit quam venenatis nulla, a accumsan tellus erat id metus.
+        <div style={{ fontFamily: V_FB, fontSize: 12.5, lineHeight: 1.45, color: DIARY.ink, marginTop: 8 }}>
+          {content || 'Hoy te vi tranquilo y sentí que este día también merece quedar guardado.'}
         </div>
       )}
     </div>
   );
 }
 
-function DiaryDetailView({ onBack, onOpenAdd, addOpen, setAddOpen, canEditDiary }) {
+function DiaryPhotoTile({ entry, fallbackSrc, height = 128 }) {
+  return (
+    <img src={entry?.imageSrc || fallbackSrc} alt="" style={{
+      width:'100%', height, objectFit:'cover', borderRadius: 18, display:'block',
+      border: `1px solid ${KUN.hair}`,
+    }}/>
+  );
+}
+
+function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoice, addOpen, setAddOpen, canEditDiary, diaryEntries = [] }) {
+  const photoEntries = diaryEntries.filter(e => e.kind === 'photo');
+  const textEntries = diaryEntries.filter(e => e.kind === 'text');
   return (
     <div style={{ minHeight:'100%', background: DIARY.bg, paddingBottom: 96, position:'relative' }}>
-      <div style={{ display:'grid', gridTemplateColumns:'48px 1fr 48px', alignItems:'center', padding:'18px 16px 22px' }}>
-        <DiaryIconButton onClick={onBack} muted>{VINK_ICONS.back('#7D7B7B')}</DiaryIconButton>
-        <div style={{ textAlign:'center', fontFamily: V_FB, fontSize: 20, fontWeight: 800, color:'#000' }}>Hoy</div>
+      <div style={{ display:'grid', gridTemplateColumns:'48px 1fr 48px', alignItems:'center', padding:'8px 20px 18px' }}>
+        <DiaryIconButton onClick={onBack} muted>{VINK_ICONS.back(KUN.ink)}</DiaryIconButton>
+        <div style={{ textAlign:'center', fontFamily: V_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Hoy</div>
         <div />
       </div>
       {!canEditDiary && <ReadOnlyDiaryNotice />}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 6, padding:'0 16px', alignItems:'start' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 10, padding:'0 20px', alignItems:'start' }}>
         <div style={{ display:'flex', flexDirection:'column', gap: 6 }}>
-          <DiaryNote tall />
+          {textEntries[0]
+            ? <DiaryNote tall title={textEntries[0].role || 'Nota'} time={textEntries[0].time} content={textEntries[0].content} />
+            : <DiaryNote tall />}
           <DiaryAudioBar duration="01:09" />
-          <img src="tens2.webp" alt="" style={{ width:'100%', height: 128, objectFit:'cover', borderRadius: 4, display:'block' }}/>
-          <img src="tens.avif" alt="" style={{ width:'100%', height: 141, objectFit:'cover', borderRadius: 4, display:'block' }}/>
+          <DiaryPhotoTile entry={photoEntries[1]} fallbackSrc="tens2.webp" height={128} />
+          <DiaryPhotoTile entry={photoEntries[2]} fallbackSrc="tens.avif" height={141} />
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap: 6 }}>
-          <img src="premature.jpg" alt="" style={{ width:'100%', height: 249, objectFit:'cover', borderRadius: 10, display:'block' }}/>
+          <DiaryPhotoTile entry={photoEntries[0]} fallbackSrc="premature.jpg" height={249} />
           <DiaryAudioBar duration={addOpen ? '01:09' : '00:29'} compact />
-          <DiaryNote />
+          <DiaryNote content={textEntries[1]?.content} title={textEntries[1]?.role || 'Nota'} time={textEntries[1]?.time || '10:32 AM'} />
           {!addOpen && <DiaryNote title="Hoy te desconectaron del ECMO!" time="10:32 AM" strong />}
         </div>
       </div>
       {canEditDiary && !addOpen && (
-        <button onClick={onOpenAdd} style={{ position:'absolute', right: 26, bottom: 104, width: 40, height: 40, borderRadius:'50%', border:'none', background: DIARY.panel, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-          {VINK_ICONS.plus('#111')}
+        <button onClick={onOpenAdd} style={{ position:'absolute', right: 24, bottom: 104, width: 54, height: 54, borderRadius:'50%', border:'none', background: KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', boxShadow:'0 8px 18px rgba(240,116,62,0.34)' }}>
+          {VINK_ICONS.plus('#fff')}
         </button>
       )}
       {canEditDiary && addOpen && (
         <div style={{ position:'absolute', right: 26, bottom: 84, display:'flex', flexDirection:'column', alignItems:'center', gap: 7, zIndex: 20 }}>
-          <DiaryIconButton muted>
+          <DiaryIconButton onClick={onOpenPhoto} muted>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <rect x="4" y="5" width="16" height="14" rx="1.5" stroke="#111" strokeWidth="1.7"/>
-              <path d="M6.5 16L10 12.5L12.5 15L15 12L18 16" stroke="#111" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="4" y="5" width="16" height="14" rx="1.5" stroke={KUN.ink} strokeWidth="1.7"/>
+              <path d="M6.5 16L10 12.5L12.5 15L15 12L18 16" stroke={KUN.ink} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </DiaryIconButton>
-          <DiaryIconButton muted>{VINK_ICONS.text('#111')}</DiaryIconButton>
-          <DiaryIconButton muted>{VINK_ICONS.mic('#111', '#111')}</DiaryIconButton>
+          <DiaryIconButton onClick={onOpenText} muted>{VINK_ICONS.text(KUN.ink)}</DiaryIconButton>
+          <DiaryIconButton onClick={onOpenVoice} muted>{VINK_ICONS.mic(KUN.ink, KUN.ink)}</DiaryIconButton>
           <button onClick={() => setAddOpen(false)} style={{
-            width: 40, height: 40, border: 'none', borderRadius: 10,
-            transform: 'rotate(-45deg)', background: DIARY.audio,
+            width: 44, height: 44, border: 'none', borderRadius: '50%',
+            background: KUN.brick,
             display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer',
+            boxShadow:'0 8px 18px rgba(240,116,62,0.28)',
           }}>
-            <span style={{ transform: 'rotate(45deg)', display:'flex' }}>
+            <span style={{ display:'flex' }}>
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
               <path d="M5 5L17 17M17 5L5 17" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"/>
             </svg>
@@ -717,6 +857,15 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
   const [mode, setMode] = React.useState('list');
   const [addOpen, setAddOpen] = React.useState(false);
   const [sheet, setSheet] = React.useState(false);
+  const [textEditorOpen, setTextEditorOpen] = React.useState(false);
+  const photoInputRef = React.useRef(null);
+  const [diaryEntries, setDiaryEntriesState] = React.useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(DIARY_ENTRIES_KEY) || '[]');
+    } catch {
+      return [];
+    }
+  });
   const [recording, setRecording] = React.useState(false);
   const [recordingContext, setRecordingContext] = React.useState({
     author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía',
@@ -725,28 +874,91 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
     setRecordingContext(context);
     setRecording(true);
   };
+  const openTextEditor = () => {
+    setSheet(false);
+    setAddOpen(false);
+    setTextEditorOpen(true);
+  };
+  const openPhotoPicker = () => {
+    setSheet(false);
+    setAddOpen(false);
+    if (photoInputRef.current) photoInputRef.current.click();
+  };
+  const openVoiceRecorder = () => {
+    setSheet(false);
+    setAddOpen(false);
+    startRecorder({ author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' });
+  };
+  const setDiaryEntries = (updater) => {
+    setDiaryEntriesState(prev => {
+      const next = typeof updater === 'function' ? updater(prev) : updater;
+      try { localStorage.setItem(DIARY_ENTRIES_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+  const savePhotoFile = (file) => {
+    if (!file || !file.type || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setDiaryEntries(prev => [{
+        id: Date.now(),
+        kind: 'photo',
+        author: 'Mamá',
+        role: 'Foto',
+        color: KUN.rosehip,
+        time: 'Ahora',
+        imageSrc: reader.result,
+        content: 'Nuevo recuerdo guardado en el diario.',
+      }, ...prev]);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <>
       <div style={{ position:'relative', minHeight:'100%', overflowX:'hidden', maxWidth:'100%' }}>
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            savePhotoFile(e.target.files && e.target.files[0]);
+            e.target.value = '';
+          }}
+          style={{ display:'none' }}
+        />
         {mode === 'list'
           ? <DiaryListView
               canEditDiary={canEditDiary}
+              diaryEntries={diaryEntries}
+              onBack={onBack}
               onOpenDay={() => { setMode('detail'); setAddOpen(false); }}
               onOpenAdd={() => { setMode('detail'); setAddOpen(true); }}
             />
           : <DiaryDetailView
               canEditDiary={canEditDiary}
+              diaryEntries={diaryEntries}
               addOpen={addOpen}
               setAddOpen={setAddOpen}
               onOpenAdd={() => setAddOpen(true)}
+              onOpenPhoto={openPhotoPicker}
+              onOpenText={openTextEditor}
+              onOpenVoice={openVoiceRecorder}
               onBack={() => { setMode('list'); setAddOpen(false); }}
             />
         }
         {sheet && canEditDiary && (
           <AddEntrySheet
             onClose={() => setSheet(false)}
-            onPickVoice={() => { setSheet(false); startRecorder({ author: 'Mama', role: 'Mama - Voz para Sofia', color: KUN.rosehip, name: 'Para Sofia' }); }}
+            onPickPhoto={openPhotoPicker}
+            onPickText={openTextEditor}
+            onPickVoice={openVoiceRecorder}
+          />
+        )}
+        {textEditorOpen && canEditDiary && (
+          <NoteEditorSheet
+            onClose={() => setTextEditorOpen(false)}
+            onSave={(entry) => setDiaryEntries(prev => [entry, ...prev])}
           />
         )}
         {recording && addRecording && (
@@ -1341,10 +1553,10 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
 }
 
 // ── Public entry ────────────────────────────────────────
-function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true }) {
+function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía' }) {
   if (view === 'journey') return <NuestroViaje onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} canEditDiary={canEditDiary} />;
   if (view === 'activities') return <ActividadesGuagua onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
-  return <VinkEntry onPick={setView} />;
+  return <VinkEntry onPick={setView} babyName={babyName} />;
 }
 
 window.ScreenVinculo = ScreenVinculo;

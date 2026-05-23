@@ -375,8 +375,101 @@ function CapsuleDetail({ capsule, onBack, onSave, onDelete, askConfirm }) {
   );
 }
 
+const STAFF_TOPIC_META = [
+  { name: 'Alimentacion por sonda', icon: KIcon.cat.breast, tone: KUN.sun, matches: ['alimentacion por sonda'] },
+  { name: 'Lactancia', icon: KIcon.cat.breast, tone: KUN.apple, matches: ['lactancia'] },
+  { name: 'Prematuridad', icon: KIcon.cat.prem, tone: KUN.rosehip, matches: ['prematuridad'] },
+  { name: 'Equipos y monitores', icon: KIcon.cat.ecmo, tone: KUN.clear, matches: ['equipos y monitores'] },
+  { name: 'Metodo canguro', icon: KIcon.cat.kang, tone: KUN.viola, matches: ['metodo canguro'] },
+  { name: 'ECMO', icon: KIcon.cat.ecmo, tone: KUN.clear, matches: ['ecmo'] },
+  { name: 'Alta y hogar', icon: KIcon.cat.prem, tone: KUN.apple, matches: ['alta y hogar'] },
+];
+
+const STAFF_CATEGORY_TO_TOPICS = {
+  Lactancia: ['Lactancia', 'Alimentacion por sonda'],
+  Prematuridad: ['Prematuridad'],
+  'Metodo canguro': ['Metodo canguro'],
+  ECMO: ['ECMO', 'Equipos y monitores'],
+  'Alta y hogar': ['Alta y hogar'],
+};
+
+function staffTextKey(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function StaffCategoryChips({ active, onChange }) {
+  const chips = ['Todo', 'Lactancia', 'Prematuridad', 'Metodo canguro', 'ECMO', 'Alta y hogar'];
+  return (
+    <div style={{ display: 'flex', gap: 8, padding: '0 0 18px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+      {chips.map(c => {
+        const isA = c === active;
+        return (
+          <button key={c} onClick={() => onChange(c)} style={{
+            flexShrink: 0, cursor: 'pointer', borderRadius: 999,
+            border: isA ? 'none' : `1px solid ${KUN.hair}`,
+            background: isA ? KUN.ink : '#fff',
+            color: isA ? '#fff' : KUN.inkSoft,
+            padding: '9px 16px',
+            fontFamily: STAFF_FT, fontSize: 13, fontWeight: 700,
+          }}>{c}</button>
+        );
+      })}
+    </div>
+  );
+}
+
+function StaffCapsuleItem({ cap, onOpen }) {
+  return (
+    <div onClick={() => onOpen(cap.id)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 4px', cursor: 'pointer' }}>
+      <div style={{ width: 7, height: 7, borderRadius: '50%', background: cap.status === 'publicada' ? KUN.apple : KUN.brick, flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: STAFF_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{cap.title}</div>
+        <div style={{ fontFamily: STAFF_FB, fontSize: 11.5, color: KUN.inkSoft, marginTop: 2 }}>{cap.dur || '4 min'} · {cap.status || 'borrador'}</div>
+      </div>
+      {KIcon.chevRight(KUN.inkFaint)}
+    </div>
+  );
+}
+
+function StaffTopicRow({ topic, caps, defaultOpen, onOpenCapsule }) {
+  const [open, setOpen] = React.useState(!!defaultOpen);
+  return (
+    <div style={{ background: '#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10, border: `1px solid ${KUN.hair}` }}>
+      <div onClick={() => setOpen(o => !o)} style={{ display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
+        <div style={{ width: 44, height: 44, borderRadius: 14, background: topic.tone, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {topic.icon(KUN.ink)}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: STAFF_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{topic.name}</div>
+          <div style={{ fontFamily: STAFF_FB, fontSize: 12, color: KUN.inkSoft, marginTop: 2 }}>
+            {caps.length === 1 ? '1 capsula' : `${caps.length} capsulas`}
+          </div>
+        </div>
+        <div style={{
+          width: 32, height: 32, borderRadius: '50%',
+          background: open ? KUN.brick : KUN.cream,
+          border: open ? 'none' : `1px solid ${KUN.hair}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.brick)}
+        </div>
+      </div>
+      {open && (
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px dashed ${KUN.hair}`, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {caps.map(cap => <StaffCapsuleItem key={cap.id} cap={cap} onOpen={onOpenCapsule} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StaffEducation({ capsules, setCapsules, askConfirm }) {
   const [detailId, setDetailId] = React.useState(null);
+  const [activeCategory, setActiveCategory] = React.useState('Todo');
+  const [query, setQuery] = React.useState('');
   const selected = capsules.find(c => c.id === detailId);
   const saveCapsule = (draft) => setCapsules(capsules.map(c => c.id === draft.id ? draft : c));
   const deleteCapsule = (id) => { setCapsules(capsules.filter(c => c.id !== id)); setDetailId(null); };
@@ -386,15 +479,44 @@ function StaffEducation({ capsules, setCapsules, askConfirm }) {
     setDetailId(next.id);
   });
   if (selected) return <CapsuleDetail capsule={selected} onBack={() => setDetailId(null)} onSave={saveCapsule} onDelete={deleteCapsule} askConfirm={askConfirm} />;
+
+  const queryKey = staffTextKey(query);
+  const filteredCapsules = capsules.filter(c => !queryKey || staffTextKey(`${c.title} ${c.topic} ${c.status}`).includes(queryKey));
+  const topicMatches = (topic, cap) => topic.matches.includes(staffTextKey(cap.topic));
+  const visibleTopicNames = activeCategory === 'Todo' ? null : STAFF_CATEGORY_TO_TOPICS[activeCategory] || [];
+  const topics = STAFF_TOPIC_META
+    .filter(t => !visibleTopicNames || visibleTopicNames.includes(t.name))
+    .map(t => ({ ...t, caps: filteredCapsules.filter(c => topicMatches(t, c)) }))
+    .filter(t => t.caps.length > 0);
+  const uncategorized = filteredCapsules.filter(c => !STAFF_TOPIC_META.some(t => topicMatches(t, c)));
+  if (!visibleTopicNames && uncategorized.length) {
+    topics.push({ name: 'Sin categoria', icon: KIcon.book, tone: KUN.cardSoft, caps: uncategorized });
+  }
+  const totalCaps = topics.reduce((sum, t) => sum + t.caps.length, 0);
+
   return (
     <div style={{ padding: '0 18px 120px' }}>
       <button onClick={create} style={{ position: 'absolute', right: 22, bottom: 112, width: 58, height: 58, borderRadius: '50%', border: 'none', background: KUN.brick, color: '#fff', fontFamily: STAFF_FT, fontSize: 30, fontWeight: 700, cursor: 'pointer', zIndex: 20 }}>+</button>
-      {capsules.map(c => (
-        <div key={c.id} onClick={() => setDetailId(c.id)} style={{ background: '#fff', borderRadius: 20, padding: 14, border: `1px solid ${KUN.hair}`, marginBottom: 10, cursor: 'pointer' }}>
-          <div style={{ fontFamily: STAFF_FT, fontSize: 15, fontWeight: 700, color: KUN.ink }}>{c.title}</div>
-          <div style={{ fontFamily: STAFF_FB, fontSize: 11.5, color: KUN.inkMuted, marginTop: 3 }}>{c.topic} · {c.status}</div>
+      <div style={{ background: '#fff', borderRadius: 16, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, border: `1.5px solid ${KUN.hair}`, marginBottom: 12 }}>
+        {KIcon.search(KUN.inkMuted)}
+        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar capsulas..." style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontFamily: STAFF_FB, fontSize: 14, color: KUN.ink }} />
+      </div>
+      <StaffCategoryChips active={activeCategory} onChange={setActiveCategory} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px 10px' }}>
+        <div style={{ fontFamily: STAFF_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform: 'uppercase' }}>
+          {totalCaps} capsula{totalCaps !== 1 ? 's' : ''}
         </div>
-      ))}
+        <div style={{ fontFamily: STAFF_FT, fontSize: 12.5, fontWeight: 700, color: KUN.brick, display: 'flex', alignItems: 'center', gap: 4 }}>
+          Ordenar {KIcon.chevDown(KUN.brick)}
+        </div>
+      </div>
+      {topics.length ? topics.map((t, i) => (
+        <StaffTopicRow key={t.name} topic={t} caps={t.caps} defaultOpen={activeCategory !== 'Todo' || i === 0} onOpenCapsule={setDetailId} />
+      )) : (
+        <div style={{ background: '#fff', borderRadius: 22, padding: 18, border: `1px solid ${KUN.hair}`, fontFamily: STAFF_FB, color: KUN.inkSoft }}>
+          No hay capsulas para esta busqueda.
+        </div>
+      )}
     </div>
   );
 }
