@@ -510,99 +510,108 @@ function DiaryIconButton({ children, onClick, muted = false }) {
 function DiaryAudioBar({ duration = '01:09', compact = false }) {
   return (
     <div style={{
-      height: compact ? 38 : 42, borderRadius: 999, background: '#fff',
-      display:'flex', alignItems:'center', gap: 8,
-      padding: '0 10px', boxSizing:'border-box',
-      color: KUN.ink, minWidth: 0,
-      border: `1px solid ${KUN.hair}`,
+      height: compact ? 46 : 50, borderRadius: 20, background: KUN.inkSoft,
+      display:'flex', alignItems:'center', gap: 9,
+      padding: '0 12px', boxSizing:'border-box',
+      color: '#fff', minWidth: 0,
+      border: 'none',
     }}>
       <div style={{
-        width: compact ? 22 : 24, height: compact ? 22 : 24, borderRadius:'50%',
+        width: compact ? 34 : 38, height: compact ? 34 : 38, borderRadius:'50%',
         background: KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
       }}>
-        <div style={{ width: compact ? 8 : 9, height: compact ? 8 : 9, borderRadius:'50%', background: KUN.brick }}/>
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" fill={KUN.inkMuted}/>
+          <path d="M4.5 21C5.5 16.5 8.5 14.5 12 14.5C15.5 14.5 18.5 16.5 19.5 21" fill={KUN.inkMuted}/>
+        </svg>
       </div>
       <div style={{
-        width: compact ? 22 : 24, height: compact ? 22 : 24, borderRadius:'50%',
-        background: KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+        width: compact ? 34 : 38, height: compact ? 34 : 38, borderRadius:'50%',
+        background: '#fff', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
       }}>
-        {VINK_ICONS.play('#fff', compact ? 9 : 11)}
+        {VINK_ICONS.play(KUN.brick, compact ? 13 : 15)}
       </div>
-      <svg viewBox="0 0 112 24" style={{ flex: 1, height: compact ? 20 : 24, minWidth: 58 }}>
-        {Array.from({length: 32}).map((_, i) => {
-          const h = 5 + Math.abs(Math.sin(i * 0.78)) * 15;
-          return <rect key={i} x={i * 3.5} y={(24 - h) / 2} width="2" height={h} rx="1" fill={KUN.brick} opacity={i < 20 ? 0.9 : 0.32}/>;
+      <svg viewBox="0 0 136 28" style={{ flex: 1, height: compact ? 22 : 26, minWidth: 62 }}>
+        {Array.from({length: 34}).map((_, i) => {
+          const h = 5 + Math.abs(Math.sin(i * 0.76)) * 20;
+          return <rect key={i} x={i * 4} y={(28 - h) / 2} width="2.3" height={h} rx="1.15" fill="#fff" opacity={i < 23 ? 0.95 : 0.45}/>;
         })}
       </svg>
-      <span style={{ fontFamily: V_FT, fontSize: compact ? 12 : 13, fontWeight: 700, color: KUN.inkMuted, flexShrink:0 }}>
+      <span style={{ fontFamily: V_FT, fontSize: compact ? 18 : 20, fontWeight: 700, color: '#fff', flexShrink:0 }}>
         {duration}
       </span>
     </div>
   );
 }
 
-function DiaryPhotoCount({ count }) {
+function DiaryMetricPill({ type = 'photo', count }) {
+  const isAudio = type === 'audio';
   return (
     <div style={{
-      height: 22, minWidth: 38, borderRadius: 999, background: KUN.cardSoft,
-      color:'#fff', display:'inline-flex', alignItems:'center', justifyContent:'center',
-      gap: 4, padding:'0 7px', boxSizing:'border-box', fontFamily: V_FB, fontSize: 12,
-      fontWeight: 600, color: KUN.ink,
+      height: 34, minWidth: 72, borderRadius: 999, background: KUN.cardSoft,
+      display:'inline-flex', alignItems:'center', justifyContent:'center',
+      gap: 7, padding:'0 10px', boxSizing:'border-box',
+      fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.inkSoft,
       border: `1px solid ${KUN.hair}`,
     }}>
-      <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-        <rect x="2.5" y="3.5" width="13" height="11" rx="1.5" stroke={KUN.brick} strokeWidth="1.4"/>
-        <path d="M4.5 12L7.4 9.2L9.4 11.1L11.3 8.8L14 12" stroke={KUN.brick} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
+      {isAudio ? (
+        <svg width="28" height="17" viewBox="0 0 54 20">
+          {Array.from({length: 12}).map((_, i) => (
+            <rect key={i} x={i * 4.4} y={3 + (i % 3)} width="2.4" height={14 - (i % 3) * 2} rx="1" fill={KUN.inkSoft}/>
+          ))}
+        </svg>
+      ) : (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="5" width="16" height="14" rx="2" stroke={KUN.inkSoft} strokeWidth="1.8"/>
+          <path d="M6.5 16L10 12.5L12.5 15L15 12L18 16" stroke={KUN.inkSoft} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="16.5" cy="8.5" r="1.3" fill={KUN.inkSoft}/>
+        </svg>
+      )}
       {count}
     </div>
   );
 }
 
 function DiaryListEntry({ title, text, photos = [], photoCount = 5, audioCount = 2, onOpen }) {
+  const visiblePhotos = photos.slice(0, 3);
   return (
     <div onClick={onOpen} style={{
-      margin: '0 20px 14px', background: '#fff', borderRadius: 22,
-      minHeight: 112, padding: '14px 12px 14px 16px',
-      display:'grid', gridTemplateColumns:'1fr 90px', gap: 10,
+      margin: '0 20px 14px', background: '#fff', borderRadius: 24,
+      minHeight: 132, padding: '16px',
+      display:'grid', gridTemplateColumns:'1fr 132px', gap: 12,
       cursor:'pointer', boxSizing:'border-box',
       border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: V_FT, fontSize: 15.5, fontWeight: 700, color: DIARY.ink, marginBottom: 4, letterSpacing: -0.1 }}>
+        <div style={{ fontFamily: V_FT, fontSize: 21, fontWeight: 700, color: DIARY.ink, marginBottom: 5, letterSpacing: -0.2, lineHeight: 1.05 }}>
           {title}
         </div>
-        <div style={{ fontFamily: V_FB, fontSize: 11.5, color: KUN.inkSoft, lineHeight: 1.35, maxHeight: 48, overflow:'hidden' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 17, color: KUN.ink, lineHeight: 1.25, maxHeight: 66, overflow:'hidden' }}>
           {text}
         </div>
-        <div style={{ display:'flex', gap: 6, marginTop: 10 }}>
-          <DiaryPhotoCount count={photoCount}/>
-          <div style={{
-            height: 22, minWidth: 42, borderRadius: 999, background: KUN.cardSoft,
-            color: KUN.ink, display:'inline-flex', alignItems:'center', justifyContent:'center',
-            gap: 3, padding:'0 7px', boxSizing:'border-box', fontFamily: V_FB, fontSize: 12,
-            border: `1px solid ${KUN.hair}`,
-          }}>
-            <svg width="18" height="12" viewBox="0 0 54 20">
-              {Array.from({length: 12}).map((_, i) => (
-                <rect key={i} x={i * 4.4} y={3 + (i % 3)} width="2.4" height={14 - (i % 3) * 2} rx="1" fill={KUN.brick}/>
-              ))}
-            </svg>
-            <span>{audioCount}</span>
-          </div>
+        <div style={{ display:'flex', gap: 7, marginTop: 12 }}>
+          <DiaryMetricPill type="photo" count={photoCount}/>
+          <DiaryMetricPill type="audio" count={audioCount}/>
         </div>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gridTemplateRows:'1fr 1fr', gap: 4, height: 76, alignSelf:'center' }}>
-        {photos.slice(0, 4).map((p, i) => (
-          <div key={i} style={{ position:'relative', overflow:'hidden', borderRadius: 10, background: KUN.cardSoft }}>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gridTemplateRows:'1fr 1fr', gap: 5, height: 92, alignSelf:'center' }}>
+        {visiblePhotos.map((p, i) => (
+          <div key={i} style={{
+            position:'relative', overflow:'hidden',
+            borderRadius: 10, background: KUN.cardSoft,
+            gridColumn: i === 0 ? '1 / 3' : 'auto',
+          }}>
             <img src={p} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
-            {i === 3 && photoCount > 4 && (
-              <div style={{ position:'absolute', inset:0, background:'rgba(89,89,89,0.8)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily: V_FB, fontSize: 15, fontWeight: 500 }}>
-                +{photoCount - 2}
-              </div>
-            )}
           </div>
         ))}
+        {photoCount > 3 && (
+          <div style={{ position:'relative', overflow:'hidden', borderRadius: 10, background: KUN.inkSoft }}>
+            <img src={photos[3] || photos[0]} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', opacity: 0.42 }}/>
+            <div style={{ position:'absolute', inset:0, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily: V_FT, fontSize: 22, fontWeight: 700 }}>
+              +{photoCount - 2}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -701,12 +710,20 @@ const diarySectionLabel = {
 };
 
 function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntries = [] }) {
+  const [memoryIndex, setMemoryIndex] = React.useState(0);
   const entries = [
     { title:'juh', date:'HOY - 20 Junio 2026', photoCount:5, audioCount:2, photos:['premature.jpg','tens2.webp','tens.avif','premature.jpg'] },
     { title:'akgsdli', date:'AYER - 19 Junio 2026', photoCount:4, audioCount:2, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'] },
     { title:'dfghj', date:'LUN - 17 Junio 2026', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'] },
     { title:'rtgha', date:'SAB - 15 Junio 2026', photoCount:2, audioCount:1, photos:['tens.avif','premature.jpg','tens2.webp','premature.jpg'] },
   ];
+  const photoMemories = diaryEntries
+    .filter(e => e.kind === 'photo' && e.imageSrc)
+    .map((e, i) => ({ src: e.imageSrc, title: e.role || 'Foto', date: e.time || 'Ahora', id: e.id || `photo-${i}` }));
+  const memories = [...photoMemories, ...DIARY_PHOTOS.map((item, i) => ({ ...item, id: `seed-${i}` }))];
+  const currentMemory = memories[memoryIndex] || memories[0];
+  const goMemory = (dir) => setMemoryIndex(prev => (prev + dir + memories.length) % memories.length);
+
   return (
     <div style={{ minHeight:'100%', background: DIARY.bg, paddingBottom: 96 }}>
       <div style={{ display:'grid', gridTemplateColumns:'42px 1fr auto', alignItems:'center', gap: 10, padding:'8px 20px 18px' }}>
@@ -723,20 +740,55 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
       </div>
 
       {!canEditDiary && <ReadOnlyDiaryNotice />}
-      <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform:'uppercase', padding:'0 24px 10px' }}>
-        Recuerdos
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px 10px' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform:'uppercase' }}>
+          Recuerdos
+        </div>
+        <div style={{ fontFamily: V_FT, fontSize: 12, fontWeight: 700, color: KUN.brick }}>
+          {memoryIndex + 1}/{memories.length}
+        </div>
       </div>
-      <div style={{ display:'flex', gap: 12, overflowX:'auto', padding:'0 20px 28px', scrollSnapType:'x mandatory' }}>
-        {DIARY_PHOTOS.map((item, i) => (
-          <div key={i} onClick={onOpenDay} style={{ width: 166, height: 112, borderRadius: 18, overflow:'hidden', position:'relative', flexShrink:0, cursor:'pointer', scrollSnapAlign:'start', background: KUN.cardSoft, border: `1px solid ${KUN.hair}` }}>
-            <img src={item.src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
+      <div style={{ padding:'0 20px 28px' }}>
+        <div style={{ position:'relative', height: 188 }}>
+          <div onClick={onOpenDay} style={{
+            position:'absolute', inset: 0,
+            borderRadius: 24, overflow:'hidden', cursor:'pointer',
+            background: KUN.cardSoft, border: `1px solid ${KUN.hair}`,
+            boxShadow: '0 14px 28px rgba(42,35,32,0.08)',
+          }}>
+            <img src={currentMemory.src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
             <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, rgba(0,0,0,0) 28%, rgba(0,0,0,0.42) 100%)' }}/>
-            <div style={{ position:'absolute', left:16, right: 14, bottom:13, color:'#fff' }}>
-              <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, lineHeight:1.05 }}>{item.title}</div>
-              <div style={{ fontFamily: V_FB, fontSize: 12, fontWeight: 400, marginTop: 6 }}>{item.date}</div>
+            <div style={{ position:'absolute', left:18, right: 70, bottom:16, color:'#fff' }}>
+              <div style={{ fontFamily: V_FT, fontSize: 22, fontWeight: 700, lineHeight:1.05, letterSpacing: -0.3 }}>{currentMemory.title}</div>
+              <div style={{ fontFamily: V_FB, fontSize: 12, fontWeight: 400, marginTop: 6 }}>{currentMemory.date}</div>
             </div>
           </div>
-        ))}
+          {memories.length > 1 && (
+            <>
+              <button onClick={e => { e.stopPropagation(); goMemory(-1); }} style={{
+                position:'absolute', left: 12, top:'50%', transform:'translateY(-50%)',
+                width: 36, height: 36, borderRadius:'50%', border:'none',
+                background:'rgba(255,255,255,0.88)', display:'flex', alignItems:'center', justifyContent:'center',
+                cursor:'pointer', boxShadow:'0 4px 12px rgba(42,35,32,0.16)',
+              }}>{VINK_ICONS.back(KUN.ink)}</button>
+              <button onClick={e => { e.stopPropagation(); goMemory(1); }} style={{
+                position:'absolute', right: 12, top:'50%', transform:'translateY(-50%) rotate(180deg)',
+                width: 36, height: 36, borderRadius:'50%', border:'none',
+                background:'rgba(255,255,255,0.88)', display:'flex', alignItems:'center', justifyContent:'center',
+                cursor:'pointer', boxShadow:'0 4px 12px rgba(42,35,32,0.16)',
+              }}>{VINK_ICONS.back(KUN.ink)}</button>
+            </>
+          )}
+        </div>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap: 7, marginTop: 12 }}>
+          {memories.map((m, i) => (
+            <button key={m.id} onClick={() => setMemoryIndex(i)} style={{
+              width: i === memoryIndex ? 18 : 7, height: 7, borderRadius: 999,
+              border:'none', background: i === memoryIndex ? KUN.brick : KUN.inkFaint,
+              padding: 0, cursor:'pointer',
+            }} />
+          ))}
+        </div>
       </div>
 
       <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform:'uppercase', padding:'0 24px 10px' }}>
