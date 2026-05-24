@@ -550,7 +550,9 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
       {/* Scrollable body */}
       <div style={{
         flex: 1,
+        minHeight: 0,
         overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
         padding: '4px 20px 24px',
         position: 'relative',
         zIndex: 1,
@@ -607,9 +609,25 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
     ...(normalizedCurrentStatus || {}),
   });
   const [openCat, setOpenCat] = React.useState(null);
+  const bodyRef = React.useRef(null);
+  const sectionRefs = React.useRef({});
 
   const handleChange = (catId, value) => {
     setStatus(prev => ({ ...prev, [catId]: value }));
+  };
+
+  const toggleCategory = (catId) => {
+    const nextOpen = openCat === catId ? null : catId;
+    setOpenCat(nextOpen);
+    if (nextOpen) {
+      window.setTimeout(() => {
+        const body = bodyRef.current;
+        const section = sectionRefs.current[nextOpen];
+        if (!body || !section) return;
+        const sectionTop = section.offsetTop - body.offsetTop - 8;
+        body.scrollTo({ top: sectionTop, behavior: 'smooth' });
+      }, 60);
+    }
   };
 
   const getSummary = (cat) => {
@@ -704,14 +722,16 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
       {/* Body */}
       <div style={{
         flex: 1,
+        minHeight: 0,
         overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
         padding: '4px 20px 24px',
         position: 'relative',
         zIndex: 1,
         display: 'flex',
         flexDirection: 'column',
         gap: 0,
-      }}>
+      }} ref={bodyRef}>
         {BABY_STATUS_CATS.map((cat) => {
           const isOpen = openCat === cat.id;
           const summary = getSummary(cat);
@@ -719,17 +739,19 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
           return (
             <div
               key={cat.id}
+              ref={(el) => { sectionRefs.current[cat.id] = el; }}
               style={{
                 background: '#fff',
                 borderRadius: 20,
                 border: isOpen ? `1.5px solid ${KUN.brick}` : `1.5px solid ${KUN.hair}`,
                 marginBottom: 10,
-                overflow: 'hidden',
+                overflow: isOpen ? 'visible' : 'hidden',
+                flexShrink: 0,
               }}
             >
               {/* Accordion header */}
               <div
-                onClick={() => setOpenCat(isOpen ? null : cat.id)}
+                onClick={() => toggleCategory(cat.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -794,6 +816,10 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
                 <div style={{
                   padding: '14px 16px 16px',
                   borderTop: `1px dashed ${KUN.hair}`,
+                  maxHeight: 430,
+                  overflowY: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  overscrollBehavior: 'contain',
                 }}>
                   <CategoryBlock
                     cat={cat}

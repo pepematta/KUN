@@ -581,22 +581,44 @@ function StaffForum({ questions, reports, onAnswerQuestion, onRemoveQuestion, as
   );
 }
 
-function StaffReportsPanel({ reports, onClose }) {
+function StaffReportsPanel({ reports, feedback = [], onClose }) {
+  const notifications = [
+    ...feedback.map(item => ({ ...item, kind: 'feedback' })),
+    ...reports.map(item => ({ ...item, kind: 'report' })),
+  ].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 220, background: KUN.bg, display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '58px 20px 12px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <StaffIconButton onClick={onClose}>‹</StaffIconButton>
         <div>
           <div style={{ fontFamily: STAFF_FT, fontSize: 22, fontWeight: 700, color: KUN.ink }}>Notificaciones</div>
-          <div style={{ fontFamily: STAFF_FB, fontSize: 12, color: KUN.inkMuted }}>{reports.length} reportes del foro</div>
+          <div style={{ fontFamily: STAFF_FB, fontSize: 12, color: KUN.inkMuted }}>{notifications.length} mensaje{notifications.length === 1 ? '' : 's'} para el equipo</div>
         </div>
       </div>
       <div style={{ flex: 1, overflow: 'auto', padding: '0 20px 30px' }}>
-        {reports.length === 0 ? <div style={{ background: '#fff', borderRadius: 22, padding: 18, border: `1px solid ${KUN.hair}`, fontFamily: STAFF_FB, color: KUN.inkSoft }}>No hay reportes nuevos.</div> : reports.map(r => (
+        {notifications.length === 0 ? <div style={{ background: '#fff', borderRadius: 22, padding: 18, border: `1px solid ${KUN.hair}`, fontFamily: STAFF_FB, color: KUN.inkSoft }}>No hay mensajes nuevos.</div> : notifications.map(r => (
           <div key={r.id} style={{ background: '#fff', borderRadius: 22, padding: 16, border: `1px solid ${KUN.hair}`, marginBottom: 10 }}>
-            <StaffPill tone={KUN.sun}>Reporte foro</StaffPill>
-            <div style={{ fontFamily: STAFF_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, marginTop: 8 }}>{r.postTitle || 'Entrada reportada'}</div>
-            <div style={{ fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 5 }}>Motivo: {r.reason}</div>
+            <StaffPill tone={r.kind === 'feedback' ? KUN.rosehip : KUN.sun}>{r.kind === 'feedback' ? 'Retroalimentación familiar' : 'Reporte foro'}</StaffPill>
+            <div style={{ fontFamily: STAFF_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, marginTop: 8 }}>
+              {r.kind === 'feedback' ? `${r.stage || 'Camino de cuidados'} · ${r.babyName || 'Bebé'}` : (r.postTitle || 'Entrada reportada')}
+            </div>
+            {r.kind === 'feedback' ? (
+              <>
+                <div style={{ fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 5 }}>
+                  Familia: {r.parentName || 'Sin nombre'}
+                </div>
+                {r.thanks && <div style={{ fontFamily: STAFF_FB, fontSize: 13, color: KUN.ink, lineHeight: 1.5, marginTop: 8 }}>{r.thanks}</div>}
+                {Array.isArray(r.tags) && r.tags.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+                    {r.tags.map(tag => <StaffPill key={tag} tone={KUN.cream}>{tag}</StaffPill>)}
+                  </div>
+                )}
+                {r.note && <div style={{ fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 8 }}>Recomendación: {r.note}</div>}
+              </>
+            ) : (
+              <div style={{ fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 5 }}>Motivo: {r.reason}</div>
+            )}
           </div>
         ))}
       </div>
@@ -604,7 +626,7 @@ function StaffReportsPanel({ reports, onClose }) {
   );
 }
 
-function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = [], onAnswerQuestion, onRemoveQuestion, onRecommendCapsule }) {
+function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = [], careFeedback = [], onAnswerQuestion, onRemoveQuestion, onRecommendCapsule }) {
   const [tab, setTab] = React.useState('home');
   const [confirm, setConfirm] = React.useState(null);
   const [reportsOpen, setReportsOpen] = React.useState(false);
@@ -625,7 +647,7 @@ function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = []
   return (
     <>
       <div className="kun-content-wrap" style={{ height: 'calc(100% - 50px)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <StaffTop title="KUN Salud" subtitle={subtitle} onLogout={onLogout} reports={forumReports} onReports={() => setReportsOpen(true)} />
+        <StaffTop title="KUN Salud" subtitle={subtitle} onLogout={onLogout} reports={[...forumReports, ...careFeedback]} onReports={() => setReportsOpen(true)} />
         <div style={{ flex: 1, overflow: 'auto', overflowX: 'hidden' }}>
           {tab === 'home' && <StaffHome babies={babies} setBabies={setBabies} capsules={capsules} lactarioSlots={lactarioSlots} setLactarioSlots={setLactarioSlots} onRecommend={recommend} askConfirm={askConfirm} />}
           {tab === 'edu' && <StaffEducation capsules={capsules} setCapsules={setCapsules} askConfirm={askConfirm} />}
@@ -633,7 +655,7 @@ function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = []
         </div>
       </div>
       <StaffBottomNav active={tab} onChange={setTab} />
-      {reportsOpen && <StaffReportsPanel reports={forumReports} onClose={() => setReportsOpen(false)} />}
+      {reportsOpen && <StaffReportsPanel reports={forumReports} feedback={careFeedback} onClose={() => setReportsOpen(false)} />}
       {confirm && <StaffConfirm title={confirm.title} text={confirm.text} onCancel={() => setConfirm(null)} onConfirm={() => { const action = confirm.action; setConfirm(null); action && action(); }} />}
     </>
   );

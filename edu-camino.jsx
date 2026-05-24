@@ -283,6 +283,177 @@ function CaminoPath({ onOpenCapsula, completedCapsulas, stagePath }) {
   );
 }
 
+const FEEDBACK_TAGS = [
+  'Gracias por la paciencia',
+  'Explicaron con claridad',
+  'Nos sentimos acompañados',
+  'Podrían anticipar más información',
+  'Más apoyo en horarios de visita',
+  'Más guía para practicar cuidados',
+];
+
+function CaminoFeedback({ stagePath, parentName, babyName, feedbackSent, onSubmit }) {
+  const [thanks, setThanks] = React.useState('');
+  const [note, setNote] = React.useState('');
+  const [tags, setTags] = React.useState([]);
+  const displayBaby = babyName || 'tu bebé';
+
+  const toggleTag = (tag) => {
+    setTags(prev => prev.includes(tag) ? prev.filter(item => item !== tag) : [...prev, tag]);
+  };
+
+  const handleSubmit = () => {
+    if (!onSubmit || feedbackSent || !canSend) return;
+    onSubmit({
+      stage: stagePath.label,
+      babyName: displayBaby,
+      parentName: parentName || 'Familia',
+      thanks: thanks.trim(),
+      note: note.trim(),
+      tags,
+    });
+    setThanks('');
+    setNote('');
+    setTags([]);
+  };
+
+  const canSend = thanks.trim() || note.trim() || tags.length > 0;
+
+  return (
+    <div style={{
+      margin: '10px 24px 34px',
+      background: '#fff',
+      border: `1px solid ${KUN.hair}`,
+      borderRadius: 22,
+      padding: '18px 18px',
+    }}>
+      <div style={{
+        fontFamily: C_FB,
+        fontSize: 10.5,
+        fontWeight: 600,
+        color: KUN.brick,
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+      }}>
+        Cierre de etapa
+      </div>
+      <div style={{
+        fontFamily: C_FT,
+        fontSize: 18,
+        fontWeight: 700,
+        color: KUN.ink,
+        letterSpacing: -0.2,
+        marginTop: 5,
+      }}>
+        Retroalimentación para el equipo
+      </div>
+      <div style={{
+        fontFamily: C_FB,
+        fontSize: 12.8,
+        color: KUN.inkSoft,
+        lineHeight: 1.5,
+        marginTop: 6,
+      }}>
+        Ya completaron el camino de {stagePath.label}. Pueden dejar un agradecimiento o una recomendación amistosa para el equipo que cuidó a {displayBaby}.
+      </div>
+
+      {feedbackSent ? (
+        <div style={{
+          marginTop: 14,
+          background: KUN.cream,
+          borderRadius: 16,
+          padding: '14px 16px',
+          fontFamily: C_FT,
+          fontSize: 14,
+          fontWeight: 700,
+          color: KUN.brick,
+          textAlign: 'center',
+        }}>
+          Gracias. Tu mensaje quedó disponible para el personal de salud.
+        </div>
+      ) : (
+        <>
+          <textarea
+            value={thanks}
+            onChange={e => setThanks(e.target.value)}
+            placeholder="Un agradecimiento para el equipo..."
+            style={{
+              width: '100%',
+              minHeight: 76,
+              marginTop: 14,
+              border: `1.5px solid ${KUN.hair}`,
+              borderRadius: 16,
+              padding: '12px 13px',
+              boxSizing: 'border-box',
+              resize: 'none',
+              outline: 'none',
+              fontFamily: C_FB,
+              fontSize: 13.5,
+              lineHeight: 1.5,
+              color: KUN.ink,
+            }}
+          />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+            {FEEDBACK_TAGS.map(tag => {
+              const active = tags.includes(tag);
+              return (
+                <button key={tag} onClick={() => toggleTag(tag)} style={{
+                  border: active ? 'none' : `1px solid ${KUN.hair}`,
+                  background: active ? KUN.brick : KUN.cream,
+                  color: active ? '#fff' : KUN.inkSoft,
+                  borderRadius: 999,
+                  padding: '8px 10px',
+                  fontFamily: C_FT,
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}>
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+          <textarea
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            placeholder="Una recomendación amistosa para mejorar la experiencia..."
+            style={{
+              width: '100%',
+              minHeight: 76,
+              marginTop: 10,
+              border: `1.5px solid ${KUN.hair}`,
+              borderRadius: 16,
+              padding: '12px 13px',
+              boxSizing: 'border-box',
+              resize: 'none',
+              outline: 'none',
+              fontFamily: C_FB,
+              fontSize: 13.5,
+              lineHeight: 1.5,
+              color: KUN.ink,
+            }}
+          />
+          <button onClick={handleSubmit} style={{
+            width: '100%',
+            height: 46,
+            marginTop: 12,
+            borderRadius: 999,
+            border: 'none',
+            background: canSend ? KUN.brick : 'rgba(42,35,32,0.08)',
+            color: canSend ? '#fff' : KUN.inkMuted,
+            fontFamily: C_FT,
+            fontSize: 14,
+            fontWeight: 700,
+            cursor: canSend ? 'pointer' : 'default',
+          }}>
+            Enviar al personal de salud
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 // Decorative half-moon shapes (low opacity, recortadas)
 function CaminoShapes() {
   return (
@@ -303,17 +474,30 @@ function CaminoShapes() {
   );
 }
 
-function ScreenCamino({ onOpenCapsula, completedCapsulas, parentName, babyName, babyStatus }) {
+function ScreenCamino({ onOpenCapsula, completedCapsulas, parentName, babyName, babyStatus, careFeedback = [], onSubmitCareFeedback }) {
   const stageKey = normalizeCaminoStage(babyStatus?.lugar);
   const stagePath = CAMINO_STAGE_PATHS[stageKey];
   const caminoCapIds = stagePath.caps.map(cap => cap.capId);
   const completedCount = (completedCapsulas || []).filter(id => caminoCapIds.includes(id)).length;
+  const stageComplete = completedCount === caminoCapIds.length;
+  const feedbackSent = (careFeedback || []).some(item =>
+    item.stage === stagePath.label && item.babyName === (babyName || 'tu bebé')
+  );
   return (
     <div style={{ position:'relative' }}>
       <CaminoShapes/>
       <div style={{ position:'relative', zIndex: 1 }}>
         <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} parentName={parentName} babyName={babyName} stagePath={stagePath} />
         <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} stagePath={stagePath} />
+        {stageComplete && (
+          <CaminoFeedback
+            stagePath={stagePath}
+            parentName={parentName}
+            babyName={babyName}
+            feedbackSent={feedbackSent}
+            onSubmit={onSubmitCareFeedback}
+          />
+        )}
       </div>
     </div>
   );
