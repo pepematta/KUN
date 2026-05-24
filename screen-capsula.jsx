@@ -84,428 +84,586 @@ const CI = {
 // ── Librería de cápsulas ──────────────────────────────────────────────────────
 
 const CAP_LIBRARY = {
-  // ── 1 · Tu bebé empezó a alimentarse por sonda ──────────────────────────────
+
+  // ── 1 · El apego en la UCIN ──────────────────────────────────────────────────
   1: {
-    headerTitle: 'Alimentación por sonda',
-    dur: '4 MIN',
+    headerTitle: 'El apego en la UCIN',
+    dur: '5 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Qué es la sonda nasogástrica?',
-        icon: () => CI.drop(KUN.sage),
-        text: 'Es un tubo muy delgado y flexible que entra por la nariz de tu bebé y llega hasta su estómago. Se usa cuando el bebé aún no tiene la fuerza o la coordinación para succionar y tragar por sí solo, algo muy común en los prematuros.',
+      { num: 1, kind: 'text', accent: KUN.rosehip,
+        title: '¿Qué es el apego?',
+        icon: () => CI.heart(KUN.brick),
+        text: 'El apego es un vínculo afectivo entre tu hijo(a) y sus padres o cuidadores principales. Se desarrolla a partir de la interacción y la comunicación, y es una relación de amor que comienza durante el embarazo y perdura toda la vida.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: '¿Por qué la necesita?',
-        icon: () => CI.drop(KUN.accent),
-        text: 'Los bebés prematuros nacen antes de que el reflejo de succión esté completamente desarrollado. La sonda le permite recibir la leche directamente en el estómago, para que pueda crecer y ganar fuerzas sin gastar energía en el esfuerzo de alimentarse.',
+      { num: 2, kind: 'text', accent: KUN.accentSoft,
+        title: '¿Por qué es tan importante?',
+        icon: () => CI.heart(KUN.accent),
+        text: 'Los estudios indican que las experiencias tempranas de apego influyen en cómo nos relacionamos con otras personas el resto de nuestras vidas. Un apego sano da seguridad, confianza y bienestar emocional.',
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Duele?',
-        icon: () => CI.face(KUN.sage),
-        text: 'No. Puede verse incómoda, pero los bebés se acostumbran rápidamente. Si tu bebé está tranquilo, la sonda no le está molestando.',
+      { num: 3, kind: 'text', accent: KUN.sageSoft,
+        title: 'La hospitalización y el apego',
+        icon: () => CI.baby(KUN.sage),
+        text: 'El apego NO se desarrolla solo en los primeros minutos de vida. Se consolida durante los tres primeros años. No poder tomar a tu hijo en brazos de inmediato no interrumpe ese proceso. Tu bebé ya puede reconocer tu voz, la textura de tu piel y tu olor. Incluso mientras duerme, siente tu presencia y tu cariño.',
       },
-      {
-        num: 4, kind: 'list',
-        title: '¿Qué puedes hacer tú?',
+      { num: 4, kind: 'list',
+        title: '¿Qué puedes hacer hoy?',
+        image: 'assets/capsulas/apego/00.jpeg',
         items: [
-          { title: 'Háblale suavemente', text: 'Mientras se alimenta, tu voz lo calma y hace del momento algo más cercano.' },
-          { title: 'Succión no nutritiva', text: 'Si el médico lo permite, ofrécele tu dedo o un chupete mientras recibe la leche por la sonda. Esto ayuda a su desarrollo.' },
-          { title: 'Pregunta a la enfermera', text: '¿Cuándo podría empezar el pecho o mamadera? Cada bebé tiene su ritmo.' },
+          { title: 'Háblale con voz suave', text: 'Cuéntale cómo está el día, cómo te sientes.' },
+          { title: 'Tócalo suavemente', text: 'Con tus manos cuando el equipo te lo permita.' },
+          { title: 'Practica el método canguro', text: 'Cuando sea posible.' },
+          { title: 'Visítalo todos los días', text: 'Aunque sea un rato.' },
+          { title: 'Si a veces te cuesta reconocerlo', text: 'Es algo que les pasa a muchos padres — habla con el equipo, están para apoyarte.' },
         ],
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'La sonda es temporal.', sub: 'Es un puente mientras tu bebé madura.' },
-          { headline: 'Tu voz y presencia lo calman.', sub: 'Háblale suavemente durante la alimentación.' },
-          { headline: 'La succión no nutritiva ayuda.', sub: 'Ayuda al desarrollo de tu bebé.' },
+          { headline: 'El apego se construye con tiempo, amor y presencia.', sub: 'No solo en los primeros minutos de vida.' },
+          { headline: 'Tu bebé ya te reconoce.', sub: 'Tu voz, tu olor, tu piel.' },
+          { headline: 'La hospitalización no impide el apego.', sub: 'Lo hace diferente, pero no menos real.' },
+          { headline: 'Estar presente es el mejor regalo que puedes darle.', sub: 'Hablarle y tocarlo le comunica tu amor.' },
         ],
       },
     ],
   },
 
-  // ── 2 · Método canguro: cómo empezar ────────────────────────────────────────
+  // ── 2 · Alimentación por sonda al dedo ──────────────────────────────────────
   2: {
-    headerTitle: 'Método canguro',
-    dur: '6 MIN',
+    headerTitle: 'Sonda al dedo',
+    dur: '5 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Qué es el método canguro?',
-        icon: () => CI.kang(KUN.sage),
-        text: 'Es la práctica de colocar a tu bebé directamente sobre tu pecho desnudo, piel con piel. La OMS lo recomienda para todos los prematuros porque regula su temperatura, estabiliza su respiración y fortalece el vínculo entre ustedes.',
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Qué es y cuándo se usa?',
+        icon: () => CI.drop(KUN.sage),
+        image: 'assets/capsulas/sonda_dedo/00.jpeg',
+        text: 'La alimentación por sonda al dedo se usa cuando el recién nacido no logra ganar peso adecuado, o cuando la madre tiene dolor en los pezones y necesita evitar la mamadera. La mamadera puede alterar el patrón de succión y dificultar el acople al pecho materno.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: '¿Qué le hace al bebé?',
-        icon: () => CI.heart(KUN.accent),
-        text: 'El contacto piel a piel activa el sistema nervioso de tu bebé de forma positiva. Regula su frecuencia cardíaca, mejora su oxigenación y reduce el estrés. Tu calor corporal reemplaza parte del trabajo que hace la incubadora.',
+      { num: 2, kind: 'list',
+        title: 'Materiales necesarios',
+        image: 'assets/capsulas/sonda_dedo/01.jpeg',
+        note: 'Solicita estos materiales al equipo de enfermería.',
+        items: [
+          { title: 'Sonda de alimentación de 5 fr, de 40 cm', text: '' },
+          { title: 'Jeringa de 20 ml', text: '' },
+          { title: 'Frasco tapa roja de 60 ml o mamadera', text: '' },
+          { title: 'Tela adhesiva', text: '' },
+        ],
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Cómo se hace?',
-        icon: () => CI.kang(KUN.sage),
-        text: 'Siéntate en una posición cómoda y reclinada. El bebé se coloca verticalmente sobre tu pecho, con su cabeza girada hacia un lado para respirar libremente. Cúbrelo con una manta por la espalda. El equipo de enfermería te guiará la primera vez.',
+      { num: 3, kind: 'list',
+        title: 'Pasos 1 al 4',
+        image: 'assets/capsulas/sonda_dedo/02.jpeg',
+        items: [
+          { title: 'Paso 1', text: 'Lávate las manos.' },
+          { title: 'Paso 2', text: 'Extrae leche materna con extractor manual o eléctrico.' },
+          { title: 'Paso 3', text: 'Fija el extremo de la sonda en tu dedo índice con tela adhesiva, sin que sobresalga hacia adelante. Uñas cortas y sin esmalte.' },
+          { title: 'Paso 4', text: 'Introduce el extremo gris de la sonda dentro del frasco con leche.' },
+        ],
       },
-      {
-        num: 4, kind: 'text', accent: KUN.accentSoft,
-        title: '¿Cuánto tiempo y con qué frecuencia?',
-        icon: () => CI.heart(KUN.accent),
-        text: 'Incluso 30 minutos al día tienen beneficios medibles. Idealmente, cuanto más tiempo mejor. Tanto la mamá como el papá pueden practicarlo. No necesitas esperar a que tu bebé esté completamente estable — consulta con la enfermera cuándo es el momento adecuado para tu bebé.',
+      { num: 4, kind: 'list',
+        title: 'Pasos 5 al 7',
+        image: 'assets/capsulas/sonda_dedo/03.jpeg',
+        items: [
+          { title: 'Paso 5', text: 'Introduce el dedo en la boca del bebé entre la lengua y el paladar, con la sonda hacia el paladar. El bebé comenzará a succionar el dedo y por este medio, la leche.' },
+          { title: 'Paso 6', text: 'Al finalizar, retira la sonda y lávala con 10 cc de agua tibia a través de la jeringa.' },
+          { title: 'Paso 7', text: 'Guarda en un lugar hermético y limpio.' },
+        ],
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'El canguro regula cuerpo y mente.', sub: 'Temperatura, respiración y frecuencia cardíaca se estabilizan.' },
-          { headline: 'Mamá y papá pueden practicarlo.', sub: 'Ambos pueden tener este contacto especial con el bebé.' },
-          { headline: 'Las sesiones cortas también cuentan.', sub: 'Incluso 30 minutos al día tienen un impacto real.' },
+          { headline: 'La sonda al dedo evita la mamadera.', sub: 'Protege el patrón de succión natural del bebé.' },
+          { headline: 'Uñas cortas, manos lavadas y sonda bien fijada.', sub: 'Preparación clave antes de empezar.' },
+          { headline: 'La sonda va con la punta hacia el paladar del bebé.', sub: 'Para que pueda succionar correctamente.' },
+          { headline: 'Lávala siempre después de cada uso.', sub: 'Con 10 cc de agua tibia a través de la jeringa.' },
         ],
       },
     ],
   },
 
-  // ── 3 · Cómo se ve tu bebé hoy ──────────────────────────────────────────────
+  // ── 3 · Alimentación por sonda al pecho ─────────────────────────────────────
   3: {
-    headerTitle: 'Tu bebé hoy',
-    dur: '3 MIN',
+    headerTitle: 'Sonda al pecho',
+    dur: '5 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: 'Un cuerpo que sorprende',
-        icon: () => CI.baby(KUN.sage),
-        text: 'Si tu bebé es prematuro, su apariencia puede ser muy distinta a la de un recién nacido de término. Eso es completamente normal. Su cuerpo está haciendo exactamente lo que debe hacer: seguir desarrollándose fuera del útero.',
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Qué es y cuándo se usa?',
+        icon: () => CI.milk(KUN.sage),
+        image: 'assets/capsulas/sonda_pecho/00.jpeg',
+        text: 'La alimentación por sonda al pecho se usa cuando hay poca producción de leche para estimular la glándula mamaria, o para hacer la transición de mamadera al pecho directo.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: 'Su piel',
-        icon: () => CI.drop(KUN.accent),
-        text: 'Puede verse muy delgada, casi transparente, con venitas visibles. También puede tener un vello fino llamado lanugo. Su piel puede parecer frágil, pero está cumpliendo su función de protegerlo.',
+      { num: 2, kind: 'list',
+        title: 'Materiales necesarios',
+        image: 'assets/capsulas/sonda_pecho/01.png',
+        note: 'Solicita estos materiales al equipo de enfermería.',
+        items: [
+          { title: 'Sonda de alimentación de 5 fr, de 40 cm', text: '' },
+          { title: 'Jeringa de 20 ml', text: '' },
+          { title: 'Frasco tapa roja de 60 ml o mamadera', text: '' },
+          { title: 'Tela adhesiva', text: '' },
+        ],
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: 'Su tamaño y proporciones',
-        icon: () => CI.baby(KUN.sage),
-        text: 'Su cabeza puede parecer grande en relación a su cuerpo. Sus extremidades son delgadas y sus movimientos pueden ser bruscos o temblorosos. Todo esto es parte del desarrollo neurológico normal a esta etapa.',
+      { num: 3, kind: 'list',
+        title: 'Pasos 1 al 4',
+        image: 'assets/capsulas/sonda_pecho/02.jpeg',
+        items: [
+          { title: 'Paso 1', text: 'Lávate las manos.' },
+          { title: 'Paso 2', text: 'Prepara el relleno o calienta leche extraída anteriormente.' },
+          { title: 'Paso 3', text: 'Fija el extremo de la sonda en el pezón con tela adhesiva, sin que sobresalga hacia adelante.' },
+          { title: 'Paso 4', text: 'Introduce el extremo gris de la sonda dentro del frasco con la leche.' },
+        ],
       },
-      {
-        num: 4, kind: 'text', accent: KUN.accentSoft,
-        title: 'Los cables y tubos',
-        icon: () => CI.monitor(KUN.accent),
-        text: 'Ver a tu bebé conectado a monitores, sondas o ventilación puede ser impactante. Cada dispositivo tiene un propósito específico: monitorear sus signos vitales, alimentarlo o ayudarlo a respirar. No indican que algo esté mal, sino que está recibiendo el apoyo que necesita.',
+      { num: 4, kind: 'list',
+        title: 'Pasos 5 al 8',
+        image: 'assets/capsulas/sonda_pecho/03.jpeg',
+        items: [
+          { title: 'Paso 5', text: 'El bebé comenzará a succionar el pecho y por este medio la leche del frasco, estimulando así la glándula mamaria.' },
+          { title: 'Paso 6', text: 'Divide la leche preparada entre ambos pechos para lograr una mejor estimulación.' },
+          { title: 'Paso 7', text: 'Al finalizar, retira la sonda y lávala con 10 cc de agua tibia.' },
+          { title: 'Paso 8', text: 'Guarda en un lugar hermético y limpio.' },
+        ],
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'Su apariencia es normal para su etapa.', sub: 'Piel delgada, lanugo y proporciones distintas son esperables.' },
-          { headline: 'Cuerpo y movimientos irán cambiando.', sub: 'A medida que madure, todo irá tomando su lugar.' },
-          { headline: 'Los dispositivos son herramientas de apoyo.', sub: 'No señalan peligro, sino cuidado especializado.' },
+          { headline: 'La sonda al pecho estimula la producción de leche.', sub: 'Mientras el bebé succiona y se alimenta.' },
+          { headline: 'Divide la leche entre ambos pechos.', sub: 'Para una estimulación pareja.' },
+          { headline: 'Es una excelente forma de volver al pecho.', sub: 'Transición de mamadera a pecho directo.' },
+          { headline: 'Lávala siempre después de cada uso.', sub: 'Con 10 cc de agua tibia.' },
         ],
       },
     ],
   },
 
-  // ── 4 · Entender los monitores ──────────────────────────────────────────────
+  // ── 4 · Cómo extraer leche materna ──────────────────────────────────────────
   4: {
-    headerTitle: 'Los monitores',
+    headerTitle: 'Extracción de leche',
     dur: '5 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Para qué sirven los monitores?',
-        icon: () => CI.monitor(KUN.sage),
-        text: 'Los monitores registran constantemente las funciones vitales de tu bebé: frecuencia cardíaca, respiración y nivel de oxígeno en sangre. Te permiten a ti y al equipo médico saber en todo momento cómo está tu bebé.',
-      },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: 'Las alarmas',
-        icon: () => CI.wave(KUN.accent),
-        text: 'Las alarmas suenan cuando algún valor sale de rango. Esto no siempre significa una emergencia. A veces el sensor se mueve, el bebé cambia de posición o tiene una pausa respiratoria breve que se resuelve sola. El equipo sabe distinguir cuándo actuar.',
-      },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: 'Los números que verás',
-        icon: () => CI.monitor(KUN.sage),
-        text: 'Frecuencia cardíaca normal en prematuros: entre 120 y 160 latidos por minuto. Saturación de oxígeno: idealmente sobre 90–95%. Frecuencia respiratoria: entre 40 y 60 respiraciones por minuto. El equipo te explicará los rangos específicos para tu bebé.',
-      },
-      {
-        num: 4, kind: 'list',
-        title: '¿Qué hacer cuando suena una alarma?',
-        items: [
-          { title: 'Mantén la calma', text: 'Observa si tu bebé está bien antes de reaccionar. Muchas alarmas se resuelven solas.' },
-          { title: 'Llama a la enfermera', text: 'No intentes ajustar los monitores ni los sensores por tu cuenta.' },
-          { title: 'Aprende con el tiempo', text: 'Irás distinguiendo las alarmas que requieren atención inmediata de las que no.' },
-        ],
-      },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
-        points: [
-          { headline: 'Los monitores vigilan signos vitales clave.', sub: 'Frecuencia cardíaca, respiración y oxígeno en sangre.' },
-          { headline: 'No toda alarma es una emergencia.', sub: 'El equipo evalúa cada situación con calma.' },
-          { headline: 'Te irás familiarizando.', sub: 'Con el tiempo aprenderás a leer los números y sonidos.' },
-        ],
-      },
-    ],
-  },
-
-  // ── 5 · Posición correcta en el canguro ─────────────────────────────────────
-  5: {
-    headerTitle: 'Posición en el canguro',
-    dur: '4 MIN',
-    pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: 'La posición importa',
-        icon: () => CI.kang(KUN.sage),
-        text: 'Una posición correcta durante el método canguro garantiza que tu bebé respire bien, esté cómodo y pueda aprovechar al máximo el contacto piel a piel. Una posición incorrecta puede comprometer su vía aérea.',
-      },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: 'La postura de tu bebé',
-        icon: () => CI.baby(KUN.accent),
-        text: 'Tu bebé debe estar vertical sobre tu pecho, con la cabeza girada hacia un lado y ligeramente extendida hacia atrás para mantener la vía aérea abierta. Sus caderas deben estar flexionadas, como si estuviera en posición de rana. Su abdomen debe apoyarse en tu pecho, no colgar.',
-      },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: 'Tu postura',
-        icon: () => CI.kang(KUN.sage),
-        text: 'Siéntate reclinado entre 30 y 60 grados, nunca completamente horizontal ni completamente vertical. Usa almohadas para apoyar tus brazos. El objetivo es que ambos estén cómodos y relajados durante todo el tiempo que dure la sesión.',
-      },
-      {
-        num: 4, kind: 'list',
-        title: 'Señales de que todo está bien',
-        items: [
-          { title: 'Color rosado', text: 'La piel de tu bebé mantiene un tono rosado, sin cambios bruscos de coloración.' },
-          { title: 'Respiración regular', text: 'Respira de forma constante y sin esfuerzo visible.' },
-          { title: 'Calma y sueño', text: 'Está tranquilo, somnoliento o durmiendo pacíficamente sobre tu pecho.' },
-        ],
-      },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
-        points: [
-          { headline: 'La cabeza debe estar girada y extendida.', sub: 'Para mantener la vía aérea libre en todo momento.' },
-          { headline: 'Tú reclinado entre 30 y 60 grados.', sub: 'Cómodo y apoyado para que la sesión dure más.' },
-          { headline: 'Color, respiración y calma lo confirman.', sub: 'Esas son las señales de que todo va bien.' },
-        ],
-      },
-    ],
-  },
-
-  // ── 6 · Producción de leche materna ─────────────────────────────────────────
-  6: {
-    headerTitle: 'Producción de leche',
-    dur: '5 MIN',
-    pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: 'Por qué la leche materna es especial',
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Cuándo y por qué extraer?',
         icon: () => CI.milk(KUN.sage),
-        text: 'La leche de una mamá de prematuro es diferente a la de una mamá de bebé de término. Tiene más proteínas, más anticuerpos y más factores de crecimiento, exactamente lo que tu bebé necesita para madurar. Tu cuerpo sabe lo que está haciendo.',
+        image: 'assets/capsulas/extraccion_leche/00.jpeg',
+        text: 'La extracción se realiza cuando tienes los pechos muy congestionados o no puedes amamantar de forma directa. Se recomienda extraer cada 3 horas para mantener la producción.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: 'Cómo estimular la producción',
+      { num: 2, kind: 'list',
+        title: 'Materiales',
+        image: 'assets/capsulas/extraccion_leche/01.png',
+        items: [
+          { title: 'Contenedor', text: 'Mamadera, bolsa recolectora o frasco de vidrio limpio.' },
+          { title: 'Bomba extractora', text: 'Manual o eléctrica, si la dispones.' },
+          { title: 'Cooler', text: 'Si no hay refrigerador cerca.' },
+          { title: 'Material para rotular', text: 'Para identificar el contenedor.' },
+          { title: 'Implementos de lavado de manos', text: '' },
+        ],
+      },
+      { num: 3, kind: 'list',
+        title: 'Extracción manual',
+        image: 'assets/capsulas/extraccion_leche/02.jpeg',
+        items: [
+          { title: 'Paso 1', text: 'Lávate las manos y descúbrete los pechos.' },
+          { title: 'Paso 2', text: 'Masajea con los dedos en círculos y luego como rastrillo desde la base hasta el pezón.' },
+          { title: 'Paso 3', text: 'Si hay congestión, coloca una hoja de repollo fría sobre la mama por 10 minutos.' },
+          { title: 'Paso 4', text: 'Rodea la areola con pulgar e índice formando una C, empuja hacia las costillas y comprime de forma intermitente. Rota la posición de los dedos para un mejor vaciamiento. Mantén 15 minutos por mama.' },
+        ],
+      },
+      { num: 4, kind: 'text', accent: KUN.accentSoft,
+        title: 'Extracción con bomba y rotulado',
         icon: () => CI.drop(KUN.accent),
-        text: 'La extracción frecuente es clave: idealmente cada 2 a 3 horas, incluso de noche. Cuanto más extraes, más produce tu cuerpo. El método canguro también ayuda: el contacto con tu bebé libera oxitocina, la hormona que favorece la bajada de leche.',
+        image: 'assets/capsulas/extraccion_leche/03.png',
+        text: 'Si usas bomba: prepárala según instrucciones, realiza el masaje previo, conecta el adaptador al pezón y extrae 15 minutos por mama. Si deja de salir leche, detén, masajea y reinicia. Siempre cierra el contenedor y rotúlalo con la fecha de extracción. Refrigera o congela según necesidad.',
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: 'El estrés y la leche',
-        icon: () => CI.milk(KUN.sage),
-        text: 'El estrés emocional puede reducir la producción. Esto no es tu culpa, es fisiología. Intenta extraer en un ambiente tranquilo, con una foto de tu bebé cerca o pensando en él. Pide apoyo a la trabajadora de lactancia de la unidad si notas una baja sostenida.',
-      },
-      {
-        num: 4, kind: 'text', accent: KUN.accentSoft,
-        title: 'Si la producción baja',
-        icon: () => CI.heart(KUN.accent),
-        text: 'Es normal que la producción fluctúe. Si baja, no te rindas de inmediato. Aumenta la frecuencia de extracción, mantén la hidratación y el descanso en la medida de lo posible. Si necesitas complementar con fórmula, no significa que hayas fallado: lo importante es el bienestar de tu bebé.',
-      },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'Tu leche es única para tu bebé.', sub: 'Diseñada especialmente para un prematuro.' },
-          { headline: 'Extracción frecuente y canguro, tus aliados.', sub: 'Cuanto más extraes, más produce tu cuerpo.' },
-          { headline: 'El estrés afecta: busca apoyo.', sub: 'Pide ayuda a la trabajadora de lactancia si lo necesitas.' },
+          { headline: 'Extrae cada 3 horas para mantener la producción.', sub: 'Incluso de noche.' },
+          { headline: 'El masaje previo favorece la bajada de leche.', sub: 'Dedos en círculos y luego como rastrillo.' },
+          { headline: '15 minutos por mama es el tiempo recomendado.', sub: 'Sea manual o con bomba.' },
+          { headline: 'Rotula siempre con la fecha de extracción.', sub: 'Y refrigera o congela según necesidad.' },
         ],
       },
     ],
   },
 
-  // ── 7 · Lactancia con sonda ──────────────────────────────────────────────────
-  7: {
-    headerTitle: 'Lactancia con sonda',
+  // ── 5 · Conservar y usar leche extraída ─────────────────────────────────────
+  5: {
+    headerTitle: 'Conservación de leche',
     dur: '4 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: 'Alimentarse mientras madura',
-        icon: () => CI.milk(KUN.sage),
-        text: 'Muchos bebés prematuros reciben leche materna a través de la sonda antes de poder succionar por sí solos. Esto no es un retroceso: es la forma en que tu bebé recibe todos los beneficios de tu leche mientras su reflejo de succión termina de desarrollarse.',
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: 'Cómo almacenar',
+        icon: () => CI.shield(KUN.sage),
+        image: 'assets/capsulas/conservacion_leche/00.jpeg',
+        text: 'Almacena la leche en recipientes de vidrio, plástico duro libre de BPA o bolsas especiales. Anota siempre la fecha, cantidad y nombre del bebé en cada envase. Es normal que la grasa se separe y la leche parezca cortada — agítala suavemente y recuperará su apariencia.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: 'Succión no nutritiva',
-        icon: () => CI.baby(KUN.accent),
-        text: 'Mientras tu bebé se alimenta por sonda, puedes ofrecerle tu pecho o un chupete para que practique la succión sin el esfuerzo de extraer leche. Esto se llama succión no nutritiva y tiene beneficios reales: acelera la maduración del reflejo y reduce el estrés del bebé.',
+      { num: 2, kind: 'list',
+        title: '¿Cuánto dura?',
+        image: 'assets/capsulas/conservacion_leche/01.png',
+        items: [
+          { title: 'Temperatura ambiente', text: 'Solo en invierno, menos de 25°C: 6-8 horas.' },
+          { title: 'Refrigerador', text: 'Primera bandeja, nunca en la puerta: 5 días.' },
+          { title: 'Congelador de 1 puerta', text: 'Hasta 14 días.' },
+          { title: 'Congelador de 2 puertas', text: 'Al fondo: 3-6 meses.' },
+          { title: 'Cooler', text: '24 horas.' },
+        ],
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: 'La transición al pecho o mamadera',
-        icon: () => CI.milk(KUN.sage),
-        text: 'La transición ocurre de forma gradual, a medida que tu bebé gana fuerza y coordinación. Primero intentará succionar por períodos cortos, luego irá aumentando. El ritmo lo marca tu bebé, no una fecha en el calendario.',
+      { num: 3, kind: 'text', accent: KUN.sageSoft,
+        title: 'Cómo descongelar',
+        icon: () => CI.drop(KUN.sage),
+        text: 'Lo ideal es pasar la leche del congelador al refrigerador la noche anterior. Si necesitas leche de inmediato, coloca el frasco en un recipiente con agua caliente (no hirviendo). La leche descongelada puede mantenerse 1 día en el refrigerador.',
       },
-      {
-        num: 4, kind: 'text', accent: KUN.accentSoft,
-        title: 'Cómo acompañar el proceso',
-        icon: () => CI.heart(KUN.accent),
-        text: 'Tu presencia durante la alimentación por sonda es valiosa aunque no puedas amamantar todavía. Hablarle, tocarlo suavemente y hacer contacto visual le comunica que estás ahí. Cuando llegue el momento de intentar el pecho, el equipo te acompañará.',
+      { num: 4, kind: 'list',
+        title: 'Reglas importantes',
+        image: 'assets/capsulas/conservacion_leche/02.jpeg',
+        items: [
+          { title: 'Usa primero la leche más antigua', text: '' },
+          { title: 'No vuelvas a congelar leche ya descongelada', text: '' },
+          { title: 'No mezcles leche fresca con leche ya congelada', text: '' },
+          { title: 'No congeles leche con más de 48 h en el refrigerador', text: '' },
+          { title: 'Remanentes del mismo día', text: 'Solo pueden reutilizarse durante ese mismo día.' },
+        ],
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'La sonda permite recibir leche materna.', sub: 'Mientras el reflejo de succión termina de madurar.' },
-          { headline: 'La succión no nutritiva acelera el desarrollo.', sub: 'Practica con pecho o chupete durante la alimentación.' },
-          { headline: 'La transición es gradual y va al ritmo del bebé.', sub: 'No hay fechas, solo el ritmo de tu bebé.' },
+          { headline: 'Rotula siempre con fecha, cantidad y nombre del bebé.', sub: 'Es esencial para organizarte.' },
+          { headline: 'En refrigerador dura 5 días.', sub: 'En congelador de 2 puertas, hasta 6 meses.' },
+          { headline: 'Descongela lentamente, nunca en microondas.', sub: 'Agua caliente o paso previo al refrigerador.' },
+          { headline: 'Una vez descongelada no se puede volver a congelar.', sub: 'Y no mezcles con leche fresca.' },
         ],
       },
     ],
   },
 
-  // ── 8 · Etapas del desarrollo prematuro ─────────────────────────────────────
-  8: {
-    headerTitle: 'Desarrollo prematuro',
+  // ── 6 · Lactancia materna ────────────────────────────────────────────────────
+  6: {
+    headerTitle: 'Lactancia materna',
     dur: '5 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: 'Un desarrollo que continúa',
-        icon: () => CI.star(KUN.sage),
-        text: 'Nacer antes de tiempo no detiene el desarrollo de tu bebé, lo traslada a un nuevo entorno. Muchos de los hitos que habría alcanzado en el útero los irá logrando en la UCIN y en casa. La edad corregida, no la de nacimiento, es la referencia para evaluar su desarrollo.',
+      { num: 1, kind: 'text', accent: KUN.rosehip,
+        title: '¿Por qué es tan especial?',
+        icon: () => CI.heart(KUN.brick),
+        image: 'assets/capsulas/lactancia/00.jpeg',
+        text: 'La leche materna tiene todas las vitaminas, grasas y proteínas que tu bebé necesita en la cantidad exacta. Protege contra infecciones, se digiere bien y favorece el desarrollo psicomotor y del lenguaje. También crea un vínculo único entre ustedes. La OMS recomienda lactancia materna exclusiva hasta los 6 meses.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: 'Edad cronológica vs. edad corregida',
-        icon: () => CI.baby(KUN.accent),
-        text: 'La edad corregida se calcula desde la fecha en que debería haber nacido. Un bebé de 4 meses que nació 2 meses antes tiene una edad corregida de 2 meses. Sus hitos de desarrollo deben evaluarse según esa edad, no la cronológica.',
+      { num: 2, kind: 'list',
+        title: 'El acople correcto',
+        image: 'assets/capsulas/lactancia_guia/00.png',
+        items: [
+          { title: 'Posición cómoda', text: 'Siéntate con la espalda apoyada; el bebé enfrentando a la madre, boca a la altura del pecho.' },
+          { title: 'Sostén en C', text: 'Rodea la mama con la mano en forma de C.' },
+          { title: 'Estimula con el pezón', text: 'Toca el labio del bebé para que abra la boca.' },
+          { title: 'Acerca el bebé al pecho (no al revés)', text: 'Con un movimiento rápido. Labios evertidos, mentón tocando el pecho.' },
+        ],
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: 'Hitos esperados en prematuros',
-        icon: () => CI.star(KUN.sage),
-        text: 'En los primeros meses, tu bebé irá ganando tono muscular, control de la cabeza y respuesta a estímulos. La sonrisa social, el balbuceo y el seguimiento visual llegarán en su momento. Cada bebé tiene su propio ritmo, especialmente los prematuros.',
+      { num: 3, kind: 'text', accent: KUN.sageSoft,
+        title: 'Frecuencia y cómo retirar',
+        icon: () => CI.milk(KUN.sage),
+        image: 'assets/capsulas/lactancia_guia/01.png',
+        text: 'Amamanta a libre demanda, sin dejar pasar más de 3-4 horas. No hay un tiempo exacto por pecho: lo importante es que el bebé vacíe un pecho completamente antes de ofrecer el otro. La leche se enriquece a medida que se vacía. Para retirar al bebé, introduce suavemente tu dedo meñique por el costado de su boca.',
       },
-      {
-        num: 4, kind: 'text', accent: KUN.accentSoft,
-        title: 'Cómo estimularlo',
-        icon: () => CI.heart(KUN.accent),
-        text: 'El contacto, la voz, la música suave y el método canguro son los mejores estímulos en esta etapa. Evita la sobreestimulación: tu bebé te avisará con señales cuando necesite descanso, como apartar la mirada, fruncir el ceño o ponerse irritable.',
+      { num: 4, kind: 'list',
+        title: '¿Cómo saber si está tomando bien?',
+        image: 'assets/capsulas/lactancia_guia/02.png',
+        items: [
+          { title: 'Deglute de forma rítmica', text: 'Escucharás o verás que traga mientras mama.' },
+          { title: 'Los pechos quedan blandos', text: 'Después de amamantar.' },
+          { title: 'Sin dolor mientras amamantas', text: '' },
+          { title: 'Moja 6 pañales al día', text: 'Y mama entre 8 y 12 veces en 24 horas.' },
+          { title: 'Duerme bien después', text: 'Entre 1½ y 3 horas después de amamantar.' },
+        ],
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'Usa la edad corregida como referencia.', sub: 'No la cronológica, para evaluar su desarrollo.' },
-          { headline: 'Los hitos llegarán a su tiempo.', sub: 'Cada bebé prematuro tiene su propio ritmo.' },
-          { headline: 'Tu voz y contacto son el mejor estímulo.', sub: 'Simple y poderoso en esta etapa.' },
+          { headline: 'La leche materna es el alimento más completo.', sub: 'Vitaminas, proteínas y defensas en un solo alimento.' },
+          { headline: 'El acople correcto es clave: sin dolor.', sub: 'Labios evertidos, mentón tocando el pecho.' },
+          { headline: 'Amamanta a libre demanda.', sub: 'Sin límite de tiempo por pecho.' },
+          { headline: 'Ante cualquier duda o dolor, pide apoyo.', sub: 'La matrona o trabajadora de lactancia pueden ayudarte.' },
         ],
       },
     ],
   },
 
-  // ── 9 · Qué es el ECMO ──────────────────────────────────────────────────────
-  9: {
-    headerTitle: 'ECMO',
+  // ── 7 · Manejo efectivo del llanto: el enlulamiento ─────────────────────────
+  7: {
+    headerTitle: 'El enlulamiento',
     dur: '4 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Qué es el ECMO?',
-        icon: () => CI.ecmo(KUN.sage),
-        text: 'ECMO significa oxigenación por membrana extracorpórea. Es una máquina que asume temporalmente el trabajo del corazón y los pulmones de tu bebé, permitiendo que estos órganos descansen y se recuperen. Es un tratamiento de soporte avanzado, no una cura en sí mismo.',
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Qué es el enlulamiento?',
+        icon: () => CI.baby(KUN.sage),
+        image: 'assets/capsulas/manejo_llanto/00.jpeg',
+        text: 'El enlulamiento consiste en envolver al bebé con una manta de algodón para replicar las condiciones del ambiente intrauterino. Puede facilitar el sueño y ayudar a disminuir el llanto en los primeros meses. Se recomienda hasta que el bebé aprenda a girarse, aproximadamente a los 4 meses.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: '¿Cuándo se usa?',
-        icon: () => CI.wave(KUN.accent),
-        text: 'Se usa cuando el corazón o los pulmones de tu bebé no pueden funcionar suficientemente bien por sí solos, a pesar de otros tratamientos. Es una medida temporal mientras el cuerpo de tu bebé se estabiliza o se recupera de una condición específica.',
+      { num: 2, kind: 'list',
+        title: 'Antes de comenzar',
+        items: [
+          { title: 'Manta de algodón amplia', text: '' },
+          { title: 'Siempre boca arriba', text: 'Obsérvalo permanentemente para evitar que se gire boca abajo.' },
+          { title: 'Cuna despejada', text: 'Sin sábanas, frazadas, almohadas ni peluches sueltos.' },
+          { title: 'Sin sobreabrigar', text: 'Al envolverlo su temperatura aumentará: evita ropa extra debajo.' },
+        ],
       },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Cómo funciona?',
-        icon: () => CI.ecmo(KUN.sage),
-        text: 'La sangre de tu bebé sale de su cuerpo a través de un tubo, pasa por una membrana que la oxigena y elimina el dióxido de carbono, y luego regresa a su cuerpo. Todo ocurre de forma continua y controlada por el equipo especializado.',
+      { num: 3, kind: 'list',
+        title: 'Cómo hacerlo (pasos 1-4)',
+        image: 'assets/capsulas/manejo_llanto/01.png',
+        items: [
+          { title: 'Paso 1', text: 'Pon la manta en una superficie plana formando un rombo.' },
+          { title: 'Paso 2', text: 'Dobla una punta y coloca al bebé boca arriba con la cabeza fuera de la manta.' },
+          { title: 'Paso 3', text: 'Estira el brazo izquierdo del bebé al costado de su cuerpo, cúbrelo con la manta e introduce la tela libre bajo el lado derecho del bebé.' },
+          { title: 'Paso 4', text: 'Dobla la punta inferior sobre el cuerpo, dejando espacio para que las caderas se muevan libremente.' },
+        ],
       },
-      {
-        num: 4, kind: 'text', accent: KUN.accentSoft,
-        title: '¿Qué puedes hacer tú?',
-        icon: () => CI.heart(KUN.accent),
-        text: 'Con el ECMO, el contacto físico directo es muy limitado. Sin embargo, tu presencia sigue siendo importante. Hablarle en voz baja, poner tu mano cerca de él con autorización del equipo y simplemente estar ahí tiene un valor real para tu bebé y para ti.',
+      { num: 4, kind: 'text', accent: KUN.accentSoft,
+        title: 'Paso 5 y cuidados finales',
+        icon: () => CI.baby(KUN.accent),
+        image: 'assets/capsulas/manejo_llanto/02.jpeg',
+        text: 'Estira el brazo derecho al costado del cuerpo y cúbrelo con la manta. Deja siempre espacio suficiente para que las piernas y caderas se muevan con libertad: esto protege el desarrollo adecuado de la articulación de la cadera. Considera el uso de chupete durante el sueño después del primer mes si el bebé está con lactancia materna exclusiva.',
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'El ECMO asume el trabajo del corazón y pulmones.', sub: 'Temporalmente, para que los órganos se recuperen.' },
-          { headline: 'Es una medida de soporte, no una cura.', sub: 'Apoya al cuerpo mientras se estabiliza.' },
-          { headline: 'Tu presencia sigue siendo valiosa.', sub: 'Tu voz y cercanía importan, incluso con limitaciones.' },
+          { headline: 'El enlulamiento imita el ambiente del útero.', sub: 'Ayuda a calmar el llanto y facilitar el sueño.' },
+          { headline: 'Úsalo solo hasta los 4 meses.', sub: 'Cuando el bebé comience a girarse, detén su uso.' },
+          { headline: 'Siempre boca arriba y observándolo permanentemente.', sub: 'La seguridad primero.' },
+          { headline: 'Deja espacio libre para las caderas.', sub: 'Protege el desarrollo de la articulación.' },
         ],
       },
     ],
   },
 
-  // ── 10 · Cuidados al alta ────────────────────────────────────────────────────
-  10: {
-    headerTitle: 'Alta y hogar',
-    dur: '6 MIN',
+  // ── 8 · Masaje para cólicos y estreñimiento ──────────────────────────────────
+  8: {
+    headerTitle: 'Masaje anticólico',
+    dur: '5 MIN',
     pages: [
-      {
-        num: 1, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Qué significa el alta?',
-        icon: () => CI.home(KUN.sage),
-        text: 'El alta es el momento en que tu bebé está listo para continuar su desarrollo en casa. No significa que todo está resuelto, sino que tu bebé ha alcanzado la estabilidad suficiente para salir del hospital. Es un gran logro, y también el inicio de una nueva etapa.',
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Cuándo y cómo prepararse?',
+        icon: () => CI.heart(KUN.sage),
+        image: 'assets/capsulas/masaje/00.jpeg',
+        text: 'Haz el masaje 1-2 veces al día de forma preventiva. El bebé debe estar despierto, sin hambre y sin enfermedad aguda. Espera al menos 30 minutos después de la alimentación. Usa aceite hipoalergénico o aceite comestible calentado entre tus manos. El bebé debe estar desnudo o solo con pañal, en un lugar temperado.',
       },
-      {
-        num: 2, kind: 'text', accent: KUN.accentSoft,
-        title: '¿Cómo saber si están listos?',
-        icon: () => CI.shield(KUN.accent),
-        text: 'Antes del alta, el equipo médico verificará que tu bebé pueda mantener su temperatura corporal, alimentarse de forma consistente y que su peso vaya en aumento. También recibirás instrucciones claras sobre sus cuidados en casa.',
-      },
-      {
-        num: 3, kind: 'text', accent: KUN.sageSoft,
-        title: '¿Qué debes preparar en casa?',
-        icon: () => CI.home(KUN.sage),
-        text: 'Asegúrate de tener un espacio cálido y tranquilo para tu bebé. Evita visitas masivas los primeros días. Ten a mano los números de contacto del equipo médico y la clínica. Menos estímulos al inicio significa más descanso y mejor adaptación.',
-      },
-      {
-        num: 4, kind: 'list',
-        title: '¿Qué señales debes vigilar?',
+      { num: 2, kind: 'list',
+        title: 'Técnica (pasos 1-4)',
+        image: 'assets/capsulas/masaje/01.png',
         items: [
-          { title: 'Dificultad para respirar', text: 'Busca atención médica de inmediato si notas que le cuesta respirar.' },
-          { title: 'Cambios de color en la piel', text: 'Palidez, coloración azulada o amarilla son señales de alerta.' },
-          { title: 'Fiebre o rechazo a la alimentación', text: 'Pueden indicar una infección u otro problema que requiere evaluación.' },
+          { title: 'Paso 1', text: 'Masajea los costados del abdomen, con las manos en la parte baja subiendo hacia arriba.' },
+          { title: 'Paso 2', text: 'Círculos alrededor del ombligo con índice y medio, en sentido de las agujas del reloj.' },
+          { title: 'Paso 3', text: 'Círculos alrededor del abdomen con la palma, también en sentido de las agujas del reloj.' },
+          { title: 'Paso 4', text: 'Movimientos descendentes en el abdomen con ambas manos, una siguiendo a la otra.' },
         ],
       },
-      {
-        num: 5, kind: 'summary',
-        title: 'Lo que aprendiste hoy',
+      { num: 3, kind: 'list',
+        title: 'Técnica (pasos 5-8)',
+        image: 'assets/capsulas/masaje/02.jpeg',
+        items: [
+          { title: 'Paso 5', text: 'Levanta una pierna sosteniéndola del tobillo; con índice y medio haz suaves toques desde el tobillo hasta la zona glútea.' },
+          { title: 'Paso 6', text: 'Flexiones de rodillas de forma alternada.' },
+          { title: 'Paso 7', text: 'Flexiona ambas rodillas simultáneamente llevándolas hacia el pecho.' },
+          { title: 'Paso 8', text: 'Para finalizar, masaje circular con la palma en la base de la columna.' },
+        ],
+      },
+      { num: 4, kind: 'text', accent: KUN.accentSoft,
+        title: 'Señales y cuidados',
+        icon: () => CI.face(KUN.accent),
+        image: 'assets/capsulas/masaje/03.jpeg',
+        text: 'El bebé debe estar cómodo durante todo el masaje. Si llora o se muestra incómodo, detente y vuelve a intentarlo más tarde. El masaje no reemplaza la consulta médica si el bebé presenta cólicos intensos o estreñimiento prolongado.',
+      },
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
         points: [
-          { headline: 'El alta es un logro real.', sub: 'Tu bebé alcanzó la estabilidad necesaria para ir a casa.' },
-          { headline: 'Prepara un ambiente cálido y tranquilo.', sub: 'Pocos estímulos al inicio, más descanso y adaptación.' },
-          { headline: 'Conoce las señales de alerta.', sub: 'Y no dudes en consultar ante cualquier duda.' },
+          { headline: 'Haz el masaje 1-2 veces al día.', sub: 'Mínimo 30 minutos después de comer.' },
+          { headline: 'Siempre en sentido de las agujas del reloj.', sub: 'Siguiendo el trayecto intestinal.' },
+          { headline: 'Las flexiones de rodillas ayudan a liberar gases.', sub: 'Alternadas y simultáneas.' },
+          { headline: 'Si el bebé llora o se incomoda, detente.', sub: 'Vuelve a intentarlo en otro momento.' },
+        ],
+      },
+    ],
+  },
+
+  // ── 9 · Porteo seguro ────────────────────────────────────────────────────────
+  9: {
+    headerTitle: 'Porteo seguro',
+    dur: '5 MIN',
+    pages: [
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Qué es el porteo y para qué sirve?',
+        icon: () => CI.kang(KUN.sage),
+        image: 'assets/capsulas/porteo/00.jpeg',
+        text: 'El porteo consiste en cargar al bebé sobre el cuerpo de un adulto usando un portabebés, mei-tai, fular o mochila ergonómica. Los especialistas lo recomiendan por sus beneficios para el desarrollo del bebé, la prevención del llanto y la promoción del apego.',
+      },
+      { num: 2, kind: 'list',
+        title: 'Lo más importante: la vía aérea',
+        image: 'assets/capsulas/porteo/01.png',
+        items: [
+          { title: 'Mentón siempre despejado', text: 'Asegúrate de que la cabeza del bebé no obstruya el ingreso de aire: evita que el mentón toque su pecho.' },
+          { title: 'Aire fresco', text: 'Permite que reciba aire fresco y que la nariz se mantenga despejada.' },
+          { title: 'Lo suficientemente cerca para besarlo', text: 'Así podrás observarlo en todo momento.' },
+        ],
+      },
+      { num: 3, kind: 'list',
+        title: 'Posición correcta del cuerpo',
+        image: 'assets/capsulas/porteo/02.jpeg',
+        items: [
+          { title: 'Vertical mientras sea pequeño', text: 'Las posiciones horizontales pueden obstruir la vía aérea.' },
+          { title: 'Posición de ranita', text: 'Columna curvada, caderas y rodillas dobladas más de 90°, piernas abiertas.' },
+          { title: 'Sostén según edad', text: '0-3 meses: hasta la cabeza. 3-8 meses: hasta el cuello. Desde 8 meses: hasta el hombro.' },
+          { title: 'Nunca orientado hacia el frente', text: '' },
+        ],
+      },
+      { num: 4, kind: 'list',
+        title: 'Comodidad y seguridad',
+        image: 'assets/capsulas/porteo/03.jpeg',
+        items: [
+          { title: 'Lee siempre las instrucciones del fabricante', text: '' },
+          { title: 'Tela bien estirada y sin nudos', text: '' },
+          { title: 'Sin movimientos bruscos', text: 'No saltes, corras ni hagas movimientos bruscos mientras portas.' },
+          { title: 'No usar en auto ni bicicleta', text: '' },
+        ],
+      },
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
+        points: [
+          { headline: 'El porteo favorece vínculo, calma el llanto y apoya el desarrollo.', sub: '' },
+          { headline: 'Posición de ranita: protege caderas y columna.', sub: '' },
+          { headline: 'El mentón siempre despejado del pecho.', sub: 'Para que el bebé pueda respirar.' },
+          { headline: 'Nunca orientado hacia el frente.', sub: 'Siempre mirando a quien lo porta.' },
+        ],
+      },
+    ],
+  },
+
+  // ── 10 · Detección precoz de hipoacusia ──────────────────────────────────────
+  10: {
+    headerTitle: 'Screening auditivo',
+    dur: '4 MIN',
+    pages: [
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Qué es el screening auditivo?',
+        icon: () => CI.wave(KUN.sage),
+        text: 'Es un programa de prevención para identificar a los recién nacidos con sordera congénita. El examen debe realizarse antes del primer mes de vida. La detección temprana es fundamental para maximizar el desarrollo del lenguaje del bebé.',
+      },
+      { num: 2, kind: 'text', accent: KUN.accentSoft,
+        title: '¿Cómo se hace?',
+        icon: () => CI.monitor(KUN.accent),
+        text: 'Se usan dos tipos de examen: Emisiones Otoacústicas (EOA) o Potenciales Evocados Auditivos (PEAT) automatizados. Son simples, rápidos y no invasivos. Consisten en introducir una pequeña sonda en el oído o colocar electrodos en la piel. No generan ninguna incomodidad al bebé.',
+      },
+      { num: 3, kind: 'list',
+        title: 'Los dos resultados posibles',
+        items: [
+          { title: 'PASA', text: 'Audición dentro de límites normales. Se entrega el informe correspondiente.' },
+          { title: 'REFIERE', text: 'Indica sospecha de audición disminuida, no necesariamente hipoacusia. Se repite el examen en 2-3 semanas. Si vuelve a ser REFIERE, el bebé es derivado al otorrinolaringólogo.' },
+        ],
+      },
+      { num: 4, kind: 'text', accent: KUN.sageSoft,
+        title: 'Si el resultado es PASA, ¿hay que seguir controlando?',
+        icon: () => CI.shield(KUN.sage),
+        text: 'Sí. Un resultado PASA indica audición normal al momento del examen, pero existen causas de hipoacusia que aparecen o progresan después del nacimiento. Es importante mantenerse atento al desarrollo del lenguaje y comunicar al médico cualquier diferencia en cómo el bebé responde a los sonidos.',
+      },
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
+        points: [
+          { headline: 'El screening se hace antes del mes de vida.', sub: 'Sin causar ninguna molestia al bebé.' },
+          { headline: 'PASA significa audición normal.', sub: 'REFIERE significa que se necesita más evaluación.' },
+          { headline: 'Un REFIERE no significa que tu bebé tiene sordera.', sub: 'Es una señal para hacer más evaluaciones.' },
+          { headline: 'La detección temprana protege el desarrollo del lenguaje.', sub: '' },
+        ],
+      },
+    ],
+  },
+
+  // ── 60 · Maniobra de Heimlich ────────────────────────────────────────────────
+  60: {
+    headerTitle: 'Maniobra de Heimlich',
+    dur: '5 MIN',
+    pages: [
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Qué es y por qué aprenderla?',
+        icon: () => CI.shield(KUN.sage),
+        image: 'assets/capsulas/heimlich/00.jpeg',
+        text: 'La maniobra de Heimlich es una técnica de primeros auxilios para expulsar un objeto de la garganta de un bebé o niño que se está atragantando. Consiste en compresiones firmes que usan el aire de los pulmones para sacar el objeto. Es importante aprenderla antes de necesitarla.',
+      },
+      { num: 2, kind: 'list',
+        title: 'Para bebés hasta 1 año (conscientes)',
+        image: 'assets/capsulas/heimlich/01.png',
+        items: [
+          { title: 'Paso 1', text: 'Sostén al bebé boca abajo sobre tu antebrazo, sosteniendo su cabeza en todo momento.' },
+          { title: 'Paso 2', text: 'Da 5 palmadas firmes en la espalda con la base de la palma, entre los omóplatos.' },
+          { title: 'Paso 3', text: 'Si el objeto no sale, voltea al bebé sobre su espalda. Traza una línea imaginaria entre las tetillas y con 2 dedos aplica 5 compresiones en el centro del pecho.' },
+          { title: 'Paso 4', text: 'Alterna 5 palmadas y 5 compresiones hasta que el bebé pueda respirar, toser o llorar. Si pierde la conciencia: inicia RCP.' },
+        ],
+      },
+      { num: 3, kind: 'list',
+        title: 'Para niños de más de 1 año (conscientes)',
+        image: 'assets/capsulas/heimlich/02.jpeg',
+        items: [
+          { title: 'Paso 1', text: 'Pregúntale si se está ahogando. Si asiente, dile que vas a ayudarlo.' },
+          { title: 'Paso 2', text: 'Arrodíllate o párate detrás del niño y rodéalo con los brazos.' },
+          { title: 'Paso 3', text: 'Forma un puño con el pulgar levemente por encima del ombligo.' },
+          { title: 'Paso 4', text: 'Agarra el puño con la otra mano y realiza compresiones rápidas hacia arriba y hacia adentro del estómago. Continúa hasta que el objeto sea expulsado. Si pierde la conciencia: inicia RCP.' },
+        ],
+      },
+      { num: 4, kind: 'list',
+        title: 'Lo que debes recordar',
+        image: 'assets/capsulas/heimlich/03.png',
+        items: [
+          { title: 'Para bebés: palmadas en espalda + compresiones en pecho', text: 'Con 2 dedos en el centro del pecho.' },
+          { title: 'Para niños: compresiones abdominales', text: 'Por encima del ombligo, hacia arriba y adentro.' },
+          { title: 'La técnica de bebés y la de niños son distintas', text: 'No las confundas.' },
+          { title: 'Busca capacitación formal', text: 'Pregunta al equipo médico sobre cursos disponibles.' },
+        ],
+      },
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
+        points: [
+          { headline: 'Para bebés: 5 palmadas + 5 compresiones en el pecho.', sub: 'Alternadas hasta que el objeto salga.' },
+          { headline: 'Para niños: compresiones abdominales hacia arriba y adentro.', sub: 'Por encima del ombligo.' },
+          { headline: 'Si el bebé pierde la conciencia, inicia RCP de inmediato.', sub: '' },
+          { headline: 'Aprende esta técnica antes de necesitarla.', sub: '' },
+        ],
+      },
+    ],
+  },
+
+  // ── 61 · Traslado seguro en auto ─────────────────────────────────────────────
+  61: {
+    headerTitle: 'Traslado seguro en auto',
+    dur: '5 MIN',
+    pages: [
+      { num: 1, kind: 'text', accent: KUN.sageSoft,
+        title: '¿Por qué es tan importante?',
+        icon: () => CI.shield(KUN.sage),
+        image: 'assets/capsulas/sillas/00.jpeg',
+        text: 'Los accidentes de tránsito son una causa importante de lesiones y muerte en niños. El uso correcto de un sistema de retención infantil (SRI) puede reducir entre un 50% y un 80% las lesiones mortales en caso de accidente. Nunca viajes con el bebé en brazos, sin importar lo corto del trayecto.',
+      },
+      { num: 2, kind: 'text', accent: KUN.accentSoft,
+        title: '¿Qué tipo de silla usar?',
+        icon: () => CI.star(KUN.accent),
+        image: 'assets/capsulas/sillas/01.jpeg',
+        text: 'La elección depende de la edad, peso y talla del bebé, y de las características del vehículo. Usa siempre una silla certificada con normas internacionales y acreditada por el Ministerio de Transportes de Chile. Puedes verificar el listado actualizado en conaset.cl.',
+      },
+      { num: 3, kind: 'list',
+        title: 'Cómo instalarla correctamente',
+        image: 'assets/capsulas/sillas/02.png',
+        items: [
+          { title: 'Paso 1', text: 'Colócala en la posición indicada por el fabricante (mirando hacia adelante o hacia atrás).' },
+          { title: 'Paso 2', text: 'La posición más segura es el centro del asiento trasero.' },
+          { title: 'Paso 3', text: 'Usa el sistema de anclaje indicado: cinturón, Latch o Isofix. No los combines.' },
+          { title: 'Paso 4', text: 'Para verificar el anclaje, toma la silla con una mano a cada lado y muévela lateralmente: el movimiento no debe superar 2,5 cm.' },
+        ],
+      },
+      { num: 4, kind: 'list',
+        title: 'Cuidados adicionales',
+        image: 'assets/capsulas/sillas/03.jpeg',
+        items: [
+          { title: 'Revisa la fecha de vencimiento', text: 'Siempre antes de usar la silla.' },
+          { title: 'Revisión gratuita disponible', text: 'Un técnico puede revisar la instalación en el programa #RevisaTuSilla (conaset.cl).' },
+          { title: 'Ajusta bien el arnés', text: 'Ni muy apretado ni muy suelto.' },
+          { title: 'No la uses como cama en casa', text: '' },
+        ],
+      },
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy',
+        points: [
+          { headline: 'Usa siempre silla certificada, apropiada para la edad y peso.', sub: '' },
+          { headline: 'Instálala correctamente: movimiento lateral inferior a 2,5 cm.', sub: 'Centro del asiento trasero, la posición más segura.' },
+          { headline: 'Nunca lleves al bebé en brazos en el auto.', sub: 'Sin importar la distancia.' },
+          { headline: 'Revisa vencimiento y anclaje antes de cada viaje.', sub: '' },
         ],
       },
     ],
   },
 };
+
 
 const STAGE_CAPSULE_CONTENT = {
   11: ['Conocer la unidad neonatal', 'Ubícate primero', 'La unidad suele tener recepción, lavamanos, sala clínica, lactario, baños y un lugar de espera familiar. Pide que te muestren el recorrido seguro para entrar y salir sin interrumpir procedimientos.', 'Pregunta dónde dejar tus cosas, dónde lavarte las manos, quién es la enfermera a cargo y cómo reconocer al equipo de turno.', ['Conoce recepción, lavamanos y lactario.', 'Identifica a la enfermera a cargo.', 'Pregunta el recorrido seguro de ingreso.']],
@@ -567,206 +725,246 @@ window.CAP_LIBRARY = CAP_LIBRARY;
 
 const CAP_QUIZZES = {
   1: {
-    prompt: '¿Para qué ayuda la sonda nasogástrica mientras tu bebé madura?',
+    prompt: '¿El apego entre tu bebé y tú depende de haber estado juntos en los primeros minutos de vida?',
     options: [
       {
-        text: 'A que reciba leche sin gastar tanta energía en succionar',
+        text: 'Sí, los primeros minutos son decisivos y no se pueden recuperar.',
+        correct: false,
+        feedback: 'El apego NO depende de los primeros minutos. Se construye durante los tres primeros años de vida, con tiempo y amor.',
+      },
+      {
+        text: 'No. El apego se construye con el tiempo, el amor y la presencia a lo largo de los primeros años.',
         correct: true,
-        feedback: 'Muy bien. La sonda es un apoyo temporal para que tu bebé pueda alimentarse y crecer mientras gana fuerza y coordinación.',
+        feedback: 'El apego es un vínculo que crece cada vez que estás presente, le hablas y lo tocas.',
       },
       {
-        text: 'A reemplazar siempre la lactancia de forma permanente',
+        text: 'Solo si el bebé nació de parto natural.',
         correct: false,
-        feedback: 'Tiene sentido que pueda sentirse así, pero la sonda suele ser un puente temporal. La idea es acompañar a tu bebé hasta que esté listo para pecho o mamadera.',
-      },
-      {
-        text: 'A evitar que necesite compañía durante la alimentación',
-        correct: false,
-        feedback: 'Tu presencia sigue importando mucho. Hablarle suavemente o acompañarlo durante la alimentación puede calmarlo y fortalecer el vínculo.',
+        feedback: 'El apego no depende del tipo de parto ni del primer contacto. Lo que importa es la presencia, el cariño y el tiempo compartido.',
       },
     ],
   },
   2: {
-    prompt: '¿Qué efecto puede tener el método canguro en tu bebé?',
+    prompt: '¿Por qué se prefiere la sonda al dedo en vez de la mamadera?',
     options: [
       {
-        text: 'Ayudar a regular temperatura, respiración y vínculo',
+        text: 'Porque la mamadera es más difícil de limpiar.',
+        correct: false,
+        feedback: 'La razón principal es que la mamadera puede alterar el patrón de succión natural del bebé, dificultando el acople al pecho materno.',
+      },
+      {
+        text: 'Porque la mamadera puede alterar el patrón de succión y dificultar el acople al pecho.',
         correct: true,
-        feedback: 'Muy bien. El piel con piel puede estabilizar el cuerpo de tu bebé y también crear un momento de cercanía para ambos.',
+        feedback: 'La sonda al dedo protege la succión natural del bebé mientras se alimenta de forma segura.',
       },
       {
-        text: 'Solo sirve cuando el bebé ya está completamente estable',
+        text: 'Porque el bebé absorbe más leche con la sonda.',
         correct: false,
-        feedback: 'Es una duda muy común. Muchas veces se puede empezar antes de una estabilidad completa, siempre con autorización y guía del equipo de salud.',
-      },
-      {
-        text: 'Debe hacerlo solamente la mamá',
-        correct: false,
-        feedback: 'No pasa nada: esta idea aparece mucho. Mamá y papá pueden practicarlo si el equipo lo permite; ambos pueden entregar calma y calor.',
+        feedback: 'La cantidad de leche no es la razón. La clave es proteger el patrón de succión para que el bebé pueda volver al pecho materno.',
       },
     ],
   },
   3: {
-    prompt: 'Si ves piel delgada, lanugo o proporciones distintas, ¿qué puede significar?',
+    prompt: '¿Cuál es el objetivo principal de la alimentación por sonda al pecho?',
     options: [
       {
-        text: 'Que muchas de esas características son esperables en prematuros',
+        text: 'Reemplazar la lactancia cuando la madre no tiene leche suficiente.',
+        correct: false,
+        feedback: 'La sonda al pecho no reemplaza la lactancia: la estimula. Mientras el bebé succiona, se activa la producción de leche materna.',
+      },
+      {
+        text: 'Estimular la producción de leche mientras el bebé succiona el pecho.',
         correct: true,
-        feedback: 'Exacto. Su cuerpo sigue desarrollándose y muchas cosas que impactan al principio son parte de esta etapa.',
+        feedback: 'La succión activa la glándula mamaria y ayuda a establecer o aumentar la producción de leche.',
       },
       {
-        text: 'Que necesariamente algo está mal',
+        text: 'Evitar que el bebé se canse durante la toma.',
         correct: false,
-        feedback: 'Es comprensible preocuparse al verlo distinto. Aun así, piel delgada, lanugo y movimientos inmaduros pueden ser normales para su edad gestacional.',
-      },
-      {
-        text: 'Que los cables y tubos no tienen una función clara',
-        correct: false,
-        feedback: 'Puede ser abrumador ver tantos dispositivos. Cada uno tiene un propósito: vigilar, alimentar o ayudar a respirar cuando tu bebé lo necesita.',
+        feedback: 'Aunque también puede ser cómodo, el objetivo principal es estimular la producción de leche materna y facilitar la transición de mamadera a pecho.',
       },
     ],
   },
   4: {
-    prompt: 'Cuando suena una alarma del monitor, ¿qué es lo más seguro?',
+    prompt: '¿Con qué frecuencia se recomienda extraer leche para mantener la producción?',
     options: [
       {
-        text: 'Mantener la calma y llamar al equipo si hace falta',
+        text: 'Una vez al día por la mañana.',
+        correct: false,
+        feedback: 'Una vez al día no es suficiente para mantener una buena producción. La frecuencia recomendada es cada 3 horas, incluso de noche.',
+      },
+      {
+        text: 'Cada 3 horas, incluso de noche.',
         correct: true,
-        feedback: 'Muy bien. No toda alarma es una emergencia, y el equipo sabe interpretar cuándo actuar.',
+        feedback: 'La extracción frecuente imita el ritmo natural de alimentación del bebé y es clave para mantener la producción.',
       },
       {
-        text: 'Ajustar sensores o cables por cuenta propia',
+        text: 'Solo cuando los pechos se sientan muy cargados.',
         correct: false,
-        feedback: 'La intención de ayudar es muy natural, pero es mejor no manipular los monitores. Llama a la enfermera para que revise con seguridad.',
-      },
-      {
-        text: 'Asumir que siempre es una emergencia grave',
-        correct: false,
-        feedback: 'Es normal asustarse con el sonido. A veces la alarma aparece por movimiento o un sensor suelto; observa a tu bebé y pide apoyo al equipo.',
+        feedback: 'Esperar a sentir los pechos muy cargados puede reducir la producción con el tiempo. Lo ideal es extraer de forma regular, cada 3 horas.',
       },
     ],
   },
   5: {
-    prompt: 'En el método canguro, ¿qué postura ayuda a cuidar la vía aérea?',
+    prompt: '¿Cuánto tiempo puede mantenerse la leche materna en el refrigerador?',
     options: [
       {
-        text: 'Bebé vertical, cabeza hacia un lado y un poco extendida',
+        text: '24 horas.',
+        correct: false,
+        feedback: 'La leche en refrigerador dura más: hasta 5 días en la primera bandeja, nunca en la puerta.',
+      },
+      {
+        text: '3 días.',
+        correct: false,
+        feedback: 'La leche en refrigerador puede durar más tiempo si se almacena correctamente. El plazo es de 5 días en la primera bandeja.',
+      },
+      {
+        text: '5 días en la primera bandeja, nunca en la puerta.',
         correct: true,
-        feedback: 'Muy bien. Esa postura ayuda a que respire cómodo y seguro durante el contacto piel con piel.',
-      },
-      {
-        text: 'Bebé completamente horizontal sobre el pecho',
-        correct: false,
-        feedback: 'Buena pregunta para repasar. En canguro se busca una posición vertical, con la cabeza girada y ligeramente extendida para proteger la respiración.',
-      },
-      {
-        text: 'Bebé con la cara hundida contra el pecho',
-        correct: false,
-        feedback: 'Es importante corregirlo con calma. La nariz y boca deben quedar libres; pide ayuda al equipo para acomodarlo sin miedo.',
+        feedback: 'Almacenar bien conserva la leche con todas sus propiedades por más tiempo.',
       },
     ],
   },
   6: {
-    prompt: '¿Qué puede ayudar a estimular la producción de leche?',
+    prompt: '¿Cómo saber si el bebé está tomando bien el pecho?',
     options: [
       {
-        text: 'Extracción frecuente y contacto piel con piel cuando se pueda',
+        text: 'Deglute de forma rítmica, los pechos quedan blandos y no sientes dolor.',
         correct: true,
-        feedback: 'Muy bien. La frecuencia y el contacto con tu bebé pueden apoyar la producción. Y si baja, no significa que hayas fallado.',
+        feedback: 'Estos son los tres indicadores más claros de una toma efectiva y un acople correcto.',
       },
       {
-        text: 'Esperar muchas horas para juntar más leche',
+        text: 'Tarda más de 30 minutos en cada toma.',
         correct: false,
-        feedback: 'Es una idea comprensible, pero suele ayudar más extraer con frecuencia. Tu cuerpo responde al estímulo repetido.',
+        feedback: 'Una toma larga puede ser señal de un acople inadecuado. Un bebé que toma bien suele vaciarse eficientemente.',
       },
       {
-        text: 'Culparte si la producción cambia',
+        text: 'Llora después de cada toma.',
         correct: false,
-        feedback: 'Nada de culpa aquí. El estrés y el cansancio influyen mucho; pedir apoyo de lactancia también es parte del cuidado.',
+        feedback: 'El llanto frecuente después de tomar puede indicar que el bebé no está quedando satisfecho. Un buen acople permite vaciamiento completo.',
       },
     ],
   },
   7: {
-    prompt: 'Mientras tu bebé usa sonda, ¿qué puede apoyar su aprendizaje para alimentarse?',
+    prompt: '¿Hasta cuándo se recomienda usar el enlulamiento?',
     options: [
       {
-        text: 'Acercarlo al pecho y usar succión no nutritiva si el equipo lo autoriza',
+        text: 'Durante el primer año de vida.',
+        correct: false,
+        feedback: 'El enlulamiento debe dejarse antes: aproximadamente a los 4 meses, cuando el bebé comienza a aprender a girarse.',
+      },
+      {
+        text: 'Hasta los 4 meses, cuando el bebé aprende a girarse.',
         correct: true,
-        feedback: 'Muy bien. Esos momentos pueden ayudar a asociar el pecho con calma, olor, contacto y alimentación.',
+        feedback: 'Cuando el bebé comienza a girar, el enlulamiento puede ser un riesgo, ya que podría quedar boca abajo y no poder girarse solo.',
       },
       {
-        text: 'Pensar que la lactancia ya no será posible',
+        text: 'Solo los primeros 15 días de vida.',
         correct: false,
-        feedback: 'Es normal sentir esa preocupación. La sonda no cierra la puerta a la lactancia; muchas veces acompaña el proceso mientras el bebé madura.',
-      },
-      {
-        text: 'Forzarlo a succionar aunque se canse',
-        correct: false,
-        feedback: 'La paciencia es clave. Si se cansa, no es falta de ganas: está aprendiendo y necesita pausas seguras.',
+        feedback: 'El enlulamiento puede usarse más tiempo: hasta que el bebé comience a intentar girarse, lo que ocurre alrededor de los 4 meses.',
       },
     ],
   },
   8: {
-    prompt: '¿Cómo conviene mirar el desarrollo de un bebé prematuro?',
+    prompt: '¿Qué dirección debe seguir el masaje abdominal para ser efectivo?',
     options: [
       {
-        text: 'Según su edad corregida y su propio ritmo',
+        text: 'En sentido de las agujas del reloj, siguiendo el trayecto intestinal.',
         correct: true,
-        feedback: 'Exacto. La edad corregida ayuda a entender mejor sus avances sin exigirle como si hubiese nacido a término.',
+        feedback: 'Este sentido sigue el recorrido natural del intestino y favorece el movimiento de gases hacia la salida.',
       },
       {
-        text: 'Comparándolo siempre con bebés nacidos a término',
+        text: 'En cualquier dirección, lo importante es la presión.',
         correct: false,
-        feedback: 'Es muy humano comparar, pero puede generar presión. Tu bebé tiene su propio calendario y merece ser mirado desde ahí.',
+        feedback: 'La dirección importa: el sentido de las agujas del reloj sigue el trayecto intestinal y ayuda a mover los gases de forma natural.',
       },
       {
-        text: 'Esperando que todos los hitos lleguen al mismo tiempo',
+        text: 'De arriba hacia abajo únicamente.',
         correct: false,
-        feedback: 'Cada avance puede llegar con ritmos distintos. Lo importante es observar tendencias y consultar dudas con el equipo.',
+        feedback: 'El masaje incluye movimientos circulares alrededor del ombligo y del abdomen, siempre en sentido de las agujas del reloj.',
       },
     ],
   },
   9: {
-    prompt: '¿Qué rol cumple el ECMO cuando se indica?',
+    prompt: '¿Cuál es la señal más importante para verificar que el porteo es seguro?',
     options: [
       {
-        text: 'Apoyar temporalmente corazón y pulmones mientras el cuerpo se estabiliza',
+        text: 'Que el bebé esté mirando hacia afuera para ver el entorno.',
+        correct: false,
+        feedback: 'Al contrario: el bebé nunca debe mirar hacia afuera. Siempre debe mirar hacia quien lo porta, para mantener posición segura y contacto visual.',
+      },
+      {
+        text: 'Que el bebé no llore durante el porteo.',
+        correct: false,
+        feedback: 'El llanto no es el único indicador de seguridad. Lo más importante es verificar la vía aérea: el mentón despejado del pecho y la nariz libre para respirar.',
+      },
+      {
+        text: 'Que el mentón esté despejado del pecho y la nariz libre para respirar.',
         correct: true,
-        feedback: 'Muy bien. El ECMO es un soporte avanzado y temporal para dar tiempo a que el cuerpo de tu bebé se recupere.',
-      },
-      {
-        text: 'Curar por sí sola la enfermedad de base',
-        correct: false,
-        feedback: 'Es fácil pensarlo así por lo complejo que se ve. En realidad, el ECMO sostiene al cuerpo mientras otros tratamientos y la recuperación hacen su parte.',
-      },
-      {
-        text: 'Eliminar la importancia de tu presencia',
-        correct: false,
-        feedback: 'Tu presencia sigue teniendo valor. Aunque el contacto sea limitado, tu voz y cercanía pueden acompañar a tu bebé.',
+        feedback: 'La vía aérea es la prioridad absoluta en el porteo. Siempre verifica que el bebé pueda respirar con facilidad.',
       },
     ],
   },
   10: {
-    prompt: 'Antes y después del alta, ¿qué es importante recordar?',
+    prompt: "¿Qué significa que el resultado del screening auditivo sea 'REFIERE'?",
     options: [
       {
-        text: 'Preparar un ambiente tranquilo y conocer señales de alerta',
+        text: 'Que el bebé tiene confirmada una pérdida auditiva.',
+        correct: false,
+        feedback: 'REFIERE no confirma sordera. Indica una sospecha que requiere más evaluación, ya sea repetir el examen o consultar al otorrinolaringólogo.',
+      },
+      {
+        text: 'Que hay una sospecha de audición disminuida y se necesita más evaluación.',
         correct: true,
-        feedback: 'Muy bien. El alta es un logro, y tener claridad sobre cuidados y señales de alerta ayuda a llegar a casa con más calma.',
+        feedback: 'REFIERE no significa diagnóstico. Es una señal para continuar estudiando, no para alarmarse.',
       },
       {
-        text: 'Recibir muchas visitas para celebrar de inmediato',
+        text: "Que el bebé pasó el examen sin ningún problema.",
         correct: false,
-        feedback: 'La celebración puede esperar un poco. Al principio suele ayudar un ambiente tranquilo, con pocos estímulos y más descanso.',
-      },
-      {
-        text: 'Evitar consultar para no molestar al equipo',
-        correct: false,
-        feedback: 'Consultar no molesta. Si notas dificultad para respirar, cambios de color, fiebre o rechazo a alimentarse, pide orientación o atención.',
+        feedback: "Cuando el bebé pasa sin problemas, el resultado es 'PASA'. 'REFIERE' indica que se necesita más evaluación.",
       },
     ],
   },
-};
+  60: {
+    prompt: '¿Cuál es la técnica correcta para un bebé menor de 1 año que se está atragantando?',
+    options: [
+      {
+        text: '5 palmadas en la espalda alternadas con 5 compresiones en el centro del pecho.',
+        correct: true,
+        feedback: 'Esta secuencia usa la presión del aire en los pulmones para expulsar el objeto obstructor.',
+      },
+      {
+        text: 'Compresiones abdominales por encima del ombligo, como en adultos.',
+        correct: false,
+        feedback: 'Las compresiones abdominales son para niños mayores de 1 año. En bebés, se usan palmadas en la espalda y compresiones en el pecho.',
+      },
+      {
+        text: 'Introducir un dedo en la boca para sacar el objeto.',
+        correct: false,
+        feedback: 'Nunca introduzcas el dedo en la boca del bebé: puedes empujar el objeto más adentro. Usa palmadas y compresiones en su lugar.',
+      },
+    ],
+  },
+  61: {
+    prompt: '¿Cuál es la posición más segura para instalar la silla del bebé en el auto?',
+    options: [
+      {
+        text: 'En el asiento del copiloto, frente al airbag, para que lo veas mejor.',
+        correct: false,
+        feedback: 'El asiento del copiloto con airbag activo es el lugar más peligroso para una silla infantil. El airbag puede causar lesiones graves al activarse.',
+      },
+      {
+        text: 'En el centro del asiento trasero, con el anclaje correcto.',
+        correct: true,
+        feedback: 'El centro del asiento trasero es la posición más protegida en caso de impacto lateral. Verifica que el movimiento lateral no supere 2,5 cm.',
+      },
+      {
+        text: 'En cualquier asiento trasero, siempre mirando hacia adelante.',
+        correct: false,
+        feedback: 'La dirección depende de la edad y peso del bebé, y de las instrucciones del fabricante. Algunos bebés deben ir mirando hacia atrás por más tiempo.',
+      },
+    ],
+  },
+}
 
 Object.keys(STAGE_CAPSULE_CONTENT).forEach(id => {
   CAP_QUIZZES[id] = {
@@ -1103,12 +1301,31 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
               fontFamily: CAP_FB, fontSize: 15, color: KUN.ink, fontWeight: 400,
               lineHeight: 1.65,
             }}>{page.text}</div>
+            {page.image && (
+              <img src={page.image} alt="" style={{
+                marginTop: 18, width: '100%', borderRadius: 18, display: 'block',
+                border: `1px solid ${KUN.hair}`,
+              }} />
+            )}
           </div>
         )}
 
         {/* ── Página de lista ── */}
         {page.kind === 'list' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {page.image && (
+              <img src={page.image} alt="" style={{
+                width: '100%', borderRadius: 18, display: 'block',
+                border: `1px solid ${KUN.hair}`, marginBottom: 4,
+              }} />
+            )}
+            {page.note && (
+              <div style={{
+                fontFamily: CAP_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 500,
+                padding: '10px 14px', background: KUN.accentSoft, borderRadius: 12,
+                lineHeight: 1.5,
+              }}>{page.note}</div>
+            )}
             {page.items.map((item, i) => (
               <div key={i} style={{
                 background: '#fff', borderRadius: 22, padding: '16px 18px',
@@ -1127,10 +1344,12 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
                     fontFamily: CAP_FT, fontSize: 15, fontWeight: 700, color: KUN.ink,
                     letterSpacing: -0.2, marginBottom: 6,
                   }}>{item.title}</div>
-                  <div style={{
-                    fontFamily: CAP_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400,
-                    lineHeight: 1.55,
-                  }}>{item.text}</div>
+                  {item.text ? (
+                    <div style={{
+                      fontFamily: CAP_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400,
+                      lineHeight: 1.55,
+                    }}>{item.text}</div>
+                  ) : null}
                 </div>
               </div>
             ))}

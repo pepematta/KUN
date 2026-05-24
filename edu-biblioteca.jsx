@@ -7,16 +7,18 @@ const B_FB = 'Poppins, sans-serif';
 // Catálogo compartido de las cápsulas. El personal de salud puede reemplazarlo
 // desde el editor clínico guardado en localStorage.
 const DEFAULT_CAPSULAS = [
-  { id: 1,  title: 'Tu bebé empezó a alimentarse por sonda', dur: '4 min',  topic: 'Alimentación por sonda' },
-  { id: 2,  title: 'Método canguro: cómo empezar',           dur: '6 min',  topic: 'Método canguro' },
-  { id: 3,  title: 'Cómo se ve tu bebé hoy',                 dur: '3 min',  topic: 'Prematuridad' },
-  { id: 4,  title: 'Entender los monitores',                  dur: '5 min',  topic: 'Equipos y monitores' },
-  { id: 5,  title: 'Posición correcta en el canguro',         dur: '4 min',  topic: 'Método canguro' },
-  { id: 6,  title: 'Producción de leche materna',             dur: '5 min',  topic: 'Lactancia' },
-  { id: 7,  title: 'Lactancia con sonda',                     dur: '4 min',  topic: 'Lactancia' },
-  { id: 8,  title: 'Etapas del desarrollo prematuro',         dur: '5 min',  topic: 'Prematuridad' },
-  { id: 9,  title: 'Qué es el ECMO',                          dur: '4 min',  topic: 'ECMO' },
-  { id: 10, title: 'Cuidados al alta',                        dur: '6 min',  topic: 'Alta y hogar' },
+  { id: 1,  title: 'El apego en la UCIN',               dur: '5 min',  topic: 'Apego y vínculo' },
+  { id: 2,  title: 'Sonda al dedo',                     dur: '5 min',  topic: 'Alimentación' },
+  { id: 3,  title: 'Sonda al pecho',                    dur: '5 min',  topic: 'Alimentación' },
+  { id: 4,  title: 'Extracción de leche',               dur: '5 min',  topic: 'Lactancia' },
+  { id: 5,  title: 'Conservación de leche',             dur: '4 min',  topic: 'Lactancia' },
+  { id: 6,  title: 'Lactancia materna',                 dur: '5 min',  topic: 'Lactancia' },
+  { id: 7,  title: 'El enlulamiento',                   dur: '4 min',  topic: 'Alta y hogar' },
+  { id: 8,  title: 'Masaje anticólico',                 dur: '5 min',  topic: 'Alta y hogar' },
+  { id: 9,  title: 'Porteo seguro',                     dur: '5 min',  topic: 'Alta y hogar' },
+  { id: 10, title: 'Screening auditivo',                dur: '4 min',  topic: 'Alta y hogar' },
+  { id: 60, title: 'Maniobra de Heimlich',              dur: '5 min',  topic: 'Primeros auxilios' },
+  { id: 61, title: 'Traslado seguro en auto',           dur: '5 min',  topic: 'Alta y hogar' },
   { id: 11, title: 'Conocer la unidad neonatal',               dur: '3 min',  topic: 'Cuidados por etapa' },
   { id: 12, title: 'Horarios de visita y a quién preguntar',   dur: '4 min',  topic: 'Cuidados por etapa' },
   { id: 13, title: 'Ley Mila y acompañamiento familiar',       dur: '4 min',  topic: 'Cuidados por etapa' },
@@ -59,14 +61,12 @@ window.CAPSULAS = CAPSULAS;
 
 // Color por tema — usa la paleta DS
 const TOPIC_COLOR = {
-  'Alimentación por sonda': KUN.sun,
-  'Lactancia':              KUN.apple,
-  'Prematuridad':           KUN.rosehip,
-  'Equipos y monitores':    KUN.clear,
-  'Método canguro':         KUN.viola,
-  'ECMO':                   KUN.clear,
-  'Alta y hogar':           KUN.apple,
-  'Cuidados por etapa':      KUN.rosehip,
+  'Apego y vínculo':   KUN.rosehip,
+  'Alimentación':      KUN.sun,
+  'Lactancia':         KUN.apple,
+  'Alta y hogar':      KUN.apple,
+  'Primeros auxilios': KUN.viola,
+  'Cuidados por etapa': KUN.rosehip,
 };
 
 function SearchField() {
@@ -89,7 +89,7 @@ function SearchField() {
 }
 
 function CategoryChips({ active, onChange }) {
-  const chips = ['Todo', 'Cuidados por etapa', 'Lactancia', 'Prematuridad', 'Método canguro', 'ECMO', 'Alta y hogar'];
+  const chips = ['Todo', 'Cuidados por etapa', 'Lactancia', 'Alimentación', 'Alta y hogar', 'Apego y vínculo', 'Primeros auxilios'];
   return (
     <div style={{
       display:'flex', gap: 8, padding: '0 20px 18px',
