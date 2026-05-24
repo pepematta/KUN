@@ -17,6 +17,31 @@ const DEFAULT_CAPSULAS = [
   { id: 8,  title: 'Etapas del desarrollo prematuro',         dur: '5 min',  topic: 'Prematuridad' },
   { id: 9,  title: 'Qué es el ECMO',                          dur: '4 min',  topic: 'ECMO' },
   { id: 10, title: 'Cuidados al alta',                        dur: '6 min',  topic: 'Alta y hogar' },
+  { id: 11, title: 'Conocer la unidad neonatal',               dur: '3 min',  topic: 'Cuidados por etapa' },
+  { id: 12, title: 'Horarios de visita y a quién preguntar',   dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 13, title: 'Ley Mila y acompañamiento familiar',       dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 14, title: 'Lavado de manos y normas de ingreso',      dur: '3 min',  topic: 'Cuidados por etapa' },
+  { id: 15, title: 'Primeros equipos que verás',               dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 21, title: 'Qué significa estar en UCI neonatal',      dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 22, title: 'Monitores, alarmas y tubos',               dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 23, title: 'Cómo tocar y acompañar con seguridad',     dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 24, title: 'Preguntas clave para la visita médica',    dur: '3 min',  topic: 'Cuidados por etapa' },
+  { id: 25, title: 'Pequeñas señales de avance',               dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 31, title: 'Qué cambia en Intermedio A',               dur: '3 min',  topic: 'Cuidados por etapa' },
+  { id: 32, title: 'Muda y aseo con apoyo',                    dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 33, title: 'Piel con piel cuando está indicado',       dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 34, title: 'Primeras señales de hambre y cansancio',   dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 35, title: 'Alimentación paso a paso',                 dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 41, title: 'Qué practicar antes del alta',             dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 42, title: 'Mamadera, pecho y ritmos de alimentación', dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 43, title: 'Medicamentos e indicaciones',              dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 44, title: 'Sueño seguro desde el hospital',           dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 45, title: 'Checklist familiar de alta',               dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 51, title: 'Primeros días en casa',                    dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 52, title: 'Controles y seguimiento',                  dur: '3 min',  topic: 'Cuidados por etapa' },
+  { id: 53, title: 'Signos de alarma',                         dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 54, title: 'Rutina de alimentación y medicamentos',    dur: '5 min',  topic: 'Cuidados por etapa' },
+  { id: 55, title: 'Cuidar también a la familia',              dur: '4 min',  topic: 'Cuidados por etapa' },
 ];
 
 const CAPSULAS = (() => {
@@ -41,6 +66,7 @@ const TOPIC_COLOR = {
   'Método canguro':         KUN.viola,
   'ECMO':                   KUN.clear,
   'Alta y hogar':           KUN.apple,
+  'Cuidados por etapa':      KUN.rosehip,
 };
 
 function SearchField() {
@@ -63,7 +89,7 @@ function SearchField() {
 }
 
 function CategoryChips({ active, onChange }) {
-  const chips = ['Todo', 'Lactancia', 'Prematuridad', 'Método canguro', 'ECMO', 'Alta y hogar'];
+  const chips = ['Todo', 'Cuidados por etapa', 'Lactancia', 'Prematuridad', 'Método canguro', 'ECMO', 'Alta y hogar'];
   return (
     <div style={{
       display:'flex', gap: 8, padding: '0 20px 18px',

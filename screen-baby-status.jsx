@@ -11,10 +11,11 @@ const BABY_STATUS_CATS = [
     title: '¿Dónde está tu bebé?',
     type: 'radio',
     options: [
-      { label: 'UCI',           info: 'Unidad de Cuidados Intensivos neonatales. Máximo monitoreo y soporte para bebés con necesidades críticas.' },
-      { label: 'Intermedio A',  info: 'Unidad de cuidados intermedios. Monitoreo constante pero etapa más estable.' },
-      { label: 'Intermedio B',  info: 'Segunda unidad intermedia, para bebés progresando bien hacia el alta.' },
-      { label: 'Alta',          info: 'Tu bebé recibió el alta hospitalaria y continúa su desarrollo en casa.' },
+      { label: 'Recién ingresado', info: 'Primeros momentos en la unidad neonatal. Sirve para orientarse, conocer al equipo y entender las normas básicas.' },
+      { label: 'UCI',              info: 'Unidad de Cuidados Intensivos neonatales. Máximo monitoreo y soporte para bebés con necesidades críticas.' },
+      { label: 'Intermedio A',     info: 'Unidad de cuidados intermedios. Monitoreo constante pero etapa más estable.' },
+      { label: 'Intermedio B',     info: 'Segunda unidad intermedia, para bebés progresando bien hacia el alta.' },
+      { label: 'Dado de alta',     info: 'Tu bebé recibió el alta hospitalaria y continúa su desarrollo en casa.' },
     ],
   },
   {
@@ -93,7 +94,7 @@ function generateBabyStatusSegments(status, babyName) {
   const chip  = (label, color) => segs.push({ chip: label, chipColor: color });
 
   // ── Lugar + Temperatura (combined sentence) ─────────────────────────────────
-  if (status.lugar === 'Alta') {
+  if (status.lugar === 'Alta' || status.lugar === 'Dado de alta') {
     push(`${name} ya está en casa. ¡Un gran paso para toda la familia! `);
   } else if (status.lugar) {
     const lugar = status.lugar;
@@ -101,7 +102,12 @@ function generateBabyStatusSegments(status, babyName) {
     const intro = (lugar === 'UCI' || lugar === 'Intermedio B') ? `${name} está en ` : `${name} se encuentra en `;
     push(intro); chip(lugar, 'apple');
 
-    if (lugar === 'UCI') {
+    if (lugar === 'Recién ingresado') {
+      if (temp === 'Incubadora')             { push(', protegida en su '); chip('incubadora', 'clear'); push(' mientras el equipo la evalúa. '); }
+      else if (temp === 'Cuna de calor radiante') { push(', bajo una '); chip('cuna de calor radiante', 'clear'); push(' durante sus primeros cuidados. '); }
+      else if (temp === 'Cuna abierta')      { push(', descansando en su '); chip('cuna abierta', 'clear'); push('. '); }
+      else push('. ');
+    } else if (lugar === 'UCI') {
       if (temp === 'Incubadora')             { push(', protegida en su '); chip('incubadora', 'clear'); push('. '); }
       else if (temp === 'Cuna de calor radiante') { push(', bajo una '); chip('cuna de calor radiante', 'clear'); push('. '); }
       else push('. ');
@@ -588,6 +594,9 @@ window.ScreenBabyStatusOnboarding = ScreenBabyStatusOnboarding;
 
 // ─── ScreenBabyStatusEdit ─────────────────────────────────────────────────────
 function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
+  const normalizedCurrentStatus = currentStatus?.lugar === 'Alta'
+    ? { ...currentStatus, lugar: 'Dado de alta' }
+    : currentStatus;
   const [status, setStatus] = React.useState({
     lugar: null,
     temperatura: null,
@@ -595,7 +604,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
     alimentacion: [],
     accesos: [],
     diagnosticos: [],
-    ...(currentStatus || {}),
+    ...(normalizedCurrentStatus || {}),
   });
   const [openCat, setOpenCat] = React.useState(null);
 

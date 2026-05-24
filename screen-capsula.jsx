@@ -507,6 +507,61 @@ const CAP_LIBRARY = {
   },
 };
 
+const STAGE_CAPSULE_CONTENT = {
+  11: ['Conocer la unidad neonatal', 'Ubícate primero', 'La unidad suele tener recepción, lavamanos, sala clínica, lactario, baños y un lugar de espera familiar. Pide que te muestren el recorrido seguro para entrar y salir sin interrumpir procedimientos.', 'Pregunta dónde dejar tus cosas, dónde lavarte las manos, quién es la enfermera a cargo y cómo reconocer al equipo de turno.', ['Conoce recepción, lavamanos y lactario.', 'Identifica a la enfermera a cargo.', 'Pregunta el recorrido seguro de ingreso.']],
+  12: ['Visitas y equipo', 'Horarios de visita', 'Los horarios pueden cambiar según la condición de cada bebé y las normas del hospital. Guarda el horario oficial, los teléfonos útiles y el nombre del profesional que puede responder dudas durante el turno.', 'Si hay cambios de horario, pregunta si son por protocolo de la unidad, por un procedimiento o por la situación clínica de tu bebé.', ['Ten el horario oficial a mano.', 'Pregunta a quién acudir en cada turno.', 'Confirma normas especiales antes de invitar familiares.']],
+  13: ['Ley Mila', 'Acompañamiento familiar', 'La Ley Mila promueve el acompañamiento de niñas y niños hospitalizados por su madre, padre o cuidador significativo. En neonatología, el equipo puede ordenar este derecho con medidas de seguridad clínica.', 'Pregunta cómo se aplica en tu hospital, qué horarios contempla, qué identificación necesitas y cuáles son las normas cuando hay procedimientos.', ['La familia tiene un rol activo.', 'Cada unidad define medidas de seguridad.', 'Puedes pedir orientación sobre su aplicación local.']],
+  14: ['Higiene de ingreso', 'Manos limpias, bebé protegido', 'El lavado de manos es una de las formas más importantes de proteger a tu bebé. Retira anillos o pulseras, lava hasta muñecas, seca bien y usa alcohol gel si el equipo lo indica.', 'Evita entrar con síntomas respiratorios, fiebre o malestar. Si tienes dudas, avisa antes de ingresar.', ['Lávate antes de tocar al bebé o su entorno.', 'Retira accesorios de manos y muñecas.', 'Avisa si tienes síntomas.']],
+  15: ['Equipos iniciales', 'Lo que ves alrededor', 'Incubadora, monitores, bombas de infusión, sondas y sensores pueden impresionar al comienzo. Cada uno cumple una función: dar calor, vigilar signos vitales, administrar medicamentos o apoyar alimentación y respiración.', 'No muevas cables ni sensores por tu cuenta. Si algo se despega o suena, llama a la enfermera.', ['Los equipos tienen una función específica.', 'Las alarmas no siempre son emergencia.', 'El equipo clínico ajusta cables y sensores.']],
+
+  21: ['UCI neonatal', 'Cuidado intensivo', 'La UCI neonatal entrega monitoreo continuo y apoyo avanzado cuando un bebé necesita vigilancia estrecha. Estar en UCI no significa que todo irá mal; significa que hay un equipo mirando cada cambio de cerca.', 'Tu presencia sigue siendo importante: tu voz, tu calma y tus preguntas ayudan a conocer mejor a tu bebé.', ['UCI significa vigilancia estrecha.', 'El equipo observa cambios minuto a minuto.', 'Tu presencia también cuida.']],
+  22: ['Monitores y alarmas', 'Aprender los sonidos', 'Los monitores muestran frecuencia cardíaca, respiración y oxígeno. Las alarmas avisan cambios, pero a veces suenan porque un sensor se movió o el bebé cambió de posición.', 'Mira al bebé antes que al número y llama a la enfermera si algo te preocupa.', ['Los monitores vigilan signos vitales.', 'No toda alarma es emergencia.', 'No ajustes sensores sin ayuda.']],
+  23: ['Acompañar en UCI', 'Tocar con seguridad', 'En UCI a veces se puede tocar, contener o hablar suavemente, y otras veces conviene dejar descansar. Pregunta qué tipo de contacto es seguro ese día.', 'Una mano quieta y tibia suele calmar más que muchas caricias. El equipo te dirá cuándo probarlo.', ['Pregunta antes de tocar.', 'Prefiere contacto quieto y suave.', 'Respeta pausas y procedimientos.']],
+  24: ['Preguntas clínicas', 'Conversar con el equipo', 'Puedes anotar tres preguntas para la visita médica: qué cambió hoy, cuál es la prioridad de cuidado y qué puedes hacer tú. Eso ayuda a transformar la angustia en pasos concretos.', 'Si no entiendes una palabra, pide que la expliquen con ejemplos simples.', ['Pregunta qué cambió hoy.', 'Pregunta la prioridad del día.', 'Pide explicaciones simples.']],
+  25: ['Señales de avance', 'Pequeños progresos', 'En UCI los avances pueden ser pequeños: menos oxígeno, más estabilidad, mejor tolerancia a leche, menos pausas o más momentos tranquilos. Cada bebé tiene su ritmo.', 'Celebra pasos pequeños sin comparar con otros bebés.', ['Menos apoyo puede ser avance.', 'La tolerancia a leche importa.', 'Cada bebé progresa a su ritmo.']],
+
+  31: ['Intermedio A', 'Una etapa más estable', 'Intermedio A suele indicar que tu bebé está más estable, aunque todavía necesita monitoreo y apoyo. Es una buena etapa para aprender cuidados básicos con la guía de enfermería.', 'Pregunta qué tareas puedes empezar a practicar hoy.', ['Hay más estabilidad clínica.', 'Aún hay monitoreo y apoyo.', 'Puedes participar más.']],
+  32: ['Muda y aseo', 'Cuidar con apoyo', 'La muda, el aseo de piel y el cambio de posición pueden hacerse paso a paso con ayuda. Prepara todo antes de empezar para que el bebé no pierda calor ni se estrese.', 'Si tu bebé se pone pálido, muy inquieto o deja de tolerar, pausa y pide ayuda.', ['Prepara pañal y materiales.', 'Haz movimientos lentos.', 'Pausa si aparecen señales de cansancio.']],
+  33: ['Piel con piel', 'Contacto indicado', 'El contacto piel con piel ayuda a regular temperatura, respiración y vínculo. En Intermedio A puede comenzar o aumentar si el equipo confirma que es seguro.', 'La primera vez pide ayuda para trasladar al bebé y acomodar cables o sondas.', ['Confirma si está indicado.', 'Pide ayuda para el traslado.', 'Una posición segura protege la respiración.']],
+  34: ['Señales del bebé', 'Hambre y cansancio', 'Tu bebé puede mostrar hambre buscando, chupando, llevando manos a la boca o despertando más activo. También puede cansarse con bostezos, hipo, cambios de color o movimientos bruscos.', 'Aprender estas señales ayuda a cuidar sin sobreestimular.', ['Busca señales tempranas de hambre.', 'Reconoce señales de cansancio.', 'Menos estímulo también es cuidado.']],
+  35: ['Alimentación gradual', 'Paso a paso', 'La alimentación puede avanzar de sonda a pecho o mamadera según madurez, respiración y energía. A veces combinar métodos es parte normal del proceso.', 'Pregunta qué meta de alimentación tiene tu bebé esta semana.', ['La transición puede ser gradual.', 'Combinar métodos es común.', 'La energía del bebé guía el ritmo.']],
+
+  41: ['Preparación al alta', 'Practicar antes de casa', 'Intermedio B es una etapa para practicar rutinas: alimentar, mudar, tomar temperatura, administrar indicaciones y reconocer señales de alerta.', 'Pide hacer los cuidados con supervisión para ganar confianza antes de salir.', ['Practica cuidados diarios.', 'Haz preguntas mientras estás en la unidad.', 'La confianza se entrena.']],
+  42: ['Alimentación en Intermedio B', 'Ritmos y pausas', 'Pecho y mamadera requieren coordinación de succión, respiración y pausa. Observa si el bebé se cansa, cambia de color, tose o necesita descansar.', 'No fuerces volúmenes. El equipo te enseñará cómo acompañar el ritmo de tu bebé.', ['Respirar y succionar requiere energía.', 'Las pausas son normales.', 'No fuerces la toma.']],
+  43: ['Medicamentos', 'Indicaciones claras', 'Si tu bebé se irá con medicamentos, vitaminas o controles especiales, practica horarios y dosis con el equipo. Pide que todo quede escrito de forma simple.', 'Antes del alta, confirma qué hacer si vomita una dosis o si olvidas un horario.', ['Pide indicaciones por escrito.', 'Confirma dosis y horarios.', 'Pregunta qué hacer ante olvidos o vómitos.']],
+  44: ['Sueño seguro', 'Dormir en casa', 'La recomendación general es dormir boca arriba, en una superficie firme, sin almohadas, cojines ni peluches sueltos. Evita sobreabrigar y mantén una rutina simple.', 'Si tu bebé tiene una indicación distinta, sigue la recomendación del equipo tratante.', ['Boca arriba para dormir.', 'Superficie firme y despejada.', 'Evita sobreabrigo.']],
+  45: ['Checklist de alta', 'Lo que debe quedar listo', 'Antes de salir, confirma controles, medicamentos, alimentación, signos de alarma, carnet o documentos, teléfonos útiles y transporte seguro.', 'Una lista escrita reduce la ansiedad del último día.', ['Controles agendados.', 'Indicaciones y teléfonos claros.', 'Transporte y documentos listos.']],
+
+  51: ['Primeros días en casa', 'Llegar con calma', 'Los primeros días en casa pueden sentirse intensos. Mantén rutinas simples, limita visitas, lava manos con frecuencia y registra alimentación, pañales y medicamentos si te ayuda.', 'No necesitas hacerlo perfecto; necesitas hacerlo acompañado y con información clara.', ['Rutinas simples ayudan.', 'Limita visitas al inicio.', 'Registra lo importante si te ordena.']],
+  52: ['Controles', 'Seguimiento después del alta', 'Los controles permiten revisar peso, alimentación, respiración, medicamentos, vacunas y desarrollo. Lleva tus preguntas anotadas para aprovechar cada visita.', 'Si no puedes asistir a un control, avisa y reagenda lo antes posible.', ['Los controles son parte del tratamiento.', 'Lleva preguntas anotadas.', 'Reagenda si no puedes asistir.']],
+  53: ['Signos de alarma', 'Cuándo pedir ayuda', 'Consulta de inmediato si hay dificultad para respirar, color azulado, fiebre o temperatura baja, rechazo persistente de alimentación, decaimiento marcado o menos pañales mojados.', 'Ante duda, llama al teléfono indicado por tu equipo o acude a urgencia.', ['Respiración y color importan.', 'Fiebre o hipotermia requieren consulta.', 'Confía en tu intuición y pide ayuda.']],
+  54: ['Rutina en casa', 'Alimentación y medicamentos', 'Organiza horarios visibles para tomas, medicamentos y controles. Usa una alarma si lo necesitas y confirma con el equipo cómo preparar o conservar leche y medicamentos.', 'Evita cambiar dosis o fórmulas sin indicación clínica.', ['Usa horarios visibles.', 'Confirma conservación y preparación.', 'No cambies indicaciones sin consultar.']],
+  55: ['Cuidar a la familia', 'Sostener el cuidado', 'El alta también mueve emociones: alegría, miedo, cansancio y alerta constante. Reparte tareas, acepta ayuda concreta y pide apoyo si sientes que no descansas o la angustia no baja.', 'Cuidarte no compite con cuidar a tu bebé; lo hace más sostenible.', ['Reparte tareas concretas.', 'Acepta ayuda útil.', 'Pide apoyo emocional cuando lo necesites.']],
+};
+
+function makeStageCapsule(id, data) {
+  const [headerTitle, title, text, actionText, points] = data;
+  return {
+    headerTitle,
+    dur: '4 MIN',
+    pages: [
+      { num: 1, kind: 'text', accent: KUN.sageSoft, title, icon: () => CI.shield(KUN.sage), text },
+      { num: 2, kind: 'text', accent: KUN.accentSoft, title: 'Qué puedes hacer tú', icon: () => CI.heart(KUN.accent), text: actionText },
+      { num: 3, kind: 'list', title: 'Preguntas útiles', items: [
+        { title: 'Hoy', text: '¿Qué es lo más importante que debo saber en esta etapa?' },
+        { title: 'Mi rol', text: '¿Qué cuidado puedo practicar con supervisión?' },
+        { title: 'Seguridad', text: '¿Cuándo debo llamar al equipo o pedir ayuda?' },
+      ] },
+      { num: 4, kind: 'text', accent: KUN.sageSoft, title: 'Una idea para recordar', icon: () => CI.star(KUN.sage), text: 'Tu aprendizaje no tiene que ser perfecto ni completo en un día. Puedes volver a esta cápsula, preguntar de nuevo y avanzar por partes.' },
+      { num: 5, kind: 'summary', title: 'Lo que aprendiste hoy', points: points.map(point => ({ headline: point, sub: 'Guárdalo como una guía simple para esta etapa.' })) },
+    ],
+  };
+}
+
+Object.keys(STAGE_CAPSULE_CONTENT).forEach(id => {
+  CAP_LIBRARY[id] = makeStageCapsule(Number(id), STAGE_CAPSULE_CONTENT[id]);
+});
+
 // Exponer catálogo globalmente para otros screens
 window.CAP_LIBRARY = CAP_LIBRARY;
 
@@ -712,6 +767,29 @@ const CAP_QUIZZES = {
     ],
   },
 };
+
+Object.keys(STAGE_CAPSULE_CONTENT).forEach(id => {
+  CAP_QUIZZES[id] = {
+    prompt: '¿Qué idea ayuda más a cuidar con seguridad en esta etapa?',
+    options: [
+      {
+        text: 'Preguntar al equipo, seguir las indicaciones y avanzar paso a paso',
+        correct: true,
+        feedback: 'Exacto. Tu rol crece mejor cuando está acompañado por información clara y supervisión.',
+      },
+      {
+        text: 'Hacer todos los cuidados sin pedir ayuda para aprender más rápido',
+        correct: false,
+        feedback: 'Aprender con supervisión es más seguro para tu bebé y para ti.',
+      },
+      {
+        text: 'Comparar el avance de tu bebé con otros bebés de la unidad',
+        correct: false,
+        feedback: 'Cada bebé tiene su propio ritmo. La comparación suele aumentar la ansiedad.',
+      },
+    ],
+  };
+});
 
 // ── DS scoped fonts ──────────────────────────────────────────
 const CAP_FT = 'Quicksand, sans-serif';

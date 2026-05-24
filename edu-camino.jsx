@@ -4,7 +4,70 @@
 const C_FT = 'Quicksand, sans-serif';
 const C_FB = 'Poppins, sans-serif';
 
-function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
+const CAMINO_STAGE_PATHS = {
+  'Recién ingresado': {
+    label: 'Recién ingresado',
+    intro: 'Primer mapa para ubicarse, entender las reglas de la unidad y saber qué derechos acompañan a tu familia.',
+    caps: [
+      { capId: 11, title: 'Conocer la unidad neonatal', dur: '3 min' },
+      { capId: 12, title: 'Horarios de visita y a quién preguntar', dur: '4 min' },
+      { capId: 13, title: 'Ley Mila y acompañamiento familiar', dur: '4 min' },
+      { capId: 14, title: 'Lavado de manos y normas de ingreso', dur: '3 min' },
+      { capId: 15, title: 'Primeros equipos que verás', dur: '5 min' },
+    ],
+  },
+  UCI: {
+    label: 'UCI',
+    intro: 'Un camino para entender la vigilancia intensiva, acompañar con calma y conversar mejor con el equipo clínico.',
+    caps: [
+      { capId: 21, title: 'Qué significa estar en UCI neonatal', dur: '4 min' },
+      { capId: 22, title: 'Monitores, alarmas y tubos', dur: '5 min' },
+      { capId: 23, title: 'Cómo tocar y acompañar con seguridad', dur: '4 min' },
+      { capId: 24, title: 'Preguntas clave para la visita médica', dur: '3 min' },
+      { capId: 25, title: 'Pequeñas señales de avance', dur: '4 min' },
+    ],
+  },
+  'Intermedio A': {
+    label: 'Intermedio A',
+    intro: 'Aquí empieza una participación más activa: cuidados simples, contacto y lectura de señales del bebé.',
+    caps: [
+      { capId: 31, title: 'Qué cambia en Intermedio A', dur: '3 min' },
+      { capId: 32, title: 'Muda y aseo con apoyo', dur: '5 min' },
+      { capId: 33, title: 'Piel con piel cuando está indicado', dur: '5 min' },
+      { capId: 34, title: 'Primeras señales de hambre y cansancio', dur: '4 min' },
+      { capId: 35, title: 'Alimentación paso a paso', dur: '4 min' },
+    ],
+  },
+  'Intermedio B': {
+    label: 'Intermedio B',
+    intro: 'Una etapa para ganar autonomía y practicar rutinas parecidas a las que vivirán en casa.',
+    caps: [
+      { capId: 41, title: 'Qué practicar antes del alta', dur: '4 min' },
+      { capId: 42, title: 'Mamadera, pecho y ritmos de alimentación', dur: '5 min' },
+      { capId: 43, title: 'Medicamentos e indicaciones', dur: '4 min' },
+      { capId: 44, title: 'Sueño seguro desde el hospital', dur: '4 min' },
+      { capId: 45, title: 'Checklist familiar de alta', dur: '5 min' },
+    ],
+  },
+  'Dado de alta': {
+    label: 'Dado de alta',
+    intro: 'El camino de casa: organizar controles, reconocer alertas y sostener el cuidado sin sentirse solos.',
+    caps: [
+      { capId: 51, title: 'Primeros días en casa', dur: '4 min' },
+      { capId: 52, title: 'Controles y seguimiento', dur: '3 min' },
+      { capId: 53, title: 'Signos de alarma', dur: '5 min' },
+      { capId: 54, title: 'Rutina de alimentación y medicamentos', dur: '5 min' },
+      { capId: 55, title: 'Cuidar también a la familia', dur: '4 min' },
+    ],
+  },
+};
+
+function normalizeCaminoStage(stage) {
+  if (stage === 'Alta') return 'Dado de alta';
+  return CAMINO_STAGE_PATHS[stage] ? stage : 'Recién ingresado';
+}
+
+function CaminoHeader({ completedCount, totalCount, parentName, babyName, stagePath }) {
   const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   const displayName = parentName || 'padre/madre';
   const displayBaby = babyName || 'tu bebé';
@@ -51,7 +114,16 @@ function CaminoHeader({ completedCount, totalCount, parentName, babyName }) {
           fontFamily: C_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400,
         }}>
           <span style={{ width: 8, height: 8, borderRadius:'50%', background: KUN.brick }}/>
-          Pilar 1 · <span style={{ fontFamily: C_FT, color: KUN.ink, fontWeight: 700 }}>Cuerpo y cuidados de {displayBaby}</span>
+          {stagePath.label} · <span style={{ fontFamily: C_FT, color: KUN.ink, fontWeight: 700 }}>Cuidados básicos de {displayBaby}</span>
+        </div>
+        <div style={{
+          marginTop: 8,
+          fontFamily: C_FB,
+          fontSize: 12.5,
+          color: KUN.inkSoft,
+          lineHeight: 1.45,
+        }}>
+          {stagePath.intro}
         </div>
       </div>
     </div>
@@ -139,17 +211,17 @@ function Station({ state, num, title, dur, cx, cy, side, onClick }) {
   );
 }
 
-function CaminoPath({ onOpenCapsula, completedCapsulas, babyName }) {
+function CaminoPath({ onOpenCapsula, completedCapsulas, stagePath }) {
   const W = 390;
   const completed = completedCapsulas || [];
 
-  // Station order: fixed sequence. State computed from completedCapsulas.
-  const stationDefs = [
-    { num:1, title:'Cómo se ve tu bebé hoy',               dur:'3 min', x: 78,  y:  40, side:'right', capId: 3 },
-    { num:2, title:'Entender los monitores',                dur:'5 min', x: 312, y: 150, side:'left',  capId: 4 },
-    { num:3, title:'Método canguro: cómo empezar',          dur:'6 min', x: 78,  y: 280, side:'right', capId: 2 },
-    { num:4, title:'Tu bebé empezó a alimentarse por sonda', dur:'4 min', x: 312, y: 410, side:'left',  capId: 1 },
-  ];
+  const stationDefs = stagePath.caps.map((cap, idx) => ({
+    ...cap,
+    num: idx + 1,
+    x: idx % 2 === 0 ? 78 : 312,
+    y: 40 + (idx * 118),
+    side: idx % 2 === 0 ? 'right' : 'left',
+  }));
 
   let foundActive = false;
   const stations = stationDefs.map(s => {
@@ -231,15 +303,17 @@ function CaminoShapes() {
   );
 }
 
-function ScreenCamino({ onOpenCapsula, completedCapsulas, parentName, babyName }) {
-  const caminoCapIds = [3, 4, 2, 1];
+function ScreenCamino({ onOpenCapsula, completedCapsulas, parentName, babyName, babyStatus }) {
+  const stageKey = normalizeCaminoStage(babyStatus?.lugar);
+  const stagePath = CAMINO_STAGE_PATHS[stageKey];
+  const caminoCapIds = stagePath.caps.map(cap => cap.capId);
   const completedCount = (completedCapsulas || []).filter(id => caminoCapIds.includes(id)).length;
   return (
     <div style={{ position:'relative' }}>
       <CaminoShapes/>
       <div style={{ position:'relative', zIndex: 1 }}>
-        <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} parentName={parentName} babyName={babyName} />
-        <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} babyName={babyName} />
+        <CaminoHeader completedCount={completedCount} totalCount={caminoCapIds.length} parentName={parentName} babyName={babyName} stagePath={stagePath} />
+        <CaminoPath onOpenCapsula={onOpenCapsula} completedCapsulas={completedCapsulas} stagePath={stagePath} />
       </div>
     </div>
   );
