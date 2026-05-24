@@ -97,6 +97,61 @@ function ComAvatar({ name, color, size = 44 }) {
 const COM_FT = 'Quicksand, sans-serif';
 const COM_FB = 'Poppins, sans-serif';
 
+const normalizeComSearch = (value = '') => String(value)
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '');
+
+const cleanComTag = (value = '') => String(value)
+  .trim()
+  .replace(/^#+/, '')
+  .replace(/\s+/g, '')
+  .toLowerCase()
+  .slice(0, 24);
+
+function ComHashtagList({ tags = [] }) {
+  if (!tags.length) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+      {tags.map(tag => (
+        <span key={tag} style={{
+          padding: '5px 9px', borderRadius: 999,
+          background: KUN.sageSoft,
+          color: KUN.inkSoft,
+          fontFamily: COM_FT,
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: 0,
+        }}>#{tag}</span>
+      ))}
+    </div>
+  );
+}
+
+function CommunitySearchBox({ value, onChange }) {
+  return (
+    <div style={{ padding: '0 20px 12px' }}>
+      <div style={{
+        background: '#fff', borderRadius: 18, padding: '0 14px',
+        minHeight: 46, display: 'flex', alignItems: 'center', gap: 10,
+        border: `1.5px solid ${KUN.hair}`,
+      }}>
+        {COM_ICONS.search(KUN.inkMuted)}
+        <input
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder="Buscar por tema, palabra o hashtag..."
+          style={{
+            flex: 1, border: 'none', outline: 'none', background: 'transparent',
+            fontFamily: COM_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400,
+            minWidth: 0,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 // ── Subtabs principales (Chat / Foro) ──────────────
 function ComTopTabs({ active, onChange }) {
   const tabs = [
@@ -913,6 +968,7 @@ const QUESTIONS = [
     text: 'Mi bebé, que nació a las 24 semanas, ahora tiene 2 años y pesa 24 libras. ¿Cuántos años tiene tu bebé prematuro y cuánto pesa?',
     time: 'Hace 3 h',
     likes: 12, replies: 8,
+    tags: ['prematuro', 'peso', 'desarrollo', 'edad', 'ucin'],
     answers: [
       { author: 'Anónimo', anonymous: true, color: KUN.inkMuted, text: 'Mi hijo nació de 25 semanas 🩵 ahora tiene 3 años y pesa como 12 kg.', time: 'Hace 1 h' },
       { author: 'Carla',   color: '#B58E5F', text: 'La mía nació de 27 semanas, hoy tiene 2 años y está en 10,5 kg aprox.', time: 'Hace 30 min' },
@@ -927,6 +983,7 @@ const QUESTIONS = [
     text: 'Pasé de extraer 240 ml por sesión a solo 60 ml. Estoy preocupada y no sé qué cambió. ¿A alguien más le pasó? ¿Qué hicieron?',
     time: 'Hace 6 h',
     likes: 24, replies: 11,
+    tags: ['lactancia', 'leche', 'extraccion', 'produccion', 'apoyo'],
     answers: [],
   },
 ];
@@ -959,7 +1016,7 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
           }}>PREGUNTA</span>
           <div onClick={e => e.stopPropagation()}>
             <PostActionsMenu
-              isOwn={q.author === currentUser}
+              isOwn={q.author === currentUser || q.fresh}
               onReport={() => onReport && onReport(q.id)}
               onEdit={() => onEdit && onEdit(q.id)}
               onDelete={() => onDelete && onDelete(q.id)}
@@ -983,6 +1040,8 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
         fontFamily: COM_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400,
         lineHeight: 1.6,
       }}>{q.text}</div>
+
+      <ComHashtagList tags={q.tags} />
 
       {q.photo && <PhotoPreview label="Foto en la pregunta" />}
 
@@ -1057,6 +1116,7 @@ function QuestionThread({ qId, onBack, questions }) {
             fontFamily: COM_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400,
             lineHeight: 1.6,
           }}>{q.text}</div>
+          <ComHashtagList tags={q.tags} />
           {q.photo && <PhotoPreview label="Foto en la pregunta" />}
 
           {q.staffAnswer && (
@@ -1226,6 +1286,7 @@ const EXPERIENCES = [
     long: ' Sin imaginarlo, antes de tiempo, estás ahí con el miedo inundándote y con la casi nula posibilidad de escuchar llorar a tu bebé, de abrazarlo, darle un beso y llevarlo contigo…',
     time: 'Hace 2 h',
     likes: 47, replies: 9, photo: true,
+    tags: ['alta', 'chequeos', 'ucin', 'familia', 'esperanza'],
   },
 ];
 
@@ -1256,7 +1317,7 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
           }}>EXPERIENCIA</span>
           <div onClick={e => e.stopPropagation()}>
             <PostActionsMenu
-              isOwn={e.author === currentUser}
+              isOwn={e.author === currentUser || e.fresh}
               onReport={() => onReport && onReport(e.id)}
               onEdit={() => onEdit && onEdit(e.id)}
               onDelete={() => onDelete && onDelete(e.id)}
@@ -1274,6 +1335,7 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
         {expanded && <span>{e.long}</span>}
       </div>
       {e.photo && <PhotoPreview label="Foto de la experiencia" />}
+      <ComHashtagList tags={e.tags} />
       {!expanded && e.long && (
         <span onClick={() => setExpanded(true)} style={{
           display: 'inline-block', marginTop: 10,
@@ -1287,10 +1349,27 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
   );
 }
 
-function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDelete, moderationMode }) {
+function EmptyCommunitySearch({ query }) {
+  return (
+    <div style={{
+      margin: '0 20px', padding: '26px 18px', borderRadius: 22,
+      background: '#fff', border: `1.5px dashed ${KUN.inkFaint}`, textAlign: 'center',
+    }}>
+      <div style={{ fontFamily: COM_FT, fontSize: 15, fontWeight: 700, color: KUN.ink }}>
+        No encontramos entradas
+      </div>
+      <div style={{ fontFamily: COM_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 6 }}>
+        Prueba con otra palabra o con un hashtag relacionado con "{query}".
+      </div>
+    </div>
+  );
+}
+
+function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDelete, moderationMode, searchQuery = '' }) {
+  const list = questions || QUESTIONS;
   return (
     <div style={{ padding: '0 20px' }}>
-      {(questions || QUESTIONS).map(q => (
+      {list.map(q => (
         <QuestionCard
           key={q.id}
           q={q}
@@ -1302,14 +1381,15 @@ function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDel
           moderationMode={moderationMode}
         />
       ))}
+      {!list.length && <EmptyCommunitySearch query={searchQuery} />}
     </div>
   );
 }
 
-function ExperiencesFeed({ currentUser, onReport, onEdit, onDelete, moderationMode }) {
+function ExperiencesFeed({ experiences = EXPERIENCES, currentUser, onReport, onEdit, onDelete, moderationMode, searchQuery = '' }) {
   return (
     <div style={{ padding: '0 20px' }}>
-      {EXPERIENCES.map(e => (
+      {experiences.map(e => (
         <ExperienceCard
           key={e.id}
           e={e}
@@ -1320,23 +1400,36 @@ function ExperiencesFeed({ currentUser, onReport, onEdit, onDelete, moderationMo
           moderationMode={moderationMode}
         />
       ))}
+      {!experiences.length && <EmptyCommunitySearch query={searchQuery} />}
     </div>
   );
 }
 
 // ── New post sheet (bottom sheet simulado en pantalla) ──
-function NewPostSheet({ onClose, defaultKind = 'question' }) {
+function NewPostSheet({ onClose, defaultKind = 'question', onPublish }) {
   const [kind, setKind] = React.useState(defaultKind);
   const [anon, setAnon] = React.useState(false);
   const [posted, setPosted] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [body, setBody] = React.useState('');
   const [hasPhoto, setHasPhoto] = React.useState(false);
+  const [tagInput, setTagInput] = React.useState('');
+  const [tags, setTags] = React.useState([]);
 
-  const canPublish = kind === 'question' ? (title.trim() && body.trim()) : body.trim();
+  const canPublish = (kind === 'question' ? (title.trim() && body.trim()) : body.trim()) && tags.length === 5;
+
+  const addTag = () => {
+    const tag = cleanComTag(tagInput);
+    if (!tag || tags.includes(tag) || tags.length >= 5) return;
+    setTags(prev => [...prev, tag]);
+    setTagInput('');
+  };
+
+  const removeTag = (tag) => setTags(prev => prev.filter(item => item !== tag));
 
   const handlePublish = () => {
     if (!canPublish) return;
+    onPublish && onPublish({ kind, title: title.trim(), body: body.trim(), tags, anon, hasPhoto });
     setPosted(true);
     setTimeout(onClose, 1600);
   };
@@ -1384,7 +1477,7 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
           ].map(t => {
             const isA = t.id === kind;
             return (
-              <div key={t.id} onClick={() => { setKind(t.id); setTitle(''); setBody(''); }} style={{
+              <div key={t.id} onClick={() => { setKind(t.id); setTitle(''); setBody(''); setTags([]); setTagInput(''); }} style={{
                 flex: 1, textAlign: 'center', cursor: 'pointer',
                 padding: '10px 6px', borderRadius: 999,
                 background: isA ? KUN.brick : KUN.cardSoft,
@@ -1427,6 +1520,70 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
             style={{ ...sharedInputStyle }}
           />
           {hasPhoto && <PhotoPreview label="Foto lista para publicar" />}
+        </div>
+
+        <div style={{
+          background: '#fff', borderRadius: 22, padding: 14, marginBottom: 12,
+          border: `1px solid ${KUN.hair}`,
+        }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            marginBottom: 10, gap: 8,
+          }}>
+            <div style={{ fontFamily: COM_FT, fontSize: 13.5, fontWeight: 700, color: KUN.ink }}>
+              Hashtags de busqueda
+            </div>
+            <div style={{
+              fontFamily: COM_FT, fontSize: 12, fontWeight: 700,
+              color: tags.length === 5 ? KUN.brick : KUN.inkMuted,
+            }}>{tags.length}/5</div>
+          </div>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            border: `1.5px solid ${KUN.hair}`, borderRadius: 999,
+            padding: '6px 6px 6px 12px', marginBottom: 10,
+            background: KUN.bg,
+          }}>
+            <span style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.brick }}>#</span>
+            <input
+              value={tagInput}
+              onChange={e => setTagInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addTag();
+                }
+              }}
+              placeholder={tags.length >= 5 ? 'Ya agregaste 5 etiquetas' : 'ej: lactancia'}
+              disabled={tags.length >= 5}
+              style={{
+                flex: 1, border: 'none', outline: 'none', background: 'transparent',
+                fontFamily: COM_FB, fontSize: 13.5, color: KUN.ink, minWidth: 0,
+              }}
+            />
+            <button onClick={addTag} disabled={tags.length >= 5 || !cleanComTag(tagInput)} style={{
+              border: 'none', borderRadius: 999, padding: '8px 12px',
+              background: tags.length < 5 && cleanComTag(tagInput) ? KUN.brick : 'rgba(42,35,32,0.08)',
+              color: tags.length < 5 && cleanComTag(tagInput) ? '#fff' : KUN.inkMuted,
+              fontFamily: COM_FT, fontSize: 12.5, fontWeight: 700,
+              cursor: tags.length < 5 && cleanComTag(tagInput) ? 'pointer' : 'default',
+            }}>Agregar</button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+            {tags.map(tag => (
+              <button key={tag} onClick={() => removeTag(tag)} style={{
+                border: 'none', borderRadius: 999, padding: '7px 10px',
+                background: KUN.sageSoft, color: KUN.inkSoft,
+                fontFamily: COM_FT, fontSize: 12, fontWeight: 700,
+                cursor: 'pointer',
+              }}>#{tag} x</button>
+            ))}
+            {!tags.length && (
+              <span style={{ fontFamily: COM_FB, fontSize: 12, color: KUN.inkMuted }}>
+                Agrega exactamente 5 hashtags para publicar.
+              </span>
+            )}
+          </div>
         </div>
 
         <button onClick={() => setHasPhoto(p => !p)} style={{
@@ -1490,9 +1647,29 @@ function NewPostSheet({ onClose, defaultKind = 'question' }) {
   );
 }
 
-function CommunityView({ onNew, questions, focusQuestionId, currentUser, onReport, onEdit, onDelete, moderationMode, allowNew = true }) {
+function postMatchesSearch(post, query) {
+  const cleanQuery = normalizeComSearch(query).replace(/^#/, '').trim();
+  if (!cleanQuery) return true;
+  const terms = cleanQuery.split(/\s+/).filter(Boolean);
+  const haystack = normalizeComSearch([
+    post.author,
+    post.role,
+    post.category,
+    post.title,
+    post.text,
+    post.short,
+    post.long,
+    ...(post.tags || []),
+  ].filter(Boolean).join(' '));
+  return terms.every(term => haystack.includes(term));
+}
+
+function CommunityView({ onNew, questions, experiences, focusQuestionId, currentUser, onReport, onEdit, onDelete, moderationMode, allowNew = true }) {
   const [sub, setSub] = React.useState('questions');
   const [openQ, setOpenQ] = React.useState(null);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const filteredQuestions = (questions || QUESTIONS).filter(q => postMatchesSearch(q, searchQuery));
+  const filteredExperiences = (experiences || EXPERIENCES).filter(e => postMatchesSearch(e, searchQuery));
 
   React.useEffect(() => {
     setSub('questions');
@@ -1506,10 +1683,11 @@ function CommunityView({ onNew, questions, focusQuestionId, currentUser, onRepor
   return (
     <div style={{ position: 'relative', height: '100%' }}>
       <div style={{ paddingBottom: 100 }}>
+        <CommunitySearchBox value={searchQuery} onChange={setSearchQuery} />
         <CommunityInnerTabs active={sub} onChange={setSub} />
         {sub === 'questions'
-          ? <QuestionsFeed onOpen={setOpenQ} questions={questions} currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} moderationMode={moderationMode} />
-          : <ExperiencesFeed currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} moderationMode={moderationMode} />}
+          ? <QuestionsFeed onOpen={setOpenQ} questions={filteredQuestions} currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} moderationMode={moderationMode} searchQuery={searchQuery} />
+          : <ExperiencesFeed experiences={filteredExperiences} currentUser={currentUser} onReport={onReport} onEdit={onEdit} onDelete={onDelete} moderationMode={moderationMode} searchQuery={searchQuery} />}
       </div>
 
       {/* FAB nueva publicación */}
@@ -1532,16 +1710,31 @@ function CommunityView({ onNew, questions, focusQuestionId, currentUser, onRepor
 // ╚══════════════════════════════════════════════════════╝
 
 function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser = '', onReportSubmit, moderationMode = false, onModerateRemove, allowNew = true, hiddenIds = [] }) {
-  const mergedQuestions = [...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id))]
+  const [userPosts, setUserPosts] = React.useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('kun_community_posts_v1') || '{"questions":[],"experiences":[]}');
+    } catch {
+      return { questions: [], experiences: [] };
+    }
+  });
+  const saveUserPosts = (next) => {
+    setUserPosts(next);
+    try { localStorage.setItem('kun_community_posts_v1', JSON.stringify(next)); } catch {}
+  };
+  const userQuestions = userPosts.questions || [];
+  const userExperiences = userPosts.experiences || [];
+  const mergedQuestions = [...userQuestions, ...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id) && !userQuestions.some(userQ => userQ.id === q.id))]
     .filter(q => !hiddenIds.includes(q.id));
+  const mergedExperiences = [...userExperiences, ...EXPERIENCES]
+    .filter(e => !hiddenIds.includes(e.id));
   const [newPost, setNewPost] = React.useState(null);
   const [reportingPostId, setReportingPostId] = React.useState(null);
   const [reportingPostTitle, setReportingPostTitle] = React.useState('');
 
   const handleReport = (postId) => {
-    const post = mergedQuestions.find(q => q.id === postId);
+    const post = mergedQuestions.find(q => q.id === postId) || mergedExperiences.find(e => e.id === postId);
     setReportingPostId(postId);
-    setReportingPostTitle(post?.title || 'Entrada del foro');
+    setReportingPostTitle(post?.title || post?.short || 'Entrada del foro');
   };
 
   const handleReportSubmit = (reason) => {
@@ -1549,16 +1742,62 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
     console.log(`Post ${reportingPostId} reportado por: ${reason}`);
     setReportingPostId(null);
   };
+  const handlePublishPost = ({ kind, title, body, tags, anon, hasPhoto }) => {
+    const id = `${kind}-${Date.now()}`;
+    const author = anon ? 'Anonimo' : (currentUser || 'Tu');
+    const base = {
+      id,
+      author,
+      authorColor: anon ? KUN.inkMuted : KUN.rosehip,
+      color: anon ? KUN.inkMuted : KUN.rosehip,
+      role: anon ? 'Publicacion anonima' : 'Familia KUN',
+      time: 'Ahora',
+      likes: 0,
+      replies: 0,
+      tags,
+      photo: hasPhoto,
+      fresh: true,
+    };
+    if (kind === 'question') {
+      saveUserPosts({
+        ...userPosts,
+        questions: [{
+          ...base,
+          category: 'Comunidad',
+          title,
+          text: body,
+          answers: [],
+        }, ...userQuestions],
+      });
+    } else {
+      saveUserPosts({
+        ...userPosts,
+        experiences: [{
+          ...base,
+          short: body,
+          long: '',
+        }, ...userExperiences],
+      });
+    }
+  };
+  const handleDelete = (postId) => {
+    saveUserPosts({
+      questions: userQuestions.filter(q => q.id !== postId),
+      experiences: userExperiences.filter(e => e.id !== postId),
+    });
+    if (onModerateRemove) onModerateRemove(postId);
+  };
 
   return (
     <>
       <CommunityView
         questions={mergedQuestions}
+        experiences={mergedExperiences}
         focusQuestionId={focusQuestionId}
         currentUser={currentUser}
         onReport={handleReport}
         onEdit={() => {}}
-        onDelete={onModerateRemove || (() => {})}
+        onDelete={handleDelete}
         onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')}
         moderationMode={moderationMode}
         allowNew={allowNew}
@@ -1567,6 +1806,7 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
       {newPost && (
         <NewPostSheet
           defaultKind={newPost}
+          onPublish={handlePublishPost}
           onClose={() => setNewPost(null)}
         />
       )}

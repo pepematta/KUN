@@ -510,34 +510,34 @@ function DiaryIconButton({ children, onClick, muted = false }) {
 function DiaryAudioBar({ duration = '01:09', compact = false }) {
   return (
     <div style={{
-      height: compact ? 46 : 50, borderRadius: 20, background: KUN.inkSoft,
-      display:'flex', alignItems:'center', gap: 9,
-      padding: '0 12px', boxSizing:'border-box',
+      height: compact ? 38 : 42, borderRadius: 18, background: KUN.inkSoft,
+      display:'flex', alignItems:'center', gap: compact ? 5 : 6,
+      padding: compact ? '0 7px' : '0 8px', boxSizing:'border-box',
       color: '#fff', minWidth: 0,
       border: 'none',
     }}>
       <div style={{
-        width: compact ? 34 : 38, height: compact ? 34 : 38, borderRadius:'50%',
+        width: compact ? 26 : 28, height: compact ? 26 : 28, borderRadius:'50%',
         background: KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
       }}>
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
+        <svg width={compact ? 15 : 17} height={compact ? 15 : 17} viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="8" r="4" fill={KUN.inkMuted}/>
           <path d="M4.5 21C5.5 16.5 8.5 14.5 12 14.5C15.5 14.5 18.5 16.5 19.5 21" fill={KUN.inkMuted}/>
         </svg>
       </div>
       <div style={{
-        width: compact ? 34 : 38, height: compact ? 34 : 38, borderRadius:'50%',
+        width: compact ? 26 : 28, height: compact ? 26 : 28, borderRadius:'50%',
         background: '#fff', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
       }}>
-        {VINK_ICONS.play(KUN.brick, compact ? 13 : 15)}
+        {VINK_ICONS.play(KUN.brick, compact ? 10 : 11)}
       </div>
-      <svg viewBox="0 0 136 28" style={{ flex: 1, height: compact ? 22 : 26, minWidth: 62 }}>
-        {Array.from({length: 34}).map((_, i) => {
+      <svg viewBox="0 0 112 28" style={{ flex: 1, height: compact ? 18 : 20, minWidth: 0 }}>
+        {Array.from({length: 28}).map((_, i) => {
           const h = 5 + Math.abs(Math.sin(i * 0.76)) * 20;
           return <rect key={i} x={i * 4} y={(28 - h) / 2} width="2.3" height={h} rx="1.15" fill="#fff" opacity={i < 23 ? 0.95 : 0.45}/>;
         })}
       </svg>
-      <span style={{ fontFamily: V_FT, fontSize: compact ? 18 : 20, fontWeight: 700, color: '#fff', flexShrink:0 }}>
+      <span style={{ fontFamily: V_FT, fontSize: compact ? 12 : 13, fontWeight: 700, color: '#fff', flexShrink:0 }}>
         {duration}
       </span>
     </div>
@@ -548,23 +548,23 @@ function DiaryMetricPill({ type = 'photo', count }) {
   const isAudio = type === 'audio';
   return (
     <div style={{
-      height: 34, minWidth: 72, borderRadius: 999, background: KUN.cardSoft,
+      height: 34, minWidth: 72, borderRadius: 999, background: KUN.inkSoft,
       display:'inline-flex', alignItems:'center', justifyContent:'center',
       gap: 7, padding:'0 10px', boxSizing:'border-box',
-      fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.inkSoft,
-      border: `1px solid ${KUN.hair}`,
+      fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: '#fff',
+      border: 'none',
     }}>
       {isAudio ? (
         <svg width="28" height="17" viewBox="0 0 54 20">
           {Array.from({length: 12}).map((_, i) => (
-            <rect key={i} x={i * 4.4} y={3 + (i % 3)} width="2.4" height={14 - (i % 3) * 2} rx="1" fill={KUN.inkSoft}/>
+            <rect key={i} x={i * 4.4} y={3 + (i % 3)} width="2.4" height={14 - (i % 3) * 2} rx="1" fill="#fff"/>
           ))}
         </svg>
       ) : (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <rect x="4" y="5" width="16" height="14" rx="2" stroke={KUN.inkSoft} strokeWidth="1.8"/>
-          <path d="M6.5 16L10 12.5L12.5 15L15 12L18 16" stroke={KUN.inkSoft} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <circle cx="16.5" cy="8.5" r="1.3" fill={KUN.inkSoft}/>
+          <rect x="4" y="5" width="16" height="14" rx="2" stroke="#fff" strokeWidth="1.8"/>
+          <path d="M6.5 16L10 12.5L12.5 15L15 12L18 16" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="16.5" cy="8.5" r="1.3" fill="#fff"/>
         </svg>
       )}
       {count}
@@ -572,24 +572,25 @@ function DiaryMetricPill({ type = 'photo', count }) {
   );
 }
 
-function DiaryListEntry({ title, text, photos = [], photoCount = 5, audioCount = 2, onOpen }) {
+function DiaryListEntry({ title, text, photos = [], photoCount = 5, audioCount = 2, imageLayout = 'default', onOpen }) {
   const visiblePhotos = photos.slice(0, 3);
+  const referenceLayout = imageLayout === 'reference';
   return (
     <div onClick={onOpen} style={{
-      margin: '0 20px 14px', background: '#fff', borderRadius: 24,
-      minHeight: 132, padding: '16px',
+      margin: '0 16px 14px', background: KUN.cardSoft, borderRadius: 14,
+      minHeight: 116, padding: '14px 14px 12px',
       display:'grid', gridTemplateColumns:'1fr 132px', gap: 12,
       cursor:'pointer', boxSizing:'border-box',
       border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: V_FT, fontSize: 21, fontWeight: 700, color: DIARY.ink, marginBottom: 5, letterSpacing: -0.2, lineHeight: 1.05 }}>
+        <div style={{ fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: DIARY.ink, marginBottom: 4, letterSpacing: 0, lineHeight: 1.05 }}>
           {title}
         </div>
-        <div style={{ fontFamily: V_FB, fontSize: 17, color: KUN.ink, lineHeight: 1.25, maxHeight: 66, overflow:'hidden' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 15.5, color: KUN.ink, lineHeight: 1.24, maxHeight: 58, overflow:'hidden' }}>
           {text}
         </div>
-        <div style={{ display:'flex', gap: 7, marginTop: 12 }}>
+        <div style={{ display:'flex', gap: 7, marginTop: 10 }}>
           <DiaryMetricPill type="photo" count={photoCount}/>
           <DiaryMetricPill type="audio" count={audioCount}/>
         </div>
@@ -600,6 +601,7 @@ function DiaryListEntry({ title, text, photos = [], photoCount = 5, audioCount =
             position:'relative', overflow:'hidden',
             borderRadius: 10, background: KUN.cardSoft,
             gridColumn: i === 0 ? '1 / 3' : 'auto',
+            gridRow: referenceLayout && i === 0 ? '1 / 2' : 'auto',
           }}>
             <img src={p} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
           </div>
@@ -710,19 +712,37 @@ const diarySectionLabel = {
 };
 
 function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntries = [] }) {
-  const [memoryIndex, setMemoryIndex] = React.useState(0);
   const entries = [
-    { title:'juh', date:'HOY - 20 Junio 2026', photoCount:5, audioCount:2, photos:['premature.jpg','tens2.webp','tens.avif','premature.jpg'] },
-    { title:'akgsdli', date:'AYER - 19 Junio 2026', photoCount:4, audioCount:2, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'] },
-    { title:'dfghj', date:'LUN - 17 Junio 2026', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'] },
-    { title:'rtgha', date:'SAB - 15 Junio 2026', photoCount:2, audioCount:1, photos:['tens.avif','premature.jpg','tens2.webp','premature.jpg'] },
+    { id:'today', title:'dfghj', date:'HOY - 20 Junio 2026', detailTitle:'Hoy', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg'], text: DIARY_TEXT },
+    { id:'yesterday', title:'akgsdli', date:'AYER - 19 Junio 2026', detailTitle:'Ayer', photoCount:4, audioCount:2, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'], text: 'Ayer fue un dia de avances pequenos. Guardamos fotos, audios y recuerdos de quienes vinieron a acompanar.' },
+    { id:'monday', title:'dfghj', date:'LUN - 17 Junio 2026', detailTitle:'Lun 17', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'], text: 'Este dia dejamos registro de nuevas fotos y de como fue cambiando su rutina de cuidados.' },
+    { id:'saturday', title:'rtgha', date:'SAB - 15 Junio 2026', detailTitle:'Sab 15', photoCount:2, audioCount:1, photos:['tens.avif','premature.jpg','tens2.webp','premature.jpg'], text: 'Un recuerdo de fin de semana para mirar despues con calma.' },
   ];
   const photoMemories = diaryEntries
     .filter(e => e.kind === 'photo' && e.imageSrc)
-    .map((e, i) => ({ src: e.imageSrc, title: e.role || 'Foto', date: e.time || 'Ahora', id: e.id || `photo-${i}` }));
-  const memories = [...photoMemories, ...DIARY_PHOTOS.map((item, i) => ({ ...item, id: `seed-${i}` }))];
-  const currentMemory = memories[memoryIndex] || memories[0];
-  const goMemory = (dir) => setMemoryIndex(prev => (prev + dir + memories.length) % memories.length);
+    .map((e, i) => ({
+      src: e.imageSrc,
+      title: e.role || 'Foto',
+      date: e.time || 'Ahora',
+      id: e.id || `photo-${i}`,
+      detailTitle: 'Hoy',
+      photos: [e.imageSrc, 'premature.jpg', 'tens2.webp', 'tens.avif'],
+      text: e.content || 'Nuevo recuerdo guardado en el diario.',
+      photoCount: 1,
+      audioCount: 0,
+    }));
+  const memories = [
+    ...photoMemories,
+    ...DIARY_PHOTOS.map((item, i) => ({
+      ...item,
+      id: `seed-${i}`,
+      detailTitle: item.title,
+      photos: [item.src, i === 0 ? 'tens2.webp' : 'premature.jpg', i === 1 ? 'tens.avif' : 'tens2.webp'],
+      text: i === 0 ? DIARY_TEXT : `Recuerdo guardado de ${item.date}.`,
+      photoCount: i === 0 ? 5 : 3,
+      audioCount: i === 0 ? 2 : 1,
+    })),
+  ];
 
   return (
     <div style={{ minHeight:'100%', background: DIARY.bg, paddingBottom: 96 }}>
@@ -745,50 +765,24 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
           Recuerdos
         </div>
         <div style={{ fontFamily: V_FT, fontSize: 12, fontWeight: 700, color: KUN.brick }}>
-          {memoryIndex + 1}/{memories.length}
+          {memories.length} momentos
         </div>
       </div>
-      <div style={{ padding:'0 20px 28px' }}>
-        <div style={{ position:'relative', height: 188 }}>
-          <div onClick={onOpenDay} style={{
-            position:'absolute', inset: 0,
-            borderRadius: 24, overflow:'hidden', cursor:'pointer',
+      <div style={{ display:'flex', gap: 12, overflowX:'auto', padding:'0 20px 28px', scrollSnapType:'x mandatory', scrollbarWidth:'none' }}>
+        {memories.map((item) => (
+          <div key={item.id} onClick={() => onOpenDay(item)} style={{
+            width: 166, height: 112, borderRadius: 18, overflow:'hidden',
+            position:'relative', flexShrink:0, cursor:'pointer', scrollSnapAlign:'start',
             background: KUN.cardSoft, border: `1px solid ${KUN.hair}`,
-            boxShadow: '0 14px 28px rgba(42,35,32,0.08)',
           }}>
-            <img src={currentMemory.src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
+            <img src={item.src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
             <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, rgba(0,0,0,0) 28%, rgba(0,0,0,0.42) 100%)' }}/>
-            <div style={{ position:'absolute', left:18, right: 70, bottom:16, color:'#fff' }}>
-              <div style={{ fontFamily: V_FT, fontSize: 22, fontWeight: 700, lineHeight:1.05, letterSpacing: -0.3 }}>{currentMemory.title}</div>
-              <div style={{ fontFamily: V_FB, fontSize: 12, fontWeight: 400, marginTop: 6 }}>{currentMemory.date}</div>
+            <div style={{ position:'absolute', left:16, right: 14, bottom:13, color:'#fff' }}>
+              <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, lineHeight:1.05 }}>{item.title}</div>
+              <div style={{ fontFamily: V_FB, fontSize: 12, fontWeight: 400, marginTop: 6 }}>{item.date}</div>
             </div>
           </div>
-          {memories.length > 1 && (
-            <>
-              <button onClick={e => { e.stopPropagation(); goMemory(-1); }} style={{
-                position:'absolute', left: 12, top:'50%', transform:'translateY(-50%)',
-                width: 36, height: 36, borderRadius:'50%', border:'none',
-                background:'rgba(255,255,255,0.88)', display:'flex', alignItems:'center', justifyContent:'center',
-                cursor:'pointer', boxShadow:'0 4px 12px rgba(42,35,32,0.16)',
-              }}>{VINK_ICONS.back(KUN.ink)}</button>
-              <button onClick={e => { e.stopPropagation(); goMemory(1); }} style={{
-                position:'absolute', right: 12, top:'50%', transform:'translateY(-50%) rotate(180deg)',
-                width: 36, height: 36, borderRadius:'50%', border:'none',
-                background:'rgba(255,255,255,0.88)', display:'flex', alignItems:'center', justifyContent:'center',
-                cursor:'pointer', boxShadow:'0 4px 12px rgba(42,35,32,0.16)',
-              }}>{VINK_ICONS.back(KUN.ink)}</button>
-            </>
-          )}
-        </div>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap: 7, marginTop: 12 }}>
-          {memories.map((m, i) => (
-            <button key={m.id} onClick={() => setMemoryIndex(i)} style={{
-              width: i === memoryIndex ? 18 : 7, height: 7, borderRadius: 999,
-              border:'none', background: i === memoryIndex ? KUN.brick : KUN.inkFaint,
-              padding: 0, cursor:'pointer',
-            }} />
-          ))}
-        </div>
+        ))}
       </div>
 
       <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted, letterSpacing: 1, textTransform:'uppercase', padding:'0 24px 10px' }}>
@@ -802,14 +796,14 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
           <div style={{ textAlign:'center', fontFamily: V_FB, fontSize: 16, fontWeight: 400, color:'#777', margin:'0 0 8px' }}>
             {entry.date}
           </div>
-          <DiaryListEntry {...entry} text={DIARY_TEXT} onOpen={onOpenDay} />
+          <DiaryListEntry {...entry} text={entry.text} imageLayout={entry.id === 'today' ? 'reference' : 'default'} onOpen={() => onOpenDay(entry)} />
         </React.Fragment>
       ))}
     </div>
   );
 }
 
-function DiaryNote({ title = 'Nota', time = '10:32 AM', content, strong, tall = false }) {
+function DiaryNoteLegacy({ title = 'Nota', time = '10:32 AM', content, strong, tall = false }) {
   return (
     <div style={{
       background: strong ? KUN.sun : '#fff',
@@ -836,40 +830,152 @@ function DiaryNote({ title = 'Nota', time = '10:32 AM', content, strong, tall = 
   );
 }
 
-function DiaryPhotoTile({ entry, fallbackSrc, height = 128 }) {
+function DiaryNote({ title = 'Nota', time = '10:32 AM', content, strong, tall = false, onOpen }) {
   return (
-    <img src={entry?.imageSrc || fallbackSrc} alt="" style={{
-      width:'100%', height, objectFit:'cover', borderRadius: 18, display:'block',
+    <div onClick={onOpen} style={{
+      background: strong ? KUN.sun : '#fff',
+      borderRadius: 20,
+      padding: strong ? '14px 14px' : '14px 15px',
+      boxSizing:'border-box',
+      minHeight: tall ? 155 : 'auto',
+      height: tall ? 155 : (strong ? 'auto' : 150),
+      overflow:'hidden',
       border: `1px solid ${KUN.hair}`,
-    }}/>
+      cursor: onOpen ? 'pointer' : 'default',
+    }}>
+      <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', gap: 10, marginBottom: strong ? 0 : 2 }}>
+        <div style={{ fontFamily: V_FT, fontSize: strong ? 16 : 15, fontWeight: 700, lineHeight: 1.15, color: DIARY.ink }}>
+          {title}
+        </div>
+        <div style={{ fontFamily: V_FT, fontSize: 11.5, fontWeight: 700, color: DIARY.muted, flexShrink:0 }}>{time}</div>
+      </div>
+      {!strong && (
+        <div style={{ fontFamily: V_FB, fontSize: 12.5, lineHeight: 1.45, color: DIARY.ink, marginTop: 8 }}>
+          {content || 'Hoy te vi tranquilo y sentí que este día también merece quedar guardado.'}
+        </div>
+      )}
+    </div>
   );
 }
 
-function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoice, addOpen, setAddOpen, canEditDiary, diaryEntries = [] }) {
+function DiaryPhotoTile({ entry, fallbackSrc, height = 128, onOpen }) {
+  const src = typeof entry === 'string' ? entry : entry?.imageSrc;
+  return (
+    <button onClick={onOpen} style={{
+      width:'100%', maxWidth:'100%', height, border:'none', padding:0, background:'transparent',
+      borderRadius: 18, overflow:'hidden', display:'block', cursor: onOpen ? 'pointer' : 'default',
+      boxSizing:'border-box',
+    }}>
+      <img src={src || fallbackSrc} alt="" style={{
+        width:'100%', height:'100%', objectFit:'cover', borderRadius: 18, display:'block',
+        border: `1px solid ${KUN.hair}`,
+        boxSizing:'border-box',
+      }}/>
+    </button>
+  );
+}
+
+function DiaryExpandedItem({ item, onClose }) {
+  if (!item) return null;
+  const isPhoto = item.type === 'photo';
+  return (
+    <div onClick={onClose} style={{
+      position:'fixed', inset:0, zIndex: 300, background:'rgba(42,35,32,0.58)',
+      display:'flex', alignItems:'center', justifyContent:'center', padding: 22, boxSizing:'border-box',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width:'100%', maxWidth: 420, maxHeight:'86vh', overflow:'auto',
+        background: isPhoto ? 'transparent' : '#fff', borderRadius: isPhoto ? 22 : 24,
+        boxSizing:'border-box',
+      }}>
+        {isPhoto ? (
+          <img src={item.src} alt="" style={{
+            width:'100%', maxHeight:'78vh', objectFit:'contain', display:'block',
+            borderRadius: 22, background:'#fff',
+          }}/>
+        ) : (
+          <div style={{ padding: 20, border: `1px solid ${KUN.hair}`, borderRadius: 24 }}>
+            <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', gap: 12 }}>
+              <div style={{ fontFamily: V_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, lineHeight: 1.1 }}>{item.title}</div>
+              <div style={{ fontFamily: V_FT, fontSize: 12, fontWeight: 700, color: KUN.inkMuted, flexShrink:0 }}>{item.time}</div>
+            </div>
+            <div style={{ fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink, marginTop: 14 }}>
+              {item.content}
+            </div>
+          </div>
+        )}
+      </div>
+      <button onClick={onClose} style={{
+        position:'fixed', top: 18, right: 18, width: 42, height: 42, borderRadius:'50%',
+        border:'none', background:'#fff', display:'flex', alignItems:'center', justifyContent:'center',
+        cursor:'pointer', boxShadow:'0 8px 18px rgba(42,35,32,0.18)',
+      }}>
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+          <path d="M5 5L17 17M17 5L5 17" stroke={KUN.ink} strokeWidth="2.4" strokeLinecap="round"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoice, addOpen, setAddOpen, canEditDiary, diaryEntries = [], selectedDay }) {
+  const [expandedItem, setExpandedItem] = React.useState(null);
   const photoEntries = diaryEntries.filter(e => e.kind === 'photo');
   const textEntries = diaryEntries.filter(e => e.kind === 'text');
+  const day = selectedDay || {};
+  const dayPhotos = day.photos || [];
+  const title = day.detailTitle || day.title || 'Hoy';
+  const primaryText = day.text || textEntries[0]?.content;
+  const noteFallback = 'Hoy te vi tranquilo y senti que este dia tambien merece quedar guardado.';
+  const getPhotoSrc = (entry, fallbackSrc) => typeof entry === 'string' ? entry : (entry?.imageSrc || fallbackSrc);
+  const openExpandedPhoto = (entry, fallbackSrc) => {
+    setExpandedItem({ type: 'photo', src: getPhotoSrc(entry, fallbackSrc) });
+  };
+  const openExpandedNote = (note) => {
+    setExpandedItem({
+      type: 'note',
+      title: note.title || 'Nota',
+      time: note.time || '10:32 AM',
+      content: note.content || noteFallback,
+    });
+  };
+  const primaryNote = {
+    title: day.title || textEntries[0]?.role || 'Nota',
+    time: day.date || textEntries[0]?.time || 'Ahora',
+    content: primaryText || noteFallback,
+  };
+  const secondaryNote = {
+    title: textEntries[1]?.role || 'Nota',
+    time: textEntries[1]?.time || '10:32 AM',
+    content: textEntries[1]?.content || noteFallback,
+  };
+  const milestoneNote = {
+    title: 'Hoy te desconectaron del ECMO!',
+    time: '10:32 AM',
+    content: 'Hoy te desconectaron del ECMO!',
+  };
   return (
-    <div style={{ minHeight:'100%', background: DIARY.bg, paddingBottom: 96, position:'relative' }}>
+    <div style={{ minHeight:'100%', background: DIARY.bg, paddingBottom: 96, position:'relative', overflowX:'hidden', maxWidth:'100%', boxSizing:'border-box' }}>
       <div style={{ display:'grid', gridTemplateColumns:'48px 1fr 48px', alignItems:'center', padding:'8px 20px 18px' }}>
         <DiaryIconButton onClick={onBack} muted>{VINK_ICONS.back(KUN.ink)}</DiaryIconButton>
-        <div style={{ textAlign:'center', fontFamily: V_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Hoy</div>
+        <div style={{ textAlign:'center', fontFamily: V_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>{title}</div>
         <div />
       </div>
       {!canEditDiary && <ReadOnlyDiaryNotice />}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 10, padding:'0 20px', alignItems:'start' }}>
-        <div style={{ display:'flex', flexDirection:'column', gap: 6 }}>
-          {textEntries[0]
-            ? <DiaryNote tall title={textEntries[0].role || 'Nota'} time={textEntries[0].time} content={textEntries[0].content} />
-            : <DiaryNote tall />}
+      <div style={{ display:'grid', gridTemplateColumns:'minmax(0, 1fr) minmax(0, 1fr)', gap: 8, padding:'0 16px', alignItems:'start', boxSizing:'border-box', maxWidth:'100%' }}>
+        <div style={{ display:'flex', flexDirection:'column', gap: 6, minWidth: 0 }}>
+          {primaryText
+            ? <DiaryNote tall {...primaryNote} onOpen={() => openExpandedNote(primaryNote)} />
+            : <DiaryNote tall onOpen={() => openExpandedNote(primaryNote)} />}
           <DiaryAudioBar duration="01:09" />
-          <DiaryPhotoTile entry={photoEntries[1]} fallbackSrc="tens2.webp" height={128} />
-          <DiaryPhotoTile entry={photoEntries[2]} fallbackSrc="tens.avif" height={141} />
+          <DiaryPhotoTile entry={dayPhotos[1] || photoEntries[1]} fallbackSrc="tens2.webp" height={128} onOpen={() => openExpandedPhoto(dayPhotos[1] || photoEntries[1], 'tens2.webp')} />
+          <DiaryPhotoTile entry={dayPhotos[2] || photoEntries[2]} fallbackSrc="tens.avif" height={141} onOpen={() => openExpandedPhoto(dayPhotos[2] || photoEntries[2], 'tens.avif')} />
         </div>
-        <div style={{ display:'flex', flexDirection:'column', gap: 6 }}>
-          <DiaryPhotoTile entry={photoEntries[0]} fallbackSrc="premature.jpg" height={249} />
+        <div style={{ display:'flex', flexDirection:'column', gap: 6, minWidth: 0 }}>
+          <DiaryPhotoTile entry={dayPhotos[0] || photoEntries[0]} fallbackSrc="premature.jpg" height={249} onOpen={() => openExpandedPhoto(dayPhotos[0] || photoEntries[0], 'premature.jpg')} />
           <DiaryAudioBar duration={addOpen ? '01:09' : '00:29'} compact />
-          <DiaryNote content={textEntries[1]?.content} title={textEntries[1]?.role || 'Nota'} time={textEntries[1]?.time || '10:32 AM'} />
-          {!addOpen && <DiaryNote title="Hoy te desconectaron del ECMO!" time="10:32 AM" strong />}
+          <DiaryNote {...secondaryNote} onOpen={() => openExpandedNote(secondaryNote)} />
+          {!addOpen && <DiaryNote title={milestoneNote.title} time={milestoneNote.time} strong onOpen={() => openExpandedNote(milestoneNote)} />}
         </div>
       </div>
       {canEditDiary && !addOpen && (
@@ -901,6 +1007,7 @@ function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoi
           </button>
         </div>
       )}
+      <DiaryExpandedItem item={expandedItem} onClose={() => setExpandedItem(null)} />
     </div>
   );
 }
@@ -908,6 +1015,7 @@ function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoi
 function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
   const [mode, setMode] = React.useState('list');
   const [addOpen, setAddOpen] = React.useState(false);
+  const [selectedDay, setSelectedDay] = React.useState(null);
   const [sheet, setSheet] = React.useState(false);
   const [textEditorOpen, setTextEditorOpen] = React.useState(false);
   const photoInputRef = React.useRef(null);
@@ -965,6 +1073,11 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
     };
     reader.readAsDataURL(file);
   };
+  const openDay = (day) => {
+    setSelectedDay(day || null);
+    setMode('detail');
+    setAddOpen(false);
+  };
 
   return (
     <>
@@ -984,12 +1097,13 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
               canEditDiary={canEditDiary}
               diaryEntries={diaryEntries}
               onBack={onBack}
-              onOpenDay={() => { setMode('detail'); setAddOpen(false); }}
+              onOpenDay={openDay}
               onOpenAdd={() => { setMode('detail'); setAddOpen(true); }}
             />
           : <DiaryDetailView
               canEditDiary={canEditDiary}
               diaryEntries={diaryEntries}
+              selectedDay={selectedDay}
               addOpen={addOpen}
               setAddOpen={setAddOpen}
               onOpenAdd={() => setAddOpen(true)}
