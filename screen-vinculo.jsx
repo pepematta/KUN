@@ -1,4 +1,4 @@
-// Vínculo section — entry, Diario de vida, Actividades con mi hijo.
+﻿// Vínculo section — entry, Diario de vida, Actividades con mi hijo.
 // Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs,
 // hairline cards, DS palette per category, decorative half-moon shapes.
 
@@ -343,7 +343,7 @@ function FeedEntry({ author, role, color, time, kind, content, imageSrc, isVoice
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display:'flex', alignItems:'baseline', gap: 8, marginBottom: 4, paddingLeft: 4 }}>
           <span style={{ fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.ink }}>{author}</span>
-          <span style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400 }}>{role} · {time}</span>
+          <span style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400 }}>{role} - {time}</span>
         </div>
         <div style={{
           background:'#fff', borderRadius: 20, borderTopLeftRadius: 6,
@@ -364,7 +364,7 @@ function FeedEntry({ author, role, color, time, kind, content, imageSrc, isVoice
                   display:'flex', alignItems:'center', justifyContent:'center',
                   fontFamily: V_FB, fontSize: 11, color: KUN.ink,
                   fontWeight: 500, marginBottom: 8,
-                }}>foto · abuela y Sofía</div>
+                }}>foto - abuela y Sofía</div>
               )}
               {content && (
                 <div style={{
@@ -1028,7 +1028,7 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
   });
   const [recording, setRecording] = React.useState(false);
   const [recordingContext, setRecordingContext] = React.useState({
-    author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía',
+    author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía',
   });
   const startRecorder = (context) => {
     setRecordingContext(context);
@@ -1047,7 +1047,7 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
   const openVoiceRecorder = () => {
     setSheet(false);
     setAddOpen(false);
-    startRecorder({ author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' });
+    startRecorder({ author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' });
   };
   const setDiaryEntries = (updater) => {
     setDiaryEntriesState(prev => {
@@ -1148,10 +1148,10 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
           <ActivityCard
             canEdit={canEditDiary}
             onOpenSheet={() => canEditDiary && setSheet(true)}
-            onOpenRecorder={() => canEditDiary && startRecorder({ author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' })}
-            onOpenSiblingRecorder={() => canEditDiary && startRecorder({ author: 'Hermanito', role: 'Hermanito · Voz para Sofía', color: KUN.viola, name: 'Mensaje del hermanito' })}
+            onOpenRecorder={() => canEditDiary && startRecorder({ author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' })}
+            onOpenSiblingRecorder={() => canEditDiary && startRecorder({ author: 'Hermanito', role: 'Hermanito - Voz para Sofía', color: KUN.viola, name: 'Mensaje del hermanito' })}
           />
-          <FeedSeparator label="HOY · DÍA 32" />
+          <FeedSeparator label="HOY - DÍA 32" />
 
           <FeedEntry
             author="Mamá" role="Mamá" color={KUN.rosehip} time="14:20"
@@ -1165,12 +1165,12 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
 
           {recordings && recordings.length > 0 && recordings.map((r, i) => (
             <FeedEntry key={i}
-              author={r.author || "Mamá"} role={r.role || "Mamá · Voz para Sofía"} color={r.color || KUN.rosehip}
+              author={r.author || "Mamá"} role={r.role || "Mamá - Voz para Sofía"} color={r.color || KUN.rosehip}
               time={r.time} kind="voice" duration={r.duration} isVoice
             />
           ))}
 
-          <FeedSeparator label="AYER · DÍA 31" />
+          <FeedSeparator label="AYER - DÍA 31" />
 
           <FeedEntry
             author="Abuela Rosa" role="Abuela" color={KUN.sun} time="Ayer 19:30"
@@ -1194,7 +1194,7 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
         {sheet && canEditDiary && (
           <AddEntrySheet
             onClose={() => setSheet(false)}
-            onPickVoice={() => { setSheet(false); startRecorder({ author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' }); }}
+            onPickVoice={() => { setSheet(false); startRecorder({ author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' }); }}
           />
         )}
         {recording && addRecording && (
@@ -1326,7 +1326,7 @@ function MusicaTab({ onOpenRecorder, onOpenSiblingRecorder }) {
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{t.name}</div>
                   <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
-                    {t.desc} · {t.dur}
+                    {t.desc} - {t.dur}
                   </div>
                 </div>
                 <div style={{
@@ -1407,7 +1407,7 @@ function StoryRow({ story, onRecord }) {
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
           <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
-            {open ? 'Toca el texto y léelo en voz alta' : 'Cuento corto · 2 min'}
+            {open ? 'Toca el texto y léelo en voz alta' : 'Cuento corto - 2 min'}
           </div>
         </div>
         <div style={{
@@ -1551,7 +1551,7 @@ function CuentosTab({ recordings, onOpenRecorder, onOpenSiblingRecorder }) {
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{r.name}</div>
                   <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, marginTop: 2, letterSpacing: 0.2 }}>
-                    {r.author ? `${r.author} · ` : ''}{r.duration} · {r.time}
+                    {r.author ? `${r.author} - ` : ''}{r.duration} - {r.time}
                   </div>
                 </div>
               </div>
@@ -1566,7 +1566,7 @@ function CuentosTab({ recordings, onOpenRecorder, onOpenSiblingRecorder }) {
 function Recorder({ onClose, onSave, context }) {
   const [recording, setRecording] = React.useState(false);
   const [seconds, setSeconds] = React.useState(0);
-  const ctx = context || { author: 'Mamá', role: 'Mamá · Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' };
+  const ctx = context || { author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' };
   React.useEffect(() => {
     if (!recording) return;
     const id = setInterval(() => setSeconds(s => s + 1), 1000);
@@ -1582,7 +1582,7 @@ function Recorder({ onClose, onSave, context }) {
       duration: fmt(seconds),
       time: 'Hace un momento',
       author: ctx.author || 'Mamá',
-      role: ctx.role || 'Mamá · Voz para Sofía',
+      role: ctx.role || 'Mamá - Voz para Sofía',
       color: ctx.color || KUN.rosehip,
     });
     onClose();
@@ -1658,7 +1658,7 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
   const [sub, setSub] = React.useState('musica');
   const [recording, setRecording] = React.useState(false);
   const [recordingContext, setRecordingContext] = React.useState({
-    author: 'Mamá', role: 'Mamá · Actividades para Sofía', color: KUN.rosehip, name: 'Actividad para Sofía',
+    author: 'Mamá', role: 'Mamá - Actividades para Sofía', color: KUN.rosehip, name: 'Actividad para Sofía',
   });
   const startRecorder = (context) => {
     setRecordingContext(context);
@@ -1697,16 +1697,16 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
         ? <MusicaTab
             onOpenRecorder={(option) => startRecorder({
               author: 'Mamá',
-              role: 'Mamá · Karaoke para Sofía',
+              role: 'Mamá - Karaoke para Sofía',
               color: KUN.rosehip,
-              name: option?.title ? `Karaoke · ${option.title}` : 'Musica para Sofía',
+              name: option?.title ? `Karaoke - ${option.title}` : 'Musica para Sofía',
             })}
-            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito · Voz para Sofía', color: KUN.viola, name: 'Mensaje del hermanito' })}
+            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito - Voz para Sofía', color: KUN.viola, name: 'Mensaje del hermanito' })}
           />
         : <CuentosTab
             recordings={recordings}
-            onOpenRecorder={() => startRecorder({ author: 'Mamá', role: 'Mamá · Cuento para Sofía', color: KUN.rosehip, name: 'Cuento para Sofía' })}
-            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito · Cuento para Sofía', color: KUN.viola, name: 'Cuento del hermanito' })}
+            onOpenRecorder={() => startRecorder({ author: 'Mamá', role: 'Mamá - Cuento para Sofía', color: KUN.rosehip, name: 'Cuento para Sofía' })}
+            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito - Cuento para Sofía', color: KUN.viola, name: 'Cuento del hermanito' })}
           />}
 
       {recording && <Recorder
@@ -1719,10 +1719,536 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
 }
 
 // ── Public entry ────────────────────────────────────────
+
+// -- Diario de vida guiado - prototipo UCIN -------------------------------
+const DIARY_GUIDED_KEY = 'kun_diary_guided_entries_v2';
+
+const guidedTemplates = [
+  { id:'hoy-celebramos', name:'Hoy celebramos', category:'Hoy celebramos', icon:'spark', color:'#FFF5DC', shortDescription:'Avances pequenos que merecen quedar guardados.', mainPrompt:'Hoy celebramos que...', writingIdeas:['Que paso hoy?', 'Por que fue importante para ustedes?', 'Como se sintieron al verlo?'], examples:['Hoy celebramos que subiste de peso.', 'Hoy celebramos que respiraste mejor.', 'Hoy celebramos que abriste los ojos.', 'Hoy celebramos una noticia pequena pero enorme.'] },
+  { id:'hito-ucin', name:'Hito UCIN', category:'Hito UCIN', icon:'monitor', color:'#E9EEF7', shortDescription:'Cambios medicos o avances en los cuidados.', mainPrompt:'Hoy hubo un cambio importante en tus cuidados...', writingIdeas:['Que cambio hoy?', 'Como nos lo explico el equipo?', 'Como nos sentimos al saberlo?'], examples:['Primer dia sin ventilador.', 'Primer dia sin CPAP.', 'Primer dia sin oxigeno.', 'Primer dia sin sonda.', 'Primer dia sin via.', 'Primer dia sin fototerapia.', 'Primer dia fuera de incubadora.', 'Primer dia en cuna.', 'Primer dia con menos monitores.', 'Primer examen importante.', 'Primer resultado alentador.', 'Primer dia regulando mejor tu temperatura.'] },
+  { id:'respiracion', name:'Respiracion', category:'Respiracion', icon:'breath', color:'#EAF2F6', shortDescription:'Apoyos, cambios y senales al respirar.', mainPrompt:'Hoy tu respiracion estuvo...', writingIdeas:['Necesitaste mas o menos apoyo?', 'Que notamos al verte respirar?', 'Que sentimos nosotros?'], examples:['Hoy te vimos respirar mas tranquilo/a.', 'Hoy celebramos que necesitaste menos oxigeno.', 'Hoy dimos un pasito mas hacia respirar solito/a.', 'Hoy el equipo ajusto tu apoyo respiratorio.'] },
+  { id:'alimentacion', name:'Alimentacion', category:'Alimentacion', icon:'milk', color:'#EAF2E7', shortDescription:'Leche, sonda, pecho, mamadera o tolerancia.', mainPrompt:'Hoy tu alimentacion fue...', writingIdeas:['Como recibiste tu leche hoy?', 'Hubo algun avance?', 'Que aprendimos sobre tus senales?'], examples:['Hoy recibiste leche por sonda.', 'Hoy toleraste mejor la leche.', 'Hoy tomaste poquitos ml, pero para nosotros fue enorme.', 'Hoy mama logro extraerse leche para ti.', 'Hoy fue tu primera vez tomando por boca.', 'Hoy fue tu primera mamadera.', 'Hoy fue tu primera vez al pecho.', 'Hoy celebramos cada gotita.'] },
+  { id:'piel-con-piel', name:'Piel con piel', category:'Piel con piel', icon:'heart', color:'#EFE8F5', shortDescription:'Cercania, contacto y momentos de apego.', mainPrompt:'Hoy te tuve cerca y senti...', writingIdeas:['Cuanto tiempo estuvieron juntos?', 'Que recuerdas de ese momento?', 'Que te gustaria contarle cuando sea grande?'], examples:['Hoy pudimos hacer piel con piel por primera vez.', 'Hoy senti tu calor.', 'Hoy escuchaste mi voz muy cerquita.', 'Hoy te tome la mano.', 'Hoy no pude tomarte, pero pude estar contigo de otra forma.', 'Hoy papa hizo piel con piel.', 'Hoy mama hizo piel con piel.'] },
+  { id:'aprendimos-cuidarte', name:'Aprendimos a cuidarte', category:'Aprendizaje', icon:'hands', color:'#F4ECDD', shortDescription:'Tareas y cuidados que van aprendiendo.', mainPrompt:'Hoy aprendimos a cuidarte cuando...', writingIdeas:['Que aprendimos hoy?', 'Quien nos enseno?', 'Que sentimos al hacerlo por primera vez?'], examples:['Hoy aprendimos a cambiarte el panal.', 'Hoy aprendimos a tomarte la temperatura.', 'Hoy aprendimos como tocarte con cuidado.', 'Hoy aprendimos como contenerte.', 'Hoy ayudamos en tu aseo.', 'Hoy participamos en tus cuidados por primera vez.'] },
+  { id:'dia-dificil', name:'Hoy fue dificil', category:'Dia dificil', icon:'cloud', color:'#ECE7E1', shortDescription:'Para dias complejos, sin forzar optimismo.', mainPrompt:'Hoy fue un dia dificil porque...', writingIdeas:['Que fue lo que mas costo?', 'Que ayudo un poquito?', 'Que quieres dejar registrado de este dia?'], examples:['Hoy nos costo esperar.', 'Hoy tuvimos miedo.', 'Hoy no sabemos bien que escribir.', 'Hoy solo queremos dejar registrado que estuvimos aqui.', 'Hoy no hubo grandes cambios, pero seguimos contigo.', 'Hoy aprendimos que avanzar tambien puede ser lento.'] },
+  { id:'hoy-me-senti', name:'Hoy me senti', category:'Emocion', icon:'heart', color:'#FCE7DE', shortDescription:'Emociones de mama, papa o cuidador.', mainPrompt:'Hoy me senti...', writingIdeas:['Que emocion estuvo mas presente?', 'Que la provoco?', 'Que necesitabas en ese momento?'], examples:['Hoy me dio esperanza...', 'Hoy me dio miedo...', 'Hoy llore cuando...', 'Hoy sonrei cuando...', 'Hoy agradeci...', 'Hoy no tengo muchas palabras, pero quiero guardar este momento.'] },
+  { id:'personalidad', name:'Tu personalidad', category:'Personalidad', icon:'star', color:'#FFF0C9', shortDescription:'Gestos, rasgos y pequenas senales.', mainPrompt:'Hoy nos mostraste que eres...', writingIdeas:['Que gesto hiciste?', 'Que nos llamo la atencion?', 'A quien nos recordaste?'], examples:['Hoy abriste los ojos cuando te hablamos.', 'Hoy moviste tus manos como si quisieras saludar.', 'Hoy hiciste una cara que parecia enojo.', 'Hoy te vimos tranquilo/a cuando escuchaste nuestra voz.', 'Hoy nos hiciste reir porque...', 'Cada dia te vemos mas tu.'] },
+  { id:'cosas-calman', name:'Cosas que te calman', category:'Calma', icon:'music', color:'#E9EEF7', shortDescription:'Voces, sonidos y formas de contencion.', mainPrompt:'Hoy te calmo...', writingIdeas:['Que parecio ayudarte?', 'Que sonido, voz o gesto te tranquilizo?', 'Que descubrimos sobre ti?'], examples:['Hoy te calmo escuchar la voz de mama.', 'Hoy te gusto que te cantaramos.', 'Hoy te tranquilizaste con nuestras manos.', 'Hoy te leimos un cuento.', 'Hoy descubrimos algo que te gusta.', 'Hoy descubrimos algo que no te gusta tanto.'] },
+  { id:'familia-visitas', name:'Familia y visitas', category:'Familia', icon:'people', color:'#EAF2E7', shortDescription:'Visitas, mensajes y apoyo cercano o a distancia.', mainPrompt:'Hoy recibiste carino de...', writingIdeas:['Quien vino o pregunto por ti?', 'Que mensaje te enviaron?', 'Como se sintio ese apoyo?'], examples:['Hoy vino a verte...', 'Hoy tus abuelos preguntaron por ti.', 'Hoy recibiste carino desde lejos.', 'Hoy alguien rezo o penso en ti.', 'Hoy una persona importante para nosotros te conocio.', 'Hoy alguien dejo un mensaje para ti.'] },
+  { id:'equipo-salud', name:'Equipo de salud', category:'Equipo de salud', icon:'plus', color:'#EAF2F6', shortDescription:'Explicaciones, frases y acompanamiento del equipo.', mainPrompt:'Hoy alguien del equipo nos ayudo a...', writingIdeas:['Quien nos acompano hoy?', 'Que nos explico?', 'Que frase queremos recordar?'], examples:['Hoy una enfermera nos explico...', 'Hoy una persona del equipo nos dio tranquilidad.', 'Hoy aprendimos del equipo que...', 'Hoy queremos recordar el nombre de...', 'Hoy el equipo celebro contigo.', 'Hoy agradecemos especialmente a...'] },
+  { id:'foto-hoy', name:'Foto de hoy', category:'Foto del dia', icon:'camera', color:'#FCE7DE', shortDescription:'Una imagen que habla por este dia.', mainPrompt:'Hoy guardamos esta foto porque...', writingIdeas:['Que muestra esta foto?', 'Por que es importante?', 'Que emocion tiene este recuerdo?'], examples:['Foto de tu incubadora.', 'Foto de tus manitos.', 'Foto de tus piecitos.', 'Foto de piel con piel.', 'Foto de tu primera mantita.', 'Foto de una visita especial.', 'Foto de un hito medico.'] },
+  { id:'carta', name:'Carta para ti', category:'Carta', icon:'letter', color:'#EFE8F5', shortDescription:'Un mensaje directo para tu bebe.', mainPrompt:'Querido/a bebe, hoy quiero contarte que...', writingIdeas:['Que quieres que sepa?', 'Que le contarias cuando sea grande?', 'Que promesa o deseo quieres guardar?'], examples:['Hoy quiero que sepas que...', 'Tal vez no recuerdes estos dias, pero nosotros...', 'Hoy estuviste muy valiente.', 'Hoy nosotros tambien intentamos ser valientes.', 'Lo que sueno para ti es...', 'Gracias por ensenarme...'] },
+  { id:'preparando-casa', name:'Preparandonos para casa', category:'Camino a casa', icon:'home', color:'#EAF2E7', shortDescription:'Pasos, aprendizajes y emociones hacia el alta.', mainPrompt:'Hoy dimos un paso mas hacia casa cuando...', writingIdeas:['Que aprendimos para cuidarte en casa?', 'Que nos emociona?', 'Que nos da miedo?'], examples:['Hoy nos hablaron del alta.', 'Hoy empezamos a prepararnos para llevarte a casa.', 'Hoy aprendimos un cuidado que necesitaremos en casa.', 'Hoy imaginamos como sera tu llegada.', 'Hoy fue tu ultimo dia con...', 'Hoy saliste de la UCIN.'] },
+  { id:'llegada-casa', name:'Llegada a casa', category:'Llegada a casa', icon:'home', color:'#FFF5DC', shortDescription:'Para guardar el dia en que salieron de UCIN.', mainPrompt:'Llegaste a casa el dia...', writingIdeas:['Como fue ese momento?', 'Quienes estaban?', 'Que fue lo primero que hicieron?'], examples:['Te recibimos con...', 'Tu pieza estaba preparada con...', 'La primera noche en casa fue...', 'Despues de tantos dias en UCIN, llegar a casa se sintio...', 'Queremos recordar este dia porque...'] },
+];
+
+const DIARY_TEMPLATES = guidedTemplates;
+const DIARY_COLORS = ['#FFF5DC', '#FCE7DE', '#EAF2E7', '#E9EEF7', '#EFE8F5', '#ECE7E1'];
+const DIARY_CATEGORIES = ['Hoy celebramos', 'Hito UCIN', 'Respiracion', 'Alimentacion', 'Piel con piel', 'Aprendizaje', 'Dia dificil', 'Emocion', 'Personalidad', 'Calma', 'Familia', 'Equipo de salud', 'Foto del dia', 'Carta', 'Camino a casa', 'Llegada a casa'];
+
+const CLASSIC_MEMORY_PROMPTS = [
+  'Antes de que nacieras, te imaginabamos...',
+  'Cuando supimos que venias en camino, sentimos...',
+  'Tu llegada fue distinta a lo que imaginabamos, pero...',
+  'El dia que naciste...',
+  'La primera vez que te vimos fue...',
+  'Cuando entraste a la UCIN sentimos...',
+  'Naciste con semanas de gestacion...',
+  'Tu espacio en la UCIN se veia asi...',
+  'Tu incubadora o cunita hoy tenia...',
+  'Despues de tantos dias en UCIN, llegar a casa se sintio...',
+];
+
+const emptyDiaryMedia = () => ({ photos: [], audios: [], videos: [] });
+function diaryMediaFromTypes(types = []) {
+  return {
+    photos: types.includes('photo') ? ['premature.jpg'] : [],
+    audios: types.includes('audio') ? ['audio-placeholder'] : [],
+    videos: types.includes('video') ? ['video-placeholder'] : [],
+  };
+}
+function getEntryMedia(entry = {}) {
+  if (entry.media && !Array.isArray(entry.media)) return {
+    photos: entry.media.photos || [],
+    audios: entry.media.audios || [],
+    videos: entry.media.videos || [],
+  };
+  return {
+    photos: entry.photos || (entry.media?.includes?.('photo') ? ['premature.jpg'] : []),
+    audios: entry.media?.includes?.('audio') ? ['audio-placeholder'] : [],
+    videos: entry.media?.includes?.('video') ? ['video-placeholder'] : [],
+  };
+}
+function getEntryMediaTypes(entry = {}) {
+  const media = getEntryMedia(entry);
+  return [
+    media.photos.length ? 'photo' : null,
+    media.audios.length ? 'audio' : null,
+    media.videos.length ? 'video' : null,
+  ].filter(Boolean);
+}
+function getEntryPhotos(entry = {}) {
+  return getEntryMedia(entry).photos || [];
+}
+
+function getTemplateByCategory(category, fallback) {
+  return guidedTemplates.find(t => t.category === category) || fallback || guidedTemplates[0];
+}
+
+const DIARY_SEED_ENTRIES = [
+  { id:'seed-ecmo', date:'2026-06-20', type:'guided', templateId:'hito-ucin', title:'Hoy te desconectaron de la ECMO', text:'El equipo nos aviso temprano. Fue un dia inmenso, lleno de cuidado y de silencio compartido.', category:'Hito UCIN', color:'#E9EEF7', media:{ photos:['premature.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-20T15:40:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'15:40' },
+  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#FCE7DE', media:{ photos:['tens2.webp'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
+  { id:'seed-peso', date:'2026-06-19', type:'guided', templateId:'hoy-celebramos', title:'Subiste 20 gramos', text:'La enfermera nos dijo que era una buena noticia para guardar con calma.', category:'Hoy celebramos', color:'#FFF5DC', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T10:30:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'10:30' },
+  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#EFE8F5', media:{ photos:['premature.jpg','tens.avif'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
+  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F4ECDD', media:{ photos:['tens.avif'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
+  { id:'seed-oxigeno', date:'2026-06-17', type:'guided', templateId:'respiracion', title:'Hoy necesitaste menos oxigeno', text:'Mirarte respirar un poco mas tranquilo nos ayudo a respirar tambien a nosotros.', category:'Respiracion', color:'#EAF2F6', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-17T16:20:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'16:20' },
+  { id:'seed-leche', date:'2026-06-16', type:'guided', templateId:'alimentacion', title:'Hoy toleraste mejor la leche', text:'Fue poquito a poquito, pero el equipo nos dijo que era una buena senal.', category:'Alimentacion', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-16T13:10:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'13:10' },
+  { id:'seed-dificil', date:'2026-06-16', type:'guided', templateId:'dia-dificil', title:'Hoy no hubo grandes cambios, pero estuvimos contigo', text:'No fue un dia facil. Vinimos igual, te hablamos suave y dejamos este recuerdo sin exigirnos mas.', category:'Dia dificil', color:'#ECE7E1', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-16T19:30:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'19:30' },
+  { id:'seed-abuelos', date:'2026-06-15', type:'guided', templateId:'familia-visitas', title:'Hoy tus abuelos te mandaron un mensaje', text:'Preguntaron por ti y nos pidieron contarte que te esperan con mucho carino.', category:'Familia', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-15T18:00:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'18:00' },
+  { id:'seed-casa', date:'2026-06-15', type:'guided', templateId:'preparando-casa', title:'Hoy dimos un paso mas hacia casa', text:'Nos explicaron un cuidado que necesitaremos practicar. Da emocion y tambien un poco de miedo.', category:'Camino a casa', color:'#FFF5DC', media:{ photos:['premature.jpg'], audios:[], videos:[] }, createdAt:'2026-06-15T11:40:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'11:40' },
+];
+function DiaryMediaIcon({ type, color = KUN.inkMuted }) {
+  if (type === 'audio') return VINK_ICONS.mic(color);
+  if (type === 'video') {
+    return <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="10" height="10" rx="2" stroke={color} strokeWidth="1.7"/><path d="M13 8L17 6V14L13 12" stroke={color} strokeWidth="1.7" strokeLinejoin="round"/></svg>;
+  }
+  return VINK_ICONS.camera(color);
+}
+
+function DiaryTopBar({ onBack, title = 'Diario de vida', action }) {
+  return (
+    <div style={{ display:'grid', gridTemplateColumns:'42px 1fr 42px', alignItems:'center', gap: 10, padding:'8px 20px 16px' }}>
+      <DiaryIconButton onClick={onBack} muted>{VINK_ICONS.back(KUN.ink)}</DiaryIconButton>
+      <div style={{ textAlign:'center' }}>
+        <div style={{ fontFamily: V_FT, fontSize: 12, fontWeight: 800, color: KUN.brick, letterSpacing: 1 }}>KUN</div>
+        <div style={{ fontFamily: V_FT, fontSize: 22, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3, lineHeight: 1.05 }}>{title}</div>
+      </div>
+      <div>{action}</div>
+    </div>
+  );
+}
+
+function MediaButtons({ selected = [], onToggle }) {
+  const items = [
+    { id:'photo', label:'Foto' },
+    { id:'video', label:'Video' },
+    { id:'audio', label:'Audio' },
+  ];
+  return (
+    <div style={{ display:'flex', gap: 8, flexWrap:'wrap' }}>
+      {items.map(item => {
+        const active = selected.includes(item.id);
+        return (
+          <button key={item.id} onClick={() => onToggle && onToggle(item.id)} style={{
+            border: `1px solid ${active ? KUN.brick : KUN.hair}`,
+            background: active ? '#FFF1EA' : '#fff',
+            color: active ? KUN.brick : KUN.inkSoft,
+            borderRadius: 999,
+            padding: '9px 12px',
+            fontFamily: V_FT,
+            fontSize: 12.5,
+            fontWeight: 700,
+            display:'inline-flex',
+            alignItems:'center',
+            gap: 6,
+            cursor:'pointer',
+          }}>
+            <DiaryMediaIcon type={item.id} color={active ? KUN.brick : KUN.inkMuted} /> {item.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function CategorySelector({ value, onChange }) {
+  return (
+    <div style={{ display:'flex', flexWrap:'wrap', gap: 8 }}>
+      {DIARY_CATEGORIES.map(category => {
+        const active = value === category;
+        return (
+          <button key={category} onClick={() => onChange(category)} style={{
+            border: active ? 'none' : `1px solid ${KUN.hair}`,
+            background: active ? KUN.brick : KUN.cardSoft,
+            color: active ? '#fff' : KUN.inkSoft,
+            borderRadius: 999,
+            padding: '8px 11px',
+            fontFamily: V_FT,
+            fontSize: 12,
+            fontWeight: 700,
+            cursor:'pointer',
+          }}>{category}</button>
+        );
+      })}
+    </div>
+  );
+}
+
+function MemoryHighlights({ entries, onOpenDay }) {
+  const featured = entries.slice(0, 5);
+  return (
+    <section style={{ marginBottom: 20 }}>
+      <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', padding:'0 22px 10px' }}>
+        <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink }}>Recuerdos destacados</div>
+        <div style={{ fontFamily: V_FB, fontSize: 11.5, color: KUN.inkMuted }}>{entries.length} guardados</div>
+      </div>
+      <div style={{ display:'flex', gap: 12, overflowX:'auto', padding:'0 20px 4px', scrollSnapType:'x mandatory' }}>
+        {featured.map(entry => {
+          const photos = getEntryPhotos(entry);
+          return (
+            <button key={entry.id} onClick={() => onOpenDay(entry.fullDate)} style={{
+              width: 206, minHeight: 132, flexShrink: 0, border:'none', borderRadius: 24, padding: 0,
+              overflow:'hidden', background: photos[0] ? '#fff' : entry.color, position:'relative',
+              textAlign:'left', cursor:'pointer', boxShadow:'0 10px 28px rgba(42,35,32,0.08)', scrollSnapAlign:'start',
+            }}>
+              {photos[0] && <img src={photos[0]} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' }} />}
+              <div style={{ position:'absolute', inset:0, background: photos[0] ? 'linear-gradient(180deg, rgba(42,35,32,0.05), rgba(42,35,32,0.58))' : 'transparent' }} />
+              <div style={{ position:'relative', zIndex:1, minHeight:132, padding: 16, display:'flex', flexDirection:'column', justifyContent:'flex-end', boxSizing:'border-box' }}>
+                <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: photos[0] ? 'rgba(255,255,255,0.84)' : KUN.inkMuted, marginBottom: 7 }}>{entry.dateLabel} - {entry.category}</div>
+                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: photos[0] ? '#fff' : KUN.ink, lineHeight: 1.12 }}>{entry.title}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function DiaryEntryCard({ entry, onOpen }) {
+  const photos = getEntryPhotos(entry);
+  const mediaTypes = getEntryMediaTypes(entry);
+  const isGuided = entry.type === 'guided' || !!entry.templateId;
+  return (
+    <button onClick={onOpen} style={{
+      width:'100%', border:'none', background:'#fff', borderRadius: 22, padding: 14,
+      display:'grid', gridTemplateColumns: photos.length ? '1fr 74px' : '1fr', gap: 12,
+      textAlign:'left', cursor:'pointer', borderTop: `1px solid ${KUN.hairSoft}`,
+      boxShadow:'0 6px 18px rgba(42,35,32,0.045)',
+    }}>
+      <div style={{ minWidth:0 }}>
+        <div style={{ display:'flex', alignItems:'center', gap: 7, marginBottom: 5, flexWrap:'wrap' }}>
+          <span style={{ width: 8, height: 8, borderRadius:'50%', background: entry.color, boxShadow:`0 0 0 3px ${entry.color}55` }} />
+          <span style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 500 }}>{entry.time} - {entry.category}</span>
+          {isGuided && <span style={{ borderRadius:999, background:'#FFF1EA', color:KUN.brick, padding:'3px 7px', fontFamily:V_FT, fontSize:10.5, fontWeight:700 }}>Guia</span>}
+        </div>
+        <div style={{ fontFamily: V_FT, fontSize: 16.5, fontWeight: 700, color: KUN.ink, lineHeight: 1.15 }}>{entry.title}</div>
+        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 6, maxHeight: 38, overflow:'hidden' }}>{entry.text || 'Recuerdo guardado con medio adjunto.'}</div>
+        <div style={{ display:'flex', gap: 7, marginTop: 9 }}>
+          {mediaTypes.map(m => <span key={m} style={{ width: 28, height: 28, borderRadius: 14, background: KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center' }}><DiaryMediaIcon type={m} /></span>)}
+        </div>
+      </div>
+      {photos.length > 0 && (
+        <div style={{ display:'grid', gridTemplateRows:'1fr 1fr', gap: 5, height: 96 }}>
+          <img src={photos[0]} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius: 14, gridRow: photos.length === 1 ? '1 / 3' : 'auto' }} />
+          {photos[1] && <img src={photos[1]} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius: 14 }} />}
+        </div>
+      )}
+    </button>
+  );
+}
+
+function DiaryHome({ entries, onBack, onOpenDay, onCreate, canEditDiary }) {
+  const [categoryFilter, setCategoryFilter] = React.useState('Todos');
+  const categories = ['Todos', ...Array.from(new Set(entries.map(e => e.category).filter(Boolean)))];
+  const visibleEntries = categoryFilter === 'Todos' ? entries : entries.filter(e => e.category === categoryFilter);
+  const groups = visibleEntries.reduce((acc, entry) => {
+    acc[entry.fullDate] = acc[entry.fullDate] || [];
+    acc[entry.fullDate].push(entry);
+    return acc;
+  }, {});
+  return (
+    <div style={{ minHeight:'100%', background: KUN.bg, paddingBottom: 108, position:'relative' }}>
+      <DiaryTopBar onBack={onBack} />
+      {!canEditDiary && <ReadOnlyDiaryNotice />}
+      <div style={{ padding:'0 22px 16px' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 13.5, color: KUN.inkSoft, lineHeight: 1.55 }}>
+          Este recuerdo es tuyo. Puedes escribirlo como quieras. No tiene que quedar perfecto.
+        </div>
+      </div>
+      <MemoryHighlights entries={entries} onOpenDay={onOpenDay} />
+      <div style={{ padding:'0 20px 18px' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: KUN.inkMuted, letterSpacing: .8, textTransform:'uppercase', marginBottom: 9 }}>Filtrar por categoria</div>
+        <div style={{ display:'flex', gap: 8, overflowX:'auto', paddingBottom: 2 }}>
+          {categories.map(cat => {
+            const active = cat === categoryFilter;
+            return <button key={cat} onClick={() => setCategoryFilter(cat)} style={{ border:active ? 'none' : `1px solid ${KUN.hair}`, background:active ? KUN.brick : '#fff', color:active ? '#fff' : KUN.inkSoft, borderRadius:999, padding:'8px 12px', fontFamily:V_FT, fontSize:12, fontWeight:700, whiteSpace:'nowrap', cursor:'pointer' }}>{cat}</button>;
+          })}
+        </div>
+      </div>
+      <div style={{ padding:'0 20px', display:'flex', flexDirection:'column', gap: 18 }}>
+        {canEditDiary && (
+          <button onClick={onCreate} style={{ width:'100%', border:'none', background:'#fff', borderRadius:22, padding:'14px 16px', display:'flex', alignItems:'center', gap:12, cursor:'pointer', boxShadow:'0 6px 18px rgba(42,35,32,0.045)', borderTop:`1px solid ${KUN.hairSoft}`, textAlign:'left' }}>
+            <span style={{ width:38, height:38, borderRadius:19, background:KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{VINK_ICONS.plus('#fff')}</span>
+            <span style={{ minWidth:0 }}>
+              <span style={{ display:'block', fontFamily:V_FT, fontSize:15.5, fontWeight:700, color:KUN.ink }}>Agregar un recuerdo</span>
+              <span style={{ display:'block', fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, marginTop:2 }}>Puedes partir libremente o usar una guia suave.</span>
+            </span>
+          </button>
+        )}
+        {Object.keys(groups).map(date => (
+          <section key={date}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', margin:'0 4px 10px' }}>
+              <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink }}>{date}</div>
+              <button onClick={() => onOpenDay(date)} style={{ border:'none', background:'transparent', fontFamily: V_FT, fontSize: 12.5, fontWeight: 700, color: KUN.brick, cursor:'pointer' }}>Ver dia</button>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap: 10 }}>
+              {groups[date].map(entry => <DiaryEntryCard key={entry.id} entry={entry} onOpen={() => onOpenDay(date)} />)}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MemoryBlock({ block, onOpen }) {
+  const base = { width:'100%', maxWidth:'100%', display:'block', boxSizing:'border-box', border:'none', borderRadius: block.kind === 'photo' ? 24 : 22, background: block.color || '#fff', padding: block.kind === 'photo' ? 0 : 15, textAlign:'left', cursor:'pointer', overflow:'hidden', minHeight: block.tall ? 180 : 118, boxShadow:'0 8px 22px rgba(42,35,32,0.055)' };
+  if (block.kind === 'photo') return <button onClick={onOpen} style={{ ...base, minHeight: block.tall ? 238 : 150 }}><img src={block.src} alt="" style={{ width:'100%', height:'100%', minHeight: block.tall ? 238 : 150, objectFit:'cover', display:'block' }} /></button>;
+  if (block.kind === 'audio') return <button onClick={onOpen} style={base}><div style={{ display:'flex', alignItems:'center', gap: 8, minWidth:0 }}><span style={{ width: 34, height: 34, borderRadius: 17, background: KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{VINK_ICONS.play('#fff', 12)}</span><svg viewBox="0 0 74 22" style={{ flex:1, height:22, minWidth:0 }}>{Array.from({length: 16}).map((_, i) => { const h = 5 + Math.abs(Math.sin(i * .8)) * 13; return <rect key={i} x={i * 4.5} y={(22 - h) / 2} width="2.4" height={h} rx="1.2" fill={KUN.inkSoft} opacity={i < 12 ? .9 : .38}/>; })}</svg><span style={{ fontFamily:V_FT, fontSize:11, fontWeight:700, color:KUN.inkMuted, flexShrink:0 }}>{block.duration || '00:42'}</span></div><div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, marginTop: 12 }}>{block.title}</div></button>;
+  if (block.kind === 'video') return <button onClick={onOpen} style={{ ...base, background:'#fff' }}><div style={{ height:96, borderRadius:18, background:block.color || KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:10 }}>{DiaryMediaIcon({ type:'video', color:KUN.brick })}</div><div style={{ fontFamily:V_FT, fontSize:15, fontWeight:700, color:KUN.ink }}>{block.title}</div></button>;
+  return (
+    <button onClick={onOpen} style={base}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8, marginBottom: 9 }}>
+        <span style={{ fontFamily: V_FB, fontSize: 10.5, color: KUN.inkMuted, fontWeight: 600, letterSpacing: .5, textTransform:'uppercase' }}>{block.label}</span>
+        <span style={{ fontFamily: V_FT, fontSize: 11, color: KUN.inkMuted, fontWeight: 700 }}>{block.time}</span>
+      </div>
+      <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, lineHeight: 1.12 }}>{block.title}</div>
+      <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 8 }}>{block.text}</div>
+    </button>
+  );
+}
+
+function DayFloatingAddButton({ onCreate }) {
+  const target = typeof document !== 'undefined'
+    ? document.querySelector('.kun-device')
+    : null;
+  const button = (
+    <button onClick={onCreate} style={{
+      position:'absolute',
+      right: 24,
+      bottom: 112,
+      zIndex: 120,
+      width: 54,
+      height: 54,
+      borderRadius:'50%',
+      border:'none',
+      background: KUN.brick,
+      display:'flex',
+      alignItems:'center',
+      justifyContent:'center',
+      cursor:'pointer',
+      boxShadow:'0 12px 24px rgba(240,116,62,0.28)',
+    }}>{VINK_ICONS.plus('#fff')}</button>
+  );
+  return target && ReactDOM?.createPortal
+    ? ReactDOM.createPortal(button, target)
+    : button;
+}
+
+function DayTimeline({ date, entries, onBack, onCreate }) {
+  const blocks = entries.flatMap(entry => {
+    const media = getEntryMedia(entry);
+    const core = [{ kind:'note', label:entry.category, title:entry.title, text:entry.text || 'Recuerdo guardado sin texto.', time:entry.time, color:entry.color, tall:entry.category === 'Carta' || entry.category === 'Dia dificil' }];
+    const photos = media.photos.map((src, i) => ({ kind:'photo', src, tall:i === 0 && entry.category === 'Personalidad' }));
+    const audios = media.audios.map(() => ({ kind:'audio', title:'Audio guardado', duration:'01:09', color:'#fff' }));
+    const videos = media.videos.map(() => ({ kind:'video', title:'Video guardado', color:entry.color }));
+    return [...core, ...photos, ...audios, ...videos];
+  });
+  return (
+    <div style={{ minHeight:'100%', background: KUN.bg, paddingBottom: 108, position:'relative' }}>
+      <DiaryTopBar onBack={onBack} title={date || 'Hoy'} />
+      <div style={{ padding:'0 22px 18px' }}>
+        <div style={{ fontFamily: V_FB, fontSize: 13, lineHeight: 1.55, color: KUN.inkSoft }}>Recuerdos de este dia, ordenados como album. No todo tiene que estar completo para quedar guardado.</div>
+      </div>
+      <div style={{ columnCount: 2, columnGap: 10, padding:'0 16px' }}>
+        {blocks.map((block, i) => (
+          <div key={i} style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom: 10 }}>
+            <MemoryBlock block={block} />
+          </div>
+        ))}
+        <div style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom: 10 }}>
+          <MemoryBlock block={{ kind:'note', label:'Para recordar', title:'Un detalle pequeno', text:'Hoy queremos recordar este momento tal como fue.', time:'Noche', color:'#FFF5DC' }} />
+        </div>
+      </div>
+      <DayFloatingAddButton onCreate={onCreate} />
+    </div>
+  );
+}
+
+function TemplateIcon({ icon, color = KUN.ink }) {
+  if (icon === 'monitor') return KIcon.cat.ecmo(color);
+  if (icon === 'heart') return KIcon.heart(color);
+  if (icon === 'camera') return VINK_ICONS.camera(color);
+  if (icon === 'people') return KIcon.people(color);
+  if (icon === 'home') return KIcon.home(color);
+  if (icon === 'book') return KIcon.book(color);
+  if (icon === 'milk') return HIcon.bottle(color);
+  return KIcon.spark(color);
+}
+
+function TemplateCard({ template, onSelect }) {
+  return (
+    <button onClick={() => onSelect(template)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', borderRadius: 20, padding: 14, display:'flex', gap: 12, alignItems:'flex-start', textAlign:'left', cursor:'pointer' }}>
+      <span style={{ width: 42, height: 42, borderRadius: 15, background: template.color, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><TemplateIcon icon={template.icon} color={KUN.ink} /></span>
+      <span style={{ flex:1 }}>
+        <span style={{ display:'block', fontFamily: V_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink }}>{template.name}</span>
+        <span style={{ display:'block', fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 3 }}>{template.shortDescription}</span>
+      </span>
+    </button>
+  );
+}
+
+function TemplateSelector({ onSelect }) {
+  return (
+    <div style={{ display:'grid', gridTemplateColumns:'1fr', gap: 10 }}>
+      {guidedTemplates.map(template => <TemplateCard key={template.id} template={template} onSelect={onSelect} />)}
+    </div>
+  );
+}
+
+function EntryModeSelector({ onFree, onGuide }) {
+  return (
+    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 10, marginBottom: 18 }}>
+      <button onClick={onFree} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', borderRadius: 24, padding: 16, textAlign:'left', cursor:'pointer' }}>
+        <div style={{ width: 42, height: 42, borderRadius: 16, background:'#FFF5DC', display:'flex', alignItems:'center', justifyContent:'center', marginBottom: 12 }}>{VINK_ICONS.text(KUN.ink)}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink }}>Escribir libremente</div>
+        <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 5 }}>Una frase, una foto o lo que salga hoy.</div>
+      </button>
+      <button onClick={onGuide} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', borderRadius: 24, padding: 16, textAlign:'left', cursor:'pointer' }}>
+        <div style={{ width: 42, height: 42, borderRadius: 16, background:'#EAF2E7', display:'flex', alignItems:'center', justifyContent:'center', marginBottom: 12 }}>{KIcon.spark(KUN.ink)}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink }}>Usar una guia</div>
+        <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 5 }}>Preguntas suaves para empezar.</div>
+      </button>
+    </div>
+  );
+}
+
+function WritingIdeas({ ideas = [], onPick }) {
+  return <div style={{ display:'flex', flexDirection:'column', gap: 7 }}>{ideas.slice(0, 3).map(idea => <button key={idea} onClick={() => onPick(idea)} style={{ border:'none', background: KUN.cardSoft, borderRadius: 14, padding:'10px 12px', textAlign:'left', fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, cursor:'pointer' }}>{idea}</button>)}</div>;
+}
+
+function ExampleChips({ examples = [], onPick }) {
+  return <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:2 }}>{examples.map(example => <button key={example} onClick={() => onPick(example)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.inkSoft, borderRadius:999, padding:'8px 11px', fontFamily:V_FB, fontSize:12, whiteSpace:'nowrap', cursor:'pointer' }}>{example}</button>)}</div>;
+}
+
+function SoftColorSelector({ value, onChange }) {
+  return <div style={{ display:'flex', gap: 9, marginBottom: 16 }}>{DIARY_COLORS.map(c => <button key={c} onClick={() => onChange(c)} style={{ width: 30, height: 30, borderRadius:'50%', background:c, border: value === c ? `2px solid ${KUN.ink}` : '2px solid #fff', boxShadow:`0 0 0 1px ${KUN.hair}`, cursor:'pointer' }} />)}</div>;
+}
+
+function ClassicPromptStrip({ onPick }) {
+  return (
+    <div style={{ margin:'2px 0 16px' }}>
+      <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: KUN.inkMuted, letterSpacing: .8, textTransform:'uppercase', marginBottom: 8 }}>Tambien puedes partir desde un recuerdo clasico</div>
+      <div style={{ display:'flex', gap:8, overflowX:'auto' }}>{CLASSIC_MEMORY_PROMPTS.slice(0, 6).map(prompt => <button key={prompt} onClick={() => onPick(prompt)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', borderRadius:999, padding:'8px 12px', fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, whiteSpace:'nowrap', cursor:'pointer' }}>{prompt}</button>)}</div>
+    </div>
+  );
+}
+
+function FreeEditor({ onSave, onUseGuide }) {
+  const [text, setText] = React.useState('');
+  const [media, setMedia] = React.useState([]);
+  const toggleMedia = (type) => setMedia(prev => prev.includes(type) ? prev.filter(x => x !== type) : [...prev, type]);
+  const canSave = text.trim() || media.length;
+  const saveTitle = text.trim().split('\n')[0] || (media.includes('photo') ? 'Foto de hoy' : media.includes('audio') ? 'Audio de hoy' : media.includes('video') ? 'Video de hoy' : 'Recuerdo de hoy');
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap: 14 }}>
+      <div style={{ fontFamily: V_FB, fontSize: 13, color: KUN.inkSoft, lineHeight: 1.5 }}>Puedes escribir solo una frase. Tambien puedes guardar solo una foto.</div>
+      <ClassicPromptStrip onPick={(prompt) => setText(prev => prev ? `${prev}\n${prompt} ` : `${prompt} `)} />
+      <textarea value={text} onChange={e => setText(e.target.value)} placeholder="Escribe lo que quieras recordar de hoy..." style={{ minHeight: 190, width:'100%', resize:'none', boxSizing:'border-box', border:`1px solid ${KUN.hair}`, borderRadius: 22, background:'#fff', padding: 16, outline:'none', fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink }} />
+      <MediaButtons selected={media} onToggle={toggleMedia} />
+      {onUseGuide && <button onClick={onUseGuide} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', alignSelf:'flex-start' }}>Elige una guia si no sabes por donde partir</button>}
+      <button onClick={() => onSave({ text, selectedMedia:media, category:'Foto del dia', color:'#FFF5DC', title:saveTitle, type:'free' })} disabled={!canSave} style={{ height: 48, borderRadius: 999, border:'none', background: canSave ? KUN.brick : 'rgba(42,35,32,.12)', color: canSave ? '#fff' : KUN.inkMuted, fontFamily: V_FT, fontSize: 15, fontWeight: 700, cursor:canSave ? 'pointer' : 'not-allowed' }}>Guardar recuerdo</button>
+    </div>
+  );
+}
+
+function GuidedEditor({ template, onSave, onFree }) {
+  const [text, setText] = React.useState('');
+  const [media, setMedia] = React.useState([]);
+  const [color, setColor] = React.useState(template.color || '#FCE7DE');
+  const [category, setCategoryState] = React.useState(template.category || 'Emocion');
+  const categoryTemplate = getTemplateByCategory(category, template);
+  const setCategory = (nextCategory) => {
+    const nextTemplate = getTemplateByCategory(nextCategory, template);
+    setCategoryState(nextCategory);
+    if (nextTemplate?.color) setColor(nextTemplate.color);
+  };
+  const toggleMedia = (type) => setMedia(prev => prev.includes(type) ? prev.filter(x => x !== type) : [...prev, type]);
+  const canSave = text.trim() || media.length;
+  const appendText = (snippet) => setText(prev => prev ? `${prev}\n${snippet} ` : `${snippet} `);
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap: 14 }}>
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 24, padding: 16 }}>
+        <div style={{ display:'flex', gap:12, alignItems:'center' }}><span style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}><TemplateIcon icon={template.icon} /></span><div><div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, lineHeight: 1.12 }}>{template.name}</div><div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkMuted, marginTop:3 }}>{template.shortDescription}</div></div></div>
+        <div style={{ fontFamily: V_FB, fontSize: 13.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 14 }}>{template.mainPrompt}</div>
+      </div>
+      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={template.mainPrompt} style={{ minHeight: 172, width:'100%', resize:'none', boxSizing:'border-box', border:`1px solid ${KUN.hair}`, borderRadius: 22, background: color, padding: 16, outline:'none', fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink }} />
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}><div style={diarySectionLabel}>Ideas para escribir</div><WritingIdeas ideas={categoryTemplate.writingIdeas} onPick={appendText} /></div>
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}><div style={diarySectionLabel}>Ejemplos opcionales</div><ExampleChips examples={categoryTemplate.examples} onPick={appendText} /></div>
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}>
+        <div style={diarySectionLabel}>Medios</div><MediaButtons selected={media} onToggle={toggleMedia} />
+        <div style={{ ...diarySectionLabel, marginTop: 16 }}>Color suave</div><SoftColorSelector value={color} onChange={setColor} />
+        <div style={diarySectionLabel}>Categoria</div><CategorySelector value={category} onChange={setCategory} />
+      </div>
+      <button onClick={onFree} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', alignSelf:'flex-start' }}>Prefiero escribir libremente</button>
+      <button onClick={() => onSave({ text, selectedMedia:media, category, color, title: text.trim().split('\n')[0] || template.name, type:'guided', templateId:template.id })} disabled={!canSave} style={{ height: 48, borderRadius: 999, border:'none', background: canSave ? KUN.brick : 'rgba(42,35,32,.12)', color: canSave ? '#fff' : KUN.inkMuted, fontFamily: V_FT, fontSize: 15, fontWeight: 700, cursor:canSave ? 'pointer' : 'not-allowed' }}>Guardar recuerdo</button>
+    </div>
+  );
+}
+
+function CreateEntry({ onBack, onSave }) {
+  const [mode, setMode] = React.useState('choice');
+  const [template, setTemplate] = React.useState(null);
+  const selectTemplate = (item) => { setTemplate(item); setMode('guided-editor'); };
+  return (
+    <div style={{ minHeight:'100%', background: KUN.bg, paddingBottom: 96 }}>
+      <DiaryTopBar onBack={onBack} title={mode === 'guided-editor' ? 'Nueva guia' : 'Nuevo recuerdo'} />
+      <div style={{ padding:'0 20px 24px' }}>
+        {mode === 'choice' && <><EntryModeSelector onFree={() => setMode('free')} onGuide={() => setMode('guided')} /><div style={{ fontFamily:V_FB, fontSize:13, color:KUN.inkSoft, lineHeight:1.5, marginBottom:14 }}>No tiene que quedar perfecto. Elige una guia si no sabes por donde partir.</div><TemplateSelector onSelect={selectTemplate} /></>}
+        {mode === 'free' && <FreeEditor onSave={onSave} onUseGuide={() => setMode('guided')} />}
+        {mode === 'guided' && <><button onClick={() => setMode('free')} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', marginBottom:12 }}>Prefiero escribir libremente</button><TemplateSelector onSelect={selectTemplate} /></>}
+        {mode === 'guided-editor' && template && <GuidedEditor template={template} onSave={onSave} onFree={() => setMode('free')} />}
+      </div>
+    </div>
+  );
+}
+
+function DiaryPrototype({ onBack, canEditDiary = true }) {
+  const [view, setView] = React.useState('home');
+  const [selectedDate, setSelectedDate] = React.useState('20 junio 2026');
+  const [entries, setEntries] = React.useState(() => {
+    try { const stored = JSON.parse(localStorage.getItem(DIARY_GUIDED_KEY) || '[]'); return [...stored, ...DIARY_SEED_ENTRIES]; }
+    catch { return DIARY_SEED_ENTRIES; }
+  });
+  const persist = (next) => { setEntries(next); try { localStorage.setItem(DIARY_GUIDED_KEY, JSON.stringify(next.filter(e => !String(e.id).startsWith('seed-')))); } catch {} };
+  const saveEntry = ({ text = '', selectedMedia = [], category, color, title, type = 'free', templateId }) => {
+    const clean = text.trim();
+    if (!clean && !selectedMedia.length) return;
+    const now = new Date();
+    const media = diaryMediaFromTypes(selectedMedia);
+    const entryTitle = title || clean.split('\n')[0] || (selectedMedia.includes('photo') ? 'Foto de hoy' : selectedMedia.includes('audio') ? 'Audio de hoy' : selectedMedia.includes('video') ? 'Video de hoy' : 'Recuerdo de hoy');
+    const newEntry = { id:`local-${Date.now()}`, date:'2026-06-20', type, templateId, title:entryTitle, text:clean, category, color, media, createdAt:now.toISOString(), dateLabel:'Hoy', fullDate:'20 junio 2026', time:now.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }) };
+    persist([newEntry, ...entries]);
+    setSelectedDate(newEntry.fullDate);
+    setView('day');
+  };
+  const openDay = (date) => { setSelectedDate(date); setView('day'); };
+  const dayEntries = entries.filter(entry => entry.fullDate === selectedDate);
+  if (view === 'create') return <CreateEntry onBack={() => setView('home')} onSave={saveEntry} />;
+  if (view === 'day') return <DayTimeline date={selectedDate} entries={dayEntries.length ? dayEntries : entries.slice(0, 2)} onBack={() => setView('home')} onCreate={() => setView('create')} />;
+  return <DiaryHome entries={entries} canEditDiary={canEditDiary} onBack={onBack} onOpenDay={openDay} onCreate={() => setView('create')} />;
+}
 function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía' }) {
-  if (view === 'journey') return <NuestroViaje onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} canEditDiary={canEditDiary} />;
+  if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} />;
   if (view === 'activities') return <ActividadesGuagua onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
   return <VinkEntry onPick={setView} babyName={babyName} />;
 }
 
 window.ScreenVinculo = ScreenVinculo;
+
+
+
+
+
+
