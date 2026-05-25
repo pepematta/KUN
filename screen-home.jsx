@@ -617,21 +617,21 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         <div style={{ padding: '0 22px', boxSizing: 'border-box' }}>
           <CapsuleCard
             tagKind="new" tag="NUEVO"
-            title="Tu bebé empezó a alimentarse por sonda"
-            desc={`Qué esperar estos días y cómo acompañar a ${bName} en esta etapa.`}
-            mins="4 min · cápsula"
-            illoColor={HC.apple}
-            illoIcon={HIcon.drop(HC.ink)}
+            title="El apego en la UCIN"
+            desc={`Cómo construir el vínculo con ${bName} desde los primeros días en la unidad neonatal.`}
+            mins="5 min · cápsula"
+            illoColor={HC.rosehip}
+            illoIcon={HIcon.kangaroo(HC.viola)}
             completed={completed.includes(1)}
             onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
           />
           <CapsuleCard
             tagKind="rec" tag="RECOMENDADO PARA TI"
-            title="Método canguro: cómo empezar"
-            desc={`Una guía cálida para tu primer contacto piel con piel con ${bName}.`}
-            mins="6 min · cápsula"
-            illoColor={HC.rosehip}
-            illoIcon={HIcon.kangaroo(HC.viola)}
+            title="Sonda al dedo"
+            desc={`Aprende paso a paso cómo alimentar a ${bName} con sonda al dedo de forma segura.`}
+            mins="5 min · cápsula"
+            illoColor={HC.apple}
+            illoIcon={HIcon.drop(HC.ink)}
             completed={completed.includes(2)}
             onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
           />
