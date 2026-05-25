@@ -29,18 +29,18 @@ function RecommendedHero({ onOpenCapsula }) {
 
       <div style={{ position:'relative' }}>
         <div style={{ fontFamily: P_FB, fontSize: 12, fontWeight: 400, opacity: 0.9, marginBottom: 6, letterSpacing: 0.2 }}>
-          Porque Sofía empezó a alimentarse por sonda
+          Esencial para estos primeros días en la UCIN
         </div>
         <div style={{ fontFamily: P_FT, fontSize: 22, fontWeight: 700, letterSpacing: -0.4, lineHeight: 1.2, marginBottom: 10 }}>
-          Tu bebé empezó a alimentarse por sonda
+          El apego en la UCIN
         </div>
         <div style={{ fontFamily: P_FB, fontSize: 13.5, fontWeight: 400, lineHeight: 1.55, opacity: 0.92, marginBottom: 18 }}>
-          Aprende qué es la sonda nasogástrica y cómo puedes acompañar este proceso.
+          Cómo construir el vínculo con tu bebé desde los primeros momentos en la unidad neonatal.
         </div>
 
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 12 }}>
           <div style={{ display:'flex', alignItems:'center', gap: 8, fontFamily: P_FB, fontSize: 12.5, fontWeight: 500, opacity: 0.9 }}>
-            <span>4 min</span>
+            <span>5 min</span>
             <span style={{ width: 3, height: 3, borderRadius:'50%', background:'#fff', opacity:0.7 }}/>
             <span>Lectura + audio</span>
           </div>
