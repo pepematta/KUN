@@ -88,10 +88,14 @@ function VinkShapes() {
 function VinkEntry({ onPick, babyName = 'Sofía' }) {
   const childName = babyName || 'tu bebé';
   return (
-    <div style={{ position:'relative', padding: '6px 20px 0', overflowX: 'hidden', maxWidth: '100%', boxSizing: 'border-box' }}>
+    <div style={{
+      position:'relative', padding: '6px 20px 0', overflowX: 'hidden',
+      maxWidth: '100%', boxSizing: 'border-box',
+      display: 'flex', flexDirection: 'column', minHeight: 690,
+    }}>
       <VinkShapes/>
 
-      <div style={{ position:'relative', zIndex: 1 }}>
+      <div style={{ position:'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '10px 4px 18px' }}>
           <div style={{
             fontFamily: V_FT, fontSize: 24, fontWeight: 700, color: KUN.ink,
@@ -107,57 +111,61 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
           </div>
         </div>
 
-        {/* Featured card — Diario de vida */}
-        <div onClick={() => onPick('journey')} style={{
-          background: KUN.brick, borderRadius: 30, padding: '24px 22px',
-          color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
-          marginBottom: 14,
-        }}>
-          <div style={{ position:'absolute', top:-40, right:-40, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
-          <div style={{ position:'absolute', bottom:-60, left:-30, width: 140, height: 140, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
-          <div style={{
-            width: 60, height: 60, borderRadius: 20,
-            background:'rgba(255,255,255,0.20)',
-            display:'flex', alignItems:'center', justifyContent:'center',
-            marginBottom: 16, position:'relative',
-          }}>{VINK_ICONS.journey('#fff')}</div>
-          <div style={{
-            fontFamily: V_FT, fontSize: 24, fontWeight: 700,
-            letterSpacing: -0.4, marginBottom: 4, position:'relative',
-          }}>
-            Diario de vida
-          </div>
-          <div style={{
-            fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, opacity: 0.92, position:'relative',
-          }}>
-            Registra tus momentos
-          </div>
-        </div>
+        {/* Cards — fill remaining space; Diario takes 2/3, Actividades 1/3 */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14, paddingBottom: 16 }}>
 
-        {/* Standard card — Actividades con mi hijo */}
-        <div onClick={() => onPick('activities')} style={{
-          background:'#fff', borderRadius: 30, padding: '24px 22px',
-          cursor:'pointer', position:'relative', overflow:'hidden',
-          border: `1px solid ${KUN.hair}`,
-        }}>
-          <div style={{ position:'absolute', top:-30, right:-30, width: 130, height: 130, borderRadius:'50%', background: KUN.apple, opacity: 0.40 }}/>
-          <div style={{
-            width: 60, height: 60, borderRadius: 20,
-            background: KUN.apple,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            marginBottom: 16, position:'relative',
-          }}>{VINK_ICONS.music(KUN.ink)}</div>
-          <div style={{
-            fontFamily: V_FT, fontSize: 22, fontWeight: 700,
-            letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
+          {/* Featured card — Diario de vida */}
+          <div onClick={() => onPick('journey')} style={{
+            flex: 2, background: KUN.brick, borderRadius: 30, padding: '24px 22px',
+            color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
           }}>
-            Actividades con mi hijo
+            <div style={{ position:'absolute', top:-40, right:-40, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
+            <div style={{ position:'absolute', bottom:-60, left:-30, width: 140, height: 140, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
+            <div style={{
+              width: 60, height: 60, borderRadius: 20,
+              background:'rgba(255,255,255,0.20)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              marginBottom: 16, position:'relative',
+            }}>{VINK_ICONS.journey('#fff')}</div>
+            <div style={{
+              fontFamily: V_FT, fontSize: 24, fontWeight: 700,
+              letterSpacing: -0.4, marginBottom: 4, position:'relative',
+            }}>
+              Diario de vida
+            </div>
+            <div style={{
+              fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, opacity: 0.92, position:'relative',
+            }}>
+              Registra tus momentos
+            </div>
           </div>
-          <div style={{
-            fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
+
+          {/* Standard card — Actividades con mi hijo */}
+          <div onClick={() => onPick('activities')} style={{
+            flex: 1, background:'#fff', borderRadius: 30, padding: '24px 22px',
+            cursor:'pointer', position:'relative', overflow:'hidden',
+            border: `1px solid ${KUN.hair}`,
           }}>
-            Tu voz y la música que la calma
+            <div style={{ position:'absolute', top:-30, right:-30, width: 130, height: 130, borderRadius:'50%', background: KUN.apple, opacity: 0.40 }}/>
+            <div style={{
+              width: 60, height: 60, borderRadius: 20,
+              background: KUN.apple,
+              display:'flex', alignItems:'center', justifyContent:'center',
+              marginBottom: 16, position:'relative',
+            }}>{VINK_ICONS.music(KUN.ink)}</div>
+            <div style={{
+              fontFamily: V_FT, fontSize: 22, fontWeight: 700,
+              letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
+            }}>
+              Actividades con mi hijo
+            </div>
+            <div style={{
+              fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
+            }}>
+              Tu voz y la música que la calma
+            </div>
           </div>
+
         </div>
       </div>
     </div>
