@@ -343,22 +343,6 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
   );
 }
 
-function SummaryCapsules({ onGoToCapsula, completedCapsulas }) {
-  const completed = completedCapsulas || [];
-  return (
-    <div style={{ margin: '18px 22px 0' }}>
-      <HSectionHead title="Cuidado y lactancia" kicker="Cápsulas del resumen" />
-      {DAILY_SUMMARY.concepts.map((c, i) => (
-        <ConceptRow key={i}
-          category={c.category} color={c.color} title={c.label}
-          completed={completed.includes(c.capsuleId)}
-          onClick={() => onGoToCapsula && onGoToCapsula(c.capsuleId)}
-        />
-      ))}
-    </div>
-  );
-}
-
 // ─── Lactario card (compact) ──────────────────────────────────────────────────
 function MilkBottleMeter({ reserved = 120, needed = 180 }) {
   const total = Math.max(needed, 1);
@@ -622,8 +606,6 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
           onOpen={onOpenLactario}
           onCancel={onCancelLactario}
         />
-        <SummaryCapsules onGoToCapsula={onGoToCapsula} completedCapsulas={completed} />
-
         <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
             title="Para ti, hoy"
