@@ -48,7 +48,7 @@ const DEFAULT_CAPSULAS = [
 
 const CAPSULAS = (() => {
   try {
-    const stored = JSON.parse(localStorage.getItem('kun_staff_capsules_v1') || 'null');
+    const stored = JSON.parse(localStorage.getItem('kun_staff_capsules_v2') || 'null');
     return Array.isArray(stored) && stored.length
       ? stored.map(c => ({ id: c.id, title: c.title, dur: c.dur || '4 min', topic: c.topic || 'Prematuridad' }))
       : DEFAULT_CAPSULAS;
