@@ -59,14 +59,14 @@ const CAPSULAS = (() => {
 
 window.CAPSULAS = CAPSULAS;
 
-// Color por tema — usa la paleta DS
+// Color por tema — usa la paleta DS (un color distinto por categoría)
 const TOPIC_COLOR = {
-  'Apego y vínculo':   KUN.rosehip,
-  'Alimentación':      KUN.sun,
-  'Lactancia':         KUN.apple,
-  'Alta y hogar':      KUN.apple,
-  'Primeros auxilios': KUN.viola,
-  'Cuidados por etapa': KUN.rosehip,
+  'Apego y vínculo':    KUN.rosehip,
+  'Alimentación':       KUN.sun,
+  'Lactancia':          KUN.apple,
+  'Alta y hogar':       KUN.sageSoft,
+  'Primeros auxilios':  KUN.viola,
+  'Cuidados por etapa': KUN.clear,
 };
 
 function SearchField() {
@@ -89,7 +89,7 @@ function SearchField() {
 }
 
 function CategoryChips({ active, onChange }) {
-  const chips = ['Todo', 'Cuidados por etapa', 'Lactancia', 'Alimentación', 'Alta y hogar', 'Apego y vínculo', 'Primeros auxilios'];
+  const chips = ['Todo', 'Apego y vínculo', 'Alimentación', 'Lactancia', 'Alta y hogar', 'Primeros auxilios', 'Cuidados por etapa'];
   return (
     <div style={{
       display:'flex', gap: 8, padding: '0 20px 18px',
@@ -200,26 +200,19 @@ function TopicList({ onOpenCapsula, activeCategory, completedCapsulas }) {
   const byTopic = (topicName) => CAPSULAS.filter(c => c.topic === topicName);
 
   const allTopics = [
-    { icon: KIcon.cat.breast,  name: 'Alimentación por sonda', caps: byTopic('Alimentación por sonda'), defaultOpen: true },
-    { icon: KIcon.cat.breast,  name: 'Lactancia',              caps: byTopic('Lactancia') },
-    { icon: KIcon.cat.prem,    name: 'Prematuridad',           caps: byTopic('Prematuridad') },
-    { icon: KIcon.cat.ecmo,    name: 'Equipos y monitores',    caps: byTopic('Equipos y monitores') },
-    { icon: KIcon.cat.kang,    name: 'Método canguro',         caps: byTopic('Método canguro') },
-    { icon: KIcon.cat.ecmo,    name: 'ECMO',                   caps: byTopic('ECMO') },
-    { icon: KIcon.cat.prem,    name: 'Alta y hogar',           caps: byTopic('Alta y hogar') },
+    { icon: KIcon.cat.kang,   name: 'Apego y vínculo',    caps: byTopic('Apego y vínculo') },
+    { icon: KIcon.cat.breast, name: 'Alimentación',        caps: byTopic('Alimentación') },
+    { icon: KIcon.cat.breast, name: 'Lactancia',           caps: byTopic('Lactancia') },
+    { icon: KIcon.cat.prem,   name: 'Alta y hogar',        caps: byTopic('Alta y hogar') },
+    { icon: KIcon.cat.ecmo,   name: 'Primeros auxilios',   caps: byTopic('Primeros auxilios') },
+    { icon: KIcon.cat.kang,   name: 'Cuidados por etapa',  caps: byTopic('Cuidados por etapa') },
   ];
 
-  const chipToTopic = {
-    'Lactancia': ['Lactancia', 'Alimentación por sonda'],
-    'Prematuridad': ['Prematuridad'],
-    'Método canguro': ['Método canguro'],
-    'ECMO': ['ECMO', 'Equipos y monitores'],
-    'Alta y hogar': ['Alta y hogar'],
-  };
-
-  const topics = (!activeCategory || activeCategory === 'Todo')
-    ? allTopics
-    : allTopics.filter(t => (chipToTopic[activeCategory] || []).includes(t.name));
+  // Sólo mostrar categorías que tienen cápsulas; filtrar por chip si aplica
+  const topics = allTopics.filter(t =>
+    t.caps.length > 0 &&
+    (!activeCategory || activeCategory === 'Todo' || t.name === activeCategory)
+  );
 
   const totalCaps = topics.reduce((sum, t) => sum + t.caps.length, 0);
 
@@ -238,7 +231,7 @@ function TopicList({ onOpenCapsula, activeCategory, completedCapsulas }) {
       </div>
       {topics.map((t, i) => (
         <TopicRow
-          key={t.name}
+          key={t.name + '-' + activeCategory}
           {...t}
           defaultOpen={activeCategory !== 'Todo' || i === 0}
           onOpenCapsula={onOpenCapsula}
