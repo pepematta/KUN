@@ -134,7 +134,7 @@ function PillStat({ value, label, onClick }) {
   );
 }
 
-function BabyHero({ babyName = 'Sofía', onMessageNurse }) {
+function BabyHero({ babyName = 'Sofía' }) {
   const [ageInfo, setAgeInfo] = React.useState(null);
   const info = ageInfo === 'chrono'
     ? {
@@ -216,7 +216,7 @@ function BabyHero({ babyName = 'Sofía', onMessageNurse }) {
           <div style={{
             marginTop: 14, paddingTop: 14,
             borderTop: '1px solid rgba(255,255,255,0.25)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+            display: 'flex', alignItems: 'center', gap: 12,
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, minWidth: 0 }}>
               <span style={{
@@ -229,18 +229,6 @@ function BabyHero({ babyName = 'Sofía', onMessageNurse }) {
                 whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
               }}>Valentina Rojas</span>
             </div>
-            <button
-              onClick={(e) => { e.stopPropagation(); onMessageNurse && onMessageNurse(); }}
-              style={{
-                background: HC.brick, color: '#fff', border: 'none',
-                padding: '10px 18px', borderRadius: 999,
-                fontFamily: HF_T, fontWeight: 700, fontSize: 13,
-                cursor: 'pointer', flexShrink: 0,
-                boxShadow: '0 4px 12px rgba(240,116,62,0.35)',
-              }}
-            >
-              Mensaje
-            </button>
           </div>
         </div>
       </div>
@@ -605,7 +593,7 @@ function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onC
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        lactarioReservation, onOpenLactario, onCancelLactario,
-                       onMessageNurse, completedCapsulas, babyStatus, onEditBabyStatus }) {
+                       completedCapsulas, babyStatus, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
   return (
@@ -627,7 +615,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <HomeGreeting parentName={parentName} />
-        <BabyHero babyName={bName} onMessageNurse={onMessageNurse} />
+        <BabyHero babyName={bName} />
         <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
         <LactarioCard
           reservation={lactarioReservation}

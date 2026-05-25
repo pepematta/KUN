@@ -208,8 +208,49 @@ function generateBabyStatusSegments(status, babyName) {
 }
 window.generateBabyStatusSegments = generateBabyStatusSegments;
 
+function normalizeStatusLabel(str) {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function getBabyStatusOptionInfo(label) {
+  const normalized = normalizeStatusLabel(label);
+  for (const cat of BABY_STATUS_CATS) {
+    const match = cat.options.find(opt => normalizeStatusLabel(opt.label) === normalized);
+    if (match) return { title: match.label, text: match.info };
+  }
+
+  const aliases = {
+    'alta': 'Dado de alta',
+    'ventilador mecanico': 'Ventilación mecánica',
+    'pecho directo': 'Pecho directo',
+    'sonda nasogastrica': 'Sonda nasogástrica',
+    'sonda orogastrica': 'Sonda orogástrica',
+    'nutricion parenteral': 'Nutrición parenteral',
+    'via periferica': 'Vía periférica',
+    'cateter umbilical': 'Catéter umbilical',
+    'cateter venoso central': 'Catéter venoso central',
+    'incubadora': 'Incubadora',
+    'cuna de calor radiante': 'Cuna de calor radiante',
+    'cuna abierta': 'Cuna abierta',
+    'canula nasal': 'Cánula nasal',
+  };
+  const alias = aliases[normalized];
+  if (!alias) return null;
+
+  for (const cat of BABY_STATUS_CATS) {
+    const match = cat.options.find(opt => opt.label === alias);
+    if (match) return { title: match.label, text: match.info };
+  }
+  return null;
+}
+window.getBabyStatusOptionInfo = getBabyStatusOptionInfo;
+
 // ─── NarrativeChip ───────────────────────────────────────────────────────────
-function NarrativeChip({ label, colorKey }) {
+function NarrativeChip({ label, colorKey, onClick }) {
   const colorMap = {
     apple: KUN.apple,
     clear: KUN.clear,
@@ -218,7 +259,7 @@ function NarrativeChip({ label, colorKey }) {
   const bg = colorMap[colorKey] || KUN.clear;
 
   return (
-    <span style={{
+    <span onClick={onClick} style={{
       display: 'inline-flex',
       alignItems: 'center',
       background: bg,
@@ -231,6 +272,7 @@ function NarrativeChip({ label, colorKey }) {
       verticalAlign: 'middle',
       margin: '0 2px',
       color: KUN.ink,
+      cursor: onClick ? 'pointer' : 'default',
     }}>
       {label}
     </span>
@@ -240,6 +282,7 @@ function NarrativeChip({ label, colorKey }) {
 // ─── BabyStatusNarrative ─────────────────────────────────────────────────────
 function BabyStatusNarrative({ status, babyName, onEdit }) {
   const segments = generateBabyStatusSegments(status, babyName);
+  const [activeInfo, setActiveInfo] = React.useState(null);
 
   return (
     <div style={{
@@ -259,10 +302,66 @@ function BabyStatusNarrative({ status, babyName, onEdit }) {
       }}>
         {segments.map((seg, i) =>
           seg.chip
-            ? <NarrativeChip key={i} label={seg.chip} colorKey={seg.chipColor} />
+            ? <NarrativeChip
+                key={i}
+                label={seg.chip}
+                colorKey={seg.chipColor}
+                onClick={() => {
+                  const info = getBabyStatusOptionInfo(seg.chip);
+                  if (info) setActiveInfo(info);
+                }}
+              />
             : <React.Fragment key={i}>{seg.text}</React.Fragment>
         )}
       </p>
+      {activeInfo && (
+        <div onClick={() => setActiveInfo(null)} style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(42,35,32,0.18)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 14,
+          boxSizing: 'border-box',
+          borderRadius: 24,
+          zIndex: 20,
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            width: '100%',
+            background: 'rgba(255,255,255,0.98)',
+            borderRadius: 18,
+            padding: '15px 16px',
+            boxSizing: 'border-box',
+            border: `1px solid ${KUN.hair}`,
+            boxShadow: '0 10px 28px rgba(42,35,32,0.18)',
+          }}>
+            <div style={{
+              fontFamily: BST_FT,
+              fontSize: 16,
+              fontWeight: 700,
+              color: KUN.ink,
+              letterSpacing: -0.2,
+              marginBottom: 6,
+            }}>{activeInfo.title}</div>
+            <div style={{
+              fontFamily: BST_FB,
+              fontSize: 12.5,
+              fontWeight: 400,
+              color: KUN.inkSoft,
+              lineHeight: 1.5,
+            }}>{activeInfo.text}</div>
+            <div onClick={() => setActiveInfo(null)} style={{
+              marginTop: 10,
+              fontFamily: BST_FT,
+              fontSize: 12.5,
+              fontWeight: 700,
+              color: KUN.brick,
+              cursor: 'pointer',
+            }}>Entendido</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
