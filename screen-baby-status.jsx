@@ -283,6 +283,36 @@ function NarrativeChip({ label, colorKey, onClick }) {
 function BabyStatusNarrative({ status, babyName, onEdit }) {
   const segments = generateBabyStatusSegments(status, babyName);
   const [activeInfo, setActiveInfo] = React.useState(null);
+  const [expanded, setExpanded] = React.useState(false);
+
+  // Split after the 2nd chip + its trailing text segments
+  const splitIdx = (() => {
+    let chips = 0;
+    for (let i = 0; i < segments.length; i++) {
+      if (segments[i].chip) {
+        chips++;
+        if (chips === 2) {
+          // include trailing text until next chip or end
+          let j = i + 1;
+          while (j < segments.length && !segments[j].chip) j++;
+          return j;
+        }
+      }
+    }
+    return segments.length; // fewer than 2 chips → show all
+  })();
+
+  const hasMore = splitIdx < segments.length;
+  const visible = (!hasMore || expanded) ? segments : segments.slice(0, splitIdx);
+
+  const renderSeg = (seg, i) => seg.chip
+    ? <NarrativeChip
+        key={i}
+        label={seg.chip}
+        colorKey={seg.chipColor}
+        onClick={() => { const info = getBabyStatusOptionInfo(seg.chip); if (info) setActiveInfo(info); }}
+      />
+    : <React.Fragment key={i}>{seg.text}</React.Fragment>;
 
   return (
     <div style={{
@@ -300,20 +330,35 @@ function BabyStatusNarrative({ status, babyName, onEdit }) {
         lineHeight: 1.85,
         color: KUN.ink,
       }}>
-        {segments.map((seg, i) =>
-          seg.chip
-            ? <NarrativeChip
-                key={i}
-                label={seg.chip}
-                colorKey={seg.chipColor}
-                onClick={() => {
-                  const info = getBabyStatusOptionInfo(seg.chip);
-                  if (info) setActiveInfo(info);
-                }}
-              />
-            : <React.Fragment key={i}>{seg.text}</React.Fragment>
-        )}
+        {visible.map(renderSeg)}
+        {!expanded && hasMore && <span style={{ color: KUN.inkMuted }}>...</span>}
       </p>
+
+      {hasMore && (
+        <div
+          onClick={() => setExpanded(e => !e)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            marginTop: 10, cursor: 'pointer', width: 'fit-content',
+          }}
+        >
+          <span style={{
+            fontFamily: BST_FT, fontSize: 12.5, fontWeight: 700, color: KUN.brick,
+          }}>{expanded ? 'Ver menos' : 'Ver más'}</span>
+          <div style={{
+            width: 22, height: 22, borderRadius: '50%',
+            background: KUN.accentSoft,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'transform .2s',
+            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 3.5L5 6.5L8 3.5" stroke={KUN.brick} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      )}
+
       {activeInfo && (
         <div onClick={() => setActiveInfo(null)} style={{
           position: 'absolute',
