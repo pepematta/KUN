@@ -1009,11 +1009,6 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <span style={{
-            padding: '5px 11px', borderRadius: 999,
-            background: KUN.sun, color: KUN.ink,
-            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
-          }}>PREGUNTA</span>
           <div onClick={e => e.stopPropagation()}>
             <PostActionsMenu
               isOwn={q.author === currentUser || q.fresh}
@@ -1310,11 +1305,6 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <span style={{
-            padding: '5px 11px', borderRadius: 999,
-            background: KUN.apple, color: KUN.ink,
-            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
-          }}>EXPERIENCIA</span>
           <div onClick={e => e.stopPropagation()}>
             <PostActionsMenu
               isOwn={e.author === currentUser || e.fresh}
