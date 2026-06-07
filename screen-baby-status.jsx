@@ -327,7 +327,7 @@ function BabyStatusNarrative({ status, babyName, onEdit }) {
         fontFamily: BST_FB,
         fontWeight: 400,
         fontSize: 13.5,
-        lineHeight: 1.85,
+        lineHeight: 2,
         color: KUN.ink,
       }}>
         {visible.map(renderSeg)}

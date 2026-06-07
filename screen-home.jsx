@@ -308,15 +308,20 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
         </div>
         {onEditStatus && (
           <button onClick={onEditStatus} style={{
-            width: 34, height: 34, borderRadius: '50%',
+            height: 34, borderRadius: 999,
             background: '#fff', border: `1px solid ${HC.hair}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '0 12px 0 10px',
             cursor: 'pointer', flexShrink: 0,
           }}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z"
                 stroke={HC.brick} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
+            <span style={{
+              fontFamily: HF_T, fontSize: 12, fontWeight: 700,
+              color: HC.brick, letterSpacing: '-0.1px',
+            }}>Actualizar estado</span>
           </button>
         )}
       </div>
@@ -529,69 +534,52 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
   );
 }
 
-// ─── Capsule cards (standard) ──────────────────────────────────────────────────
-function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onClick, completed }) {
-  const tagBg    = tagKind === 'new' ? HC.sun  : HC.viola;
-  const tagDot   = tagKind === 'new' ? HC.brick : null;
-  const displayTag = completed ? 'COMPLETADA' : tag;
+// ─── Capsule cards (compact row style) ────────────────────────────────────────
+function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
+  const topicMap = {
+    'Apego y vínculo':    { icon: KIcon.cat.kang,   color: HC.rosehip },
+    'Alimentación':       { icon: KIcon.cat.breast,  color: HC.sun },
+    'Lactancia':          { icon: KIcon.cat.breast,  color: HC.apple },
+    'Alta y hogar':       { icon: KIcon.cat.prem,    color: HC.apple },
+    'Primeros auxilios':  { icon: KIcon.cat.ecmo,    color: HC.viola },
+    'Cuidados por etapa': { icon: KIcon.cat.kang,    color: HC.clear },
+  };
+  const tm = topicMap[topic] || { icon: KIcon.cat.kang, color: HC.rosehip };
   return (
     <div onClick={onClick} style={{
-      background: HC.paper, border: `1px solid ${HC.hair}`,
-      borderRadius: 20, padding: 16, marginBottom: 10,
-      display: 'flex', gap: 14, alignItems: 'stretch', cursor: 'pointer',
+      background: HC.paper, borderRadius: 22, padding: '14px 16px',
+      display: 'flex', alignItems: 'center', gap: 14,
+      border: `1px solid ${HC.hair}`, cursor: 'pointer', marginBottom: 10,
     }}>
-      {/* Illo */}
+      {/* Square category icon */}
       <div style={{
-        width: 64, borderRadius: 16, background: illoColor,
-        display: 'grid', placeItems: 'center', flexShrink: 0,
+        width: 46, height: 46, borderRadius: 14, background: tm.color,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        {illoIcon}
+        {completed
+          ? <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10L8 14L16 6" stroke={HC.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          : tm.icon(HC.ink)
+        }
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div>
-          {/* Tag */}
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            background: tagBg, color: HC.ink,
-            fontFamily: HF_B, fontWeight: 600, fontSize: 10,
-            padding: '3px 9px', borderRadius: 999,
-            letterSpacing: '0.4px', textTransform: 'uppercase',
-            marginBottom: 8,
-          }}>
-            {completed && KIcon.check(HC.ink)}
-            {!completed && tagDot && <span style={{ width: 5, height: 5, borderRadius: '50%', background: tagDot }}/>}
-            {displayTag}
-          </span>
-          <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 15,
-            color: HC.ink, letterSpacing: '-0.2px', lineHeight: 1.25,
-            marginBottom: 4, textWrap: 'pretty',
-          }}>{title}</div>
-          <div style={{
-            fontFamily: HF_B, fontWeight: 400, fontSize: 12,
-            color: HC.ink2, lineHeight: 1.45, textWrap: 'pretty',
-          }}>
-            {desc}
-          </div>
-        </div>
-
+      {/* Text */}
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <span style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 11, color: HC.ink3,
-            letterSpacing: '0.2px',
-          }}>{mins}</span>
-          <div style={{
-            width: 32, height: 32, borderRadius: '50%',
-            background: HC.cream, border: `1px solid ${HC.hair}`,
-            display: 'grid', placeItems: 'center',
-          }}>
-            {completed ? KIcon.check(HC.brick) : HIcon.arrow(HC.brick)}
-          </div>
+          fontFamily: HF_T, fontSize: 14.5, fontWeight: 700, color: HC.ink,
+          letterSpacing: '-0.1px', marginBottom: 4,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>{title}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: HF_B, fontSize: 11.5, color: HC.ink3, fontWeight: 400 }}>
+          <span>{mins}</span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: HC.ink3 }}/>
+          <span>{tag || 'Cápsula'}</span>
         </div>
       </div>
+
+      {/* Chevron */}
+      {HIcon.chevR(HC.ink3)}
     </div>
   );
 }
@@ -638,22 +626,18 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         </div>
         <div style={{ padding: '0 22px', boxSizing: 'border-box' }}>
           <CapsuleCard
-            tagKind="new" tag="NUEVO"
+            topic="Apego y vínculo"
             title="El apego en la UCIN"
-            desc={`Cómo construir el vínculo con ${bName} desde los primeros días en la unidad neonatal.`}
-            mins="5 min · cápsula"
-            illoColor={HC.rosehip}
-            illoIcon={HIcon.kangaroo(HC.viola)}
+            mins="5 min"
+            tag="Nuevo para ti"
             completed={completed.includes(1)}
             onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
           />
           <CapsuleCard
-            tagKind="rec" tag="RECOMENDADO PARA TI"
+            topic="Alimentación"
             title="Sonda al dedo"
-            desc={`Aprende paso a paso cómo alimentar a ${bName} con sonda al dedo de forma segura.`}
-            mins="5 min · cápsula"
-            illoColor={HC.apple}
-            illoIcon={HIcon.drop(HC.ink)}
+            mins="5 min"
+            tag="Recomendado"
             completed={completed.includes(2)}
             onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
           />
