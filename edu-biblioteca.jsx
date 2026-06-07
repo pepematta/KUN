@@ -233,7 +233,7 @@ function TopicList({ onOpenCapsula, activeCategory, completedCapsulas }) {
         <TopicRow
           key={t.name + '-' + activeCategory}
           {...t}
-          defaultOpen={activeCategory !== 'Todo'}
+          defaultOpen={true}
           onOpenCapsula={onOpenCapsula}
           completedCapsulas={completedCapsulas}
         />
