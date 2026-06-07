@@ -86,7 +86,11 @@ function HSectionHead({ title, kicker, action, onAction }) {
         <span onClick={onAction} style={{
           fontFamily: HF_T, fontWeight: 600, fontSize: 12.5,
           color: HC.brick, cursor: 'pointer',
-          display: 'inline-flex', alignItems: 'center', gap: 2,
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '8px 16px', borderRadius: 999,
+          background: 'rgba(240, 116, 62, 0.08)',
+          border: `1.5px solid ${HC.brick}`,
+          transition: 'all 0.2s ease',
         }}>
           {action} {HIcon.chevR(HC.brick)}
         </span>
@@ -279,6 +283,101 @@ function ConceptRow({ category, color, title, onClick, completed }) {
   );
 }
 
+// ─── Daily summary modal ──────────────────────────────────────────────────────
+function DailySummaryModal({ isOpen, onClose, babyName, babyStatus, onEditStatus }) {
+  if (!isOpen) return null;
+
+  const bName = babyName || 'Sofía';
+  const hasStatus = babyStatus && (
+    babyStatus.lugar || babyStatus.temperatura || babyStatus.respiracion ||
+    (babyStatus.alimentacion && babyStatus.alimentacion.length > 0) ||
+    (babyStatus.accesos && babyStatus.accesos.length > 0) ||
+    (babyStatus.diagnosticos && babyStatus.diagnosticos.length > 0)
+  );
+
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+      alignItems: 'flex-end', justifyContent: 'center', zIndex: 1000,
+      backdropFilter: 'blur(4px)',
+    }} onClick={onClose}>
+      <div style={{
+        background: HC.cream, borderRadius: '24px 24px 0 0',
+        width: '100%', maxHeight: '85vh', overflow: 'auto',
+        boxSizing: 'border-box',
+      }} onClick={(e) => e.stopPropagation()}>
+        {/* Header with close button and edit button */}
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+          padding: '22px 22px 12px', borderBottom: `1px solid ${HC.hair}`,
+          position: 'sticky', top: 0, background: HC.cream, zIndex: 10,
+        }}>
+          {/* Edit button with pencil icon */}
+          <button onClick={onEditStatus} style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'transparent', border: 'none', cursor: 'pointer',
+            padding: 0, flexShrink: 0,
+          }}>
+            <svg width="18" height="18" viewBox="0 0 14 14" fill="none">
+              <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z"
+                stroke={HC.brick} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span style={{
+              fontFamily: HF_B, fontWeight: 600, fontSize: 14,
+              color: HC.brick, letterSpacing: '0.1px',
+            }}>Editar</span>
+          </button>
+
+          {/* Close button */}
+          <button onClick={onClose} style={{
+            background: 'transparent', border: 'none', cursor: 'pointer',
+            padding: '4px 8px', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', color: HC.ink, fontSize: 20,
+            flexShrink: 0,
+          }}>
+            ✕
+          </button>
+        </div>
+
+        {/* Modal content */}
+        <div style={{ padding: '20px 22px 28px' }}>
+          <div style={{
+            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+            color: HC.brick, letterSpacing: '0.7px', textTransform: 'uppercase',
+            marginBottom: 8,
+          }}>Resumen del día</div>
+          <div style={{
+            fontFamily: HF_T, fontWeight: 700, fontSize: 19,
+            color: HC.ink, letterSpacing: '-0.3px', marginBottom: 18,
+          }}>{`Cómo está ${bName} hoy`}</div>
+
+          {hasStatus ? (() => {
+            const StatusNarrative = window.BabyStatusNarrative;
+            return StatusNarrative
+              ? <div style={{ lineHeight: 1.85 }}>
+                  <StatusNarrative status={babyStatus} babyName={bName} onEdit={onEditStatus} />
+                </div>
+              : null;
+          })() : (
+            <div style={{
+              background: HC.paper, border: `1px solid ${HC.hair}`,
+              borderRadius: 24, padding: '18px 18px',
+            }}>
+              <p style={{
+                margin: 0, fontFamily: HF_B, fontWeight: 400,
+                fontSize: 13.5, lineHeight: 1.85, color: HC.ink, letterSpacing: '0.1px',
+              }}>
+                {DAILY_SUMMARY.text.replace(/^Sofía/, bName)}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DailySummary({ babyName, babyStatus, onEditStatus }) {
   const bName = babyName || 'Sofía';
   const hasStatus = babyStatus && (
@@ -333,7 +432,7 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
         }}>
           <p style={{
             margin: 0, fontFamily: HF_B, fontWeight: 400,
-            fontSize: 13.5, lineHeight: 1.75, color: HC.ink, letterSpacing: '0.1px',
+            fontSize: 13.5, lineHeight: 1.85, color: HC.ink, letterSpacing: '0.1px',
           }}>
             {DAILY_SUMMARY.text.replace(/^Sofía/, bName)}
           </p>
@@ -450,7 +549,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
             background: hasReservation ? 'transparent' : HC.brick,
             color: hasReservation ? HC.brick : '#fff',
             border: hasReservation ? `1.5px solid ${HC.brick}` : 'none',
-            padding: '9px 15px', borderRadius: 999,
+            padding: '12px 20px', borderRadius: 999,
             fontFamily: HF_T, fontWeight: 700, fontSize: 12.5,
             cursor: 'pointer', whiteSpace: 'nowrap',
           }}
@@ -578,8 +677,10 @@ function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onC
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        lactarioReservation, onOpenLactario, onCancelLactario,
                        completedCapsulas, babyStatus, onEditBabyStatus }) {
+  const [showDailySummaryModal, setShowDailySummaryModal] = React.useState(false);
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
+  
   return (
     <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%' }}>
       {/* subtle decorative shape — half moon rosehip behind content */}
@@ -600,7 +701,44 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       <div style={{ position: 'relative', zIndex: 1 }}>
         <HomeGreeting parentName={parentName} />
         <BabyHero babyName={bName} />
-        <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
+        
+        {/* Daily Summary Button */}
+        <div style={{ margin: '24px 22px 0' }}>
+          <button onClick={() => setShowDailySummaryModal(true)} style={{
+            width: '100%', background: HC.paper, border: `1px solid ${HC.hair}`,
+            borderRadius: 24, padding: '18px 22px',
+            display: 'flex', alignItems: 'center', gap: 14,
+            cursor: 'pointer', textAlign: 'left',
+          }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: 14,
+              background: HC.rosehip, display: 'grid', placeItems: 'center', flexShrink: 0,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke={HC.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 12h18M12 3v18"/>
+              </svg>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+                color: HC.brick, letterSpacing: '0.5px', textTransform: 'uppercase',
+              }}>Resumen</div>
+              <div style={{
+                fontFamily: HF_T, fontWeight: 700, fontSize: 15,
+                color: HC.ink, marginTop: 3, lineHeight: 1.2,
+              }}>Resumen del día</div>
+            </div>
+            <div style={{
+              width: 34, height: 34, borderRadius: '50%',
+              background: HC.cream, border: `1px solid ${HC.hair}`,
+              display: 'grid', placeItems: 'center', flexShrink: 0,
+            }}>
+              {HIcon.arrow(HC.brick)}
+            </div>
+          </button>
+        </div>
+        
         <LactarioCard
           reservation={lactarioReservation}
           onOpen={onOpenLactario}
@@ -637,6 +775,15 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
           />
         </div>
       </div>
+
+      {/* Daily Summary Modal */}
+      <DailySummaryModal
+        isOpen={showDailySummaryModal}
+        onClose={() => setShowDailySummaryModal(false)}
+        babyName={bName}
+        babyStatus={babyStatus}
+        onEditStatus={onEditBabyStatus}
+      />
     </div>
   );
 }
