@@ -148,90 +148,107 @@ function BabyHero({ babyName = 'Sofía' }) {
         }
       : null;
   return (
-    <div style={{ margin: '16px 18px 0' }}>
+    <div style={{ margin: '16px 18px 0', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative' }}>
+
+      {/* ── Compact baby card ── */}
       <div style={{
-        position: 'relative', borderRadius: 32, overflow: 'hidden',
-        aspectRatio: '1 / 1.18', background: HC.rosehip,
+        background: HC.rosehip,
+        borderRadius: 28, padding: '16px 18px',
+        display: 'flex', alignItems: 'center', gap: 16, overflow: 'hidden',
       }}>
-        {/* Full-bleed baby photo */}
-        <img src="premature.jpg" alt={babyName} style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'center 30%',
-        }}/>
-
-        {/* Bottom gradient covering name + nurse area for legibility */}
+        {/* Decorative circle */}
         <div style={{
-          position: 'absolute', left: 0, right: 0, bottom: 0, height: '60%',
-          background: 'linear-gradient(to top, rgba(42,35,32,0.85) 0%, rgba(42,35,32,0.55) 45%, rgba(42,35,32,0) 100%)',
+          position: 'absolute', top: -40, right: -40,
+          width: 130, height: 130, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.15)', pointerEvents: 'none',
         }}/>
 
-        {/* Stat pills top-right — edad cronológica + edad corregida */}
-        <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 'calc(100% - 32px)' }}>
-          <PillStat value="34" label="sem. cronológicas" onClick={() => setAgeInfo('chrono')} />
-          <PillStat value="32" label="sem. corregidas" onClick={() => setAgeInfo('corrected')} />
+        {/* Circular photo */}
+        <div style={{
+          width: 76, height: 76, borderRadius: '50%', flexShrink: 0,
+          overflow: 'hidden',
+          boxShadow: '0 0 0 3px rgba(255,255,255,0.7)',
+        }}>
+          <img src="premature.jpg" alt={babyName} style={{
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center 30%',
+          }}/>
         </div>
 
-        {info && (
-          <div onClick={() => setAgeInfo(null)} style={{
-            position: 'absolute', inset: 0,
-            background: 'rgba(42,35,32,0.34)',
-            display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-            padding: '72px 16px 0',
-            boxSizing: 'border-box',
-          }}>
-            <div onClick={(e) => e.stopPropagation()} style={{
-              width: '100%',
-              background: 'rgba(255,255,255,0.96)',
-              borderRadius: 20,
-              padding: '16px 18px',
-              boxSizing: 'border-box',
-              border: `1px solid ${HC.hair}`,
-              boxShadow: '0 10px 28px rgba(42,35,32,0.18)',
-            }}>
-              <div style={{
-                fontFamily: HF_T, fontSize: 16, fontWeight: 700,
-                color: HC.ink, letterSpacing: '-0.2px', marginBottom: 6,
-              }}>{info.title}</div>
-              <div style={{
-                fontFamily: HF_B, fontSize: 12.5, fontWeight: 400,
-                color: HC.ink2, lineHeight: 1.5,
-              }}>{info.text}</div>
-              <div onClick={() => setAgeInfo(null)} style={{
-                marginTop: 10,
-                fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
-                color: HC.brick, cursor: 'pointer',
-              }}>Entendido</div>
-            </div>
-          </div>
-        )}
-
-        {/* Bottom content: name + nurse */}
-        <div style={{ position: 'absolute', left: 20, right: 20, bottom: 18, color: '#fff' }}>
+        {/* Name + age pills stacked vertically */}
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 34,
-            letterSpacing: '-0.4px', lineHeight: 1,
+            fontFamily: HF_T, fontWeight: 700, fontSize: 28,
+            color: HC.ink, letterSpacing: '-0.4px', lineHeight: 1, marginBottom: 10,
           }}>{babyName}</div>
-
-          {/* Divider */}
-          <div style={{
-            marginTop: 14, paddingTop: 14,
-            borderTop: '1px solid rgba(255,255,255,0.25)',
-            display: 'flex', alignItems: 'center', gap: 12,
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, minWidth: 0 }}>
-              <span style={{
-                fontFamily: HF_B, fontWeight: 500, fontSize: 9.5,
-                color: 'rgba(255,255,255,0.75)', letterSpacing: '0.7px', textTransform: 'uppercase',
-              }}>Enfermera de turno</span>
-              <span style={{
-                fontFamily: HF_T, fontWeight: 700, fontSize: 16,
-                color: '#fff', marginTop: 4, letterSpacing: '-0.2px',
-                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-              }}>Valentina Rojas</span>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <PillStat value="34" label="sem. cronológicas" onClick={() => setAgeInfo('chrono')} />
+            <PillStat value="32" label="sem. corregidas"   onClick={() => setAgeInfo('corrected')} />
           </div>
         </div>
       </div>
+
+      {/* ── Nurse card ── */}
+      <div style={{
+        background: HC.paper, borderRadius: 22, padding: '13px 16px',
+        display: 'flex', alignItems: 'center', gap: 12,
+        border: `1px solid ${HC.hair}`,
+      }}>
+        {/* Avatar with initial */}
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+          background: HC.apple,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink }}>V</span>
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontFamily: HF_B, fontSize: 9.5, fontWeight: 600,
+            color: HC.ink3, letterSpacing: '0.7px', textTransform: 'uppercase', marginBottom: 3,
+          }}>Enfermera de turno</div>
+          <div style={{
+            fontFamily: HF_T, fontSize: 16, fontWeight: 700,
+            color: HC.ink, letterSpacing: '-0.2px',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>Valentina Rojas</div>
+        </div>
+        {/* Online indicator */}
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#52C17B', flexShrink: 0 }}/>
+      </div>
+
+      {/* ── Age info tooltip — lives OUTSIDE the card so it isn't clipped ── */}
+      {info && (
+        <div onClick={() => setAgeInfo(null)} style={{
+          position: 'absolute', inset: 0, zIndex: 10,
+          background: 'rgba(42,35,32,0.18)', borderRadius: 28,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '0 14px', boxSizing: 'border-box',
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            width: '100%',
+            background: 'rgba(255,255,255,0.97)',
+            borderRadius: 20, padding: '18px 20px',
+            border: `1px solid ${HC.hair}`,
+            boxShadow: '0 10px 28px rgba(42,35,32,0.18)',
+          }}>
+            <div style={{
+              fontFamily: HF_T, fontSize: 16, fontWeight: 700,
+              color: HC.ink, letterSpacing: '-0.2px', marginBottom: 6,
+            }}>{info.title}</div>
+            <div style={{
+              fontFamily: HF_B, fontSize: 12.5, fontWeight: 400,
+              color: HC.ink2, lineHeight: 1.6,
+            }}>{info.text}</div>
+            <div onClick={() => setAgeInfo(null)} style={{
+              marginTop: 12,
+              fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
+              color: HC.brick, cursor: 'pointer',
+            }}>Entendido</div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
