@@ -43,7 +43,7 @@ function loadStaffState(key, fallback) {
   catch { return fallback; }
 }
 function loadStaffCapsules() {
-  const stored = loadStaffState('kun_staff_capsules_v2', []);
+  const stored = loadStaffState('kun_staff_capsules_v3', []);
   if (!Array.isArray(stored) || stored.length === 0) return STAFF_INITIAL_CAPSULES;
   const byId = new Map(stored.map(c => [c.id, c]));
   STAFF_INITIAL_CAPSULES.forEach(c => {
@@ -637,7 +637,7 @@ function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = []
   const askConfirm = (title, text, action) => setConfirm({ title, text, action });
   const setBabies = (next) => { setBabiesState(next); saveStaffState('kun_staff_babies_v1', next); };
   const setLactarioSlots = (next) => { setLactarioSlotsState(next); saveStaffState('kun_staff_lactario_v1', next); };
-  const setCapsules = (next) => { setCapsulesState(next); saveStaffState('kun_staff_capsules_v2', next); };
+  const setCapsules = (next) => { setCapsulesState(next); saveStaffState('kun_staff_capsules_v3', next); };
   const recommend = (baby, cap) => {
     setBabies(babies.map(b => b.id === baby.id ? { ...b, recommended: [...new Set([...(b.recommended || []), cap.id])] } : b));
     onRecommendCapsule && onRecommendCapsule(baby, cap);

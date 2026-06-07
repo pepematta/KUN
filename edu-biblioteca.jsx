@@ -48,8 +48,9 @@ const DEFAULT_CAPSULAS = [
 
 const CAPSULAS = (() => {
   try {
-    const stored = JSON.parse(localStorage.getItem('kun_staff_capsules_v2') || 'null');
-    return Array.isArray(stored) && stored.length
+    const stored = JSON.parse(localStorage.getItem('kun_staff_capsules_v3') || 'null');
+    // Only trust stored data if it has at least as many capsules as the default list
+    return Array.isArray(stored) && stored.length >= DEFAULT_CAPSULAS.length
       ? stored.map(c => ({ id: c.id, title: c.title, dur: c.dur || '4 min', topic: c.topic || 'Prematuridad' }))
       : DEFAULT_CAPSULAS;
   } catch {
@@ -233,7 +234,7 @@ function TopicList({ onOpenCapsula, activeCategory, completedCapsulas }) {
         <TopicRow
           key={t.name + '-' + activeCategory}
           {...t}
-          defaultOpen={true}
+          defaultOpen={activeCategory !== 'Todo'}
           onOpenCapsula={onOpenCapsula}
           completedCapsulas={completedCapsulas}
         />
