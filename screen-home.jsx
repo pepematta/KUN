@@ -327,16 +327,38 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
           ? <StatusNarrative status={babyStatus} babyName={bName} onEdit={onEditStatus} />
           : null;
       })() : (
-        <div style={{
-          background: HC.paper, border: `1px solid ${HC.hair}`,
-          borderRadius: 24, padding: '18px 18px',
-        }}>
-          <p style={{
-            margin: 0, fontFamily: HF_B, fontWeight: 400,
-            fontSize: 13.5, lineHeight: 1.75, color: HC.ink, letterSpacing: '0.1px',
+        <div
+          onClick={onEditStatus}
+          style={{
+            background: HC.paper, border: `1.5px dashed ${HC.hair}`,
+            borderRadius: 24, padding: '22px 20px',
+            display: 'flex', alignItems: 'center', gap: 16,
+            cursor: onEditStatus ? 'pointer' : 'default',
+          }}
+        >
+          <div style={{
+            width: 44, height: 44, borderRadius: 14, flexShrink: 0,
+            background: HC.rosehip,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            {DAILY_SUMMARY.text.replace(/^Sofía/, bName)}
-          </p>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M11 5V17M5 11H17" stroke={HC.brick} strokeWidth="2.2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div style={{
+              fontFamily: HF_T, fontWeight: 700, fontSize: 14.5,
+              color: HC.ink, letterSpacing: '-0.1px', marginBottom: 4,
+            }}>
+              Actualiza el estado de {bName}
+            </div>
+            <div style={{
+              fontFamily: HF_B, fontWeight: 400, fontSize: 12.5,
+              color: HC.inkSoft, lineHeight: 1.5,
+            }}>
+              Registra cómo está hoy para tener un resumen siempre a mano.
+            </div>
+          </div>
         </div>
       )}
     </div>
