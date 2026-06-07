@@ -387,58 +387,15 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
   );
 }
 
-// ─── Lactario card (compact) ──────────────────────────────────────────────────
-function MilkBottleMeter({ reserved = 120, needed = 180 }) {
-  const total = Math.max(needed, 1);
-  const pct = Math.max(0, Math.min(100, Math.round((reserved / total) * 100)));
-  const needsMore = reserved < needed;
-  const bottleLevel = Math.max(0, Math.min(5, Math.round((pct / 100) * 5)));
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-      <img
-        src={`assets/mamadera-${bottleLevel}.svg?v=2`}
-        alt={`${pct}% de leche reservada`}
-        style={{
-          width: 64,
-          height: 116,
-          objectFit: 'contain',
-          flexShrink: 0,
-          display: 'block',
-        }}
-      />
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', gap: 10,
-          fontFamily: HF_B, fontSize: 11.5, color: HC.ink2,
-        }}>
-          <span>Reservada</span>
-          <strong style={{ color: HC.ink }}>{reserved} ml</strong>
-        </div>
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', gap: 10,
-          marginTop: 3,
-          fontFamily: HF_B, fontSize: 11.5, color: HC.ink2,
-        }}>
-          <span>Necesita</span>
-          <strong style={{ color: HC.ink }}>{needed} ml</strong>
-        </div>
-        <div style={{
-          marginTop: 7,
-          fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
-          color: needsMore ? HC.brick : '#3D9156',
-          lineHeight: 1.25,
-        }}>
-          {needsMore ? 'Se necesita que la madre vaya a dejar mas leche.' : 'Leche suficiente por ahora.'}
-        </div>
-      </div>
-    </div>
-  );
-}
-
+// ─── Lactario card ────────────────────────────────────────────────────────────
 function LactarioCard({ reservation, onOpen, onCancel }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
+
+  const reserved = 120;
+  const needed   = 180;
+  const pct = Math.max(0, Math.min(100, (reserved / Math.max(needed, 1)) * 100));
+  const needsMore = reserved < needed;
+  const bottleLevel = Math.max(0, Math.min(5, Math.round((pct / 100) * 5)));
 
   const slots = window.LACTARIO_SLOTS || [];
   const nextSlot = slots.find(s => s.used < 4);
@@ -449,70 +406,111 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
 
   return (
     <div style={{ margin: '16px 22px 0' }}>
-      <div
-        onClick={onOpen}
-        style={{
-          background: HC.paper, border: `1px solid ${HC.hair}`,
-          borderRadius: '24px 24px 0 0', padding: '14px 14px 14px 16px',
-          display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
-        }}
-      >
-        {/* Sun icon box */}
-        <div style={{
-          width: 44, height: 44, borderRadius: 14,
-          background: HC.sun, display: 'grid', placeItems: 'center', flexShrink: 0,
-        }}>
-          {HIcon.bottle(HC.ink)}
-        </div>
-
-        {/* Content */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
-            color: HC.ink2, letterSpacing: '0.5px', textTransform: 'uppercase',
-          }}>Lactario</div>
-          <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 15,
-            color: HC.ink, marginTop: 3, lineHeight: 1.2,
-          }}>
-            {hasReservation ? 'Reservado' : 'Reservar extracción'}
-          </div>
-          <div style={{
-            fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
-            color: HC.ink2, marginTop: 2,
-          }}>
-            {hasReservation
-              ? `${reservations.length}/${dailyMax} turnos hoy · primero ${displayTime}`
-              : `Próximo turno libre: ${displayTime}`}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <button
-          onClick={(e) => { e.stopPropagation(); onOpen && onOpen(); }}
-          style={{
-            background: hasReservation ? 'transparent' : HC.brick,
-            color: hasReservation ? HC.brick : '#fff',
-            border: hasReservation ? `1.5px solid ${HC.brick}` : 'none',
-            padding: '9px 15px', borderRadius: 999,
-            fontFamily: HF_T, fontWeight: 700, fontSize: 12.5,
-            cursor: 'pointer', whiteSpace: 'nowrap',
-          }}
-        >
-          {hasReservation ? 'Ver' : 'Reservar'}
-        </button>
-      </div>
-
       <div style={{
-        background: HC.paper,
-        border: `1px solid ${HC.hair}`,
-        borderTop: 'none',
-        borderRadius: '0 0 24px 24px',
-        marginTop: -1,
-        padding: '14px 16px 16px',
-      }}>
-        <div style={{ height: 1, background: HC.hairSoft, marginBottom: 2 }}/>
-        <MilkBottleMeter reserved={120} needed={180} />
+        background: HC.paper, border: `1px solid ${HC.hair}`,
+        borderRadius: 24, padding: '14px 14px 16px 16px',
+        cursor: 'pointer',
+      }} onClick={onOpen}>
+
+        {/* ── Top row: icon + text + button ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Mamadera icon — same asset, slightly smaller */}
+          <img
+            src={`assets/mamadera-${bottleLevel}.svg?v=2`}
+            alt="Mamadera"
+            style={{ width: 44, height: 52, objectFit: 'contain', flexShrink: 0, display: 'block' }}
+          />
+
+          {/* Text */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: HF_B, fontWeight: 600, fontSize: 10,
+              color: HC.ink3, letterSpacing: '0.6px', textTransform: 'uppercase',
+            }}>Lactario</div>
+            <div style={{
+              fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
+              color: HC.ink2, marginTop: 2,
+            }}>
+              {hasReservation
+                ? `${reservations.length}/${dailyMax} turnos hoy · primero ${displayTime}`
+                : `Próximo turno libre: ${displayTime}`}
+            </div>
+          </div>
+
+          {/* CTA button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onOpen && onOpen(); }}
+            style={{
+              background: hasReservation ? 'transparent' : HC.brick,
+              color: hasReservation ? HC.brick : '#fff',
+              border: hasReservation ? `1.5px solid ${HC.brick}` : 'none',
+              padding: '10px 18px', borderRadius: 999,
+              fontFamily: HF_T, fontWeight: 700, fontSize: 13.5,
+              cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            }}
+          >
+            {hasReservation ? 'Ver' : 'Reservar'}
+          </button>
+        </div>
+
+        {/* ── Divider ── */}
+        <div style={{ height: 1, background: HC.hair, margin: '14px 0 12px' }}/>
+
+        {/* ── Milk meter ── */}
+        <div>
+          {/* Label + value */}
+          <div style={{
+            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+            marginBottom: 8,
+          }}>
+            <span style={{ fontFamily: HF_B, fontSize: 13, fontWeight: 500, color: HC.ink }}>
+              Leche disponible
+            </span>
+            <span style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 700, color: HC.ink }}>
+              <span style={{ fontSize: 17 }}>{reserved}</span>
+              {' '}
+              <span style={{ fontWeight: 400, color: HC.ink2 }}>/ {needed} ml</span>
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div style={{
+            height: 8, borderRadius: 999,
+            background: HC.hairSoft,
+          }}>
+            <div style={{
+              height: '100%', borderRadius: 999,
+              background: HC.brick,
+              width: `${pct}%`,
+              transition: 'width .4s',
+            }}/>
+          </div>
+
+          {/* Alert */}
+          {needsMore && (
+            <div style={{
+              marginTop: 10,
+              background: HC.rosehip, borderRadius: 14,
+              padding: '10px 13px',
+              display: 'flex', alignItems: 'flex-start', gap: 10,
+            }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                background: HC.brick,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginTop: 1,
+              }}>
+                <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 700, color: '#fff', lineHeight: 1 }}>!</span>
+              </div>
+              <span style={{
+                fontFamily: HF_B, fontSize: 12.5, fontWeight: 500,
+                color: HC.ink, lineHeight: 1.45,
+              }}>
+                Faltan {needed - reserved} ml — pasa a dejar más leche al lactario.
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Cancel reservation link */}
