@@ -58,7 +58,7 @@
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
 <script type="text/babel" src="screen-vinculo.jsx?v=26"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=14"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=18"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=12"></script>
 <script type="text/babel" src="screen-staff.jsx?v=7"></script>
 </head>
@@ -661,10 +661,20 @@ function Prototype() {
   const publishCapsulaQuestion = ({ text, capsuleTitle, capsuleId: publishedCapsuleId }) => {
     const id = `capsula-${publishedCapsuleId || capsuleId}-${Date.now()}`;
     markCapsulaCompleted(publishedCapsuleId || capsuleId);
+    const authorName = parentName || 'Tú';
+    const avatarOptions = [
+      { authorIcon: 'flower', authorColor: '#F0743E', authorBgColor: '#FFF5DC' },
+      { authorIcon: 'star', authorColor: '#9C7CB8', authorBgColor: '#EFE8F5' },
+      { authorIcon: 'cloud', authorColor: '#7AA8B8', authorBgColor: '#E9EEF7' },
+      { authorIcon: 'leaf', authorColor: '#6FA85F', authorBgColor: '#EAF2E7' },
+      { authorIcon: 'leafPair', authorColor: '#8CA66E', authorBgColor: '#FFF5DC' },
+      { authorIcon: 'sun', authorColor: '#FDD848', authorBgColor: '#FFF5DC' },
+    ];
+    const avatar = avatarOptions[Array.from(authorName).reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarOptions.length];
     setForumQuestions(prev => [{
       id,
-      author: parentName || 'Tú',
-      authorColor: KUN.rosehip,
+      author: authorName,
+      ...avatar,
       role: `Familia de ${babyName || 'tu guagüa'}`,
       category: 'Cápsula educativa',
       title: `Duda sobre ${capsuleTitle || 'esta cápsula'}`,
