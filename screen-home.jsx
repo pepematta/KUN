@@ -360,7 +360,7 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
           <div style={{
             fontFamily: HF_T, fontWeight: 700, fontSize: 19,
             color: HC.ink, letterSpacing: '-0.3px',
-          }}>{`Cómo está ${bName} hoy`}</div>
+          }}>{`Resumen de ${bName}`}</div>
         </div>
         {onEditStatus && (
           <button onClick={onEditStatus} style={{
@@ -675,7 +675,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         />
         <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
-            title="Para ti, hoy"
+            title="Cápsulas recomendadas"
             action="Ver todo"
             onAction={onGoToEdu}
           />
