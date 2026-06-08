@@ -300,6 +300,46 @@ function ConceptRow({ category, color, title, onClick, completed }) {
   );
 }
 
+function ChildSwitcher({ childrenList, activeChildId, onSelectChild }) {
+  const items = Array.isArray(childrenList) ? childrenList : [];
+  if (items.length <= 1) return null;
+
+  return (
+    <div style={{ margin: '12px 22px 0' }}>
+      <div style={{
+        display: 'flex', gap: 8, overflowX: 'auto',
+        padding: 4, borderRadius: 999,
+        background: 'rgba(255,255,255,0.72)',
+        border: `1px solid ${HC.hair}`,
+      }}>
+        {items.map((child, index) => {
+          const selected = child.id === activeChildId;
+          const label = child.name || `Bebé ${index + 1}`;
+          return (
+            <button
+              key={child.id || index}
+              onClick={() => onSelectChild && onSelectChild(child.id)}
+              style={{
+                minWidth: 92, maxWidth: 150, height: 36,
+                borderRadius: 999, border: 'none',
+                background: selected ? HC.brick : 'transparent',
+                color: selected ? '#fff' : HC.ink2,
+                fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
+                padding: '0 14px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                flexShrink: 0,
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function DailySummary({ babyName, babyStatus, onEditStatus }) {
   const bName = babyName || 'Sofía';
   const hasStatus = babyStatus && (
@@ -605,6 +645,7 @@ function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
 
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
+                       children: childrenList, activeChildId, onSelectChild,
                        lactarioReservation, onOpenLactario, onCancelLactario,
                        completedCapsulas, babyStatus, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
@@ -629,6 +670,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       <div style={{ position: 'relative', zIndex: 1 }}>
         <HomeGreeting parentName={parentName} />
         <BabyHero babyName={bName} />
+        <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
         <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
         <LactarioCard
           reservation={lactarioReservation}

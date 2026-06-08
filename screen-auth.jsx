@@ -672,6 +672,123 @@ function ResetPasswordView({ onBack, onSubmit }) {
 }
 
 // ── Main entry ──────────────────────────────────────
+function makeChildId(index) {
+  return `child-${index + 1}-${Date.now()}`;
+}
+
+function normalizeAuthChildren(data) {
+  const existing = Array.isArray(data?.children) ? data.children : [];
+  const children = existing.length > 0
+    ? existing
+    : [{ id: data?.rut || 'child-1', rut: data?.rut || '', name: data?.babyName || '' }];
+  return children.map((child, index) => ({
+    id: child.id || child.rut || makeChildId(index),
+    rut: child.rut || (index === 0 ? data?.rut || '' : ''),
+    name: child.name || child.babyName || (index === 0 ? data?.babyName || '' : ''),
+  }));
+}
+
+function ChildrenSetupView({ sessionData, onSubmit }) {
+  const initialChildren = normalizeAuthChildren(sessionData);
+  const [count, setCount] = React.useState(Math.max(1, initialChildren.length || 1));
+  const [children, setChildren] = React.useState(() => initialChildren);
+
+  React.useEffect(() => {
+    setChildren(prev => {
+      const next = [...prev];
+      while (next.length < count) next.push({ id: makeChildId(next.length), rut: '', name: '' });
+      return next.slice(0, count);
+    });
+  }, [count]);
+
+  const updateChild = (index, patch) => {
+    setChildren(prev => prev.map((child, i) => i === index ? { ...child, ...patch } : child));
+  };
+
+  const preparedChildren = children.slice(0, count).map((child, index) => ({
+    id: child.id || child.rut || makeChildId(index),
+    rut: index === 0 ? (child.rut || sessionData?.rut || '') : (child.rut || ''),
+    name: child.name || `Bebé ${index + 1}`,
+  }));
+
+  return (
+    <>
+      <AuthShapes/>
+      <div style={{ position:'relative', zIndex: 1, flex: 1, overflowY: 'auto', paddingBottom: 16 }}>
+        <div style={{ padding: '72px 28px 0' }}>
+          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
+            ¿Tienes más de un hijo internado?
+          </div>
+          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+            Si son mellizos, trillizos o más, podrás cambiar entre ellos desde Inicio y ver su estado por separado.
+          </div>
+        </div>
+        <div style={{ padding: '24px 28px 0' }}>
+          <div style={labelStyle}>Hijos internados</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            {[1, 2, 3, 4].map(n => (
+              <button
+                key={n}
+                onClick={() => setCount(n)}
+                style={{
+                  height: 42, borderRadius: 999,
+                  border: `1.5px solid ${count === n ? KUN.brick : KUN.hair}`,
+                  background: count === n ? KUN.rosehip : '#fff',
+                  color: KUN.ink,
+                  fontFamily: A_FT, fontWeight: 700, fontSize: 15,
+                  cursor: 'pointer',
+                }}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {preparedChildren.map((child, index) => (
+              <div key={child.id} style={{
+                background: '#fff', border: `1px solid ${KUN.hair}`, borderRadius: 18,
+                padding: 14,
+              }}>
+                <div style={{ ...labelStyle, marginBottom: 10 }}>Hijo/a {index + 1}</div>
+                <input
+                  value={children[index]?.name || ''}
+                  onChange={(e) => updateChild(index, { name: e.target.value })}
+                  placeholder={`Nombre de bebé ${index + 1}`}
+                  style={inputStyle}
+                />
+                <div style={{ height: 10 }} />
+                <input
+                  value={index === 0 ? (children[index]?.rut || sessionData?.rut || '') : (children[index]?.rut || '')}
+                  onChange={(e) => updateChild(index, { rut: formatRut(e.target.value) })}
+                  placeholder={index === 0 ? 'RUT principal' : 'RUT opcional'}
+                  style={{ ...inputStyle, fontSize: 13.5 }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div style={{ flex: 1 }}/>
+      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
+        <PrimaryButton onClick={() => {
+          const first = preparedChildren[0] || {};
+          onSubmit({
+            ...sessionData,
+            rut: first.rut || sessionData?.rut,
+            babyName: first.name || sessionData?.babyName,
+            children: preparedChildren,
+            activeChildId: sessionData?.activeChildId || first.id,
+            childrenSetupDone: true,
+          });
+        }}>
+          Continuar
+        </PrimaryButton>
+      </div>
+    </>
+  );
+}
+
 function ScreenAuth({ onAuthenticated }) {
   const stored = KAuth.load();
   const [view, setView] = React.useState('role');
@@ -680,6 +797,17 @@ function ScreenAuth({ onAuthenticated }) {
   const [backupEmail, setBackupEmail] = React.useState(stored?.backupEmail || '');
   const [recoveryCode, setRecoveryCode] = React.useState('');
   const [recoveryEmail, setRecoveryEmail] = React.useState('');
+  const [pendingSession, setPendingSession] = React.useState(null);
+
+  const finishParentLogin = (data) => {
+    if (data.role === 'parent' && !data.childrenSetupDone) {
+      setPendingSession(data);
+      setView('children-setup');
+      return;
+    }
+    KAuth.save(data);
+    onAuthenticated(data);
+  };
 
   return (
     <div style={{
@@ -732,8 +860,7 @@ function ScreenAuth({ onAuthenticated }) {
               role: 'parent', rut: pendingRut, password: pass, backupEmail: email,
               sessionActive: true, createdAt: Date.now(),
             };
-            KAuth.save(data);
-            onAuthenticated(data);
+            finishParentLogin(data);
           }}
         />
       )}
@@ -748,8 +875,7 @@ function ScreenAuth({ onAuthenticated }) {
           onSubmit={() => {
             const existing = KAuth.load() || {};
             const data = { ...existing, sessionActive: true };
-            KAuth.save(data);
-            onAuthenticated(data);
+            finishParentLogin(data);
           }}
         />
       )}
@@ -786,6 +912,14 @@ function ScreenAuth({ onAuthenticated }) {
               backupEmail: existing.backupEmail || recoveryEmail,
               sessionActive: true,
             };
+            finishParentLogin(data);
+          }}
+        />
+      )}
+      {view === 'children-setup' && pendingSession && (
+        <ChildrenSetupView
+          sessionData={pendingSession}
+          onSubmit={(data) => {
             KAuth.save(data);
             onAuthenticated(data);
           }}
