@@ -1296,278 +1296,246 @@ function KaraokeSection({ onRecord }) {
   );
 }
 
-function MusicaTab({ onOpenRecorder, onOpenSiblingRecorder }) {
+// Low-opacity background helper — blends hex color with white to produce a solid tint
+function tint(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  const mix = (c) => Math.round(c * alpha + 255 * (1 - alpha)).toString(16).padStart(2,'0');
+  return `#${mix(r)}${mix(g)}${mix(b)}`;
+}
+
+// Waveform icon (right side of music tracks)
+function WaveIcon({ color, size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" fill="none">
+      <rect x="1"  y="9"  width="3" height="4"  rx="1.5" fill={color || KUN.rosehip}/>
+      <rect x="6"  y="5"  width="3" height="12" rx="1.5" fill={color || KUN.rosehip}/>
+      <rect x="11" y="7"  width="3" height="8"  rx="1.5" fill={color || KUN.rosehip}/>
+      <rect x="16" y="10" width="3" height="3"  rx="1.5" fill={color || KUN.rosehip}/>
+    </svg>
+  );
+}
+
+function MusicaTab() {
   const [playing, setPlaying] = React.useState(null);
   const tracks = [
-    { icon:'🌙', name:'Para dormir',    desc:'Sonidos suaves y latidos',  dur:'12:30', color: KUN.viola },
-    { icon:'☀️', name:'Para despertar', desc:'Tonos cálidos y delicados', dur:'8:15',  color: KUN.sun   },
-    { icon:'✨', name:'Para interactuar', desc:'Melodías estimulantes',   dur:'10:00', color: KUN.rosehip },
+    { title: 'Para dormir',      dur: '12 min', color: KUN.viola   },
+    { title: 'Para despertar',   dur: '8 min',  color: KUN.sun     },
+    { title: 'Para interactuar', dur: '10 min', color: KUN.apple   },
+    { title: 'Brisa de tarde',   dur: '15 min', color: KUN.clear   },
   ];
   return (
-    <>
-      <div style={{
-        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
-        padding: '4px 24px 14px',
-      }}>
-        ¿Qué necesita tu bebé ahora?
-      </div>
-
-      <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px' }}>
-        {tracks.map((t, i) => {
-          const isOpen = playing === i;
-          return (
-            <div key={i} style={{
-              background:'#fff', borderRadius: 22,
-              padding: '14px 16px',
-              border: isOpen ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
-              transition:'border .2s',
+    <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px' }}>
+      {tracks.map((t, i) => {
+        const isOpen = playing === i;
+        return (
+          <div key={i} style={{
+            background: tint(t.color, 0.45), borderRadius: 22,
+            padding: '16px 18px',
+            border: isOpen ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
+            transition:'border .2s',
+          }}>
+            <div onClick={() => setPlaying(isOpen ? null : i)} style={{
+              display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
             }}>
-              <div onClick={() => setPlaying(isOpen ? null : i)} style={{
-                display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
-              }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  width: 52, height: 52, borderRadius: 16,
-                  background: t.color,
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  fontSize: 24, flexShrink: 0,
-                }}>{t.icon}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{t.name}</div>
-                  <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
-                    {t.desc} - {t.dur}
-                  </div>
+                  fontFamily: V_FT, fontSize: 16, fontWeight: 700,
+                  color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
+                }}>{t.title}</div>
+                <div style={{
+                  fontFamily: V_FT, fontSize: 11, fontWeight: 700,
+                  color: KUN.brick, letterSpacing: 0.6, textTransform: 'uppercase',
+                }}>{t.dur}</div>
+              </div>
+              <WaveIcon color={KUN.brick}/>
+            </div>
+
+            {isOpen && (
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
+                <div style={{ height: 6, borderRadius: 999, background: 'rgba(42,35,32,0.08)', position:'relative', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', top:0, left:0, height:'100%', width:'34%', background: KUN.brick, borderRadius: 999 }}/>
+                  <div style={{
+                    position:'absolute', top:'50%', left:'34%', transform:'translate(-50%, -50%)',
+                    width: 14, height: 14, borderRadius: '50%', background:'#fff',
+                    boxShadow:'0 1px 3px rgba(42,35,32,0.25)',
+                  }}/>
                 </div>
                 <div style={{
-                  width: 42, height: 42, borderRadius: '50%',
-                  background: isOpen ? KUN.brick : KUN.cream,
-                  border: isOpen ? 'none' : `1px solid ${KUN.hair}`,
-                  display:'flex', alignItems:'center', justifyContent:'center',
+                  display:'flex', justifyContent:'space-between',
+                  fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, marginTop: 8,
                 }}>
-                  {isOpen
-                    ? VINK_ICONS.pause('#fff', 14)
-                    : VINK_ICONS.play(KUN.brick, 14)}
+                  <span>4:14</span>
+                  <span>{t.dur}</span>
                 </div>
               </div>
-
-              {isOpen && (
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
-                  <div style={{ height: 6, borderRadius: 999, background: 'rgba(42,35,32,0.08)', position:'relative', overflow:'hidden' }}>
-                    <div style={{ position:'absolute', top:0, left:0, height:'100%', width:'34%', background: KUN.brick, borderRadius: 999 }}/>
-                    <div style={{
-                      position:'absolute', top:'50%', left:'34%', transform:'translate(-50%, -50%)',
-                      width: 14, height: 14, borderRadius: '50%', background:'#fff',
-                      boxShadow:'0 1px 3px rgba(42,35,32,0.25)',
-                    }}/>
-                  </div>
-                  <div style={{
-                    display:'flex', justifyContent:'space-between',
-                    fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, marginTop: 8,
-                  }}>
-                    <span>4:14</span>
-                    <span>{t.dur}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <KaraokeSection onRecord={onOpenRecorder} />
-      <SiblingRecordCard onRecord={onOpenSiblingRecorder} />
-    </>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
 const STORIES = [
   {
     title: 'La nube viajera',
+    description: 'Una nube aprende a viajar sin apuro, disfrutando el camino.',
+    duration: '2 min', color: KUN.clear,
     text: 'Una nube pequeña viajaba despacio por el cielo azul. No tenía prisa. Pasaba sobre los árboles y los saludaba con suavidad. Pasaba sobre el río y se miraba en el agua tranquila. A veces se detenía y dejaba caer una lluvia muy suave, casi un susurro. Las flores levantaban sus pétalos para recibirla. Los pájaros cantaban bajito. La nube seguía su camino sin apurarse, flotando, flotando. Sabía que no importaba llegar rápido. Lo importante era el viaje. Irse despacio. Sentir el viento. Mirar el mundo desde arriba, con calma. Como tú, que estás llegando al mundo poco a poco.',
-    open: false,
   },
   {
     title: 'El pez pequeño',
+    description: 'Un pez chiquito descubre que su tamaño no define su valentía.',
+    duration: '2 min', color: KUN.apple,
     text: 'En el fondo del mar vivía un pez muy pequeñito. Era tan chiquito que a veces se asustaba de su propia sombra. Un día se animó a salir y nadó entre corales rojos y amarillos. Conoció estrellas que brillaban en la arena y a una tortuga muy paciente que le dijo: "No tengas miedo de ser pequeño. Lo importante es seguir nadando, despacio, a tu ritmo." El pez aprendió que aunque era chiquito, tenía un corazón grande. Y con cada aleteo se hacía un poquito más fuerte. Como tú, mi amor, que cada día creces un poquito más.',
-    open: false,
   },
   {
     title: 'La semilla',
+    description: 'Una semilla que duerme bajo la tierra y florece con su propio tiempo.',
+    duration: '2 min', color: KUN.sun,
     text: 'Había una vez una semilla que dormía bajo la tierra. Estaba abrigada y tranquila, escuchando los sonidos del mundo. Un día sintió calor en su piel y unas gotitas de agua que la acariciaban. Muy despacio, comenzó a estirarse. Sacó una raíz hacia abajo y un brote suave hacia arriba. No tenía prisa. Sabía que crecer toma tiempo. Día tras día miró el sol asomarse y la luna pasar. Hasta que una mañana se convirtió en una flor. Tú también estás creciendo así, mi amor. Despacito, con tu propio tiempo, hasta florecer.',
-    open: false,
   },
 ];
 
-function StoryRow({ story, onRecord }) {
-  const [open, setOpen] = React.useState(!!story.open);
+function StoryRow({ story, onOpen }) {
   return (
-    <div style={{
-      background:'#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10,
-      border: `1px solid ${KUN.hair}`,
+    <div onClick={onOpen} style={{
+      background: tint(story.color, 0.45), borderRadius: 22, padding: '16px 18px', marginBottom: 10,
+      border: `1px solid ${KUN.hair}`, cursor:'pointer',
+      display:'flex', alignItems:'center', gap: 14,
     }}>
-      <div onClick={() => setOpen(o => !o)} style={{
-        display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
-      }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: 14,
-          background: KUN.viola,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          flexShrink: 0, fontSize: 18,
-        }}>📖</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
-          <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
-            {open ? 'Toca el texto y léelo en voz alta' : 'Cuento corto - 2 min'}
-          </div>
-        </div>
-        <div style={{
-          width: 32, height: 32, borderRadius:'50%',
-          background: open ? KUN.brick : KUN.cream,
-          border: open ? 'none' : `1px solid ${KUN.hair}`,
-          display:'flex', alignItems:'center', justifyContent:'center',
-        }}>
-          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.brick)}
-        </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{story.title}</div>
+        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.4, marginBottom: 6 }}>{story.description}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.brick, letterSpacing: 0.6, textTransform: 'uppercase' }}>{story.duration}</div>
       </div>
-
-      {open && story.text && story.text !== '...' && (
-        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
-          <div style={{
-            fontFamily: V_FB, fontSize: 14, color: KUN.ink, fontWeight: 400,
-            lineHeight: 1.65, letterSpacing: 0.1,
-            background: KUN.cardSoft, borderRadius: 16, padding: 16,
-          }}>
-            {story.text}
-          </div>
-          <button onClick={onRecord} style={{
-            width:'100%', marginTop: 12,
-            padding: '12px 16px', height: 46, borderRadius: 999, border:'none',
-            background: KUN.brick, color:'#fff',
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
-            display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
-            cursor:'pointer',
-          }}>
-            {VINK_ICONS.mic('#fff')} Grabar mientras leo
-          </button>
-        </div>
-      )}
     </div>
   );
 }
 
-const MUSIC_LYRICS = `Duérmete mi niño, duérmete sonriendo, que la luna llena te está protegiendo. Cierra tus ojitos, descansa tu alma, que aquí estoy contigo, llenándote de calma. Eres tan pequeño, tan lleno de vida, eres todo nuestro, nuestra maravilla.`;
-
-function CuentosTab({ recordings, onOpenRecorder, onOpenSiblingRecorder }) {
+function CuentosTab({ onOpenStory }) {
   return (
-    <>
-      <div style={{
-        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
-        padding: '4px 24px 14px',
-      }}>
-        Cuentos para tu bebé
+    <div style={{ padding: '0 20px' }}>
+      {STORIES.map((s, i) => <StoryRow key={i} story={s} onOpen={() => onOpenStory(s)} />)}
+    </div>
+  );
+}
+
+// ── Canciones ────────────────────────────────────────────
+const CANCIONES_DATA = [
+  {
+    title: 'Arrorró mi niño',
+    duration: '2 min', color: KUN.viola,
+    lyrics: `Arrorró mi niño, arrorrón.\n\nDuérmete, mi niño,\nque tengo que hacer,\nlavar los pañales,\nsentarme a coser.\n\nArrorrón, mi niño, arrorrén.\nEl niño se duerme,\n¿qué le cantaré?`,
+  },
+  {
+    title: 'Duérmete, mi amor',
+    duration: '2 min', color: KUN.rosehip,
+    lyrics: `Duérmete mi niño,\nduérmete sonriendo,\nque la luna llena\nte está protegiendo.\n\nCierra tus ojitos,\ndescansa tu alma,\nque aquí estoy contigo,\nllenándote de calma.\n\nEres tan pequeño,\ntan lleno de vida,\neres todo nuestro,\nnuestra maravilla.`,
+  },
+  {
+    title: 'Estrellita dónde estás',
+    duration: '1 min', color: KUN.sun,
+    lyrics: `Estrellita, ¿dónde estás?\nMe pregunto qué serás.\nEn el cielo o en el mar,\nun diamante singular.\n\nEstrellita, ¿dónde estás?\nMe pregunto qué serás.`,
+  },
+  {
+    title: 'Buenos días, corazón',
+    duration: '1 min', color: KUN.apple,
+    lyrics: `Buenos días, corazón,\nnueva luz, nuevo calor.\nHoy te llamo suavecito,\nhoy te quiero un poquito más.\n\nBuenos días a tus ojos,\na tus manos, a tu voz.\nBuenos días, mi pequeño,\nhoy estamos aquí los dos.`,
+  },
+];
+
+function CancionRow({ cancion, onOpen }) {
+  return (
+    <div onClick={onOpen} style={{
+      background: tint(cancion.color, 0.45), borderRadius: 22, padding: '16px 18px', marginBottom: 10,
+      border: `1px solid ${KUN.hair}`, cursor:'pointer',
+      display:'flex', alignItems:'center', gap: 14,
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{cancion.title}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.brick, letterSpacing: 0.6, textTransform: 'uppercase' }}>{cancion.duration}</div>
+      </div>
+      <WaveIcon color={KUN.brick}/>
+    </div>
+  );
+}
+
+function CancionesTab({ onOpenCancion }) {
+  return (
+    <div style={{ padding: '0 20px' }}>
+      {CANCIONES_DATA.map((c, i) => (
+        <CancionRow key={i} cancion={c} onOpen={() => onOpenCancion(c)} />
+      ))}
+    </div>
+  );
+}
+
+// ── Detail view for story or cancion ──────────────────────
+function ContentDetailView({ item, type, onBack, onRecord }) {
+  const isStory = type === 'story';
+  return (
+    <div style={{
+      position:'absolute', inset: 0, zIndex: 100,
+      background: KUN.bg, overflowY:'auto',
+      paddingBottom: 48,
+    }}>
+      {/* Header */}
+      <div style={{ display:'flex', alignItems:'center', gap: 12, padding:'4px 20px 18px' }}>
+        <div onClick={onBack} style={{
+          width: 40, height: 40, borderRadius:'50%', background:'#fff',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          border: `1px solid ${KUN.hair}`, cursor:'pointer', flexShrink: 0,
+        }}>{VINK_ICONS.back(KUN.ink)}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4, lineHeight: 1.2 }}>
+          {item.title}
+        </div>
       </div>
 
-      {/* Cuentos */}
-      <div style={{ padding: '0 20px 6px' }}>
-        <div style={{
-          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
-          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
-        }}>
-          Cuentos
-        </div>
-        {STORIES.map((s, i) => <StoryRow key={i} story={s} onRecord={onOpenRecorder}/>)}
-      </div>
-
-      <SiblingRecordCard onRecord={onOpenSiblingRecorder} />
-
-      {/* Lectura musical */}
-      <div style={{ padding: '14px 20px 6px' }}>
-        <div style={{
-          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
-          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
-        }}>
-          Lectura musical
-        </div>
-        <div style={{
-          background: KUN.apple, borderRadius: 22, padding: '18px 20px',
-        }}>
-          <div style={{
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
-          }}>
-            Nana de la luna llena
-          </div>
-          <div style={{
-            fontFamily: V_FB, fontSize: 12, fontWeight: 400, color: KUN.inkSoft, marginBottom: 12,
-          }}>
-            Texto para leer o cantar a tu ritmo
-          </div>
-          <div style={{
-            background:'#fff', borderRadius: 16, padding: 16,
-            fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400, fontStyle:'italic',
-            lineHeight: 1.7, marginBottom: 14,
-          }}>
-            {MUSIC_LYRICS}
-          </div>
-          <button onClick={onOpenRecorder} style={{
-            width:'100%', padding: '12px 16px', height: 46, borderRadius: 999, border:'none',
-            background: KUN.brick, color:'#fff',
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
-            display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
-            cursor:'pointer',
-          }}>
-            {VINK_ICONS.mic('#fff')} Grabar lectura libre
-          </button>
-        </div>
-      </div>
-
-      {/* Grabaciones guardadas */}
-      <div style={{ padding: '18px 20px 0' }}>
-        <div style={{
-          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
-          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
-        }}>
-          Grabaciones guardadas
-        </div>
-        {(!recordings || recordings.length === 0) ? (
-          <div style={{
-            background:'#fff', borderRadius: 22,
-            padding: '24px 20px', textAlign:'center',
-            border: `1.5px dashed ${KUN.inkFaint}`,
-          }}>
-            <div style={{ fontSize: 30, marginBottom: 8 }}>🎙️</div>
-            <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
-              Aún no tienes grabaciones
-            </div>
-            <div style={{
-              fontFamily: V_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5,
-            }}>
-              Cuando grabes algo, aparecerá aquí y en tu feed familiar.
-            </div>
-          </div>
+      {/* Tag pill */}
+      <div style={{ padding: '0 24px 16px' }}>
+        {isStory ? (
+          <span style={{
+            fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400,
+          }}>Cuento corto · 2 min · Léelo en voz alta</span>
         ) : (
-          <div style={{ display:'flex', flexDirection:'column', gap: 10 }}>
-            {recordings.map((r, i) => (
-              <div key={i} style={{
-                background:'#fff', borderRadius: 18,
-                padding: '12px 14px',
-                display:'flex', alignItems:'center', gap: 12,
-                border: `1px solid ${KUN.hair}`,
-              }}>
-                <div style={{
-                  width: 42, height: 42, borderRadius: '50%',
-                  background: KUN.brick,
-                  display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
-                }}>{VINK_ICONS.play('#fff', 12)}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{r.name}</div>
-                  <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, marginTop: 2, letterSpacing: 0.2 }}>
-                    {r.author ? `${r.author} - ` : ''}{r.duration} - {r.time}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <span style={{
+            display:'inline-flex', alignItems:'center',
+            padding: '4px 12px', borderRadius: 999,
+            background: item.color,
+            fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.ink, letterSpacing: 0.5,
+          }}>{item.tag} · {item.hint}</span>
         )}
       </div>
-    </>
+
+      {/* Content */}
+      <div style={{ padding: '0 20px 22px' }}>
+        <div style={{
+          background:'#fff', borderRadius: 22, padding: '22px 20px',
+          border: `1px solid ${KUN.hair}`,
+          fontFamily: V_FB, fontSize: 15, color: KUN.ink, fontWeight: 400,
+          lineHeight: 1.85, whiteSpace: 'pre-line', letterSpacing: 0.1,
+        }}>
+          {isStory ? item.text : item.lyrics}
+        </div>
+      </div>
+
+      {/* Record CTA */}
+      <div style={{ padding: '0 20px' }}>
+        <button onClick={onRecord} style={{
+          width:'100%', padding: '14px 16px', height: 52, borderRadius: 999, border:'none',
+          background: KUN.brick, color:'#fff',
+          fontFamily: V_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
+          display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
+          cursor:'pointer',
+        }}>
+          {VINK_ICONS.mic('#fff')}
+          {isStory ? 'Grabar mientras leo' : 'Grabar cantando'}
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -1663,7 +1631,8 @@ function Recorder({ onClose, onSave, context }) {
 }
 
 function ActividadesGuagua({ onBack, recordings, addRecording }) {
-  const [sub, setSub] = React.useState('musica');
+  const [sub, setSub] = React.useState('cuentos');
+  const [detailItem, setDetailItem] = React.useState(null); // { item, type }
   const [recording, setRecording] = React.useState(false);
   const [recordingContext, setRecordingContext] = React.useState({
     author: 'Mamá', role: 'Mamá - Actividades para Sofía', color: KUN.rosehip, name: 'Actividad para Sofía',
@@ -1672,50 +1641,83 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
     setRecordingContext(context);
     setRecording(true);
   };
+  const openDetail = (item, type) => setDetailItem({ item, type });
+  const closeDetail = () => setDetailItem(null);
+
+  const TABS = [
+    { id:'cuentos',   label:'Cuentos',   color: KUN.viola   },
+    { id:'canciones', label:'Canciones', color: KUN.rosehip },
+    { id:'musica',    label:'Música',    color: KUN.apple   },
+  ];
+  const tabIcon = (id, c) => {
+    if (id === 'cuentos') return (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke={c} strokeWidth="2.2" strokeLinecap="round"/>
+        <path d="M6.5 2H20V22H6.5C5.1 22 4 20.9 4 19.5V4.5C4 3.1 5.1 2 6.5 2Z" stroke={c} strokeWidth="2.2" strokeLinejoin="round"/>
+      </svg>
+    );
+    if (id === 'canciones') return (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M9 18V6l12-2v12" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="6" cy="18" r="3" stroke={c} strokeWidth="2.2"/>
+        <circle cx="18" cy="16" r="3" stroke={c} strokeWidth="2.2"/>
+      </svg>
+    );
+    return <WaveIcon color={c} size={14}/>;
+  };
 
   return (
-    <div style={{ overflowX:'hidden', maxWidth:'100%' }}>
+    <div style={{ overflowX:'hidden', maxWidth:'100%', position:'relative', minHeight:'100%' }}>
       <SubHeader title="Actividades con mi hijo" onBack={onBack} />
 
-      {/* sub-subtabs — DS pattern: pill shape, individual rounded, Brick activa, cream inactive con borde */}
-      <div style={{
-        margin: '0 20px 14px',
-        display:'flex', gap: 8,
-      }}>
-        {[
-          { id:'musica', label:'Música' },
-          { id:'cuentos', label:'Cuentos' },
-        ].map(t => {
+      {/* Tab pills — same style as Comunidad */}
+      <div style={{ margin: '0 20px 20px', display:'flex', gap: 8 }}>
+        {TABS.map(t => {
           const isA = t.id === sub;
+          const iconColor = isA ? '#fff' : KUN.inkSoft;
           return (
             <div key={t.id} onClick={() => setSub(t.id)} style={{
-              flex: 1, textAlign:'center', cursor:'pointer',
-              padding: '10px 6px', borderRadius: 10,
+              cursor: 'pointer',
+              padding: '10px 14px', borderRadius: 10,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
               fontFamily: V_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
-              border: 'none',
-              transition:'all .2s',
-            }}>{t.label}</div>
+              transition: 'all .2s',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              {tabIcon(t.id, iconColor)}
+              {t.label}
+            </div>
           );
         })}
       </div>
 
-      {sub === 'musica'
-        ? <MusicaTab
-            onOpenRecorder={(option) => startRecorder({
+      {sub === 'cuentos' && (
+        <CuentosTab onOpenStory={(s) => openDetail(s, 'story')} />
+      )}
+      {sub === 'canciones' && (
+        <CancionesTab onOpenCancion={(c) => openDetail(c, 'cancion')} />
+      )}
+      {sub === 'musica' && <MusicaTab />}
+
+      {/* Detail view overlay */}
+      {detailItem && (
+        <ContentDetailView
+          item={detailItem.item}
+          type={detailItem.type}
+          onBack={closeDetail}
+          onRecord={() => {
+            const isStory = detailItem.type === 'story';
+            closeDetail();
+            startRecorder({
               author: 'Mamá',
-              role: 'Mamá - Karaoke para Sofía',
+              role: `Mamá - ${isStory ? 'Cuento' : 'Canción'} para Sofía`,
               color: KUN.rosehip,
-              name: option?.title ? `Karaoke - ${option.title}` : 'Musica para Sofía',
-            })}
-            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito - Voz para Sofía', color: KUN.viola, name: 'Mensaje del hermanito' })}
-          />
-        : <CuentosTab
-            recordings={recordings}
-            onOpenRecorder={() => startRecorder({ author: 'Mamá', role: 'Mamá - Cuento para Sofía', color: KUN.rosehip, name: 'Cuento para Sofía' })}
-            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito - Cuento para Sofía', color: KUN.viola, name: 'Cuento del hermanito' })}
-          />}
+              name: detailItem.item.title,
+            });
+          }}
+        />
+      )}
 
       {recording && <Recorder
         onClose={() => setRecording(false)}
