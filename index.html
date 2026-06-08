@@ -52,7 +52,7 @@
 <script type="text/babel" src="screen-auth.jsx?v=11"></script>
 <script type="text/babel" src="screen-tour.jsx?v=4"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=6"></script>
-<script type="text/babel" src="screen-baby-status.jsx?v=8"></script>
+<script type="text/babel" src="screen-baby-status.jsx?v=9"></script>
 <script type="text/babel" src="screen-home.jsx?v=30"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
@@ -73,6 +73,15 @@ const LEGACY_BABY_STATUS_KEY = 'kun_baby_status_v1';
 
 function childStatusKey(child, fallback = 'child-1') {
   return child?.id || child?.rut || fallback;
+}
+
+function childHasStatus(status) {
+  return !!(status && (
+    status.lugar || status.temperatura || status.respiracion ||
+    (status.alimentacion && status.alimentacion.length > 0) ||
+    (status.accesos && status.accesos.length > 0) ||
+    (status.diagnosticos && status.diagnosticos.length > 0)
+  ));
 }
 
 function loadBabyStatusByChild(initialChildKey) {
@@ -446,7 +455,6 @@ function Prototype() {
   // Reset when a different user logs in/out
   React.useEffect(() => {
     setTourDone(!!authData?.tourDone);
-    setBabyStatusDone(!!authData?.babyStatusDone);
     setActiveChildId(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
   }, [authData?.rut]);
 
@@ -471,7 +479,6 @@ function Prototype() {
   const [quizResults, setQuizResults] = useState({});
   const [activeChildId, setActiveChildId] = useState(() => authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
   const [babyStatusByChild, setBabyStatusByChild] = useState(() => loadBabyStatusByChild(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1'));
-  const [babyStatusDone, setBabyStatusDone] = useState(() => !!authData?.babyStatusDone);
   const [babyStatusEditOpen, setBabyStatusEditOpen] = useState(false);
   const [forumQuestions, setForumQuestions] = useState([]);
   const [forumReplyNotifications, setForumReplyNotifications] = useState([]);
@@ -521,8 +528,19 @@ function Prototype() {
   const primaryBabyName = primaryChild?.name || authData?.babyName || 'Sofía';
   const babyStatus = babyStatusByChild[activeChildKey] || null;
   const primaryBabyStatus = babyStatusByChild[primaryChildKey] || null;
+  const babyStatusDoneByChild = authData?.babyStatusDoneByChild || {};
+  const isStatusDoneForChild = (child) => {
+    const key = childStatusKey(child);
+    return !!babyStatusDoneByChild[key] || childHasStatus(babyStatusByChild[key]) || (familyChildren.length <= 1 && !!authData?.babyStatusDone);
+  };
+  const pendingStatusChild = authData?.role === 'parent'
+    ? familyChildren.find(child => !isStatusDoneForChild(child))
+    : null;
+  const pendingStatusChildKey = childStatusKey(pendingStatusChild, activeChildKey);
+  const pendingStatusBabyName = pendingStatusChild?.name || babyName;
+  const babyStatusDone = authData?.role === 'parent' ? !pendingStatusChild : !!authData?.babyStatusDone;
   const childLabel = primaryChild?.sex === 'f' ? 'hija' : 'hijo';
-  const parentRecommendations = clinicalRecommendations[activeChild?.rut || authData?.rut] || [];
+  const parentRecommendations = clinicalRecommendations[primaryChild?.rut || authData?.rut] || [];
 
   const setLactarioReminderMinutes = (minutes) => {
     setLactarioReminderMinutesState(minutes);
@@ -582,20 +600,46 @@ function Prototype() {
   };
 
   const saveBabyStatus = (status) => {
-    const next = { ...babyStatusByChild, [activeChildKey]: status };
+    const targetChild = pendingStatusChild || activeChild;
+    const targetKey = childStatusKey(targetChild, activeChildKey);
+    const next = { ...babyStatusByChild, [targetKey]: status };
+    const nextDoneByChild = { ...babyStatusDoneByChild, [targetKey]: true };
+    const nextPendingChild = familyChildren.find(child => {
+      const key = childStatusKey(child);
+      return !nextDoneByChild[key] && !childHasStatus(next[key]);
+    });
+    const nextActiveChildId = nextPendingChild?.id || targetChild?.id || activeChildId;
     setBabyStatusByChild(next);
     try { localStorage.setItem(BABY_STATUS_BY_CHILD_KEY, JSON.stringify(next)); } catch {}
-    const updated = { ...authData, babyStatusDone: true };
+    setActiveChildId(nextActiveChildId);
+    const updated = {
+      ...authData,
+      babyStatusDoneByChild: nextDoneByChild,
+      babyStatusDone: !nextPendingChild,
+      activeChildId: nextActiveChildId,
+    };
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
-    setBabyStatusDone(true);
   };
 
   const skipBabyStatus = () => {
-    const updated = { ...authData, babyStatusDone: true };
+    const targetChild = pendingStatusChild || activeChild;
+    const targetKey = childStatusKey(targetChild, activeChildKey);
+    const nextDoneByChild = { ...babyStatusDoneByChild, [targetKey]: true };
+    const nextPendingChild = familyChildren.find(child => {
+      const key = childStatusKey(child);
+      return !nextDoneByChild[key] && !childHasStatus(babyStatusByChild[key]);
+    });
+    const nextActiveChildId = nextPendingChild?.id || targetChild?.id || activeChildId;
+    setActiveChildId(nextActiveChildId);
+    const updated = {
+      ...authData,
+      babyStatusDoneByChild: nextDoneByChild,
+      babyStatusDone: !nextPendingChild,
+      activeChildId: nextActiveChildId,
+    };
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
-    setBabyStatusDone(true);
   };
 
   const handleLogout = () => {
@@ -926,7 +970,8 @@ function Prototype() {
           {/* Baby status onboarding — shown before the tour */}
           {authData.role !== 'staff' && !babyStatusDone && typeof window.ScreenBabyStatusOnboarding === 'function' && (
             <ScreenBabyStatusOnboarding
-              babyName={babyName}
+              key={pendingStatusChildKey}
+              babyName={pendingStatusBabyName}
               onSave={saveBabyStatus}
               onSkip={skipBabyStatus}
             />

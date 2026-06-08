@@ -674,7 +674,7 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
             color: KUN.ink,
             whiteSpace: 'pre-line',
           }}>
-            {'Cuéntanos sobre\ntu bebé'}
+            {`Cuéntanos sobre\n${babyName || 'tu bebé'}`}
           </div>
           <div style={{
             fontFamily: BST_FB,
