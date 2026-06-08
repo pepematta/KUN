@@ -111,12 +111,12 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
           </div>
         </div>
 
-        {/* Cards — fill remaining space; Diario takes 2/3, Actividades 1/3 */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14, paddingBottom: 16 }}>
+        {/* Cards — fixed height conjunto (50% viewport) */}
+        <div style={{ height: '50vh', display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 12 }}>
 
           {/* Featured card — Diario de vida */}
           <div onClick={() => onPick('journey')} style={{
-            flex: 2, background: KUN.brick, borderRadius: 30, padding: '24px 22px',
+            flex: 1, background: KUN.brick, borderRadius: 30, padding: '12px 22px',
             color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
           }}>
             <div style={{ position:'absolute', top:-40, right:-40, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
@@ -142,7 +142,7 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
 
           {/* Standard card — Actividades con mi hijo */}
           <div onClick={() => onPick('activities')} style={{
-            flex: 1, background:'#fff', borderRadius: 30, padding: '24px 22px',
+            flex: 1, background:'#fff', borderRadius: 30, padding: '12px 22px',
             cursor:'pointer', position:'relative', overflow:'hidden',
             border: `1px solid ${KUN.hair}`,
           }}>
@@ -1690,11 +1690,11 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
           return (
             <div key={t.id} onClick={() => setSub(t.id)} style={{
               flex: 1, textAlign:'center', cursor:'pointer',
-              padding: '10px 6px', borderRadius: 999,
+              padding: '10px 6px', borderRadius: 10,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
               fontFamily: V_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
-              border: isA ? 'none' : `1px solid ${KUN.hair}`,
+              border: 'none',
               transition:'all .2s',
             }}>{t.label}</div>
           );

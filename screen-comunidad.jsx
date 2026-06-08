@@ -780,11 +780,11 @@ function CommunityInnerTabs({ active, onChange }) {
         return (
           <div key={t.id} onClick={() => onChange(t.id)} style={{
             cursor: 'pointer',
-            padding: '10px 18px', borderRadius: 999,
+            padding: '10px 18px', borderRadius: 10,
             background: isA ? KUN.brick : KUN.cardSoft,
             color: isA ? '#fff' : KUN.inkSoft,
             fontFamily: COM_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
-            border: isA ? 'none' : `1px solid ${KUN.hair}`,
+            border: 'none',
             transition: 'all .2s',
           }}>{t.label}</div>
         );

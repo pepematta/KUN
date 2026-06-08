@@ -325,6 +325,7 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
           <div style={{
             fontFamily: HF_T, fontWeight: 700, fontSize: 19,
             color: HC.ink, letterSpacing: '-0.3px',
+            lineHeight: 1.45,
           }}>{`Cómo está ${bName} hoy`}</div>
         </div>
         {onEditStatus && (
@@ -380,7 +381,7 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
             </div>
             <div style={{
               fontFamily: HF_B, fontWeight: 400, fontSize: 12.5,
-              color: HC.inkSoft, lineHeight: 1.5,
+              color: HC.inkSoft, lineHeight: 1.9,
             }}>
               Registra cómo está hoy para tener un resumen siempre a mano.
             </div>

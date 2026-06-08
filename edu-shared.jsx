@@ -325,13 +325,13 @@ function KSubTabs({ active, onChange }) {
             onClick={() => onChange && onChange(t.id)}
             style={{
               flex: 1, textAlign:'center', cursor:'pointer',
-              padding: '10px 6px', borderRadius: 999,
+              padding: '10px 6px', borderRadius: 10,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
               fontFamily: FONT_T, fontSize: 12.5, fontWeight: 700, letterSpacing: 0.1,
               lineHeight: 1.15, minHeight: 30,
               display:'flex', alignItems:'center', justifyContent:'center',
-              border: isA ? 'none' : `1px solid ${KUN.hair}`,
+              border: 'none',
               transition: 'all .2s',
             }}>{t.label}</div>
         );
@@ -354,11 +354,11 @@ function KSubTabsGeneric({ tabs, active, onChange }) {
             onClick={() => onChange && onChange(t.id)}
             style={{
               flex: 1, textAlign:'center', cursor:'pointer',
-              padding: '10px 6px', borderRadius: 999,
+              padding: '10px 6px', borderRadius: 10,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
               fontFamily: FONT_T, fontSize: 12.5, fontWeight: 700, letterSpacing: 0.1,
-              border: isA ? 'none' : `1px solid ${KUN.hair}`,
+              border: 'none',
               transition: 'all .2s',
             }}>{t.label}</div>
         );
