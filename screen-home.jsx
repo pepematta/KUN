@@ -358,11 +358,6 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
       }}>
         <div>
           <div style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
-            color: HC.brick, letterSpacing: '0.7px', textTransform: 'uppercase',
-            marginBottom: 4,
-          }}>Resumen del día</div>
-          <div style={{
             fontFamily: HF_T, fontWeight: 700, fontSize: 19,
             color: HC.ink, letterSpacing: '-0.3px',
           }}>{`Cómo está ${bName} hoy`}</div>
@@ -467,10 +462,6 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
 
           {/* Text */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontFamily: HF_B, fontWeight: 600, fontSize: 10,
-              color: HC.ink3, letterSpacing: '0.6px', textTransform: 'uppercase',
-            }}>Lactario</div>
             <div style={{
               fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
               color: HC.ink2, marginTop: 2,
@@ -672,6 +663,11 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         <BabyHero babyName={bName} />
         <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
         <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
+        <div style={{ padding: '20px 22px 0', boxSizing: 'border-box' }}>
+          <div style={{ fontFamily: HF_T, fontWeight: 700, fontSize: 19, color: HC.ink, letterSpacing: '-0.3px' }}>
+            Lactario
+          </div>
+        </div>
         <LactarioCard
           reservation={lactarioReservation}
           onOpen={onOpenLactario}
@@ -680,7 +676,6 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
             title="Para ti, hoy"
-            kicker="Cápsulas educativas"
             action="Ver todo"
             onAction={onGoToEdu}
           />
