@@ -111,59 +111,88 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
           </div>
         </div>
 
-        {/* Cards — fixed height conjunto (50% viewport) */}
-        <div style={{ height: '50vh', display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 12 }}>
 
           {/* Featured card — Diario de vida */}
           <div onClick={() => onPick('journey')} style={{
-            flex: 1, background: KUN.brick, borderRadius: 30, padding: '12px 22px',
+            background: KUN.brick, borderRadius: 30, padding: '18px 22px',
             color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
           }}>
             <div style={{ position:'absolute', top:-40, right:-40, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
             <div style={{ position:'absolute', bottom:-60, left:-30, width: 140, height: 140, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
             <div style={{
-              width: 60, height: 60, borderRadius: 20,
+              width: 56, height: 56, borderRadius: 18,
               background:'rgba(255,255,255,0.20)',
               display:'flex', alignItems:'center', justifyContent:'center',
-              marginBottom: 16, position:'relative',
+              marginBottom: 14, position:'relative',
             }}>{VINK_ICONS.journey('#fff')}</div>
             <div style={{
-              fontFamily: V_FT, fontSize: 22, fontWeight: 700,
-              letterSpacing: -0.4, marginBottom: 4, position:'relative',
+              fontFamily: V_FT, fontSize: 20, fontWeight: 700,
+              letterSpacing: -0.4, marginBottom: 3, position:'relative',
             }}>
               Diario de vida
             </div>
             <div style={{
-              fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, opacity: 0.92, position:'relative',
+              fontFamily: V_FB, fontSize: 13, fontWeight: 400, opacity: 0.92, position:'relative',
             }}>
               Registra tus momentos
             </div>
           </div>
 
-          {/* Standard card — Actividades con mi hijo */}
-          <div onClick={() => onPick('activities')} style={{
-            flex: 1, background:'#fff', borderRadius: 30, padding: '12px 22px',
-            cursor:'pointer', position:'relative', overflow:'hidden',
-            border: `1px solid ${KUN.hair}`,
-          }}>
-            <div style={{ position:'absolute', top:-30, right:-30, width: 130, height: 130, borderRadius:'50%', background: KUN.apple, opacity: 0.40 }}/>
-            <div style={{
-              width: 60, height: 60, borderRadius: 20,
-              background: KUN.apple,
-              display:'flex', alignItems:'center', justifyContent:'center',
-              marginBottom: 16, position:'relative',
-            }}>{VINK_ICONS.music(KUN.ink)}</div>
-            <div style={{
-              fontFamily: V_FT, fontSize: 22, fontWeight: 700,
-              letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
-            }}>
-              Actividades con mi hijo
-            </div>
-            <div style={{
-              fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
-            }}>
-              Tu voz y la música que la calma
-            </div>
+          {/* 3 activity blocks */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            {[
+              {
+                id: 'cuentos', label: 'Cuentos', color: KUN.viola,
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke={KUN.ink} strokeWidth="1.8" strokeLinecap="round"/>
+                    <path d="M6.5 2H20V22H6.5C5.1 22 4 20.9 4 19.5V4.5C4 3.1 5.1 2 6.5 2Z" stroke={KUN.ink} strokeWidth="1.8" strokeLinejoin="round"/>
+                  </svg>
+                ),
+              },
+              {
+                id: 'canciones', label: 'Canciones', color: KUN.rosehip,
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18V6l12-2v12" stroke={KUN.ink} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="6" cy="18" r="3" stroke={KUN.ink} strokeWidth="1.8"/>
+                    <circle cx="18" cy="16" r="3" stroke={KUN.ink} strokeWidth="1.8"/>
+                  </svg>
+                ),
+              },
+              {
+                id: 'musica', label: 'Música', color: KUN.apple,
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 22 22" fill="none">
+                    <rect x="1"  y="9"  width="3" height="4"  rx="1.5" fill={KUN.ink}/>
+                    <rect x="6"  y="5"  width="3" height="12" rx="1.5" fill={KUN.ink}/>
+                    <rect x="11" y="7"  width="3" height="8"  rx="1.5" fill={KUN.ink}/>
+                    <rect x="16" y="10" width="3" height="3"  rx="1.5" fill={KUN.ink}/>
+                  </svg>
+                ),
+              },
+            ].map(item => (
+              <div key={item.id} onClick={() => onPick(`activities-${item.id}`)} style={{
+                flex: 1, background: item.color, borderRadius: 22, padding: '18px 10px 16px',
+                cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', gap: 12,
+              }}>
+                <div style={{
+                  width: 52, height: 52, borderRadius: 16,
+                  background: 'rgba(255,255,255,0.45)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {item.icon}
+                </div>
+                <div style={{
+                  fontFamily: V_FT, fontSize: 13, fontWeight: 700,
+                  color: KUN.ink, textAlign: 'center', letterSpacing: -0.1,
+                }}>
+                  {item.label}
+                </div>
+              </div>
+            ))}
           </div>
 
         </div>
@@ -1496,18 +1525,13 @@ function ContentDetailView({ item, type, onBack, onRecord }) {
 
       {/* Tag pill */}
       <div style={{ padding: '0 24px 16px' }}>
-        {isStory ? (
-          <span style={{
-            fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400,
-          }}>Cuento corto · 2 min · Léelo en voz alta</span>
-        ) : (
-          <span style={{
-            display:'inline-flex', alignItems:'center',
-            padding: '4px 12px', borderRadius: 999,
-            background: item.color,
-            fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.ink, letterSpacing: 0.5,
-          }}>{item.tag} · {item.hint}</span>
-        )}
+        <span style={{
+          fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400,
+        }}>
+          {isStory
+            ? `Cuento corto · ${item.duration} · Léelo en voz alta`
+            : `Canción · ${item.duration} · Cántala en voz alta`}
+        </span>
       </div>
 
       {/* Content */}
@@ -1630,8 +1654,8 @@ function Recorder({ onClose, onSave, context }) {
   );
 }
 
-function ActividadesGuagua({ onBack, recordings, addRecording }) {
-  const [sub, setSub] = React.useState('cuentos');
+function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
+  const [sub, setSub] = React.useState(initialTab || 'cuentos');
   const [detailItem, setDetailItem] = React.useState(null); // { item, type }
   const [recording, setRecording] = React.useState(false);
   const [recordingContext, setRecordingContext] = React.useState({
@@ -2287,7 +2311,10 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
 }
 function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía' }) {
   if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} />;
-  if (view === 'activities') return <ActividadesGuagua onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
+  if (view === 'activities' || view === 'activities-cuentos' || view === 'activities-canciones' || view === 'activities-musica') {
+    const tab = view.startsWith('activities-') ? view.replace('activities-', '') : 'cuentos';
+    return <ActividadesGuagua initialTab={tab} onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
+  }
   return <VinkEntry onPick={setView} babyName={babyName} />;
 }
 
