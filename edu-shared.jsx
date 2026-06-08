@@ -30,6 +30,7 @@ const KUN = {
   brick:     '#F0743E',
   rosehip:   '#F6C3AE',
   sun:       '#FDD848',
+  sunSoft:   '#FFF5DC',
   apple:     '#AAD59E',
   clear:     '#9AB2D4',
   viola:     '#CDBCDB',
@@ -187,13 +188,7 @@ const KIcon = {
 
 // ─── DS Button helper ───────────────────────────────────────────
 // Exported so other screens can use the same pill style as the DS spec.
-function KBtn({ kind = 'primary', size = 'md', children, disabled = false, icon, full = false, onClick, style = {} }) {
-  const sizes = {
-    sm: { pad: '8px 14px', fs: 12,   h: 34 },
-    md: { pad: '11px 18px', fs: 13.5, h: 42 },
-    lg: { pad: '14px 22px', fs: 15,   h: 50 },
-  };
-  const s = sizes[size];
+function KBtn({ kind = 'primary', children, disabled = false, icon, full = false, onClick, style = {} }) {
   const palettes = {
     primary:   { background: KUN.brick, color: '#fff', border: 'none' },
     secondary: { background: 'transparent', color: KUN.ink, border: `1.5px solid ${KUN.ink}` },
@@ -203,8 +198,8 @@ function KBtn({ kind = 'primary', size = 'md', children, disabled = false, icon,
   const palette = disabled ? palettes.disabled : palettes[kind];
   return (
     <button onClick={disabled ? undefined : onClick} disabled={disabled} style={{
-      ...palette, padding: s.pad, borderRadius: 999, height: s.h,
-      fontFamily: FONT_T, fontWeight: 700, fontSize: s.fs,
+      ...palette, padding: '14px 22px', borderRadius: 999, height: 50,
+      fontFamily: FONT_T, fontWeight: 700, fontSize: 15,
       display: 'inline-flex', alignItems: 'center', gap: 8,
       cursor: disabled ? 'not-allowed' : 'pointer',
       width: full ? '100%' : 'auto', justifyContent: 'center',
@@ -362,7 +357,7 @@ function KSubTabsGeneric({ tabs, active, onChange }) {
               padding: '10px 6px', borderRadius: 999,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
-              fontFamily: FONT_T, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              fontFamily: FONT_T, fontSize: 12.5, fontWeight: 700, letterSpacing: 0.1,
               border: isA ? 'none' : `1px solid ${KUN.hair}`,
               transition: 'all .2s',
             }}>{t.label}</div>

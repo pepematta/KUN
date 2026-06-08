@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KUN - Vista preliminar de colores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF6F1;
+      --paper: #FFFFFF;
+      --card-soft: #F2EBE0;
+      --ink: #2A2320;
+      --ink-soft: #5E544E;
+      --ink-muted: #8B827C;
+      --hair: rgba(42,35,32,0.10);
+      --brick: #F0743E;
+      --rosehip: #F6C3AE;
+      --sun: #FDD848;
+      --sun-soft: #FFF5DC;
+      --apple: #AAD59E;
+      --clear: #9AB2D4;
+      --viola: #CDBCDB;
+      --sage-soft: #E4ECE4;
+      --shadow: 0 16px 40px rgba(42,35,32,.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Poppins, sans-serif;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: Quicksand, sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: var(--rosehip);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    h1, h2, h3 {
+      font-family: Quicksand, sans-serif;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 24px;
+      line-height: 1.08;
+      margin-top: 18px;
+    }
+
+    .intro {
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.58;
+      max-width: 700px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      border: 1px solid var(--hair);
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-family: Quicksand, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--brick);
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-top {
+      min-height: 96px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(42,35,32,.06);
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.52);
+      color: var(--ink);
+      font-family: Quicksand, sans-serif;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .category {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(42,35,32,.58);
+      margin-bottom: 6px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      line-height: 1.12;
+    }
+
+    .card-body {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .desc {
+      font-size: 15px;
+      line-height: 1.46;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: auto;
+    }
+
+    .example {
+      border: 1px solid rgba(42,35,32,.08);
+      background: rgba(255,255,255,.58);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    .preview {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .home-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .home-row {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .mini {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-family: Quicksand, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .home-title {
+      font-family: Quicksand, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .home-note {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 3px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .rules {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rule {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--hair);
+    }
+
+    .rule strong {
+      display: block;
+      font-family: Quicksand, sans-serif;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .rule span {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .preview { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+      header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand"><div class="mark">K</div>KUN</div>
+        <h1>Vista preliminar: un color fijo por familia de información</h1>
+        <p class="intro">Esta versión prioriza los colores que ya existen en la app. Lactancia, cuidado médico, vínculo, orientación y camino a casa mantienen siempre el mismo color en Inicio, Aprender más, Diario y Estado del bebé.</p>
+      </div>
+      <div class="pill">Paleta actual</div>
+    </header>
+
+    <section class="grid" aria-label="Familias de información">
+      <article class="card">
+        <div class="card-top" style="background: var(--apple)">
+          <div><div class="category">Verde</div><h2>Lactancia y alimentación</h2></div><div class="icon">01</div>
+        </div>
+        <div class="card-body"><p class="desc">Leche, pecho, extracción, conservación, sonda, mamadera y señales de hambre.</p><div class="examples"><span class="example">Lactancia</span><span class="example">Sonda</span><span class="example">Mamadera</span></div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-top" style="background: var(--clear)">
+          <div><div class="category">Azul</div><h2>Cuidado médico</h2></div><div class="icon">02</div>
+        </div>
+        <div class="card-body"><p class="desc">Monitores, oxígeno, CPAP, exámenes, diagnósticos, medicamentos y equipo clínico.</p><div class="examples"><span class="example">Oxígeno</span><span class="example">Monitores</span><span class="example">Exámenes</span></div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-top" style="background: var(--rosehip)">
+          <div><div class="category">Rosado cálido</div><h2>Vínculo y cuidados cotidianos</h2></div><div class="icon">03</div>
+        </div>
+        <div class="card-body"><p class="desc">Apego, piel con piel, porteo, masaje, muda, aseo, contención, música y diario.</p><div class="examples"><span class="example">Piel con piel</span><span class="example">Diario</span><span class="example">Apego</span></div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-top" style="background: var(--viola)">
+          <div><div class="category">Lila</div><h2>Orientación UCIN</h2></div><div class="icon">04</div>
+        </div>
+        <div class="card-body"><p class="desc">Conocer la unidad, horarios, normas de ingreso, Ley Mila y a quién preguntar.</p><div class="examples"><span class="example">Horarios</span><span class="example">Ingreso</span><span class="example">Unidad</span></div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-top" style="background: var(--sun-soft)">
+          <div><div class="category">Amarillo suave</div><h2>Camino a casa</h2></div><div class="icon" style="background: var(--sun)">05</div>
+        </div>
+        <div class="card-body"><p class="desc">Alta, checklist, preparación para casa, primeros días en casa y rutinas familiares.</p><div class="examples"><span class="example">Alta</span><span class="example">Checklist</span><span class="example">Casa</span></div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-top" style="background: var(--card-soft)">
+          <div><div class="category">Crema</div><h2>Familia y comunidad</h2></div><div class="icon">06</div>
+        </div>
+        <div class="card-body"><p class="desc">Red de apoyo, comunidad, visitas, mensajes familiares y cuidarse como cuidador.</p><div class="examples"><span class="example">Comunidad</span><span class="example">Familia</span><span class="example">Apoyo</span></div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-top" style="background: var(--brick); color: #fff">
+          <div><div class="category" style="color: rgba(255,255,255,.74)">Marca / acción</div><h2>Naranjo KUN</h2></div><div class="icon" style="background: rgba(255,255,255,.22); color: #fff">K</div>
+        </div>
+        <div class="card-body"><p class="desc">No es categoría temática. Se usa para botones, links, pestañas activas, guardar y continuar.</p><div class="examples"><span class="example" style="background: var(--brick); color:#fff">Guardar</span><span class="example">Activo</span><span class="example">Continuar</span></div></div>
+      </article>
+    </section>
+
+    <section class="preview">
+      <div class="panel">
+        <h2>Cómo se vería en una lista</h2>
+        <div class="home-list">
+          <div class="home-row"><div class="mini" style="background: var(--apple)">L</div><div><div class="home-title">Extracción de leche</div><div class="home-note">Aprender más · 5 min</div></div><span class="tag" style="background: var(--apple)">Lactancia</span></div>
+          <div class="home-row"><div class="mini" style="background: var(--clear)">M</div><div><div class="home-title">Monitores, alarmas y tubos</div><div class="home-note">Cuidado médico · 5 min</div></div><span class="tag" style="background: var(--clear)">Médico</span></div>
+          <div class="home-row"><div class="mini" style="background: var(--rosehip)">V</div><div><div class="home-title">Hoy pudimos hacer piel con piel</div><div class="home-note">Diario de vida · vínculo</div></div><span class="tag" style="background: var(--rosehip)">Vínculo</span></div>
+          <div class="home-row"><div class="mini" style="background: var(--viola)">O</div><div><div class="home-title">Horarios de visita y a quién preguntar</div><div class="home-note">Aprender más · orientación</div></div><span class="tag" style="background: var(--viola)">Orientación</span></div>
+          <div class="home-row"><div class="mini" style="background: var(--sun)">C</div><div><div class="home-title">Checklist familiar de alta</div><div class="home-note">Camino a casa · preparación</div></div><span class="tag" style="background: var(--sun-soft)">Casa</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Reglas simples</h2>
+        <div class="rules">
+          <div class="rule"><strong>El color depende del tema</strong><span>Si algo es lactancia, siempre verde. Si es cuidado médico, siempre azul.</span></div>
+          <div class="rule"><strong>El naranjo no clasifica contenido</strong><span>Es marca e interacción: botones principales, links, navegación activa y acciones.</span></div>
+          <div class="rule"><strong>El lila representa orientación</strong><span>Información objetiva para ubicarse en la UCIN, horarios, normas y a quién preguntar.</span></div>
+          <div class="rule"><strong>El amarillo acompaña camino a casa</strong><span>Suave en tarjetas grandes y más intenso en chips o íconos pequeños, como señal de avance.</span></div>
+          <div class="rule"><strong>Una cápsula puede repetirse</strong><span>Si ayuda a encontrarla, puede aparecer en más de una categoría y tomar el color del lugar donde se muestra.</span></div>
+          <div class="rule"><strong>Los logros se colorean por tema</strong><span>Subir de peso puede ser médico azul; piel con piel, vínculo rosado; alimentación, verde.</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

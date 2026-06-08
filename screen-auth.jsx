@@ -98,10 +98,10 @@ function AuthShapes() {
 function PrimaryButton({ children, onClick, disabled }) {
   return (
     <button onClick={disabled ? undefined : onClick} disabled={!!disabled} style={{
-      width: '100%', padding: '14px 18px', borderRadius: 999, border: 'none',
+      width: '100%', padding: '14px 22px', borderRadius: 999, border: 'none',
       background: disabled ? 'rgba(42,35,32,0.08)' : KUN.brick,
       color: disabled ? KUN.inkMuted : '#fff',
-      fontFamily: A_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
+      fontFamily: A_FT, fontSize: 15, fontWeight: 700,
       cursor: disabled ? 'default' : 'pointer',
       height: 50,
       transition: 'all .2s',

@@ -100,7 +100,7 @@ function generateBabyStatusSegments(status, babyName) {
     const lugar = status.lugar;
     const temp  = status.temperatura;
     const intro = (lugar === 'UCI' || lugar === 'Intermedio B') ? `${name} está en ` : `${name} se encuentra en `;
-    push(intro); chip(lugar, 'apple');
+    push(intro); chip(lugar, lugar === 'Alta' || lugar === 'Dado de alta' ? 'sun' : 'viola');
 
     if (lugar === 'Recién ingresado') {
       if (temp === 'Incubadora')             { push(', protegida en su '); chip('incubadora', 'clear'); push(' mientras el equipo la evalúa. '); }
@@ -152,26 +152,26 @@ function generateBabyStatusSegments(status, babyName) {
     const sondaLbl = hasNaso ? 'sonda nasogástrica' : 'sonda orogástrica';
 
     if (al.length === 1) {
-      if (hasPecho)   { push('Se alimenta directamente del '); chip('pecho directo', 'clear'); push('. '); }
-      else if (hasMam){ push('Recibe su leche en '); chip('mamadera', 'clear'); push('. '); }
-      else if (hasNaso){ push('Recibe su alimentación por '); chip('sonda nasogástrica', 'clear'); push(', un tubito que llega hasta su estómago por la nariz. '); }
-      else if (hasOro) { push('Recibe su alimentación por '); chip('sonda orogástrica', 'clear'); push(', un tubito que llega hasta su estómago por la boca. '); }
-      else if (hasParent){ push('Recibe sus nutrientes directamente por la '); chip('nutrición parenteral', 'clear'); push(', mientras su sistema digestivo madura. '); }
+      if (hasPecho)   { push('Se alimenta directamente del '); chip('pecho directo', 'apple'); push('. '); }
+      else if (hasMam){ push('Recibe su leche en '); chip('mamadera', 'apple'); push('. '); }
+      else if (hasNaso){ push('Recibe su alimentación por '); chip('sonda nasogástrica', 'apple'); push(', un tubito que llega hasta su estómago por la nariz. '); }
+      else if (hasOro) { push('Recibe su alimentación por '); chip('sonda orogástrica', 'apple'); push(', un tubito que llega hasta su estómago por la boca. '); }
+      else if (hasParent){ push('Recibe sus nutrientes directamente por la '); chip('nutrición parenteral', 'apple'); push(', mientras su sistema digestivo madura. '); }
     } else if (al.length === 2) {
       if (hasPecho && hasSonda) {
-        push('Se alimenta combinando el '); chip('pecho directo', 'clear'); push(' con '); chip(sondaLbl, 'clear'); push(', para asegurarse de recibir todo lo que necesita. ');
+        push('Se alimenta combinando el '); chip('pecho directo', 'apple'); push(' con '); chip(sondaLbl, 'apple'); push(', para asegurarse de recibir todo lo que necesita. ');
       } else if (hasMam && hasSonda) {
-        push('Recibe su leche en '); chip('mamadera', 'clear'); push(' y por '); chip(sondaLbl, 'clear'); push(', según lo que necesita en cada momento. ');
+        push('Recibe su leche en '); chip('mamadera', 'apple'); push(' y por '); chip(sondaLbl, 'apple'); push(', según lo que necesita en cada momento. ');
       } else if (hasSonda && hasParent) {
-        push('Recibe su alimentación por '); chip(sondaLbl, 'clear'); push(' y también '); chip('nutrición parenteral', 'clear'); push(' por la vía. ');
+        push('Recibe su alimentación por '); chip(sondaLbl, 'apple'); push(' y también '); chip('nutrición parenteral', 'apple'); push(' por la vía. ');
       } else {
         push('Se alimenta de varias formas según sus necesidades del momento: ');
-        al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
+        al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'apple'); });
         push('. ');
       }
     } else {
       push('Se alimenta de varias formas según sus necesidades del momento: ');
-      al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
+      al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'apple'); });
       push('. ');
     }
   }
@@ -181,13 +181,13 @@ function generateBabyStatusSegments(status, babyName) {
     const ac = status.accesos;
     if (ac.length === 1) {
       const a = ac[0];
-      if (a === 'Vía periférica')        { push('Tiene una '); chip('vía periférica', 'viola'); push(' para recibir sus medicamentos y fluidos. '); }
-      else if (a === 'PICC')             { push('Tiene un '); chip('PICC', 'viola'); push(', un catéter fino que le permite recibir medicamentos y nutrición de forma segura. '); }
-      else if (a === 'Catéter umbilical'){ push('Tiene un '); chip('catéter umbilical', 'viola'); push(', colocado en el cordón, para sus tratamientos. '); }
-      else if (a === 'Catéter venoso central'){ push('Tiene un '); chip('catéter venoso central', 'viola'); push(' para sus medicamentos y nutrición. '); }
+      if (a === 'Vía periférica')        { push('Tiene una '); chip('vía periférica', 'clear'); push(' para recibir sus medicamentos y fluidos. '); }
+      else if (a === 'PICC')             { push('Tiene un '); chip('PICC', 'clear'); push(', un catéter fino que le permite recibir medicamentos y nutrición de forma segura. '); }
+      else if (a === 'Catéter umbilical'){ push('Tiene un '); chip('catéter umbilical', 'clear'); push(', colocado en el cordón, para sus tratamientos. '); }
+      else if (a === 'Catéter venoso central'){ push('Tiene un '); chip('catéter venoso central', 'clear'); push(' para sus medicamentos y nutrición. '); }
     } else {
       push('Tiene ');
-      ac.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'viola'); });
+      ac.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
       push(' para recibir sus medicamentos y fluidos. ');
     }
   }
@@ -196,10 +196,10 @@ function generateBabyStatusSegments(status, babyName) {
   if (status.diagnosticos && status.diagnosticos.length > 0) {
     const dx = status.diagnosticos;
     if (dx.length === 1) {
-      push('Su diagnóstico es '); chip(lcLabel(dx[0]), 'viola'); push('. ');
+      push('Su diagnóstico es '); chip(lcLabel(dx[0]), 'clear'); push('. ');
     } else {
       push('Sus diagnósticos incluyen ');
-      dx.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'viola'); });
+      dx.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
       push('. ');
     }
   }
@@ -255,6 +255,10 @@ function NarrativeChip({ label, colorKey, onClick }) {
     apple: KUN.apple,
     clear: KUN.clear,
     viola: KUN.viola,
+    sun: KUN.sun,
+    sunSoft: KUN.sunSoft,
+    sageSoft: KUN.sageSoft,
+    cardSoft: KUN.cardSoft,
   };
   const bg = colorMap[colorKey] || KUN.clear;
 
@@ -467,7 +471,7 @@ function InfoTooltip({ text, open, onToggle }) {
 }
 
 // ─── OptionRow ───────────────────────────────────────────────────────────────
-function OptionRow({ label, info, selected, onToggle, isRadio }) {
+function OptionRow({ label, info, selected, onToggle, isRadio, tone = KUN.rosehip }) {
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   return (
@@ -480,7 +484,7 @@ function OptionRow({ label, info, selected, onToggle, isRadio }) {
         padding: '12px 14px',
         borderRadius: 16,
         border: selected ? `1.5px solid ${KUN.brick}` : `1.5px solid ${KUN.hair}`,
-        background: selected ? KUN.rosehip : '#fff',
+        background: selected ? tone : '#fff',
         marginBottom: 8,
         cursor: 'pointer',
         transition: 'all .15s',
@@ -540,6 +544,18 @@ function OptionRow({ label, info, selected, onToggle, isRadio }) {
 }
 
 // ─── CategoryBlock ────────────────────────────────────────────────────────────
+function babyStatusTopicColor(catId) {
+  const tones = {
+    lugar: KUN.viola,
+    temperatura: KUN.clear,
+    respiracion: KUN.clear,
+    alimentacion: KUN.apple,
+    accesos: KUN.clear,
+    diagnosticos: KUN.clear,
+  };
+  return tones[catId] || KUN.cardSoft;
+}
+
 function CategoryBlock({ cat, values, onChange }) {
   const isRadio = cat.type === 'radio';
 
@@ -578,6 +594,7 @@ function CategoryBlock({ cat, values, onChange }) {
             selected={selected}
             onToggle={() => handleToggle(opt.label)}
             isRadio={isRadio}
+            tone={babyStatusTopicColor(cat.id)}
           />
         );
       })}

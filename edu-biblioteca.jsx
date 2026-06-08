@@ -7,54 +7,108 @@ const B_FB = 'Poppins, sans-serif';
 // Catálogo compartido de las cápsulas. El personal de salud puede reemplazarlo
 // desde el editor clínico guardado en localStorage.
 const DEFAULT_CAPSULAS = [
-  { id: 1,  title: 'El apego en la UCIN',               dur: '5 min',  topic: 'Apego y vínculo' },
-  { id: 2,  title: 'Sonda al dedo',                     dur: '5 min',  topic: 'Alimentación' },
-  { id: 3,  title: 'Sonda al pecho',                    dur: '5 min',  topic: 'Alimentación' },
-  { id: 4,  title: 'Extracción de leche',               dur: '5 min',  topic: 'Lactancia' },
-  { id: 5,  title: 'Conservación de leche',             dur: '4 min',  topic: 'Lactancia' },
-  { id: 6,  title: 'Lactancia materna',                 dur: '5 min',  topic: 'Lactancia' },
-  { id: 7,  title: 'El enlulamiento',                   dur: '4 min',  topic: 'Alta y hogar' },
-  { id: 8,  title: 'Masaje anticólico',                 dur: '5 min',  topic: 'Alta y hogar' },
-  { id: 9,  title: 'Porteo seguro',                     dur: '5 min',  topic: 'Alta y hogar' },
-  { id: 10, title: 'Screening auditivo',                dur: '4 min',  topic: 'Alta y hogar' },
-  { id: 60, title: 'Maniobra de Heimlich',              dur: '5 min',  topic: 'Primeros auxilios' },
-  { id: 61, title: 'Traslado seguro en auto',           dur: '5 min',  topic: 'Alta y hogar' },
-  { id: 11, title: 'Conocer la unidad neonatal',               dur: '3 min',  topic: 'Cuidados por etapa' },
-  { id: 12, title: 'Horarios de visita y a quién preguntar',   dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 13, title: 'Ley Mila y acompañamiento familiar',       dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 14, title: 'Lavado de manos y normas de ingreso',      dur: '3 min',  topic: 'Cuidados por etapa' },
-  { id: 15, title: 'Primeros equipos que verás',               dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 21, title: 'Qué significa estar en UCI neonatal',      dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 22, title: 'Monitores, alarmas y tubos',               dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 23, title: 'Cómo tocar y acompañar con seguridad',     dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 24, title: 'Preguntas clave para la visita médica',    dur: '3 min',  topic: 'Cuidados por etapa' },
-  { id: 25, title: 'Pequeñas señales de avance',               dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 31, title: 'Qué cambia en Intermedio A',               dur: '3 min',  topic: 'Cuidados por etapa' },
-  { id: 32, title: 'Muda y aseo con apoyo',                    dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 33, title: 'Piel con piel cuando está indicado',       dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 34, title: 'Primeras señales de hambre y cansancio',   dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 35, title: 'Alimentación paso a paso',                 dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 41, title: 'Qué practicar antes del alta',             dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 42, title: 'Mamadera, pecho y ritmos de alimentación', dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 43, title: 'Medicamentos e indicaciones',              dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 44, title: 'Sueño seguro desde el hospital',           dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 45, title: 'Checklist familiar de alta',               dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 51, title: 'Primeros días en casa',                    dur: '4 min',  topic: 'Cuidados por etapa' },
-  { id: 52, title: 'Controles y seguimiento',                  dur: '3 min',  topic: 'Cuidados por etapa' },
-  { id: 53, title: 'Signos de alarma',                         dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 54, title: 'Rutina de alimentación y medicamentos',    dur: '5 min',  topic: 'Cuidados por etapa' },
-  { id: 55, title: 'Cuidar también a la familia',              dur: '4 min',  topic: 'Cuidados por etapa' },
+  { id: 1,  title: 'El apego en la UCIN',               dur: '5 min' },
+  { id: 2,  title: 'Sonda al dedo',                     dur: '5 min' },
+  { id: 3,  title: 'Sonda al pecho',                    dur: '5 min' },
+  { id: 4,  title: 'Extracción de leche',               dur: '5 min' },
+  { id: 5,  title: 'Conservación de leche',             dur: '4 min' },
+  { id: 6,  title: 'Lactancia materna',                 dur: '5 min' },
+  { id: 7,  title: 'El enlulamiento',                   dur: '4 min' },
+  { id: 8,  title: 'Masaje anticólico',                 dur: '5 min' },
+  { id: 9,  title: 'Porteo seguro',                     dur: '5 min' },
+  { id: 10, title: 'Screening auditivo',                dur: '4 min' },
+  { id: 60, title: 'Maniobra de Heimlich',              dur: '5 min' },
+  { id: 61, title: 'Traslado seguro en auto',           dur: '5 min' },
+  { id: 11, title: 'Conocer la unidad neonatal',               dur: '3 min' },
+  { id: 12, title: 'Horarios de visita y a quién preguntar',   dur: '4 min' },
+  { id: 13, title: 'Ley Mila y acompañamiento familiar',       dur: '4 min' },
+  { id: 14, title: 'Lavado de manos y normas de ingreso',      dur: '3 min' },
+  { id: 15, title: 'Primeros equipos que verás',               dur: '5 min' },
+  { id: 21, title: 'Qué significa estar en UCI neonatal',      dur: '4 min' },
+  { id: 22, title: 'Monitores, alarmas y tubos',               dur: '5 min' },
+  { id: 23, title: 'Cómo tocar y acompañar con seguridad',     dur: '4 min' },
+  { id: 24, title: 'Preguntas clave para la visita médica',    dur: '3 min' },
+  { id: 25, title: 'Pequeñas señales de avance',               dur: '4 min' },
+  { id: 31, title: 'Qué cambia en Intermedio A',               dur: '3 min' },
+  { id: 32, title: 'Muda y aseo con apoyo',                    dur: '5 min' },
+  { id: 33, title: 'Piel con piel cuando está indicado',       dur: '5 min' },
+  { id: 34, title: 'Primeras señales de hambre y cansancio',   dur: '4 min' },
+  { id: 35, title: 'Alimentación paso a paso',                 dur: '4 min' },
+  { id: 41, title: 'Qué practicar antes del alta',             dur: '4 min' },
+  { id: 42, title: 'Mamadera, pecho y ritmos de alimentación', dur: '5 min' },
+  { id: 43, title: 'Medicamentos e indicaciones',              dur: '4 min' },
+  { id: 44, title: 'Sueño seguro desde el hospital',           dur: '4 min' },
+  { id: 45, title: 'Checklist familiar de alta',               dur: '5 min' },
+  { id: 51, title: 'Primeros días en casa',                    dur: '4 min' },
+  { id: 52, title: 'Controles y seguimiento',                  dur: '3 min' },
+  { id: 53, title: 'Signos de alarma',                         dur: '5 min' },
+  { id: 54, title: 'Rutina de alimentación y medicamentos',    dur: '5 min' },
+  { id: 55, title: 'Cuidar también a la familia',              dur: '4 min' },
 ];
+
+const CAPSULE_TOPICS = {
+  11: ['Orientación UCIN'],
+  12: ['Orientación UCIN'],
+  13: ['Orientación UCIN', 'Familia y comunidad'],
+  14: ['Orientación UCIN', 'Cuidado médico'],
+  15: ['Orientación UCIN', 'Cuidado médico'],
+  21: ['Orientación UCIN', 'Cuidado médico'],
+  22: ['Cuidado médico', 'Orientación UCIN'],
+  24: ['Cuidado médico', 'Orientación UCIN'],
+  25: ['Cuidado médico'],
+  31: ['Cuidado médico', 'Camino a casa'],
+  43: ['Cuidado médico', 'Camino a casa'],
+  52: ['Cuidado médico', 'Camino a casa'],
+  53: ['Cuidado médico', 'Camino a casa'],
+  60: ['Cuidado médico', 'Camino a casa'],
+  10: ['Cuidado médico'],
+  6: ['Lactancia y alimentación'],
+  4: ['Lactancia y alimentación'],
+  5: ['Lactancia y alimentación'],
+  2: ['Lactancia y alimentación'],
+  3: ['Lactancia y alimentación'],
+  34: ['Lactancia y alimentación', 'Vínculo y cuidados cotidianos'],
+  35: ['Lactancia y alimentación'],
+  42: ['Lactancia y alimentación', 'Camino a casa'],
+  54: ['Lactancia y alimentación', 'Camino a casa', 'Cuidado médico'],
+  1: ['Vínculo y cuidados cotidianos'],
+  7: ['Vínculo y cuidados cotidianos'],
+  8: ['Vínculo y cuidados cotidianos'],
+  9: ['Vínculo y cuidados cotidianos'],
+  23: ['Vínculo y cuidados cotidianos', 'Cuidado médico'],
+  32: ['Vínculo y cuidados cotidianos', 'Camino a casa'],
+  33: ['Vínculo y cuidados cotidianos', 'Cuidado médico'],
+  41: ['Camino a casa', 'Vínculo y cuidados cotidianos'],
+  44: ['Camino a casa', 'Cuidado médico'],
+  45: ['Camino a casa'],
+  51: ['Camino a casa'],
+  61: ['Camino a casa', 'Cuidado médico'],
+  55: ['Familia y comunidad', 'Camino a casa', 'Vínculo y cuidados cotidianos'],
+};
+
+const CATEGORY_ORDER = [
+  'Orientación UCIN',
+  'Cuidado médico',
+  'Lactancia y alimentación',
+  'Vínculo y cuidados cotidianos',
+  'Camino a casa',
+  'Familia y comunidad',
+];
+
+function normalizeCapsule(cap) {
+  const topics = CAPSULE_TOPICS[cap.id] || [cap.topic || 'Orientación UCIN'];
+  return { ...cap, topic: topics[0], topics };
+}
 
 const CAPSULAS = (() => {
   try {
     const stored = JSON.parse(localStorage.getItem('kun_staff_capsules_v3') || 'null');
     // Only trust stored data if it has at least as many capsules as the default list
     return Array.isArray(stored) && stored.length >= DEFAULT_CAPSULAS.length
-      ? stored.map(c => ({ id: c.id, title: c.title, dur: c.dur || '4 min', topic: c.topic || 'Prematuridad' }))
-      : DEFAULT_CAPSULAS;
+      ? stored.map(c => normalizeCapsule({ id: c.id, title: c.title, dur: c.dur || '4 min', topic: c.topic }))
+      : DEFAULT_CAPSULAS.map(normalizeCapsule);
   } catch {
-    return DEFAULT_CAPSULAS;
+    return DEFAULT_CAPSULAS.map(normalizeCapsule);
   }
 })();
 
@@ -62,12 +116,12 @@ window.CAPSULAS = CAPSULAS;
 
 // Color por tema — usa la paleta DS (un color distinto por categoría)
 const TOPIC_COLOR = {
-  'Apego y vínculo':    KUN.rosehip,
-  'Alimentación':       KUN.sun,
-  'Lactancia':          KUN.apple,
-  'Alta y hogar':       KUN.sageSoft,
-  'Primeros auxilios':  KUN.viola,
-  'Cuidados por etapa': KUN.clear,
+  'Orientación UCIN':              KUN.viola,
+  'Cuidado médico':                KUN.clear,
+  'Lactancia y alimentación':      KUN.apple,
+  'Vínculo y cuidados cotidianos': KUN.rosehip,
+  'Camino a casa':                 KUN.sunSoft,
+  'Familia y comunidad':           KUN.cardSoft,
 };
 
 function SearchField() {
@@ -90,7 +144,7 @@ function SearchField() {
 }
 
 function CategoryChips({ active, onChange }) {
-  const chips = ['Todo', 'Apego y vínculo', 'Alimentación', 'Lactancia', 'Alta y hogar', 'Primeros auxilios', 'Cuidados por etapa'];
+  const chips = ['Todo', ...CATEGORY_ORDER];
   return (
     <div style={{
       display:'flex', gap: 8, padding: '0 20px 18px',
@@ -198,16 +252,19 @@ function TopicRow({ icon, name, caps, defaultOpen, onOpenCapsula, completedCapsu
 }
 
 function TopicList({ onOpenCapsula, activeCategory, completedCapsulas }) {
-  const byTopic = (topicName) => CAPSULAS.filter(c => c.topic === topicName);
+  const byTopic = (topicName) => CAPSULAS.filter(c => (c.topics || [c.topic]).includes(topicName));
 
-  const allTopics = [
-    { icon: KIcon.cat.kang,   name: 'Apego y vínculo',    caps: byTopic('Apego y vínculo') },
-    { icon: KIcon.cat.breast, name: 'Alimentación',        caps: byTopic('Alimentación') },
-    { icon: KIcon.cat.breast, name: 'Lactancia',           caps: byTopic('Lactancia') },
-    { icon: KIcon.cat.prem,   name: 'Alta y hogar',        caps: byTopic('Alta y hogar') },
-    { icon: KIcon.cat.ecmo,   name: 'Primeros auxilios',   caps: byTopic('Primeros auxilios') },
-    { icon: KIcon.cat.kang,   name: 'Cuidados por etapa',  caps: byTopic('Cuidados por etapa') },
-  ];
+  const allTopics = CATEGORY_ORDER.map(name => {
+    const icon = {
+      'Orientación UCIN': KIcon.cat.kang,
+      'Cuidado médico': KIcon.cat.ecmo,
+      'Lactancia y alimentación': KIcon.cat.breast,
+      'Vínculo y cuidados cotidianos': KIcon.cat.kang,
+      'Camino a casa': KIcon.cat.prem,
+      'Familia y comunidad': KIcon.cat.kang,
+    }[name] || KIcon.cat.kang;
+    return { icon, name, caps: byTopic(name) };
+  });
 
   // Sólo mostrar categorías que tienen cápsulas; filtrar por chip si aplica
   const topics = allTopics.filter(t =>

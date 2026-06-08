@@ -10,8 +10,12 @@ const HC = {
   brick:    '#F0743E',
   viola:    '#CDBCDB',
   sun:      '#FDD848',
+  sunSoft:  '#FFF5DC',
   apple:    '#AAD59E',
+  appleSoft:'#EAF2E7',
   clear:    '#9AB2D4',
+  sageSoft: '#E4ECE4',
+  cardSoft: '#F2EBE0',
   ink:      '#2A2320',
   ink2:     '#5E544E',
   ink3:     '#8B827C',
@@ -197,7 +201,7 @@ function BabyHero({ babyName = 'Sofía' }) {
         {/* Avatar with initial */}
         <div style={{
           width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-          background: HC.apple,
+          background: HC.clear,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <span style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink }}>V</span>
@@ -257,8 +261,8 @@ function BabyHero({ babyName = 'Sofía' }) {
 const DAILY_SUMMARY = {
   text: 'Sofía tuvo una noche tranquila. Está respirando con un poco de ayuda del ventilador y recibiendo leche por sonda cada 3 horas. Su peso se mantiene estable.',
   concepts: [
-    { label: 'Ventilación mecánica',   capsuleId: 4, category: 'Cuidado',   color: HC.clear },
-    { label: 'Alimentación por sonda', capsuleId: 1, category: 'Lactancia', color: HC.viola },
+    { label: 'Ventilación mecánica',   capsuleId: 4, category: 'Cuidado médico', color: HC.clear },
+    { label: 'Alimentación por sonda', capsuleId: 1, category: 'Lactancia y alimentación', color: HC.apple },
   ],
 };
 
@@ -480,7 +484,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
           }}>
             <div style={{
               height: '100%', borderRadius: 999,
-              background: HC.brick,
+              background: HC.apple,
               width: `${pct}%`,
               transition: 'width .4s',
             }}/>
@@ -490,17 +494,17 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
           {needsMore && (
             <div style={{
               marginTop: 10,
-              background: HC.rosehip, borderRadius: 14,
+              background: HC.appleSoft, borderRadius: 14,
               padding: '10px 13px',
               display: 'flex', alignItems: 'flex-start', gap: 10,
             }}>
               <div style={{
                 width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                background: HC.brick,
+                background: HC.apple,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginTop: 1,
               }}>
-                <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 700, color: '#fff', lineHeight: 1 }}>!</span>
+                <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 700, color: HC.ink, lineHeight: 1 }}>!</span>
               </div>
               <span style={{
                 fontFamily: HF_B, fontSize: 12.5, fontWeight: 500,
@@ -523,7 +527,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
               ¿Confirmar cancelación?{' '}
               <span
                 onClick={(e) => { e.stopPropagation(); onCancel(displayTime); setConfirmCancel(false); }}
-                style={{ color: '#C0392B', fontWeight: 700, cursor: 'pointer' }}
+                style={{ color: '#D14B3A', fontWeight: 700, cursor: 'pointer' }}
               >Sí, cancelar</span>
               {' · '}
               <span
@@ -552,14 +556,14 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
 // ─── Capsule cards (compact row style) ────────────────────────────────────────
 function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
   const topicMap = {
-    'Apego y vínculo':    { icon: KIcon.cat.kang,   color: HC.rosehip },
-    'Alimentación':       { icon: KIcon.cat.breast,  color: HC.sun },
-    'Lactancia':          { icon: KIcon.cat.breast,  color: HC.apple },
-    'Alta y hogar':       { icon: KIcon.cat.prem,    color: HC.apple },
-    'Primeros auxilios':  { icon: KIcon.cat.ecmo,    color: HC.viola },
-    'Cuidados por etapa': { icon: KIcon.cat.kang,    color: HC.clear },
+    'Orientación UCIN':              { icon: KIcon.cat.kang,   color: HC.viola },
+    'Cuidado médico':                { icon: KIcon.cat.ecmo,   color: HC.clear },
+    'Lactancia y alimentación':      { icon: KIcon.cat.breast, color: HC.apple },
+    'Vínculo y cuidados cotidianos': { icon: KIcon.cat.kang,   color: HC.rosehip },
+    'Camino a casa':                 { icon: KIcon.cat.prem,   color: HC.sun },
+    'Familia y comunidad':           { icon: KIcon.cat.kang,   color: HC.cardSoft },
   };
-  const tm = topicMap[topic] || { icon: KIcon.cat.kang, color: HC.rosehip };
+  const tm = topicMap[topic] || { icon: KIcon.cat.kang, color: HC.cardSoft };
   return (
     <div onClick={onClick} style={{
       background: HC.paper, borderRadius: 22, padding: '14px 16px',
@@ -641,7 +645,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         </div>
         <div style={{ padding: '0 22px', boxSizing: 'border-box' }}>
           <CapsuleCard
-            topic="Apego y vínculo"
+            topic="Vínculo y cuidados cotidianos"
             title="El apego en la UCIN"
             mins="5 min"
             tag="Nuevo para ti"
@@ -649,7 +653,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
           />
           <CapsuleCard
-            topic="Alimentación"
+            topic="Lactancia y alimentación"
             title="Sonda al dedo"
             mins="5 min"
             tag="Recomendado"

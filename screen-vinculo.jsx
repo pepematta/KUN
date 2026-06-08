@@ -128,7 +128,7 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
               marginBottom: 16, position:'relative',
             }}>{VINK_ICONS.journey('#fff')}</div>
             <div style={{
-              fontFamily: V_FT, fontSize: 24, fontWeight: 700,
+              fontFamily: V_FT, fontSize: 22, fontWeight: 700,
               letterSpacing: -0.4, marginBottom: 4, position:'relative',
             }}>
               Diario de vida
@@ -466,10 +466,10 @@ function AddEntrySheet({ onClose, onPickPhoto, onPickText, onPickVoice }) {
               }}>{o.icon(KUN.ink)}</div>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
+                  fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
                 }}>{o.label}</div>
                 <div style={{
-                  fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3,
+                  fontFamily: V_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 400, marginTop: 3,
                 }}>{o.desc}</div>
               </div>
               {KIcon.chevRight(KUN.inkFaint)}
@@ -653,7 +653,7 @@ function NoteEditorSheet({ onClose, onSave }) {
         <div style={{ width: 44, height: 5, borderRadius: 3, background: KUN.inkFaint, margin:'0 auto 16px' }} />
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 14 }}>
           <div>
-            <div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Nueva nota</div>
+            <div style={{ fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Nueva nota</div>
             <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkMuted, marginTop: 2 }}>Se guardará en el diario de hoy</div>
           </div>
           <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.brick, cursor:'pointer' }}>Cancelar</button>
@@ -691,7 +691,7 @@ function NoteEditorSheet({ onClose, onSave }) {
                   background: active ? KUN.brick : KUN.cardSoft,
                   color: active ? '#fff' : KUN.inkSoft,
                   borderRadius: 999, padding: '8px 12px',
-                  fontFamily: V_FT, fontSize: 12.5, fontWeight: 700, cursor:'pointer',
+                  fontFamily: V_FT, fontSize: 13, fontWeight: 700, cursor:'pointer',
                 }}>{c}</button>
               );
             })}
@@ -1241,7 +1241,7 @@ function SiblingRecordCard({ onRecord }) {
         background: KUN.brick,
         color: '#fff',
         fontFamily: V_FT,
-        fontSize: 13.5,
+        fontSize: 12.5,
         fontWeight: 700,
         cursor: 'pointer',
       }}>
@@ -1413,7 +1413,7 @@ function StoryRow({ story, onRecord }) {
           flexShrink: 0, fontSize: 18,
         }}>📖</div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
+          <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
           <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
             {open ? 'Toca el texto y léelo en voz alta' : 'Cuento corto - 2 min'}
           </div>
@@ -1490,7 +1490,7 @@ function CuentosTab({ recordings, onOpenRecorder, onOpenSiblingRecorder }) {
           background: KUN.apple, borderRadius: 22, padding: '18px 20px',
         }}>
           <div style={{
-            fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
+            fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
           }}>
             Nana de la luna llena
           </div>
@@ -1533,11 +1533,11 @@ function CuentosTab({ recordings, onOpenRecorder, onOpenSiblingRecorder }) {
             border: `1.5px dashed ${KUN.inkFaint}`,
           }}>
             <div style={{ fontSize: 30, marginBottom: 8 }}>🎙️</div>
-            <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
+            <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
               Aún no tienes grabaciones
             </div>
             <div style={{
-              fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5,
+              fontFamily: V_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5,
             }}>
               Cuando grabes algo, aparecerá aquí y en tu feed familiar.
             </div>
@@ -1732,26 +1732,26 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
 const DIARY_GUIDED_KEY = 'kun_diary_guided_entries_v2';
 
 const guidedTemplates = [
-  { id:'hoy-celebramos', name:'Hoy celebramos', category:'Hoy celebramos', icon:'spark', color:'#FFF5DC', shortDescription:'Avances pequenos que merecen quedar guardados.', mainPrompt:'Hoy celebramos que...', writingIdeas:['Que paso hoy?', 'Por que fue importante para ustedes?', 'Como se sintieron al verlo?'], examples:['Hoy celebramos que subiste de peso.', 'Hoy celebramos que respiraste mejor.', 'Hoy celebramos que abriste los ojos.', 'Hoy celebramos una noticia pequena pero enorme.'] },
+  { id:'hoy-celebramos', name:'Hoy celebramos', category:'Hoy celebramos', icon:'spark', color:'#F6C3AE', shortDescription:'Avances pequenos que merecen quedar guardados.', mainPrompt:'Hoy celebramos que...', writingIdeas:['Que paso hoy?', 'Por que fue importante para ustedes?', 'Como se sintieron al verlo?'], examples:['Hoy celebramos que subiste de peso.', 'Hoy celebramos que respiraste mejor.', 'Hoy celebramos que abriste los ojos.', 'Hoy celebramos una noticia pequena pero enorme.'] },
   { id:'hito-ucin', name:'Hito UCIN', category:'Hito UCIN', icon:'monitor', color:'#E9EEF7', shortDescription:'Cambios medicos o avances en los cuidados.', mainPrompt:'Hoy hubo un cambio importante en tus cuidados...', writingIdeas:['Que cambio hoy?', 'Como nos lo explico el equipo?', 'Como nos sentimos al saberlo?'], examples:['Primer dia sin ventilador.', 'Primer dia sin CPAP.', 'Primer dia sin oxigeno.', 'Primer dia sin sonda.', 'Primer dia sin via.', 'Primer dia sin fototerapia.', 'Primer dia fuera de incubadora.', 'Primer dia en cuna.', 'Primer dia con menos monitores.', 'Primer examen importante.', 'Primer resultado alentador.', 'Primer dia regulando mejor tu temperatura.'] },
-  { id:'respiracion', name:'Respiracion', category:'Respiracion', icon:'breath', color:'#EAF2F6', shortDescription:'Apoyos, cambios y senales al respirar.', mainPrompt:'Hoy tu respiracion estuvo...', writingIdeas:['Necesitaste mas o menos apoyo?', 'Que notamos al verte respirar?', 'Que sentimos nosotros?'], examples:['Hoy te vimos respirar mas tranquilo/a.', 'Hoy celebramos que necesitaste menos oxigeno.', 'Hoy dimos un pasito mas hacia respirar solito/a.', 'Hoy el equipo ajusto tu apoyo respiratorio.'] },
+  { id:'respiracion', name:'Respiracion', category:'Respiracion', icon:'breath', color:'#E9EEF7', shortDescription:'Apoyos, cambios y senales al respirar.', mainPrompt:'Hoy tu respiracion estuvo...', writingIdeas:['Necesitaste mas o menos apoyo?', 'Que notamos al verte respirar?', 'Que sentimos nosotros?'], examples:['Hoy te vimos respirar mas tranquilo/a.', 'Hoy celebramos que necesitaste menos oxigeno.', 'Hoy dimos un pasito mas hacia respirar solito/a.', 'Hoy el equipo ajusto tu apoyo respiratorio.'] },
   { id:'alimentacion', name:'Alimentacion', category:'Alimentacion', icon:'milk', color:'#EAF2E7', shortDescription:'Leche, sonda, pecho, mamadera o tolerancia.', mainPrompt:'Hoy tu alimentacion fue...', writingIdeas:['Como recibiste tu leche hoy?', 'Hubo algun avance?', 'Que aprendimos sobre tus senales?'], examples:['Hoy recibiste leche por sonda.', 'Hoy toleraste mejor la leche.', 'Hoy tomaste poquitos ml, pero para nosotros fue enorme.', 'Hoy mama logro extraerse leche para ti.', 'Hoy fue tu primera vez tomando por boca.', 'Hoy fue tu primera mamadera.', 'Hoy fue tu primera vez al pecho.', 'Hoy celebramos cada gotita.'] },
-  { id:'piel-con-piel', name:'Piel con piel', category:'Piel con piel', icon:'heart', color:'#EFE8F5', shortDescription:'Cercania, contacto y momentos de apego.', mainPrompt:'Hoy te tuve cerca y senti...', writingIdeas:['Cuanto tiempo estuvieron juntos?', 'Que recuerdas de ese momento?', 'Que te gustaria contarle cuando sea grande?'], examples:['Hoy pudimos hacer piel con piel por primera vez.', 'Hoy senti tu calor.', 'Hoy escuchaste mi voz muy cerquita.', 'Hoy te tome la mano.', 'Hoy no pude tomarte, pero pude estar contigo de otra forma.', 'Hoy papa hizo piel con piel.', 'Hoy mama hizo piel con piel.'] },
-  { id:'aprendimos-cuidarte', name:'Aprendimos a cuidarte', category:'Aprendizaje', icon:'hands', color:'#F4ECDD', shortDescription:'Tareas y cuidados que van aprendiendo.', mainPrompt:'Hoy aprendimos a cuidarte cuando...', writingIdeas:['Que aprendimos hoy?', 'Quien nos enseno?', 'Que sentimos al hacerlo por primera vez?'], examples:['Hoy aprendimos a cambiarte el panal.', 'Hoy aprendimos a tomarte la temperatura.', 'Hoy aprendimos como tocarte con cuidado.', 'Hoy aprendimos como contenerte.', 'Hoy ayudamos en tu aseo.', 'Hoy participamos en tus cuidados por primera vez.'] },
-  { id:'dia-dificil', name:'Hoy fue dificil', category:'Dia dificil', icon:'cloud', color:'#ECE7E1', shortDescription:'Para dias complejos, sin forzar optimismo.', mainPrompt:'Hoy fue un dia dificil porque...', writingIdeas:['Que fue lo que mas costo?', 'Que ayudo un poquito?', 'Que quieres dejar registrado de este dia?'], examples:['Hoy nos costo esperar.', 'Hoy tuvimos miedo.', 'Hoy no sabemos bien que escribir.', 'Hoy solo queremos dejar registrado que estuvimos aqui.', 'Hoy no hubo grandes cambios, pero seguimos contigo.', 'Hoy aprendimos que avanzar tambien puede ser lento.'] },
-  { id:'hoy-me-senti', name:'Hoy me senti', category:'Emocion', icon:'heart', color:'#FCE7DE', shortDescription:'Emociones de mama, papa o cuidador.', mainPrompt:'Hoy me senti...', writingIdeas:['Que emocion estuvo mas presente?', 'Que la provoco?', 'Que necesitabas en ese momento?'], examples:['Hoy me dio esperanza...', 'Hoy me dio miedo...', 'Hoy llore cuando...', 'Hoy sonrei cuando...', 'Hoy agradeci...', 'Hoy no tengo muchas palabras, pero quiero guardar este momento.'] },
-  { id:'personalidad', name:'Tu personalidad', category:'Personalidad', icon:'star', color:'#FFF0C9', shortDescription:'Gestos, rasgos y pequenas senales.', mainPrompt:'Hoy nos mostraste que eres...', writingIdeas:['Que gesto hiciste?', 'Que nos llamo la atencion?', 'A quien nos recordaste?'], examples:['Hoy abriste los ojos cuando te hablamos.', 'Hoy moviste tus manos como si quisieras saludar.', 'Hoy hiciste una cara que parecia enojo.', 'Hoy te vimos tranquilo/a cuando escuchaste nuestra voz.', 'Hoy nos hiciste reir porque...', 'Cada dia te vemos mas tu.'] },
-  { id:'cosas-calman', name:'Cosas que te calman', category:'Calma', icon:'music', color:'#E9EEF7', shortDescription:'Voces, sonidos y formas de contencion.', mainPrompt:'Hoy te calmo...', writingIdeas:['Que parecio ayudarte?', 'Que sonido, voz o gesto te tranquilizo?', 'Que descubrimos sobre ti?'], examples:['Hoy te calmo escuchar la voz de mama.', 'Hoy te gusto que te cantaramos.', 'Hoy te tranquilizaste con nuestras manos.', 'Hoy te leimos un cuento.', 'Hoy descubrimos algo que te gusta.', 'Hoy descubrimos algo que no te gusta tanto.'] },
-  { id:'familia-visitas', name:'Familia y visitas', category:'Familia', icon:'people', color:'#EAF2E7', shortDescription:'Visitas, mensajes y apoyo cercano o a distancia.', mainPrompt:'Hoy recibiste carino de...', writingIdeas:['Quien vino o pregunto por ti?', 'Que mensaje te enviaron?', 'Como se sintio ese apoyo?'], examples:['Hoy vino a verte...', 'Hoy tus abuelos preguntaron por ti.', 'Hoy recibiste carino desde lejos.', 'Hoy alguien rezo o penso en ti.', 'Hoy una persona importante para nosotros te conocio.', 'Hoy alguien dejo un mensaje para ti.'] },
-  { id:'equipo-salud', name:'Equipo de salud', category:'Equipo de salud', icon:'plus', color:'#EAF2F6', shortDescription:'Explicaciones, frases y acompanamiento del equipo.', mainPrompt:'Hoy alguien del equipo nos ayudo a...', writingIdeas:['Quien nos acompano hoy?', 'Que nos explico?', 'Que frase queremos recordar?'], examples:['Hoy una enfermera nos explico...', 'Hoy una persona del equipo nos dio tranquilidad.', 'Hoy aprendimos del equipo que...', 'Hoy queremos recordar el nombre de...', 'Hoy el equipo celebro contigo.', 'Hoy agradecemos especialmente a...'] },
-  { id:'foto-hoy', name:'Foto de hoy', category:'Foto del dia', icon:'camera', color:'#FCE7DE', shortDescription:'Una imagen que habla por este dia.', mainPrompt:'Hoy guardamos esta foto porque...', writingIdeas:['Que muestra esta foto?', 'Por que es importante?', 'Que emocion tiene este recuerdo?'], examples:['Foto de tu incubadora.', 'Foto de tus manitos.', 'Foto de tus piecitos.', 'Foto de piel con piel.', 'Foto de tu primera mantita.', 'Foto de una visita especial.', 'Foto de un hito medico.'] },
-  { id:'carta', name:'Carta para ti', category:'Carta', icon:'letter', color:'#EFE8F5', shortDescription:'Un mensaje directo para tu bebe.', mainPrompt:'Querido/a bebe, hoy quiero contarte que...', writingIdeas:['Que quieres que sepa?', 'Que le contarias cuando sea grande?', 'Que promesa o deseo quieres guardar?'], examples:['Hoy quiero que sepas que...', 'Tal vez no recuerdes estos dias, pero nosotros...', 'Hoy estuviste muy valiente.', 'Hoy nosotros tambien intentamos ser valientes.', 'Lo que sueno para ti es...', 'Gracias por ensenarme...'] },
-  { id:'preparando-casa', name:'Preparandonos para casa', category:'Camino a casa', icon:'home', color:'#EAF2E7', shortDescription:'Pasos, aprendizajes y emociones hacia el alta.', mainPrompt:'Hoy dimos un paso mas hacia casa cuando...', writingIdeas:['Que aprendimos para cuidarte en casa?', 'Que nos emociona?', 'Que nos da miedo?'], examples:['Hoy nos hablaron del alta.', 'Hoy empezamos a prepararnos para llevarte a casa.', 'Hoy aprendimos un cuidado que necesitaremos en casa.', 'Hoy imaginamos como sera tu llegada.', 'Hoy fue tu ultimo dia con...', 'Hoy saliste de la UCIN.'] },
+  { id:'piel-con-piel', name:'Piel con piel', category:'Piel con piel', icon:'heart', color:'#F6C3AE', shortDescription:'Cercania, contacto y momentos de apego.', mainPrompt:'Hoy te tuve cerca y senti...', writingIdeas:['Cuanto tiempo estuvieron juntos?', 'Que recuerdas de ese momento?', 'Que te gustaria contarle cuando sea grande?'], examples:['Hoy pudimos hacer piel con piel por primera vez.', 'Hoy senti tu calor.', 'Hoy escuchaste mi voz muy cerquita.', 'Hoy te tome la mano.', 'Hoy no pude tomarte, pero pude estar contigo de otra forma.', 'Hoy papa hizo piel con piel.', 'Hoy mama hizo piel con piel.'] },
+  { id:'aprendimos-cuidarte', name:'Aprendimos a cuidarte', category:'Aprendizaje', icon:'hands', color:'#F6C3AE', shortDescription:'Tareas y cuidados que van aprendiendo.', mainPrompt:'Hoy aprendimos a cuidarte cuando...', writingIdeas:['Que aprendimos hoy?', 'Quien nos enseno?', 'Que sentimos al hacerlo por primera vez?'], examples:['Hoy aprendimos a cambiarte el panal.', 'Hoy aprendimos a tomarte la temperatura.', 'Hoy aprendimos como tocarte con cuidado.', 'Hoy aprendimos como contenerte.', 'Hoy ayudamos en tu aseo.', 'Hoy participamos en tus cuidados por primera vez.'] },
+  { id:'dia-dificil', name:'Hoy fue dificil', category:'Dia dificil', icon:'cloud', color:'#F6C3AE', shortDescription:'Para dias complejos, sin forzar optimismo.', mainPrompt:'Hoy fue un dia dificil porque...', writingIdeas:['Que fue lo que mas costo?', 'Que ayudo un poquito?', 'Que quieres dejar registrado de este dia?'], examples:['Hoy nos costo esperar.', 'Hoy tuvimos miedo.', 'Hoy no sabemos bien que escribir.', 'Hoy solo queremos dejar registrado que estuvimos aqui.', 'Hoy no hubo grandes cambios, pero seguimos contigo.', 'Hoy aprendimos que avanzar tambien puede ser lento.'] },
+  { id:'hoy-me-senti', name:'Hoy me senti', category:'Emocion', icon:'heart', color:'#F6C3AE', shortDescription:'Emociones de mama, papa o cuidador.', mainPrompt:'Hoy me senti...', writingIdeas:['Que emocion estuvo mas presente?', 'Que la provoco?', 'Que necesitabas en ese momento?'], examples:['Hoy me dio esperanza...', 'Hoy me dio miedo...', 'Hoy llore cuando...', 'Hoy sonrei cuando...', 'Hoy agradeci...', 'Hoy no tengo muchas palabras, pero quiero guardar este momento.'] },
+  { id:'personalidad', name:'Tu personalidad', category:'Personalidad', icon:'star', color:'#F6C3AE', shortDescription:'Gestos, rasgos y pequenas senales.', mainPrompt:'Hoy nos mostraste que eres...', writingIdeas:['Que gesto hiciste?', 'Que nos llamo la atencion?', 'A quien nos recordaste?'], examples:['Hoy abriste los ojos cuando te hablamos.', 'Hoy moviste tus manos como si quisieras saludar.', 'Hoy hiciste una cara que parecia enojo.', 'Hoy te vimos tranquilo/a cuando escuchaste nuestra voz.', 'Hoy nos hiciste reir porque...', 'Cada dia te vemos mas tu.'] },
+  { id:'cosas-calman', name:'Cosas que te calman', category:'Calma', icon:'music', color:'#F6C3AE', shortDescription:'Voces, sonidos y formas de contencion.', mainPrompt:'Hoy te calmo...', writingIdeas:['Que parecio ayudarte?', 'Que sonido, voz o gesto te tranquilizo?', 'Que descubrimos sobre ti?'], examples:['Hoy te calmo escuchar la voz de mama.', 'Hoy te gusto que te cantaramos.', 'Hoy te tranquilizaste con nuestras manos.', 'Hoy te leimos un cuento.', 'Hoy descubrimos algo que te gusta.', 'Hoy descubrimos algo que no te gusta tanto.'] },
+  { id:'familia-visitas', name:'Familia y visitas', category:'Familia', icon:'people', color:'#F2EBE0', shortDescription:'Visitas, mensajes y apoyo cercano o a distancia.', mainPrompt:'Hoy recibiste carino de...', writingIdeas:['Quien vino o pregunto por ti?', 'Que mensaje te enviaron?', 'Como se sintio ese apoyo?'], examples:['Hoy vino a verte...', 'Hoy tus abuelos preguntaron por ti.', 'Hoy recibiste carino desde lejos.', 'Hoy alguien rezo o penso en ti.', 'Hoy una persona importante para nosotros te conocio.', 'Hoy alguien dejo un mensaje para ti.'] },
+  { id:'equipo-salud', name:'Equipo de salud', category:'Equipo de salud', icon:'plus', color:'#E9EEF7', shortDescription:'Explicaciones, frases y acompanamiento del equipo.', mainPrompt:'Hoy alguien del equipo nos ayudo a...', writingIdeas:['Quien nos acompano hoy?', 'Que nos explico?', 'Que frase queremos recordar?'], examples:['Hoy una enfermera nos explico...', 'Hoy una persona del equipo nos dio tranquilidad.', 'Hoy aprendimos del equipo que...', 'Hoy queremos recordar el nombre de...', 'Hoy el equipo celebro contigo.', 'Hoy agradecemos especialmente a...'] },
+  { id:'foto-hoy', name:'Foto de hoy', category:'Foto del dia', icon:'camera', color:'#F6C3AE', shortDescription:'Una imagen que habla por este dia.', mainPrompt:'Hoy guardamos esta foto porque...', writingIdeas:['Que muestra esta foto?', 'Por que es importante?', 'Que emocion tiene este recuerdo?'], examples:['Foto de tu incubadora.', 'Foto de tus manitos.', 'Foto de tus piecitos.', 'Foto de piel con piel.', 'Foto de tu primera mantita.', 'Foto de una visita especial.', 'Foto de un hito medico.'] },
+  { id:'carta', name:'Carta para ti', category:'Carta', icon:'letter', color:'#F6C3AE', shortDescription:'Un mensaje directo para tu bebe.', mainPrompt:'Querido/a bebe, hoy quiero contarte que...', writingIdeas:['Que quieres que sepa?', 'Que le contarias cuando sea grande?', 'Que promesa o deseo quieres guardar?'], examples:['Hoy quiero que sepas que...', 'Tal vez no recuerdes estos dias, pero nosotros...', 'Hoy estuviste muy valiente.', 'Hoy nosotros tambien intentamos ser valientes.', 'Lo que sueno para ti es...', 'Gracias por ensenarme...'] },
+  { id:'preparando-casa', name:'Preparandonos para casa', category:'Camino a casa', icon:'home', color:'#FFF5DC', shortDescription:'Pasos, aprendizajes y emociones hacia el alta.', mainPrompt:'Hoy dimos un paso mas hacia casa cuando...', writingIdeas:['Que aprendimos para cuidarte en casa?', 'Que nos emociona?', 'Que nos da miedo?'], examples:['Hoy nos hablaron del alta.', 'Hoy empezamos a prepararnos para llevarte a casa.', 'Hoy aprendimos un cuidado que necesitaremos en casa.', 'Hoy imaginamos como sera tu llegada.', 'Hoy fue tu ultimo dia con...', 'Hoy saliste de la UCIN.'] },
   { id:'llegada-casa', name:'Llegada a casa', category:'Llegada a casa', icon:'home', color:'#FFF5DC', shortDescription:'Para guardar el dia en que salieron de UCIN.', mainPrompt:'Llegaste a casa el dia...', writingIdeas:['Como fue ese momento?', 'Quienes estaban?', 'Que fue lo primero que hicieron?'], examples:['Te recibimos con...', 'Tu pieza estaba preparada con...', 'La primera noche en casa fue...', 'Despues de tantos dias en UCIN, llegar a casa se sintio...', 'Queremos recordar este dia porque...'] },
 ];
 
 const DIARY_TEMPLATES = guidedTemplates;
-const DIARY_COLORS = ['#FFF5DC', '#FCE7DE', '#EAF2E7', '#E9EEF7', '#EFE8F5', '#ECE7E1'];
+const DIARY_COLORS = ['#EAF2E7', '#E9EEF7', '#F6C3AE', '#CDBCDB', '#FFF5DC', '#F2EBE0'];
 const DIARY_CATEGORIES = ['Hoy celebramos', 'Hito UCIN', 'Respiracion', 'Alimentacion', 'Piel con piel', 'Aprendizaje', 'Dia dificil', 'Emocion', 'Personalidad', 'Calma', 'Familia', 'Equipo de salud', 'Foto del dia', 'Carta', 'Camino a casa', 'Llegada a casa'];
 
 const CLASSIC_MEMORY_PROMPTS = [
@@ -1805,14 +1805,14 @@ function getTemplateByCategory(category, fallback) {
 
 const DIARY_SEED_ENTRIES = [
   { id:'seed-ecmo', date:'2026-06-20', type:'guided', templateId:'hito-ucin', title:'Hoy te desconectaron de la ECMO', text:'El equipo nos aviso temprano. Fue un dia inmenso, lleno de cuidado y de silencio compartido.', category:'Hito UCIN', color:'#E9EEF7', media:{ photos:['premature.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-20T15:40:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'15:40' },
-  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#FCE7DE', media:{ photos:['tens2.webp'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
-  { id:'seed-peso', date:'2026-06-19', type:'guided', templateId:'hoy-celebramos', title:'Subiste 20 gramos', text:'La enfermera nos dijo que era una buena noticia para guardar con calma.', category:'Hoy celebramos', color:'#FFF5DC', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T10:30:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'10:30' },
-  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#EFE8F5', media:{ photos:['premature.jpg','tens.avif'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
-  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F4ECDD', media:{ photos:['tens.avif'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
-  { id:'seed-oxigeno', date:'2026-06-17', type:'guided', templateId:'respiracion', title:'Hoy necesitaste menos oxigeno', text:'Mirarte respirar un poco mas tranquilo nos ayudo a respirar tambien a nosotros.', category:'Respiracion', color:'#EAF2F6', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-17T16:20:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'16:20' },
+  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#F6C3AE', media:{ photos:['tens2.webp'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
+  { id:'seed-peso', date:'2026-06-19', type:'guided', templateId:'hoy-celebramos', title:'Subiste 20 gramos', text:'La enfermera nos dijo que era una buena noticia para guardar con calma.', category:'Hoy celebramos', color:'#F6C3AE', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T10:30:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'10:30' },
+  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#F6C3AE', media:{ photos:['premature.jpg','tens.avif'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
+  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F6C3AE', media:{ photos:['tens.avif'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
+  { id:'seed-oxigeno', date:'2026-06-17', type:'guided', templateId:'respiracion', title:'Hoy necesitaste menos oxigeno', text:'Mirarte respirar un poco mas tranquilo nos ayudo a respirar tambien a nosotros.', category:'Respiracion', color:'#E9EEF7', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-17T16:20:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'16:20' },
   { id:'seed-leche', date:'2026-06-16', type:'guided', templateId:'alimentacion', title:'Hoy toleraste mejor la leche', text:'Fue poquito a poquito, pero el equipo nos dijo que era una buena senal.', category:'Alimentacion', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-16T13:10:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'13:10' },
-  { id:'seed-dificil', date:'2026-06-16', type:'guided', templateId:'dia-dificil', title:'Hoy no hubo grandes cambios, pero estuvimos contigo', text:'No fue un dia facil. Vinimos igual, te hablamos suave y dejamos este recuerdo sin exigirnos mas.', category:'Dia dificil', color:'#ECE7E1', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-16T19:30:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'19:30' },
-  { id:'seed-abuelos', date:'2026-06-15', type:'guided', templateId:'familia-visitas', title:'Hoy tus abuelos te mandaron un mensaje', text:'Preguntaron por ti y nos pidieron contarte que te esperan con mucho carino.', category:'Familia', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-15T18:00:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'18:00' },
+  { id:'seed-dificil', date:'2026-06-16', type:'guided', templateId:'dia-dificil', title:'Hoy no hubo grandes cambios, pero estuvimos contigo', text:'No fue un dia facil. Vinimos igual, te hablamos suave y dejamos este recuerdo sin exigirnos mas.', category:'Dia dificil', color:'#F6C3AE', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-16T19:30:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'19:30' },
+  { id:'seed-abuelos', date:'2026-06-15', type:'guided', templateId:'familia-visitas', title:'Hoy tus abuelos te mandaron un mensaje', text:'Preguntaron por ti y nos pidieron contarte que te esperan con mucho carino.', category:'Familia', color:'#F2EBE0', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-15T18:00:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'18:00' },
   { id:'seed-casa', date:'2026-06-15', type:'guided', templateId:'preparando-casa', title:'Hoy dimos un paso mas hacia casa', text:'Nos explicaron un cuidado que necesitaremos practicar. Da emocion y tambien un poco de miedo.', category:'Camino a casa', color:'#FFF5DC', media:{ photos:['premature.jpg'], audios:[], videos:[] }, createdAt:'2026-06-15T11:40:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'11:40' },
 ];
 function DiaryMediaIcon({ type, color = KUN.inkMuted }) {
@@ -1882,7 +1882,7 @@ function CategorySelector({ value, onChange }) {
             borderRadius: 999,
             padding: '8px 11px',
             fontFamily: V_FT,
-            fontSize: 12,
+            fontSize: 12.5,
             fontWeight: 700,
             cursor:'pointer',
           }}>{category}</button>
@@ -1898,7 +1898,7 @@ function MemoryHighlights({ entries, onOpenDay }) {
     <section style={{ marginBottom: 20 }}>
       <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', padding:'0 22px 10px' }}>
         <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink }}>Recuerdos destacados</div>
-        <div style={{ fontFamily: V_FB, fontSize: 11.5, color: KUN.inkMuted }}>{entries.length} guardados</div>
+        <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted }}>{entries.length} guardados</div>
       </div>
       <div style={{ display:'flex', gap: 12, overflowX:'auto', padding:'0 20px 4px', scrollSnapType:'x mandatory' }}>
         {featured.map(entry => {
@@ -1913,7 +1913,7 @@ function MemoryHighlights({ entries, onOpenDay }) {
               <div style={{ position:'absolute', inset:0, background: photos[0] ? 'linear-gradient(180deg, rgba(42,35,32,0.05), rgba(42,35,32,0.58))' : 'transparent' }} />
               <div style={{ position:'relative', zIndex:1, minHeight:132, padding: 16, display:'flex', flexDirection:'column', justifyContent:'flex-end', boxSizing:'border-box' }}>
                 <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: photos[0] ? 'rgba(255,255,255,0.84)' : KUN.inkMuted, marginBottom: 7 }}>{entry.dateLabel} - {entry.category}</div>
-                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: photos[0] ? '#fff' : KUN.ink, lineHeight: 1.12 }}>{entry.title}</div>
+                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: photos[0] ? '#fff' : KUN.ink, lineHeight: 1.12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal', wordWrap: 'break-word' }}>{entry.title}</div>
               </div>
             </button>
           );
@@ -1941,7 +1941,7 @@ function DiaryEntryCard({ entry, onOpen }) {
           {isGuided && <span style={{ borderRadius:999, background:'#FFF1EA', color:KUN.brick, padding:'3px 7px', fontFamily:V_FT, fontSize:10.5, fontWeight:700 }}>Guia</span>}
         </div>
         <div style={{ fontFamily: V_FT, fontSize: 16.5, fontWeight: 700, color: KUN.ink, lineHeight: 1.15 }}>{entry.title}</div>
-        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 6, maxHeight: 38, overflow:'hidden' }}>{entry.text || 'Recuerdo guardado con medio adjunto.'}</div>
+        <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 6, maxHeight: 38, overflow:'hidden' }}>{entry.text || 'Recuerdo guardado con medio adjunto.'}</div>
         <div style={{ display:'flex', gap: 7, marginTop: 9 }}>
           {mediaTypes.map(m => <span key={m} style={{ width: 28, height: 28, borderRadius: 14, background: KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center' }}><DiaryMediaIcon type={m} /></span>)}
         </div>
@@ -1957,10 +1957,7 @@ function DiaryEntryCard({ entry, onOpen }) {
 }
 
 function DiaryHome({ entries, onBack, onOpenDay, onCreate, canEditDiary }) {
-  const [categoryFilter, setCategoryFilter] = React.useState('Todos');
-  const categories = ['Todos', ...Array.from(new Set(entries.map(e => e.category).filter(Boolean)))];
-  const visibleEntries = categoryFilter === 'Todos' ? entries : entries.filter(e => e.category === categoryFilter);
-  const groups = visibleEntries.reduce((acc, entry) => {
+  const groups = entries.reduce((acc, entry) => {
     acc[entry.fullDate] = acc[entry.fullDate] || [];
     acc[entry.fullDate].push(entry);
     return acc;
@@ -1969,28 +1966,19 @@ function DiaryHome({ entries, onBack, onOpenDay, onCreate, canEditDiary }) {
     <div style={{ minHeight:'100%', background: KUN.bg, paddingBottom: 108, position:'relative' }}>
       <DiaryTopBar onBack={onBack} />
       {!canEditDiary && <ReadOnlyDiaryNotice />}
-      <div style={{ padding:'0 22px 16px' }}>
+      <div style={{ padding:'0 22px 16px', textAlign:'center' }}>
         <div style={{ fontFamily: V_FB, fontSize: 13.5, color: KUN.inkSoft, lineHeight: 1.55 }}>
           Este recuerdo es tuyo. Puedes escribirlo como quieras. No tiene que quedar perfecto.
         </div>
       </div>
       <MemoryHighlights entries={entries} onOpenDay={onOpenDay} />
-      <div style={{ padding:'0 20px 18px' }}>
-        <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: KUN.inkMuted, letterSpacing: .8, textTransform:'uppercase', marginBottom: 9 }}>Filtrar por categoria</div>
-        <div style={{ display:'flex', gap: 8, overflowX:'auto', paddingBottom: 2 }}>
-          {categories.map(cat => {
-            const active = cat === categoryFilter;
-            return <button key={cat} onClick={() => setCategoryFilter(cat)} style={{ border:active ? 'none' : `1px solid ${KUN.hair}`, background:active ? KUN.brick : '#fff', color:active ? '#fff' : KUN.inkSoft, borderRadius:999, padding:'8px 12px', fontFamily:V_FT, fontSize:12, fontWeight:700, whiteSpace:'nowrap', cursor:'pointer' }}>{cat}</button>;
-          })}
-        </div>
-      </div>
       <div style={{ padding:'0 20px', display:'flex', flexDirection:'column', gap: 18 }}>
         {canEditDiary && (
           <button onClick={onCreate} style={{ width:'100%', border:'none', background:'#fff', borderRadius:22, padding:'14px 16px', display:'flex', alignItems:'center', gap:12, cursor:'pointer', boxShadow:'0 6px 18px rgba(42,35,32,0.045)', borderTop:`1px solid ${KUN.hairSoft}`, textAlign:'left' }}>
             <span style={{ width:38, height:38, borderRadius:19, background:KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{VINK_ICONS.plus('#fff')}</span>
             <span style={{ minWidth:0 }}>
               <span style={{ display:'block', fontFamily:V_FT, fontSize:15.5, fontWeight:700, color:KUN.ink }}>Agregar un recuerdo</span>
-              <span style={{ display:'block', fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, marginTop:2 }}>Puedes partir libremente o usar una guia suave.</span>
+              <span style={{ display:'block', fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, marginTop:2 }}>Puedes partir libremente o usar una guia suave.</span>
             </span>
           </button>
         )}
@@ -2022,7 +2010,7 @@ function MemoryBlock({ block, onOpen }) {
         <span style={{ fontFamily: V_FT, fontSize: 11, color: KUN.inkMuted, fontWeight: 700 }}>{block.time}</span>
       </div>
       <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, lineHeight: 1.12 }}>{block.title}</div>
-      <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 8 }}>{block.text}</div>
+      <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 8 }}>{block.text}</div>
     </button>
   );
 }
@@ -2076,7 +2064,7 @@ function DayTimeline({ date, entries, onBack, onCreate }) {
           </div>
         ))}
         <div style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom: 10 }}>
-          <MemoryBlock block={{ kind:'note', label:'Para recordar', title:'Un detalle pequeno', text:'Hoy queremos recordar este momento tal como fue.', time:'Noche', color:'#FFF5DC' }} />
+          <MemoryBlock block={{ kind:'note', label:'Para recordar', title:'Un detalle pequeno', text:'Hoy queremos recordar este momento tal como fue.', time:'Noche', color:'#F6C3AE' }} />
         </div>
       </div>
       <DayFloatingAddButton onCreate={onCreate} />
@@ -2101,7 +2089,7 @@ function TemplateCard({ template, onSelect }) {
       <span style={{ width: 42, height: 42, borderRadius: 15, background: template.color, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><TemplateIcon icon={template.icon} color={KUN.ink} /></span>
       <span style={{ flex:1 }}>
         <span style={{ display:'block', fontFamily: V_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink }}>{template.name}</span>
-        <span style={{ display:'block', fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 3 }}>{template.shortDescription}</span>
+        <span style={{ display:'block', fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 3 }}>{template.shortDescription}</span>
       </span>
     </button>
   );
@@ -2140,6 +2128,55 @@ function ExampleChips({ examples = [], onPick }) {
   return <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:2 }}>{examples.map(example => <button key={example} onClick={() => onPick(example)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.inkSoft, borderRadius:999, padding:'8px 11px', fontFamily:V_FB, fontSize:12, whiteSpace:'nowrap', cursor:'pointer' }}>{example}</button>)}</div>;
 }
 
+function GuidedWritingCard({ color, text, setText, ideas, examples, showSuggestions, onStartWriting }) {
+  const textareaRef = React.useRef(null);
+  const hasEditedText = text.trim().length > 0 && !showSuggestions;
+  const starterLineCount = Math.max(1, Math.ceil((text || '').length / 34));
+  const focusEditor = (event) => {
+    onStartWriting();
+    if (event.target.tagName !== 'TEXTAREA') {
+      textareaRef.current?.focus();
+      const end = textareaRef.current?.value.length || 0;
+      textareaRef.current?.setSelectionRange(end, end);
+    }
+  };
+  return (
+    <div onClick={focusEditor} style={{ border:`1px solid ${KUN.hair}`, borderRadius: 22, background: color, padding: 16, cursor:'text' }}>
+      <textarea
+        ref={textareaRef}
+        value={text}
+        onFocus={onStartWriting}
+        onChange={e => setText(e.target.value)}
+        placeholder=""
+        style={{
+          height: showSuggestions ? starterLineCount * 24 : 160,
+          minHeight: showSuggestions ? starterLineCount * 24 : 160,
+          width:'100%',
+          resize:'none',
+          boxSizing:'border-box',
+          border:'none',
+          background:'transparent',
+          padding: 0,
+          outline:'none',
+          fontFamily: V_FB,
+          fontSize: 15,
+          fontWeight: hasEditedText ? 400 : 600,
+          lineHeight: 1.55,
+          color: KUN.ink,
+          overflow:'hidden',
+          marginBottom: showSuggestions ? 4 : 0,
+        }}
+      />
+      {showSuggestions && (
+        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkMuted, lineHeight: 1.62, marginBottom: 14 }}>
+          {ideas.slice(0, 3).map(idea => <div key={idea}>{idea}</div>)}
+          {examples.slice(0, 3).map(example => <div key={example}>{example}</div>)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SoftColorSelector({ value, onChange }) {
   return <div style={{ display:'flex', gap: 9, marginBottom: 16 }}>{DIARY_COLORS.map(c => <button key={c} onClick={() => onChange(c)} style={{ width: 30, height: 30, borderRadius:'50%', background:c, border: value === c ? `2px solid ${KUN.ink}` : '2px solid #fff', boxShadow:`0 0 0 1px ${KUN.hair}`, cursor:'pointer' }} />)}</div>;
 }
@@ -2166,13 +2203,14 @@ function FreeEditor({ onSave, onUseGuide }) {
       <textarea value={text} onChange={e => setText(e.target.value)} placeholder="Escribe lo que quieras recordar de hoy..." style={{ minHeight: 190, width:'100%', resize:'none', boxSizing:'border-box', border:`1px solid ${KUN.hair}`, borderRadius: 22, background:'#fff', padding: 16, outline:'none', fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink }} />
       <MediaButtons selected={media} onToggle={toggleMedia} />
       {onUseGuide && <button onClick={onUseGuide} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', alignSelf:'flex-start' }}>Elige una guia si no sabes por donde partir</button>}
-      <button onClick={() => onSave({ text, selectedMedia:media, category:'Foto del dia', color:'#FFF5DC', title:saveTitle, type:'free' })} disabled={!canSave} style={{ height: 48, borderRadius: 999, border:'none', background: canSave ? KUN.brick : 'rgba(42,35,32,.12)', color: canSave ? '#fff' : KUN.inkMuted, fontFamily: V_FT, fontSize: 15, fontWeight: 700, cursor:canSave ? 'pointer' : 'not-allowed' }}>Guardar recuerdo</button>
+      <button onClick={() => onSave({ text, selectedMedia:media, category:'Foto del dia', color:'#F6C3AE', title:saveTitle, type:'free' })} disabled={!canSave} style={{ height: 48, borderRadius: 999, border:'none', background: canSave ? KUN.brick : 'rgba(42,35,32,.12)', color: canSave ? '#fff' : KUN.inkMuted, fontFamily: V_FT, fontSize: 15, fontWeight: 700, cursor:canSave ? 'pointer' : 'not-allowed' }}>Guardar recuerdo</button>
     </div>
   );
 }
 
 function GuidedEditor({ template, onSave, onFree }) {
-  const [text, setText] = React.useState('');
+  const [text, setText] = React.useState(template.mainPrompt || '');
+  const [hasStartedWriting, setHasStartedWriting] = React.useState(false);
   const [media, setMedia] = React.useState([]);
   const [color, setColor] = React.useState(template.color || '#FCE7DE');
   const [category, setCategoryState] = React.useState(template.category || 'Emocion');
@@ -2181,19 +2219,17 @@ function GuidedEditor({ template, onSave, onFree }) {
     const nextTemplate = getTemplateByCategory(nextCategory, template);
     setCategoryState(nextCategory);
     if (nextTemplate?.color) setColor(nextTemplate.color);
+    setText(nextTemplate?.mainPrompt || '');
+    setHasStartedWriting(false);
   };
   const toggleMedia = (type) => setMedia(prev => prev.includes(type) ? prev.filter(x => x !== type) : [...prev, type]);
-  const canSave = text.trim() || media.length;
-  const appendText = (snippet) => setText(prev => prev ? `${prev}\n${snippet} ` : `${snippet} `);
+  const canSave = (text.trim() && text.trim() !== (categoryTemplate.mainPrompt || '').trim()) || media.length;
   return (
     <div style={{ display:'flex', flexDirection:'column', gap: 14 }}>
       <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 24, padding: 16 }}>
         <div style={{ display:'flex', gap:12, alignItems:'center' }}><span style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}><TemplateIcon icon={template.icon} /></span><div><div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, lineHeight: 1.12 }}>{template.name}</div><div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkMuted, marginTop:3 }}>{template.shortDescription}</div></div></div>
-        <div style={{ fontFamily: V_FB, fontSize: 13.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 14 }}>{template.mainPrompt}</div>
       </div>
-      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={template.mainPrompt} style={{ minHeight: 172, width:'100%', resize:'none', boxSizing:'border-box', border:`1px solid ${KUN.hair}`, borderRadius: 22, background: color, padding: 16, outline:'none', fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink }} />
-      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}><div style={diarySectionLabel}>Ideas para escribir</div><WritingIdeas ideas={categoryTemplate.writingIdeas} onPick={appendText} /></div>
-      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}><div style={diarySectionLabel}>Ejemplos opcionales</div><ExampleChips examples={categoryTemplate.examples} onPick={appendText} /></div>
+      <GuidedWritingCard color={color} text={text} setText={setText} ideas={categoryTemplate.writingIdeas} examples={categoryTemplate.examples} showSuggestions={!hasStartedWriting} onStartWriting={() => setHasStartedWriting(true)} />
       <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}>
         <div style={diarySectionLabel}>Medios</div><MediaButtons selected={media} onToggle={toggleMedia} />
         <div style={{ ...diarySectionLabel, marginTop: 16 }}>Color suave</div><SoftColorSelector value={color} onChange={setColor} />
