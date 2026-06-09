@@ -511,9 +511,9 @@ function AddEntrySheet({ onClose, onPickPhoto, onPickText, onPickVoice }) {
 }
 
 const DIARY_PHOTOS = [
-  { src: 'premature.jpg', title: 'Hoy', date: '20 Junio 2026' },
-  { src: 'tens2.webp', title: 'Hace 1 mes', date: '20 Mayo 2026' },
-  { src: 'tens.avif', title: 'Primer dibujo', date: '17 Junio 2026' },
+  { src: 'guaguas/guagua1.jpg', title: 'Hoy', date: '20 Junio 2026' },
+  { src: 'guaguas/guagua2.jpg', title: 'Hace 1 mes', date: '20 Mayo 2026' },
+  { src: 'guaguas/guagua3.jpg', title: 'Primer dibujo', date: '17 Junio 2026' },
 ];
 
 const DIARY_TEXT = 'Hoy fuimos orem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut pulvinar ante, nec cursus lorem. Donec tellus nisl, tincidunt ut risus nec, dignissim sollicitudin mauris.';
@@ -750,10 +750,10 @@ const diarySectionLabel = {
 
 function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntries = [] }) {
   const entries = [
-    { id:'today', title:'dfghj', date:'HOY - 20 Junio 2026', detailTitle:'Hoy', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg'], text: DIARY_TEXT },
-    { id:'yesterday', title:'akgsdli', date:'AYER - 19 Junio 2026', detailTitle:'Ayer', photoCount:4, audioCount:2, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'], text: 'Ayer fue un dia de avances pequenos. Guardamos fotos, audios y recuerdos de quienes vinieron a acompanar.' },
-    { id:'monday', title:'dfghj', date:'LUN - 17 Junio 2026', detailTitle:'Lun 17', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'], text: 'Este dia dejamos registro de nuevas fotos y de como fue cambiando su rutina de cuidados.' },
-    { id:'saturday', title:'rtgha', date:'SAB - 15 Junio 2026', detailTitle:'Sab 15', photoCount:2, audioCount:1, photos:['tens.avif','premature.jpg','tens2.webp','premature.jpg'], text: 'Un recuerdo de fin de semana para mirar despues con calma.' },
+    { id:'today', title:'dfghj', date:'HOY - 20 Junio 2026', detailTitle:'Hoy', photoCount:3, audioCount:0, photos:['guaguas/guagua4.jpg','guaguas/guagua5.jpeg','guaguas/guagua6.webp'], text: DIARY_TEXT },
+    { id:'yesterday', title:'akgsdli', date:'AYER - 19 Junio 2026', detailTitle:'Ayer', photoCount:4, audioCount:2, photos:['guaguas/guagua7.jpg','guaguas/guagua8.jpeg','guaguas/guagua9.jpg','guaguas/guagua10.jpg'], text: 'Ayer fue un dia de avances pequenos. Guardamos fotos, audios y recuerdos de quienes vinieron a acompanar.' },
+    { id:'monday', title:'dfghj', date:'LUN - 17 Junio 2026', detailTitle:'Lun 17', photoCount:3, audioCount:0, photos:['guaguas/guagua1.jpg','guaguas/guagua2.jpg','guaguas/guagua3.jpg'], text: 'Este dia dejamos registro de nuevas fotos y de como fue cambiando su rutina de cuidados.' },
+    { id:'saturday', title:'rtgha', date:'SAB - 15 Junio 2026', detailTitle:'Sab 15', photoCount:2, audioCount:1, photos:['guaguas/guagua4.jpg','guaguas/guagua5.jpeg','guaguas/guagua6.webp'], text: 'Un recuerdo de fin de semana para mirar despues con calma.' },
   ];
   const photoMemories = diaryEntries
     .filter(e => e.kind === 'photo' && e.imageSrc)
@@ -763,7 +763,7 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
       date: e.time || 'Ahora',
       id: e.id || `photo-${i}`,
       detailTitle: 'Hoy',
-      photos: [e.imageSrc, 'premature.jpg', 'tens2.webp', 'tens.avif'],
+      photos: [e.imageSrc, 'guaguas/guagua2.jpg', 'guaguas/guagua3.jpg', 'guaguas/guagua4.jpg'],
       text: e.content || 'Nuevo recuerdo guardado en el diario.',
       photoCount: 1,
       audioCount: 0,
@@ -774,7 +774,7 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
       ...item,
       id: `seed-${i}`,
       detailTitle: item.title,
-      photos: [item.src, i === 0 ? 'tens2.webp' : 'premature.jpg', i === 1 ? 'tens.avif' : 'tens2.webp'],
+      photos: [item.src, i === 0 ? 'guaguas/guagua5.jpeg' : 'guaguas/guagua6.webp', i === 1 ? 'guaguas/guagua7.jpg' : 'guaguas/guagua8.jpeg'],
       text: i === 0 ? DIARY_TEXT : `Recuerdo guardado de ${item.date}.`,
       photoCount: i === 0 ? 5 : 3,
       audioCount: i === 0 ? 2 : 1,
@@ -1005,11 +1005,11 @@ function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoi
             ? <DiaryNote tall {...primaryNote} onOpen={() => openExpandedNote(primaryNote)} />
             : <DiaryNote tall onOpen={() => openExpandedNote(primaryNote)} />}
           <DiaryAudioBar duration="01:09" />
-          <DiaryPhotoTile entry={dayPhotos[1] || photoEntries[1]} fallbackSrc="tens2.webp" height={128} onOpen={() => openExpandedPhoto(dayPhotos[1] || photoEntries[1], 'tens2.webp')} />
-          <DiaryPhotoTile entry={dayPhotos[2] || photoEntries[2]} fallbackSrc="tens.avif" height={141} onOpen={() => openExpandedPhoto(dayPhotos[2] || photoEntries[2], 'tens.avif')} />
+          <DiaryPhotoTile entry={dayPhotos[1] || photoEntries[1]} fallbackSrc="guaguas/guagua2.jpg" height={128} onOpen={() => openExpandedPhoto(dayPhotos[1] || photoEntries[1], 'guaguas/guagua2.jpg')} />
+          <DiaryPhotoTile entry={dayPhotos[2] || photoEntries[2]} fallbackSrc="guaguas/guagua3.jpg" height={141} onOpen={() => openExpandedPhoto(dayPhotos[2] || photoEntries[2], 'guaguas/guagua3.jpg')} />
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap: 6, minWidth: 0 }}>
-          <DiaryPhotoTile entry={dayPhotos[0] || photoEntries[0]} fallbackSrc="premature.jpg" height={249} onOpen={() => openExpandedPhoto(dayPhotos[0] || photoEntries[0], 'premature.jpg')} />
+          <DiaryPhotoTile entry={dayPhotos[0] || photoEntries[0]} fallbackSrc="guaguas/guagua1.jpg" height={249} onOpen={() => openExpandedPhoto(dayPhotos[0] || photoEntries[0], 'guaguas/guagua1.jpg')} />
           <DiaryAudioBar duration={addOpen ? '01:09' : '00:29'} compact />
           <DiaryNote {...secondaryNote} onOpen={() => openExpandedNote(secondaryNote)} />
           {!addOpen && <DiaryNote title={milestoneNote.title} time={milestoneNote.time} strong onOpen={() => openExpandedNote(milestoneNote)} />}
@@ -1766,22 +1766,83 @@ function diaryDateLabel(dateStr) {
 function groupFeedByDate(entries) {
   const map = {};
   entries.forEach(e => { if (!map[e.date]) map[e.date] = []; map[e.date].push(e); });
-  return Object.keys(map).sort((a,b) => b.localeCompare(a)).map(d => ({
+  return Object.keys(map).sort((a,b) => a.localeCompare(b)).map(d => ({
     date: d, entries: map[d].sort((a,b) => a.ts - b.ts),
   }));
 }
 
 const DIARY_FEED_SEED = [
-  { id:'df1',  type:'text',  ts:new Date('2026-06-08T14:00').getTime(), date:'2026-06-08', text:'Hoy abriste los ojos cuando te hablé suavecito. Me quedé quieta mirándote un buen rato. Fue un momento chiquitito y enorme al mismo tiempo.', color:KUN.rosehip, category:'Momento',  imageSrc:null, audioDuration:null },
-  { id:'df2',  type:'photo', ts:new Date('2026-06-08T16:30').getTime(), date:'2026-06-08', imageSrc:'premature.jpg', text:null,                              color:null,       category:null,    audioDuration:null },
-  { id:'df3',  type:'audio', ts:new Date('2026-06-07T11:00').getTime(), date:'2026-06-07', audioDuration:'0:42',    text:null,  imageSrc:null,               color:null,       category:null },
-  { id:'df4',  type:'photo', ts:new Date('2026-06-07T17:00').getTime(), date:'2026-06-07', imageSrc:'tens2.webp',   text:'Piel con piel por primera vez.',   color:null,       category:null,    audioDuration:null },
-  { id:'df5',  type:'text',  ts:new Date('2026-06-05T10:00').getTime(), date:'2026-06-05', text:'La enfermera nos enseñó a cambiarte el pañal paso a paso. Aprendimos una forma más de cuidarte.', color:KUN.apple, category:'Avance', imageSrc:null, audioDuration:null },
-  { id:'df6',  type:'text',  ts:new Date('2026-06-05T16:00').getTime(), date:'2026-06-05', text:'Hoy te desconectaron de la ECMO!',                          color:KUN.sun,    category:'Hito',  imageSrc:null, audioDuration:null },
-  { id:'df7',  type:'photo', ts:new Date('2026-06-03T09:30').getTime(), date:'2026-06-03', imageSrc:'tens.avif',    text:null,                              color:null,       category:null,    audioDuration:null },
-  { id:'df8',  type:'audio', ts:new Date('2026-06-03T18:00').getTime(), date:'2026-06-03', audioDuration:'1:09',    text:null,  imageSrc:null,               color:null,       category:null },
-  { id:'df9',  type:'text',  ts:new Date('2026-06-01T09:00').getTime(), date:'2026-06-01', text:'Hoy fue difícil. No hubo grandes cambios. Pero estuvimos aquí de todas formas.',                color:KUN.clear,  category:'Momento', imageSrc:null, audioDuration:null },
-  { id:'df10', type:'photo', ts:new Date('2026-06-01T14:00').getTime(), date:'2026-06-01', imageSrc:'premature.jpg', text:'Primera foto juntos. Guardamos este día para siempre.', color:null, category:null, audioDuration:null },
+  // ── 2026-06-08 · 4 entradas (foto + texto + audio + foto) ──────────────
+  { id:'df1',  type:'photo', ts:new Date('2026-06-08T10:00').getTime(), date:'2026-06-08',
+    imageSrc:'guaguas/guagua1.jpg', text:'Hoy abriste los ojos cuando te hablé.',
+    color:null, category:null, audioDuration:null },
+  { id:'df2',  type:'text',  ts:new Date('2026-06-08T12:30').getTime(), date:'2026-06-08',
+    text:'Me quedé quieta mirándote un buen rato. Fue un momento chiquitito y enorme al mismo tiempo.',
+    color:KUN.rosehip, category:'Momento', imageSrc:null, audioDuration:null },
+  { id:'df3',  type:'audio', ts:new Date('2026-06-08T15:00').getTime(), date:'2026-06-08',
+    audioDuration:'0:34', text:null, imageSrc:null, color:null, category:null },
+  { id:'df4',  type:'photo', ts:new Date('2026-06-08T17:00').getTime(), date:'2026-06-08',
+    imageSrc:'guaguas/guagua2.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-06-07 · 3 entradas (foto + texto + foto) ──────────────────────
+  { id:'df5',  type:'photo', ts:new Date('2026-06-07T11:00').getTime(), date:'2026-06-07',
+    imageSrc:'guaguas/guagua3.jpg', text:'Piel con piel por primera vez.',
+    color:null, category:null, audioDuration:null },
+  { id:'df6',  type:'text',  ts:new Date('2026-06-07T14:00').getTime(), date:'2026-06-07',
+    text:'Tu calor es real. Por un rato el mundo bajó el volumen.',
+    color:KUN.viola, category:'Momento', imageSrc:null, audioDuration:null },
+  { id:'df7',  type:'photo', ts:new Date('2026-06-07T17:30').getTime(), date:'2026-06-07',
+    imageSrc:'guaguas/guagua4.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-06-05 · 2 entradas (texto + audio) ────────────────────────────
+  { id:'df8',  type:'text',  ts:new Date('2026-06-05T10:00').getTime(), date:'2026-06-05',
+    text:'Hoy te desconectaron de la ECMO. El equipo celebró contigo.',
+    color:KUN.sun, category:'Hito', imageSrc:null, audioDuration:null },
+  { id:'df9',  type:'audio', ts:new Date('2026-06-05T18:00').getTime(), date:'2026-06-05',
+    audioDuration:'1:09', text:null, imageSrc:null, color:null, category:null },
+
+  // ── 2026-06-03 · 1 entrada (foto) ──────────────────────────────────────
+  { id:'df10', type:'photo', ts:new Date('2026-06-03T13:00').getTime(), date:'2026-06-03',
+    imageSrc:'guaguas/guagua5.jpeg', text:null,
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-06-01 · 3 entradas (audio + foto + texto) ─────────────────────
+  { id:'df11', type:'audio', ts:new Date('2026-06-01T09:00').getTime(), date:'2026-06-01',
+    audioDuration:'0:58', text:null, imageSrc:null, color:null, category:null },
+  { id:'df12', type:'photo', ts:new Date('2026-06-01T12:00').getTime(), date:'2026-06-01',
+    imageSrc:'guaguas/guagua6.webp', text:'Tu primera semana.',
+    color:null, category:null, audioDuration:null },
+  { id:'df13', type:'text',  ts:new Date('2026-06-01T19:00').getTime(), date:'2026-06-01',
+    text:'La enfermera nos enseñó a cambiarte el pañal. Aprendimos una forma más de cuidarte.',
+    color:KUN.apple, category:'Avance', imageSrc:null, audioDuration:null },
+
+  // ── 2026-05-29 · 2 entradas (foto + foto) ──────────────────────────────
+  { id:'df14', type:'photo', ts:new Date('2026-05-29T11:00').getTime(), date:'2026-05-29',
+    imageSrc:'guaguas/guagua7.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+  { id:'df15', type:'photo', ts:new Date('2026-05-29T16:00').getTime(), date:'2026-05-29',
+    imageSrc:'guaguas/guagua8.jpeg', text:'Papá te tomó la mano.',
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-05-27 · 1 entrada (texto) ─────────────────────────────────────
+  { id:'df16', type:'text',  ts:new Date('2026-05-27T20:00').getTime(), date:'2026-05-27',
+    text:'Hoy fue difícil. No hubo grandes cambios. Pero estuvimos aquí de todas formas.',
+    color:KUN.clear, category:'Momento', imageSrc:null, audioDuration:null },
+
+  // ── 2026-05-25 · 4 entradas (foto + texto + audio + foto) ──────────────
+  { id:'df17', type:'photo', ts:new Date('2026-05-25T10:00').getTime(), date:'2026-05-25',
+    imageSrc:'guaguas/guagua9.jpg', text:'Primera foto juntos.',
+    color:null, category:null, audioDuration:null },
+  { id:'df18', type:'text',  ts:new Date('2026-05-25T11:30').getTime(), date:'2026-05-25',
+    text:'Querida Sofía, hoy quiero que sepas que desde el primer día estuvimos aquí. Y seguiremos estando.',
+    color:KUN.sun, category:'Carta', imageSrc:null, audioDuration:null },
+  { id:'df19', type:'audio', ts:new Date('2026-05-25T14:00').getTime(), date:'2026-05-25',
+    audioDuration:'1:42', text:null, imageSrc:null, color:null, category:null },
+  { id:'df20', type:'photo', ts:new Date('2026-05-25T16:30').getTime(), date:'2026-05-25',
+    imageSrc:'guaguas/guagua10.jpg', text:null,
+    color:null, category:null, audioDuration:null },
 ];
 
 function DiaryFeedPhotoCard({ entry }) {
@@ -1887,6 +1948,145 @@ function DiaryNoteSheet({ onClose, onSave }) {
   );
 }
 
+function DiaryGuideSheet({ onClose, onSave }) {
+  const [category, setCategory] = React.useState(null);
+  const [color,    setColor]    = React.useState(null);
+  const [text,     setText]     = React.useState('');
+
+  const swatches = ['#EAF2E7','#E9EEF7','#F6C3AE','#CDBCDB','#FFF5DC','#F2EBE0'];
+  const activeColor = color || (category ? category.color : null);
+  const canSave     = !!(category && text.trim());
+
+  const insertPrompt = (p) => setText(prev => prev ? prev + ' ' + p : p);
+
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.38)',
+      display:'flex', alignItems:'flex-end' }}>
+      <div style={{
+        width:'100%', maxHeight:'88%', overflowY:'auto',
+        background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28,
+        padding:'14px 20px 32px', boxSizing:'border-box',
+      }}>
+        {/* Handle */}
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+          <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Usar una guía</div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent',
+            fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>
+            Cancelar
+          </button>
+        </div>
+
+        {/* 1 — CATEGORÍA */}
+        <div style={{ marginBottom:18 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
+            letterSpacing:0.7, textTransform:'uppercase', marginBottom:10 }}>Categoría</div>
+          <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
+            {guidedTemplates.map(t => {
+              const sel = category?.id === t.id;
+              return (
+                <button key={t.id}
+                  onClick={() => { setCategory(t); if (!color) setColor(t.color); }}
+                  style={{
+                    border: sel ? 'none' : `1px solid ${KUN.hair}`,
+                    background: sel ? KUN.brick : KUN.cardSoft,
+                    color: sel ? '#fff' : KUN.inkSoft,
+                    borderRadius:999, padding:'8px 14px',
+                    fontFamily:V_FT, fontSize:12.5, fontWeight:700, cursor:'pointer',
+                  }}>
+                  {t.category}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 2 — COLOR SUAVE */}
+        <div style={{ background:'#fff', borderRadius:20, border:`1px solid ${KUN.hair}`,
+          padding:'12px 14px', marginBottom:14 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
+            letterSpacing:0.7, textTransform:'uppercase', marginBottom:9 }}>Color suave</div>
+          <div style={{ display:'flex', gap:9 }}>
+            {swatches.map(c => (
+              <button key={c} onClick={() => setColor(c)} style={{
+                width:32, height:32, borderRadius:'50%', background:c,
+                border: activeColor === c ? `2.5px solid ${KUN.ink}` : '2px solid #fff',
+                boxShadow:`0 0 0 1.5px ${KUN.hair}`, cursor:'pointer', flexShrink:0,
+              }}/>
+            ))}
+          </div>
+        </div>
+
+        {/* 3 — TEXTO + prompts dinámicos */}
+        <div style={{ marginBottom:16 }}>
+          {category && (
+            <div style={{
+              background: activeColor || KUN.cardSoft,
+              borderRadius:16, padding:'12px 14px', marginBottom:10,
+              fontFamily:V_FT, fontSize:15, fontWeight:700, color:KUN.ink, lineHeight:1.4,
+            }}>
+              {category.mainPrompt}
+            </div>
+          )}
+
+          <textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder={category
+              ? (category.writingIdeas?.[0] || '¿Qué quieres contar?')
+              : 'Primero elige una categoría arriba...'}
+            style={{
+              width:'100%', minHeight:110, resize:'none', boxSizing:'border-box',
+              border:`1.5px solid ${KUN.hair}`, borderRadius:20, background:'#fff',
+              padding:'14px 16px', outline:'none',
+              fontFamily:V_FB, fontSize:14.5, color:KUN.ink, lineHeight:1.55,
+            }}
+          />
+
+          {category && (
+            <div style={{ marginTop:10 }}>
+              <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
+                letterSpacing:0.7, textTransform:'uppercase', marginBottom:8 }}>Ideas para escribir</div>
+              <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                {[...(category.writingIdeas || []), ...(category.examples || [])].map((p, i) => (
+                  <button key={i} onClick={() => insertPrompt(p)} style={{
+                    textAlign:'left', border:`1px solid ${KUN.hair}`, background:'#fff',
+                    borderRadius:12, padding:'9px 13px',
+                    fontFamily:V_FB, fontSize:13, color:KUN.inkSoft,
+                    cursor:'pointer', lineHeight:1.45,
+                  }}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Guardar */}
+        <button
+          onClick={() => {
+            if (!canSave) return;
+            onSave({ type:'text', text:text.trim(), color:activeColor || KUN.cardSoft, category:category.category });
+            onClose();
+          }}
+          disabled={!canSave}
+          style={{
+            width:'100%', height:50, borderRadius:999, border:'none',
+            background: canSave ? KUN.brick : 'rgba(42,35,32,0.10)',
+            color: canSave ? '#fff' : KUN.inkMuted,
+            fontFamily:V_FT, fontSize:15, fontWeight:700,
+            cursor: canSave ? 'pointer' : 'not-allowed',
+          }}>
+          Guardar en el diario
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Public entry ────────────────────────────────────────
 
 // -- Diario de vida guiado - prototipo UCIN -------------------------------
@@ -1931,7 +2131,7 @@ const CLASSIC_MEMORY_PROMPTS = [
 const emptyDiaryMedia = () => ({ photos: [], audios: [], videos: [] });
 function diaryMediaFromTypes(types = []) {
   return {
-    photos: types.includes('photo') ? ['premature.jpg'] : [],
+    photos: types.includes('photo') ? ['guaguas/guagua1.jpg'] : [],
     audios: types.includes('audio') ? ['audio-placeholder'] : [],
     videos: types.includes('video') ? ['video-placeholder'] : [],
   };
@@ -1943,7 +2143,7 @@ function getEntryMedia(entry = {}) {
     videos: entry.media.videos || [],
   };
   return {
-    photos: entry.photos || (entry.media?.includes?.('photo') ? ['premature.jpg'] : []),
+    photos: entry.photos || (entry.media?.includes?.('photo') ? ['guaguas/guagua1.jpg'] : []),
     audios: entry.media?.includes?.('audio') ? ['audio-placeholder'] : [],
     videos: entry.media?.includes?.('video') ? ['video-placeholder'] : [],
   };
@@ -1965,16 +2165,16 @@ function getTemplateByCategory(category, fallback) {
 }
 
 const DIARY_SEED_ENTRIES = [
-  { id:'seed-ecmo', date:'2026-06-20', type:'guided', templateId:'hito-ucin', title:'Hoy te desconectaron de la ECMO', text:'El equipo nos aviso temprano. Fue un dia inmenso, lleno de cuidado y de silencio compartido.', category:'Hito UCIN', color:'#E9EEF7', media:{ photos:['premature.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-20T15:40:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'15:40' },
-  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#F6C3AE', media:{ photos:['tens2.webp'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
+  { id:'seed-ecmo', date:'2026-06-20', type:'guided', templateId:'hito-ucin', title:'Hoy te desconectaron de la ECMO', text:'El equipo nos aviso temprano. Fue un dia inmenso, lleno de cuidado y de silencio compartido.', category:'Hito UCIN', color:'#E9EEF7', media:{ photos:['guaguas/guagua4.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-20T15:40:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'15:40' },
+  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#F6C3AE', media:{ photos:['guaguas/guagua5.jpeg'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
   { id:'seed-peso', date:'2026-06-19', type:'guided', templateId:'hoy-celebramos', title:'Subiste 20 gramos', text:'La enfermera nos dijo que era una buena noticia para guardar con calma.', category:'Hoy celebramos', color:'#F6C3AE', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T10:30:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'10:30' },
-  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#F6C3AE', media:{ photos:['premature.jpg','tens.avif'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
-  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F6C3AE', media:{ photos:['tens.avif'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
+  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#F6C3AE', media:{ photos:['guaguas/guagua6.webp','guaguas/guagua7.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
+  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F6C3AE', media:{ photos:['guaguas/guagua8.jpeg'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
   { id:'seed-oxigeno', date:'2026-06-17', type:'guided', templateId:'respiracion', title:'Hoy necesitaste menos oxigeno', text:'Mirarte respirar un poco mas tranquilo nos ayudo a respirar tambien a nosotros.', category:'Respiracion', color:'#E9EEF7', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-17T16:20:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'16:20' },
   { id:'seed-leche', date:'2026-06-16', type:'guided', templateId:'alimentacion', title:'Hoy toleraste mejor la leche', text:'Fue poquito a poquito, pero el equipo nos dijo que era una buena senal.', category:'Alimentacion', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-16T13:10:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'13:10' },
   { id:'seed-dificil', date:'2026-06-16', type:'guided', templateId:'dia-dificil', title:'Hoy no hubo grandes cambios, pero estuvimos contigo', text:'No fue un dia facil. Vinimos igual, te hablamos suave y dejamos este recuerdo sin exigirnos mas.', category:'Dia dificil', color:'#F6C3AE', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-16T19:30:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'19:30' },
   { id:'seed-abuelos', date:'2026-06-15', type:'guided', templateId:'familia-visitas', title:'Hoy tus abuelos te mandaron un mensaje', text:'Preguntaron por ti y nos pidieron contarte que te esperan con mucho carino.', category:'Familia', color:'#F2EBE0', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-15T18:00:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'18:00' },
-  { id:'seed-casa', date:'2026-06-15', type:'guided', templateId:'preparando-casa', title:'Hoy dimos un paso mas hacia casa', text:'Nos explicaron un cuidado que necesitaremos practicar. Da emocion y tambien un poco de miedo.', category:'Camino a casa', color:'#FFF5DC', media:{ photos:['premature.jpg'], audios:[], videos:[] }, createdAt:'2026-06-15T11:40:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'11:40' },
+  { id:'seed-casa', date:'2026-06-15', type:'guided', templateId:'preparando-casa', title:'Hoy dimos un paso mas hacia casa', text:'Nos explicaron un cuidado que necesitaremos practicar. Da emocion y tambien un poco de miedo.', category:'Camino a casa', color:'#FFF5DC', media:{ photos:['guaguas/guagua9.jpg'], audios:[], videos:[] }, createdAt:'2026-06-15T11:40:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'11:40' },
 ];
 function DiaryMediaIcon({ type, color = KUN.inkMuted }) {
   if (type === 'audio') return VINK_ICONS.mic(color);
@@ -2430,8 +2630,13 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
   });
 
   const [fab,   setFab]   = React.useState(false);
-  const [sheet, setSheet] = React.useState(null); // null | 'note' | 'recorder'
-  const photoRef = React.useRef(null);
+  const [sheet, setSheet] = React.useState(null); // null | 'note' | 'recorder' | 'guide'
+  const photoRef  = React.useRef(null);
+  const bottomRef = React.useRef(null);
+
+  React.useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior:'instant' });
+  }, []);
 
   const persist = (next) => {
     setEntries(next);
@@ -2462,29 +2667,31 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
   const groups = groupFeedByDate(entries);
 
   return (
-    <div style={{ minHeight:'100%', background:KUN.bg, position:'relative', boxSizing:'border-box' }}>
+    <div style={{ height:'100%', background:KUN.bg, position:'relative', display:'flex', flexDirection:'column', boxSizing:'border-box' }}>
 
-      {/* Header */}
-      <div style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 20px 14px' }}>
-        <button onClick={onBack} style={{
-          width:40, height:40, borderRadius:'50%', background:'#fff',
-          border:`1px solid ${KUN.hair}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer',
-        }}>
-          {VINK_ICONS.back(KUN.ink)}
-        </button>
-        <div style={{ fontFamily:V_FT, fontSize:22, fontWeight:700, color:KUN.ink, letterSpacing:-0.4 }}>
-          Diario de vida
+      {/* Header — no hace scroll */}
+      <div style={{ flexShrink:0 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 20px 14px' }}>
+          <button onClick={onBack} style={{
+            width:40, height:40, borderRadius:'50%', background:'#fff',
+            border:`1px solid ${KUN.hair}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer',
+          }}>
+            {VINK_ICONS.back(KUN.ink)}
+          </button>
+          <div style={{ fontFamily:V_FT, fontSize:22, fontWeight:700, color:KUN.ink, letterSpacing:-0.4 }}>
+            Diario de vida
+          </div>
         </div>
+
+        {!canEditDiary && (
+          <div style={{ margin:'0 16px 12px', background:KUN.cardSoft, borderRadius:20, padding:'12px 14px', border:`1px solid ${KUN.hair}`, fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, lineHeight:1.5 }}>
+            Solo mamá y papá pueden editar el diario.
+          </div>
+        )}
       </div>
 
-      {!canEditDiary && (
-        <div style={{ margin:'0 16px 12px', background:KUN.cardSoft, borderRadius:20, padding:'12px 14px', border:`1px solid ${KUN.hair}`, fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, lineHeight:1.5 }}>
-          Solo mamá y papá pueden editar el diario.
-        </div>
-      )}
-
-      {/* Feed */}
-      <div style={{ padding:'0 12px 120px', boxSizing:'border-box' }}>
+      {/* Feed — scroll propio */}
+      <div style={{ flex:1, overflowY:'auto', overflowX:'hidden', padding:'0 12px 100px', boxSizing:'border-box' }}>
         {groups.map(group => (
           <div key={group.date}>
 
@@ -2513,13 +2720,16 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
 
           </div>
         ))}
-      </div>
+
+        {/* Anchor para scroll al fondo */}
+        <div ref={bottomRef}/>
+      </div>{/* fin feed */}
 
       {/* Hidden photo input */}
       <input ref={photoRef} type="file" accept="image/*" style={{ display:'none' }}
         onChange={e => { handlePhotoFile(e.target.files?.[0]); e.target.value = ''; }}/>
 
-      {/* FAB */}
+      {/* FAB — fijo sobre el wrapper externo, no sigue el scroll */}
       {canEditDiary && (
         <>
           {fab && (
@@ -2536,21 +2746,29 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
                 <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink, letterSpacing:-0.3, marginBottom:16 }}>
                   Agregar al diario
                 </div>
-                <div style={{ display:'flex', gap:10 }}>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
                   {[
-                    { label:'Foto',  color:KUN.rosehip, icon:VINK_ICONS.camera(KUN.ink), cb:() => { setFab(false); photoRef.current?.click(); } },
-                    { label:'Texto', color:KUN.viola,   icon:VINK_ICONS.text(KUN.ink),   cb:() => { setFab(false); setSheet('note'); } },
-                    { label:'Audio', color:KUN.apple,   icon:VINK_ICONS.mic(KUN.ink),    cb:() => { setFab(false); setSheet('recorder'); } },
+                    { label:'Foto',         color:KUN.rosehip, icon:VINK_ICONS.camera(KUN.ink), cb:() => { setFab(false); photoRef.current?.click(); } },
+                    { label:'Texto',        color:KUN.viola,   icon:VINK_ICONS.text(KUN.ink),   cb:() => { setFab(false); setSheet('note'); } },
+                    { label:'Audio',        color:KUN.apple,   icon:VINK_ICONS.mic(KUN.ink),    cb:() => { setFab(false); setSheet('recorder'); } },
+                    { label:'Usar una guía', color:KUN.sun,
+                      icon:(
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 3C9.2 3 7 5.2 7 8c0 2 1.1 3.7 2.8 4.6L9 20h6l-.8-7.4C15.9 11.7 17 10 17 8c0-2.8-2.2-5-5-5z" stroke={KUN.ink} strokeWidth="1.6" strokeLinejoin="round"/>
+                          <path d="M9 20h6" stroke={KUN.ink} strokeWidth="1.6" strokeLinecap="round"/>
+                        </svg>
+                      ),
+                      cb:() => { setFab(false); setSheet('guide'); } },
                   ].map(o => (
                     <button key={o.label} onClick={o.cb} style={{
-                      flex:1, background:'#fff', border:`1px solid ${KUN.hair}`,
+                      background:'#fff', border:`1px solid ${KUN.hair}`,
                       borderRadius:20, padding:'16px 8px',
                       display:'flex', flexDirection:'column', alignItems:'center', gap:12, cursor:'pointer',
                     }}>
                       <div style={{ width:46, height:46, borderRadius:14, background:o.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
                         {o.icon}
                       </div>
-                      <div style={{ fontFamily:V_FT, fontSize:14, fontWeight:700, color:KUN.ink }}>
+                      <div style={{ fontFamily:V_FT, fontSize:14, fontWeight:700, color:KUN.ink, textAlign:'center' }}>
                         {o.label}
                       </div>
                     </button>
@@ -2588,6 +2806,12 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
           onClose={() => setSheet(null)}
           onSave={({ duration }) => addEntry({ type:'audio', audioDuration:duration })}
           context={{ author:'Mamá', role:'Mamá', color:KUN.rosehip, name:'Audio para Sofía' }}
+        />
+      )}
+      {sheet === 'guide' && (
+        <DiaryGuideSheet
+          onClose={() => setSheet(null)}
+          onSave={(data) => { addEntry(data); setSheet(null); }}
         />
       )}
     </div>

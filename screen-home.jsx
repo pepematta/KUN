@@ -173,7 +173,7 @@ function BabyHero({ babyName = 'Sofía' }) {
           overflow: 'hidden',
           boxShadow: '0 0 0 3px rgba(255,255,255,0.7)',
         }}>
-          <img src="premature.jpg" alt={babyName} style={{
+          <img src="guaguas/guagua1.jpg" alt={babyName} style={{
             width: '100%', height: '100%',
             objectFit: 'cover', objectPosition: 'center 30%',
           }}/>
