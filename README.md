@@ -119,6 +119,7 @@ Estado interno: `view` = `entry | journey | songs`. Estado compartido con app: a
 - Entradas demo: Mamá texto "Hoy te vi abrir los ojos…" 14:20; Papá voz 0:42 11:45; Abuela Rosa foto + "Te esperamos con mucho amor 🧡" Ayer 19:30.
 - Las entradas de `recordings` se insertan como burbujas voice de Mamá.
 - **FAB** terracota 58px en bottom-right del scroll.
+- **Plantillas del diario**: las plantillas visuales viven en `DIARY_ENTRY_TEMPLATES` dentro de `screen-vinculo.jsx`. Para agregar una nueva, sumar una entrada con `id`, `name`, `icon`, `color`, `shortDescription`, `fields` y `Preview`. El selector, formulario dinámico, guardado `type: "template"` y tarjeta del diario usan ese registro central.
 
 #### Actividades con mi güagüa
 Subtabs Música / Voz.

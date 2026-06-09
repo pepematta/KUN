@@ -1845,6 +1845,159 @@ const DIARY_FEED_SEED = [
     color:null, category:null, audioDuration:null },
 ];
 
+function diaryInitials(name = '') {
+  const clean = name.trim();
+  if (!clean) return '+';
+  return clean.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
+}
+
+function FamilyTreePerson({ person = {}, role, size = 58 }) {
+  const hasPhoto = !!person.photo;
+  return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, minWidth:size + 2 }}>
+      <div style={{
+        maxWidth: size + 28,
+        background:'#FFFDF9',
+        border:`1px solid ${KUN.hair}`,
+        borderRadius:999,
+        padding:'3px 8px',
+        fontFamily:V_FB,
+        fontSize:size < 44 ? 8.5 : 9.5,
+        fontWeight:600,
+        color:KUN.inkSoft,
+        lineHeight:1.1,
+        textAlign:'center',
+        transform:'rotate(-8deg)',
+        whiteSpace:'normal',
+      }}>{role}</div>
+      <div style={{
+        width:size,
+        height:size,
+        borderRadius:'50%',
+        background:hasPhoto ? '#fff' : '#EFEDE8',
+        border:'3px solid #fff',
+        boxShadow:'0 7px 16px rgba(42,35,32,0.12)',
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center',
+        overflow:'hidden',
+        fontFamily:V_FT,
+        fontSize:hasPhoto ? 0 : 21,
+        fontWeight:700,
+        color:KUN.ink,
+      }}>
+        {hasPhoto
+          ? <img src={person.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+          : diaryInitials(person.name)}
+      </div>
+      {person.name && (
+        <div style={{
+          maxWidth:72,
+          fontFamily:V_FB,
+          fontSize:9.5,
+          color:KUN.ink,
+          lineHeight:1.15,
+          textAlign:'center',
+          overflow:'hidden',
+          display:'-webkit-box',
+          WebkitLineClamp:2,
+          WebkitBoxOrient:'vertical',
+        }}>{person.name}</div>
+      )}
+    </div>
+  );
+}
+
+function FamilyTreePreview({ data = {}, compact = false }) {
+  const people = data.people || {};
+  const bg = data.color || '#FFF7E8';
+  return (
+    <div style={{
+      background:bg,
+      borderRadius:18,
+      padding:compact ? '12px 10px 14px' : '16px 12px 18px',
+      border:`1px solid ${KUN.hairSoft}`,
+      overflow:'hidden',
+      position:'relative',
+    }}>
+      <div style={{
+        position:'absolute',
+        left:'50%',
+        top:compact ? 68 : 82,
+        width:compact ? 110 : 150,
+        height:compact ? 110 : 145,
+        transform:'translateX(-50%)',
+        borderRadius:'48% 52% 46% 54%',
+        background:'radial-gradient(circle at 38% 28%, rgba(141,166,110,0.52) 0 16%, transparent 17%), radial-gradient(circle at 62% 26%, rgba(111,168,95,0.45) 0 15%, transparent 16%), radial-gradient(circle at 48% 48%, rgba(141,166,110,0.52) 0 22%, transparent 23%), radial-gradient(circle at 28% 58%, rgba(111,168,95,0.38) 0 16%, transparent 17%), radial-gradient(circle at 70% 58%, rgba(141,166,110,0.42) 0 18%, transparent 19%)',
+        opacity:.72,
+      }} />
+      <div style={{
+        position:'absolute',
+        left:'50%',
+        top:compact ? 146 : 174,
+        width:compact ? 26 : 34,
+        height:compact ? 82 : 102,
+        transform:'translateX(-50%)',
+        borderRadius:'50% 50% 12px 12px',
+        background:'linear-gradient(90deg, #A9825D, #7F6045)',
+        opacity:.42,
+      }} />
+      <div style={{ position:'relative', zIndex:1 }}>
+        <div style={{
+          display:'flex',
+          alignItems:'flex-start',
+          justifyContent:'space-between',
+          gap:3,
+          marginBottom:compact ? 12 : 18,
+        }}>
+          <FamilyTreePerson role="Abuelo paterno" person={people.paternalGrandfather} size={compact ? 34 : 52} />
+          <FamilyTreePerson role="Abuela paterna" person={people.paternalGrandmother} size={compact ? 34 : 52} />
+          <FamilyTreePerson role="Abuela materna" person={people.maternalGrandmother} size={compact ? 34 : 52} />
+          <FamilyTreePerson role="Abuelo materno" person={people.maternalGrandfather} size={compact ? 34 : 52} />
+        </div>
+        <div style={{
+          display:'flex',
+          alignItems:'flex-start',
+          justifyContent:'center',
+          gap:compact ? 46 : 64,
+          marginBottom:compact ? 12 : 18,
+        }}>
+          <FamilyTreePerson role="Papá" person={people.father} size={compact ? 42 : 58} />
+          <FamilyTreePerson role="Mamá" person={people.mother} size={compact ? 42 : 58} />
+        </div>
+        <div style={{ display:'flex', justifyContent:'center' }}>
+          <FamilyTreePerson role="Yo" person={people.me} size={compact ? 50 : 68} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Registro central: para sumar otra plantilla, agrega una entrada aqui con fields y Preview.
+const DIARY_ENTRY_TEMPLATES = [
+  {
+    id:'family-tree',
+    name:'Arbol genealogico',
+    icon:'tree',
+    color:'#FFF5DC',
+    shortDescription:'Guarda nombres y fotos de la familia cercana.',
+    fields:[
+      { id:'me', label:'Yo', type:'person' },
+      { id:'father', label:'Papa', type:'person' },
+      { id:'mother', label:'Mama', type:'person' },
+      { id:'paternalGrandfather', label:'Abuelo paterno', type:'person' },
+      { id:'paternalGrandmother', label:'Abuela paterna', type:'person' },
+      { id:'maternalGrandfather', label:'Abuelo materno', type:'person' },
+      { id:'maternalGrandmother', label:'Abuela materna', type:'person' },
+    ],
+    Preview: FamilyTreePreview,
+  },
+];
+
+function getDiaryEntryTemplate(templateId) {
+  return DIARY_ENTRY_TEMPLATES.find(t => t.id === templateId) || null;
+}
+
 function DiaryFeedPhotoCard({ entry }) {
   return (
     <div style={{ borderRadius:16, overflow:'hidden', position:'relative' }}>
@@ -1858,6 +2011,32 @@ function DiaryFeedPhotoCard({ entry }) {
           <div style={{ fontFamily:V_FB, fontSize:12, color:'#fff', lineHeight:1.35 }}>{entry.text}</div>
         </div>
       )}
+    </div>
+  );
+}
+
+function DiaryFeedTemplateCard({ entry }) {
+  const template = getDiaryEntryTemplate(entry.templateId);
+  if (!template?.Preview) return null;
+  const Preview = template.Preview;
+  return (
+    <div style={{
+      background:'#fff',
+      borderRadius:18,
+      padding:10,
+      border:`1px solid ${KUN.hair}`,
+      boxShadow:'0 8px 18px rgba(42,35,32,0.045)',
+    }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, margin:'2px 2px 9px' }}>
+        <div style={{ width:28, height:28, borderRadius:10, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <TemplateIcon icon={template.icon} color={KUN.ink} />
+        </div>
+        <div>
+          <div style={{ fontFamily:V_FT, fontSize:13.5, fontWeight:700, color:KUN.ink, lineHeight:1.1 }}>{entry.title || template.name}</div>
+          <div style={{ fontFamily:V_FB, fontSize:10.5, fontWeight:600, color:KUN.inkMuted, letterSpacing:.5, textTransform:'uppercase', marginTop:2 }}>Plantilla</div>
+        </div>
+      </div>
+      <Preview data={entry.templateData || {}} compact />
     </div>
   );
 }
@@ -2082,6 +2261,209 @@ function DiaryGuideSheet({ onClose, onSave }) {
           }}>
           Guardar en el diario
         </button>
+      </div>
+    </div>
+  );
+}
+
+function DiaryTemplateGalleryCard({ template, onSelect }) {
+  return (
+    <button onClick={() => onSelect(template)} style={{
+      border:`1px solid ${KUN.hair}`,
+      background:'#fff',
+      borderRadius:20,
+      padding:14,
+      display:'flex',
+      gap:12,
+      alignItems:'flex-start',
+      textAlign:'left',
+      cursor:'pointer',
+      width:'100%',
+    }}>
+      <div style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        <TemplateIcon icon={template.icon} color={KUN.ink} />
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontFamily:V_FT, fontSize:15.5, fontWeight:700, color:KUN.ink, lineHeight:1.15 }}>{template.name}</div>
+        <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, lineHeight:1.45, marginTop:4 }}>{template.shortDescription}</div>
+      </div>
+    </button>
+  );
+}
+
+function DiaryTemplatePersonField({ field, value = {}, onChange }) {
+  const update = (patch) => onChange({ ...value, ...patch });
+  const handlePhoto = (file) => {
+    if (!file?.type?.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => update({ photo: reader.result });
+    reader.readAsDataURL(file);
+  };
+  return (
+    <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:18, padding:12 }}>
+      <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+        <div style={{
+          width:48,
+          height:48,
+          borderRadius:'50%',
+          background: value.photo ? '#fff' : KUN.cardSoft,
+          overflow:'hidden',
+          display:'flex',
+          alignItems:'center',
+          justifyContent:'center',
+          flexShrink:0,
+          fontFamily:V_FT,
+          fontSize:18,
+          fontWeight:700,
+          color:KUN.ink,
+          border:`1px solid ${KUN.hair}`,
+        }}>
+          {value.photo ? <img src={value.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : diaryInitials(value.name)}
+        </div>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:.7, textTransform:'uppercase', marginBottom:6 }}>{field.label}</div>
+          <input value={value.name || ''} onChange={e => update({ name:e.target.value })} placeholder="Nombre"
+            style={{ width:'100%', boxSizing:'border-box', border:'none', borderBottom:`1px solid ${KUN.hair}`, outline:'none', padding:'4px 0 7px', fontFamily:V_FB, fontSize:14, color:KUN.ink, background:'transparent' }} />
+        </div>
+      </div>
+      <label style={{
+        display:'inline-flex',
+        alignItems:'center',
+        gap:6,
+        marginTop:10,
+        border:`1px solid ${KUN.hair}`,
+        background:KUN.cardSoft,
+        borderRadius:999,
+        padding:'7px 10px',
+        fontFamily:V_FT,
+        fontSize:12,
+        fontWeight:700,
+        color:KUN.inkSoft,
+        cursor:'pointer',
+      }}>
+        {VINK_ICONS.camera(KUN.inkMuted)} {value.photo ? 'Cambiar foto' : 'Agregar foto'}
+        <input type="file" accept="image/*" style={{ display:'none' }} onChange={e => { handlePhoto(e.target.files?.[0]); e.target.value = ''; }} />
+      </label>
+    </div>
+  );
+}
+
+function DiaryTemplateDynamicField({ field, value, onChange }) {
+  if (field.type === 'person') return <DiaryTemplatePersonField field={field} value={value} onChange={onChange} />;
+  return (
+    <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:18, padding:12 }}>
+      <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:.7, textTransform:'uppercase', marginBottom:7 }}>{field.label}</div>
+      <input value={value || ''} onChange={e => onChange(e.target.value)} placeholder="Escribe aquí"
+        style={{ width:'100%', boxSizing:'border-box', border:'none', borderBottom:`1px solid ${KUN.hair}`, outline:'none', padding:'4px 0 7px', fontFamily:V_FB, fontSize:14, color:KUN.ink, background:'transparent' }} />
+    </div>
+  );
+}
+
+function DiaryTemplateForm({ template, onBackToGallery, onClose, onSave }) {
+  const [values, setValues] = React.useState({});
+  const Preview = template.Preview;
+  const setField = (field, value) => setValues(prev => ({ ...prev, [field.id]: value }));
+  const templateData = { people: values, color: template.color };
+  const hasContent = Object.values(values).some(value => {
+    if (!value) return false;
+    if (typeof value === 'string') return value.trim();
+    return value.name?.trim() || value.photo;
+  });
+
+  return (
+    <>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+        <button onClick={onBackToGallery} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', padding:0 }}>Volver</button>
+        <button onClick={onClose} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', padding:0 }}>Cancelar</button>
+      </div>
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:22, padding:14, marginBottom:12 }}>
+        <div style={{ display:'flex', gap:12, alignItems:'center' }}>
+          <div style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <TemplateIcon icon={template.icon} color={KUN.ink} />
+          </div>
+          <div>
+            <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink, lineHeight:1.1 }}>{template.name}</div>
+            <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkMuted, lineHeight:1.4, marginTop:3 }}>{template.shortDescription}</div>
+          </div>
+        </div>
+      </div>
+      {Preview && (
+        <div style={{ marginBottom:12 }}>
+          <Preview data={templateData} />
+        </div>
+      )}
+      <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:9, marginBottom:14 }}>
+        {template.fields.map(field => (
+          <DiaryTemplateDynamicField
+            key={field.id}
+            field={field}
+            value={values[field.id]}
+            onChange={(value) => setField(field, value)}
+          />
+        ))}
+      </div>
+      <button
+        onClick={() => {
+          if (!hasContent) return;
+          onSave({
+            type:'template',
+            templateId:template.id,
+            templateData,
+            title:template.name,
+            text:template.shortDescription,
+            color:template.color,
+            category:'Plantilla',
+          });
+          onClose();
+        }}
+        disabled={!hasContent}
+        style={{
+          width:'100%',
+          height:50,
+          borderRadius:999,
+          border:'none',
+          background:hasContent ? KUN.brick : 'rgba(42,35,32,0.10)',
+          color:hasContent ? '#fff' : KUN.inkMuted,
+          fontFamily:V_FT,
+          fontSize:15,
+          fontWeight:700,
+          cursor:hasContent ? 'pointer' : 'not-allowed',
+        }}>
+        Guardar plantilla
+      </button>
+    </>
+  );
+}
+
+function DiaryTemplateSheet({ onClose, onSave }) {
+  const [selectedTemplate, setSelectedTemplate] = React.useState(null);
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.38)', display:'flex', alignItems:'flex-end' }}>
+      <div style={{ width:'100%', maxHeight:'90%', overflowY:'auto', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 20px 32px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        {!selectedTemplate ? (
+          <>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
+              <div>
+                <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Plantillas</div>
+                <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, lineHeight:1.45, marginTop:3 }}>Elige una forma visual para guardar un recuerdo.</div>
+              </div>
+              <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>Cancelar</button>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:10 }}>
+              {DIARY_ENTRY_TEMPLATES.map(template => (
+                <DiaryTemplateGalleryCard key={template.id} template={template} onSelect={setSelectedTemplate} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <DiaryTemplateForm
+            template={selectedTemplate}
+            onBackToGallery={() => setSelectedTemplate(null)}
+            onClose={onClose}
+            onSave={onSave}
+          />
+        )}
       </div>
     </div>
   );
@@ -2441,6 +2823,15 @@ function TemplateIcon({ icon, color = KUN.ink }) {
   if (icon === 'home') return KIcon.home(color);
   if (icon === 'book') return KIcon.book(color);
   if (icon === 'milk') return HIcon.bottle(color);
+  if (icon === 'tree') {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 19V10" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+        <path d="M12 13C9 13 6.5 11 6.5 8.2C6.5 5.9 8.3 4 10.6 4C11.2 4 11.7 4.1 12 4.4C12.4 4.1 12.9 4 13.4 4C15.7 4 17.5 5.9 17.5 8.2C17.5 11 15 13 12 13Z" stroke={color} strokeWidth="1.7" strokeLinejoin="round"/>
+        <path d="M8 20H16" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    );
+  }
   return KIcon.spark(color);
 }
 
@@ -2714,6 +3105,7 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
                   {entry.type === 'photo' && <DiaryFeedPhotoCard entry={entry}/>}
                   {entry.type === 'text'  && <DiaryFeedNoteCard  entry={entry}/>}
                   {entry.type === 'audio' && <DiaryFeedAudioCard entry={entry}/>}
+                  {entry.type === 'template' && <DiaryFeedTemplateCard entry={entry}/>}
                 </div>
               ))}
             </div>
@@ -2759,6 +3151,7 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
                         </svg>
                       ),
                       cb:() => { setFab(false); setSheet('guide'); } },
+                    { label:'Plantillas', color:'#FFF5DC', icon:<TemplateIcon icon="tree" color={KUN.ink} />, cb:() => { setFab(false); setSheet('template'); } },
                   ].map(o => (
                     <button key={o.label} onClick={o.cb} style={{
                       background:'#fff', border:`1px solid ${KUN.hair}`,
@@ -2810,6 +3203,12 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
       )}
       {sheet === 'guide' && (
         <DiaryGuideSheet
+          onClose={() => setSheet(null)}
+          onSave={(data) => { addEntry(data); setSheet(null); }}
+        />
+      )}
+      {sheet === 'template' && (
+        <DiaryTemplateSheet
           onClose={() => setSheet(null)}
           onSave={(data) => { addEntry(data); setSheet(null); }}
         />
