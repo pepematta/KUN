@@ -1,195 +1,250 @@
-# Handoff: KUN — Prototipo funcional (Inicio · Educación · Acerquémonos · Comunidad)
+# KUN — Prototipo funcional
 
 ## Overview
-KUN es una app móvil para padres de recién nacidos hospitalizados en la UCIN. Su objetivo es acompañar a los padres con información clínica adaptada, facilitar el vínculo con su bebé a distancia y conectarlos con otras familias. Este paquete entrega el **prototipo funcional unificado** con tres secciones implementadas (Inicio, Educación, Acerquémonos) más placeholder para Comunidad, todas conectadas por una barra de navegación inferior compartida.
+KUN es una app móvil para padres de recién nacidos hospitalizados en la UCIN. Acompaña a los padres con información clínica adaptada, facilita el vínculo con su bebé y los conecta con otras familias. Este repositorio contiene el **prototipo funcional de alta fidelidad** con todas las secciones implementadas: Inicio, Educación, Vínculo (Diario de vida + Actividades) y Comunidad, conectadas por barra de navegación inferior.
 
 ## About the Design Files
-Los archivos en este bundle son **referencias de diseño creadas en HTML/JSX (React+Babel via CDN)** — un prototipo que muestra la apariencia y comportamiento previstos, **no código de producción para copiar directamente**. La tarea es **recrear estos diseños en el entorno del codebase destino** (React Native, Swift/SwiftUI, Flutter, React web, etc.) usando sus patrones, design tokens, navegación y librerías establecidas. Si no existe un entorno aún, elegir el framework apropiado (recomendado: React Native o Flutter por ser app móvil) e implementar allí.
+Los archivos son **referencias de diseño en HTML/JSX (React 18 + Babel CDN)** — muestran apariencia y comportamiento finales, **no son código de producción**. La tarea del equipo de desarrollo es **recrear estos diseños en el entorno destino** (React Native, Flutter, Swift/SwiftUI, etc.) usando sus propios patrones, navegación y librerías.
 
-El JSX está cargado vía Babel en el navegador y depende de variables globales (`window.KUN`, `window.KIcon`, etc.) — esto es un atajo para prototipar, no un patrón a replicar.
+El JSX carga en el navegador via Babel standalone y comparte componentes a través de `window.*` — atajo de prototipado, no un patrón a replicar.
 
 ## Fidelity
-**Alta fidelidad (hifi)**. Colores, tipografía, espaciado, radios y micro-interacciones son finales y deben recrearse pixel-perfect dentro del sistema del codebase destino.
+**Alta fidelidad (hifi)**. Colores, tipografía, espaciado, radios, interacciones y microcopy son finales y deben recrearse con precisión en el sistema destino.
 
 ## Tech context
-- **Frame**: iPhone 390×844, esquinas 54px, dynamic island simulada.
-- **Tipografía**: Nunito (Google Fonts), pesos 400/500/600/700/800 + cursiva 600/700.
-- **Render**: React 18 + Babel standalone. Cada archivo `*.jsx` es un script `type="text/babel"` y exporta sus componentes a `window.*` para compartirlos.
+- **Frame**: iPhone 390×844, esquinas 54 px, Dynamic Island simulada.
+- **Entry point**: `index.html` — monta `<Prototype/>`, orquesta navegación y estado global.
+- **Tipografía**: Quicksand (títulos `V_FT`) + Poppins (body `V_FB`), desde Google Fonts.
+- **Render**: React 18 + Babel standalone. Cada `*.jsx` es `<script type="text/babel">` y exporta a `window.*`.
 
-## Design Tokens
+---
 
-### Colores (en `edu-shared.jsx` → `KUN`)
-```
-bg          #FAF6F1   // fondo crema general
-card        #FFFFFF
-cardSoft    #F2EBE0   // chips/iconos sin acento
-ink         #2E2A26   // texto principal
-inkSoft     #6B6258   // secundario
-inkMuted    #9A9087   // metadatos
-inkFaint    #C5BCB1   // bordes/dashes/punteados
-accent      #C97B5A   // terracota — acción primaria
-accentSoft  #F4E2D6   // fondo suave de acento
-accentDeep  #A85F40   // texto sobre fondo blanco
-sage        #7E9B86   // segundo tono cálido (enfermera, vista, badges)
-sageSoft    #E4ECE4
-divider     rgba(46,42,38,0.06)
-trackSoft   #E8DFD2   // fondo de progress bars
-```
+## Design System
+
+### Paleta `KUN` (en `edu-shared.jsx`)
+
+| Token | Hex | Uso |
+|---|---|---|
+| `bg` | `#FAF6F1` | Fondo crema general |
+| `card` | `#FFFFFF` | Cards y superficies elevadas |
+| `cardSoft` | `#F2EBE0` | Superficies anidadas suaves |
+| `ink` | `#2A2320` | Texto principal |
+| `inkSoft` | `#5E554E` | Texto secundario |
+| `inkMuted` | `#8B827C` | Metadatos, etiquetas |
+| `inkFaint` | `#C5BCB1` | Bordes, separadores, dashes |
+| `hair` | `rgba(42,35,32,0.10)` | Bordes finos de cards |
+| `brick` | `#F0743E` | Acción primaria (botones, FAB, pills activos) |
+| `rosehip` | `#F6C3AE` | Acento suave (foto, notas cálidas) |
+| `sun` | `#FDD848` | Amarillo (guías, hitos) |
+| `apple` | `#AAD59E` | Verde (audio, avances) |
+| `clear` | `#9AB2D4` | Azul suave (UCIN, respiración) |
+| `viola` | `#CDBCDB` | Lila (texto, emoción) |
+
+> Los tokens `accent`, `accentSoft`, `accentDeep`, `sage`, `sageSoft` son alias de compatibilidad que apuntan a los nuevos tokens.
 
 ### Tipografía
-- Familia: `Nunito`. Fallback `-apple-system, system-ui, sans-serif`.
-- Títulos grandes: 22–26px / 700–800 / letter-spacing −0.3 a −0.4 / line-height 1.15–1.2.
-- Body: 13–14.5px / 500–600 / line-height 1.4–1.45.
-- Caps/etiquetas: 11–12px / 700–800 / letter-spacing 0.6.
-- `text-wrap: pretty` aplicado a títulos y descripciones largas.
+- **Quicksand** (`V_FT`): títulos, labels, botones. Pesos 600–700.
+- **Poppins** (`V_FB`): body, descripciones, placeholders. Pesos 400–500.
+- Títulos grandes: 20–24 px / 700 / letter-spacing −0.3–0.4.
+- Body: 13–15 px / 400–500 / line-height 1.45–1.55.
+- Etiquetas caps: 10–12 px / 700 / letter-spacing 0.6–0.9.
 
 ### Radios y sombras
-- Cards grandes: `border-radius: 26–32px`.
-- Cards pequeños / list rows: 18–22px.
-- Pills / chips / botones: 999px.
-- Sombra estándar de card: `0 1px 2px rgba(46,42,38,0.03), 0 6–8px 18–24px rgba(46,42,38,0.04–0.05)`.
-- Sombra de acento (botón terracota): `0 6–14px 14–30px rgba(201,123,90,0.22–0.4)`.
+- Cards grandes: `border-radius: 24–32 px`.
+- Cards medias / list rows: 16–20 px.
+- Pills / chips / botones: 999 px.
+- Sombra card estándar: `0 1px 2px rgba(42,35,32,0.03), 0 6px 18px rgba(42,35,32,0.04)`.
+- Sombra FAB brick: `0 8px 22px rgba(240,116,62,0.36)`.
 
-### Espaciado
-- Padding lateral del frame: 20–24px.
-- Gap entre cards en stack: 8–12px.
-- Padding interior de card: 14–22px.
+### Íconos
+SVG inline definidos en `VINK_ICONS` (edu-shared.jsx). El equipo puede sustituirlos por su set canónico (Lucide, SF Symbols, Material Symbols) manteniendo grosor ~1.7 px y strokeLinecap round.
+
+### Función `tint(hex, alpha)`
+Helper disponible en `screen-vinculo.jsx` que mezcla un hex con blanco para generar tints sólidos (sin transparencia real).
+
+---
 
 ## Navegación
 
-**Tab bar inferior** (`KBottomNav`): cuatro tabs — Inicio (home), Educación (book), Acerquémonos (heart), Comunidad (people). Tab activa: ícono y label en terracota sobre pill `accentSoft` con opacidad 0.55.
+**Tab bar inferior** (`KBottomNav`): cuatro tabs — Inicio (home), Educación (edu), Vínculo (bond), Comunidad (comm). Tab activa: ícono y label en brick sobre pill cardSoft.
 
-**Subtabs Educación** (`KSubTabs`): pill blanco con tres segmentos — Cuidados básicos, Especial para mi güagüa, Aprender más. Segmento activo: pill terracota sólido sobre fondo blanco.
+**Estado global** (en `index.html → Prototype`):
+```
+tab:         'home' | 'edu' | 'bond' | 'comm'
+eduSub:      'camino' | 'perso' | 'biblio'
+bondView:    'entry' | 'journey' | 'activities' | 'activities-cuentos' | 'activities-canciones' | 'activities-musica'
+recordings:  Array<{ name, duration, time }>
+babyStatus:  objeto por hijo (ver localStorage)
+authData:    datos de autenticación del usuario
+```
 
-**Subtabs Actividades con mi güagüa** (en Acerquémonos): mismo patrón con dos segmentos — Música, Voz.
+**Flujos de navegación clave:**
+- Home capsule click → Educación · Especial para mi güagüa
+- Home BabyCard click → pantalla Estado del bebé
+- BabyCard "Registrar turno" → ScreenBabyStatusEdit
+- Cualquier notificación → target.tab / target.capsuleId
+- Vínculo entry → Diario de vida (`journey`) o Actividades (`activities`)
+- Cápsula educativa → ScreenCapsula (overlay full-screen sobre la tab)
 
-## Screens
+---
+
+## Pantallas
+
+### Auth (`screen-auth.jsx` → `ScreenAuth`, `KAuth`, `KTour`)
+- **KAuth**: formulario de login con RUT + contraseña, selección de hijo si hay múltiples.
+- **KTour**: onboarding de 4 pasos con cards ilustradas. Se muestra una sola vez (flag en localStorage).
 
 ### 01 · Inicio (`screen-home.jsx` → `ScreenHome`)
-- **TopBar**: logo "KUN" 800/26px + ícono kangaroo (`KunMark`) + botón campana 40px con dot terracota.
-- **Saludo**: "Buenos días, Mateo" + "Sigamos juntos hoy."
-- **BabyCard**: card 32px radius con foto circular 84px (placeholder rayado), nombre "Sofía" 22/700, "32 días hospitalizada" (32 días en accentDeep/700), "Peso actual 2,1 kg". Blob `accentSoft` decorativo arriba derecha.
-- **NurseCard**: card sageSoft, ícono enfermera, "Enfermera de turno" / "Valentina Rojas", badge "En turno" con punto sage.
-- **SectionHeader** "Cápsulas para ti" con subtítulo y "Ver todas" (linkea a Educación · Especial para mi güagüa).
-- **CapsuleCards** ×2:
-  - "Tu bebé empezó a alimentarse por sonda" — tag NUEVO (accent), illustration drop sage.
-  - "Método canguro: cómo empezar" — tag RECOMENDADO PARA TI (sageSoft), illustration kangaroo.
-  - Click → Educación · Especial para mi güagüa.
+- **TopBar**: logo "KUN" + icono canguro (`KunMark`) + campana con dot brick + engranaje.
+- **Saludo**: "Buenos días, [nombre]".
+- **BabyCard**: foto circular real (`guaguas/guagua1.jpg`) + nombre bebé + días hospitalizada + peso. Click → ScreenBabyStatusEdit.
+- **NurseCard** (si hay enfermera): card con nombre de turno y badge "En turno".
+- **NarrativeChip**: chip condensado del estado clínico del bebé (temperatura, respiración, alimentación, accesos, diagnósticos). Generado dinámicamente desde `babyStatus`.
+- **NotificationBell** (expandible): lista de notificaciones con destino de navegación.
+- **CapsuleCards** ×2: cápsulas personalizadas. Click → ScreenCapsula.
+- **Lactario** (overlay): acceso a reserva de sala de lactancia (`ScreenLactario`).
+
+### Estado del bebé (`screen-baby-status.jsx`)
+**`ScreenBabyStatusOnboarding`**: formulario de primer ingreso de datos clínicos del bebé.
+
+**`ScreenBabyStatusEdit`**: edición del estado clínico con campos:
+- Lugar (incubadora, cuna de calor, cuna normal, pecho materno, brazos)
+- Temperatura
+- Respiración (ventilación mecánica, CPAP, oxígeno, aire ambiental)
+- Alimentación (array múltiple: sonda, pecho, mamadera, parenteral, sin alimentación)
+- Accesos vasculares (array múltiple: vía periférica, central, umbilical, PICC)
+- Diagnósticos
+
+Persiste en `localStorage` bajo `kun_baby_status_by_child_v1` con clave por hijo. `BabyStatusNarrative` genera frases en lenguaje natural para el NarrativeChip.
 
 ### 02 · Educación
 
-#### Cuidados básicos (`edu-camino.jsx`)
-- Saludo "Sigamos juntos, *mamá de Sofía*" (mamá... en cursiva accent).
-- Card progreso: "TU CAMINO 2 de 4", barra 50% terracota, "Pilar 1 · Cuerpo y cuidados".
-- **Path serpenteante**: SVG 390×{altura calc} con cubic Bézier. 4 estaciones en zig-zag (x=78 / x=312 alternando). Línea sólida terracota 3px hasta la estación activa; luego dashed `4 8` color inkFaint.
-- Estaciones: dot 44px (52px si activa) con check (done), play (active), número (next con borde dashed). Active dot tiene halo `0 0 0 6px accentSoft`.
-- Card al lado del dot (200px, alterna izq/der según `side`).
+#### Cuidados básicos (`edu-camino.jsx` → `ScreenCamino`)
+- Card progreso "TU CAMINO N de 4".
+- **Path serpenteante SVG**: estaciones en zig-zag con Bézier cúbico. Línea sólida brick hasta estación activa, dashed inkFaint para las siguientes. Dots: check (completada), play (activa con halo), número (próxima dashed).
 
-Datos: "Cómo se ve tu bebé hoy" (done 3min), "Entender los monitores" (done 5min), "Tocar y contener con calma" (active "Continúa aquí · 4 min"), "Cambios de pañal en incubadora" (next "Pronto").
+#### Especial para mi güagüa (`edu-personalizado.jsx` → `ScreenPersonalizado`)
+- Hero brick con contexto personalizado + botón "Empezar" → ScreenCapsula.
+- Historial de cápsulas vistas.
 
-#### Especial para mi güagüa (`edu-personalizado.jsx`)
-- Hero terracota con tag "NUEVO PARA TI" + spark, contexto "Porque Sofía empezó a alimentarse por sonda", título 22/800, descripción, "4 min · Lectura + audio", botón blanco "Empezar".
-- Sección "Vuelve cuando quieras" con 3 history cards: badge VISTA (sage), título, duración, fecha.
+#### Aprender más (`edu-biblioteca.jsx` → `ScreenBiblioteca`)
+- Búsqueda + chips de categoría.
+- Lista acordeón de temas con subtopics. Click → ScreenCapsula.
 
-#### Aprender más (`edu-biblioteca.jsx`)
-- Search field placeholder "Buscar cápsulas…".
-- Chips horizontales: Todo (activo, ink negro), Lactancia, Prematuridad, Equipos y monitores, Acerquémonos, Alta y hogar.
-- Header "18 TEMAS" + "Ordenar".
-- Lista de TopicRow (acordeón, click toggle):
-  - Lactancia (abierto): Producción de leche, Lactancia con sonda.
-  - ECMO (cerrado).
-  - Prematuridad (cerrado).
-  - Método canguro (abierto): Primeros pasos, Posición correcta.
-- Topic abierto: ícono sobre `accentSoft`, chevron en círculo terracota; subtopics con bullet 6px terracota.
+#### Cápsula educativa (`screen-capsula.jsx` → `ScreenCapsula`)
+Overlay full-screen con contenido de la cápsula seleccionada. Botón de cierre vuelve al origen (`capsuleSource`).
 
-### 03 · Acerquémonos (`screen-vinculo.jsx` → `ScreenVinculo`)
-Estado interno: `view` = `entry | journey | songs`. Estado compartido con app: array `recordings` y función `addRecording`.
+### 03 · Vínculo (`screen-vinculo.jsx` → `ScreenVinculo`)
 
 #### Entry
-- Headline "Acércate a Sofía, aunque no estés ahí." + "Construyan juntos una memoria de estos días."
-- Card terracota grande: "Diario de vida · Registra tus momentos" con icon journey 56px en glass interior.
-- Card blanco: "Actividades con mi güagüa · Tu voz y la música que la calma" con icon music sage.
+- Headline + dos cards: "Diario de vida" y "Actividades con mi güagüa".
 
-#### Diario de vida
-- **ActivityCard** fija arriba: tag "ACTIVIDAD DEL DÍA", título "La mano de tu bebé junto a la tuya", descripción, fila de botones: "Subir foto" (primary terracota) + ghost cuadrado de texto + ghost de mic.
-- **Feed** con separadores ("HOY · DÍA 32" / "AYER · DÍA 31") y entradas estilo chat:
-  - Avatar circular 36px con inicial.
-  - Burbuja blanca radius 20 con esquina superior izq 6 (chat).
-  - Tipos: `photo` (placeholder rayado + caption), `text`, `voice` (botón play 36px + waveform SVG 28 barras + duración).
-- Entradas demo: Mamá texto "Hoy te vi abrir los ojos…" 14:20; Papá voz 0:42 11:45; Abuela Rosa foto + "Te esperamos con mucho amor 🧡" Ayer 19:30.
-- Las entradas de `recordings` se insertan como burbujas voice de Mamá.
-- **FAB** terracota 58px en bottom-right del scroll.
-- **Plantillas del diario**: las plantillas visuales viven en `DIARY_ENTRY_TEMPLATES` dentro de `screen-vinculo.jsx`. Para agregar una nueva, sumar una entrada con `id`, `name`, `icon`, `color`, `shortDescription`, `fields` y `Preview`. El selector, formulario dinámico, guardado `type: "template"` y tarjeta del diario usan ese registro central.
+#### Diario de vida (`DiaryPrototype`)
+Feed de recuerdos en dos columnas (masonry). Orden cronológico: más antiguo arriba, más reciente abajo. Al abrir hace scroll automático al registro más reciente.
 
-#### Actividades con mi güagüa
-Subtabs Música / Voz.
+**Layout:**
+- Header fijo (no scrollea): título + back.
+- Feed: `flex:1, overflowY:auto` — scroll interno.
+- FAB: `position:absolute` sobre el wrapper — siempre visible, no scrollea con el contenido.
 
-**Música**: título "¿Qué necesita tu bebé ahora?". Tres cards con emoji icon, nombre, descripción + duración, botón play/pausa circular. Card abierta: borde 2px terracota, mini-reproductor con barra de progreso 34% + thumb 14px y timestamps.
+**Tipos de entrada:**
 
-**Voz**: 
-- Sección CUENTOS: 3 StoryRow acordeón.
-  - "La nube viajera" (abierto por default) muestra texto completo en card cardSoft + botón "Grabar mientras leo" (mic + texto blanco sobre terracota).
-  - "El pez pequeño", "La semilla" (cerrados).
-- Sección CANCIÓN: card sageSoft con "Nana de la luna llena", letra completa en card blanca interior (italic, 13.5px line-height 1.6), botón "Cantarle a mi bebé · Grabación libre".
-- Sección GRABACIONES GUARDADAS: 
-  - Vacío (default): card dashed con 🎙️ "Aún no tienes grabaciones".
-  - Con datos: lista de cards con play 40px terracota, nombre, "duración · fecha".
+| Tipo | Componente | Descripción |
+|---|---|---|
+| `photo` | `DiaryFeedPhotoCard` | Imagen a ancho completo con caption opcional en gradiente |
+| `text` | `DiaryFeedNoteCard` | Card con fondo tintado, categoría y texto |
+| `audio` | `DiaryFeedAudioCard` | Player con waveform SVG decorativa + duración |
 
-**Recorder overlay** (full-screen interno, z-index 200):
-- Header con back + "Grabación".
-- Estado idle: "Cuando estés lista, presiona el círculo", contador `0:00`, waveform plana inkFaint, botón circular 86px terracota.
-- Estado recording: "Estoy escuchando…", contador running, waveform animada (sin con time-shift), botón blanco con cuadrado terracota.
-- Tras parar (seconds>0 && !recording): aparece botón "Guardar para Sofía" (ink sólido). Al guardar, llama `addRecording({ name, duration, time })` y cierra.
+**FAB (+)** — grid 2×2 con 4 opciones:
+- **Foto**: abre `<input type=file>`, procesa con FileReader a base64.
+- **Texto**: abre `DiaryNoteSheet` (textarea + color + categoría simple).
+- **Audio**: abre `Recorder` (componente compartido con Actividades).
+- **Usar una guía**: abre `DiaryGuideSheet`.
 
-### 04 · Comunidad
-Placeholder: ícono dentro de cuadro `accentSoft`, título "Comunidad", subtítulo, badge "PRÓXIMAMENTE".
+**`DiaryGuideSheet`** — escritura guiada en tres bloques (de arriba a abajo):
+1. **Categoría**: 15 píldoras (Hoy celebramos, Hito UCIN, Respiración, Alimentación, Piel con piel, Aprendizaje, Día difícil, Emoción, Personalidad, Calma, Familia, Equipo de salud, Foto del día, Carta, Camino a casa). Al seleccionar, precarga color y prompt principal.
+2. **Color suave**: 6 swatches (`#EAF2E7`, `#E9EEF7`, `#F6C3AE`, `#CDBCDB`, `#FFF5DC`, `#F2EBE0`).
+3. **Texto**: prompt principal como cabecera coloreada + textarea libre + ideas tocables que insertan texto.
 
-## Interactions & State
+**Persistencia:**
+- Clave: `kun_diary_entries_v1`
+- Solo se persisten entradas de usuario (id que no empieza con `df`). Las seed entries (`df1`–`df20`) se mezclan al cargar si no existen aún.
+- Shape de entrada: `{ id, type, ts, date, text, imageSrc, audioDuration, color, category }`.
+
+**Seed data** (`DIARY_FEED_SEED`): 20 entradas en 8 días (2026-05-25 al 2026-06-08), mostrando días con 1, 2, 3 y 4 entradas combinando fotos, textos y audios. Imágenes reales desde `guaguas/guagua1–10`.
+
+#### Actividades con mi güagüa (`ActividadesGuagua`)
+Subtabs: Cuentos / Canciones / Música.
+- **Cuentos**: acordeón con texto completo + "Grabar mientras leo".
+- **Canciones**: letra completa + "Cantarle a mi güagüa".
+- **Música**: tres cards de ambientes sonoros con player toggle.
+- **Grabaciones guardadas**: vacío con CTA o lista de cards con play.
+
+**`Recorder`** (compartido entre Actividades y Diario):
+- Idle → Recording → (parar) → Guardar.
+- Waveform animada en recording. Al guardar llama `addRecording({ name, duration, time })`.
+
+### 04 · Comunidad (`screen-comunidad.jsx` → `ScreenComunidad`)
+Feed social de familias UCIN. Completamente implementado.
+
+### Staff (`screen-staff.jsx` → `ScreenStaffApp`)
+Vista separada para personal clínico.
+
+### Lactario (`screen-lactario.jsx` → `ScreenLactario`)
+Reserva de sala de lactancia. Accesible desde Home.
+
+---
+
+## Imágenes
+
+La carpeta `guaguas/` contiene fotos reales usadas en el feed del Diario de vida:
 
 ```
-Prototype state:
-  tab:        'home' | 'edu' | 'bond' | 'comm'         (bottom nav)
-  eduSub:     'camino' | 'perso' | 'biblio'            (edu subtabs)
-  bondView:   'entry' | 'journey' | 'songs'            (vínculo internal)
-  recordings: Array<{ name, duration, time }>          (compartido voz↔feed)
-
-Transitions:
-  - Home capsule click       → tab='edu', eduSub='perso' (Educación · Especial para mi güagüa)
-  - Home "Ver todas" click   → tab='edu', eduSub='perso' (Educación · Especial para mi güagüa)
-  - Bottom nav click         → setTab(id); if (id==='bond') no reset bondView
-  - Acerquémonos entry pick  → setBondView('journey'|'songs')
-  - Acerquémonos back button → setBondView('entry')
-  - Recorder save            → addRecording(r); recording entry shows in journey feed AND in voz "Grabaciones guardadas"
-  - Library topic click      → toggle open
-  - Library chip click       → highlight (currently visual only)
-  - Music card click         → toggle player open
-  - Story click              → toggle expand
-
-Animations:
-  - Content swap fade-in: opacity 0→1, translateY 4→0, 0.25s ease-out forwards.
-  - Recorder waveform: per-bar height = 6 + |sin(i*0.6 + seconds*0.3)|*30 — re-renders each second tick.
+guaguas/guagua1.jpg  →  guagua10.jpg    (seed del feed)
+guaguas/premature.jpg                   (referencia legacy)
 ```
+
+La foto circular del bebé en Home también usa `guaguas/guagua1.jpg`. No hay más placeholders generados con CSS — todo el Diario usa fotos reales.
+
+---
+
+## localStorage
+
+| Clave | Contenido |
+|---|---|
+| `kun_baby_status_by_child_v1` | Estado clínico por hijo `{ [childKey]: statusObj }` |
+| `kun_diary_entries_v1` | Entradas de usuario del Diario de vida |
+| `kun_diary_guided_entries_v2` | (legacy) Entradas del diario guiado anterior |
+| `kun_auth_*` | Datos de sesión del usuario |
+
+---
 
 ## Files
-- `KUN Prototype.html` — entry point, monta `<Prototype/>`, define screen labels y orquesta nav.
-- `edu-shared.jsx` — paleta `KUN`, set de íconos `KIcon`, `KunMark`, `KStatusBar`, `KTopBar`, `KSubTabs`, `KBottomNav`, `KHomeIndicator`, `KDevice`.
-- `screen-home.jsx` — `ScreenHome`.
-- `edu-camino.jsx` — `ScreenCamino` + path serpenteante.
-- `edu-personalizado.jsx` — `ScreenPersonalizado`.
-- `edu-biblioteca.jsx` — `ScreenBiblioteca`.
-- `screen-vinculo.jsx` — `ScreenVinculo` + sub-vistas + recorder.
 
-## Assets / Imágenes
-No hay imágenes binarias; el prototipo usa **placeholders rayados con CSS** (`repeating-linear-gradient`) para foto del bebé y fotos del feed. En la implementación real estos slots reciben:
-- Foto del recién nacido (cargada por la app desde el sistema clínico).
-- Fotos subidas por familiares (uploads, con compresión).
-- Avatares con inicial son aceptables como fallback.
+| Archivo | Export principal | Descripción |
+|---|---|---|
+| `index.html` | `Prototype` | Entry point. Nav, estado global, orquestación de pantallas. |
+| `edu-shared.jsx` | `KUN`, `VINK_ICONS`, `KBottomNav`, `KTopBar`, etc. | Design system compartido. |
+| `screen-auth.jsx` | `ScreenAuth`, `KAuth`, `KTour` | Login y onboarding. |
+| `screen-home.jsx` | `ScreenHome` | Pantalla de inicio. |
+| `screen-baby-status.jsx` | `ScreenBabyStatusEdit`, `ScreenBabyStatusOnboarding`, `BabyStatusNarrative` | Estado clínico del bebé. |
+| `screen-lactario.jsx` | `ScreenLactario` | Reserva de sala de lactancia. |
+| `edu-camino.jsx` | `ScreenCamino` | Educación · Cuidados básicos. |
+| `edu-personalizado.jsx` | `ScreenPersonalizado` | Educación · Especial para mi güagüa. |
+| `edu-biblioteca.jsx` | `ScreenBiblioteca` | Educación · Aprender más. |
+| `screen-capsula.jsx` | `ScreenCapsula` | Cápsula educativa (overlay). |
+| `screen-vinculo.jsx` | `ScreenVinculo`, `DiaryPrototype`, `ActividadesGuagua` | Vínculo: diario + actividades + recorder. |
+| `screen-comunidad.jsx` | `ScreenComunidad` | Comunidad · Feed social. |
+| `screen-staff.jsx` | `ScreenStaffApp` | Vista de personal clínico. |
+| `color-system-preview.html` | — | Preview standalone del sistema de color. |
 
-Todos los íconos son SVG inline definidos en `KIcon` y `VINK_ICONS` — el equipo puede sustituirlos por su set canónico (Lucide, SF Symbols, Material Symbols) manteniendo grosor 1.7–2px y line-cap round.
+---
 
 ## Notas para implementación
-- **Audio real**: el prototipo simula reproducción con un timer y waveform decorativa. La implementación debe usar `expo-av` / `AVAudioPlayer` / `MediaPlayer` y exponer eventos de progreso reales.
-- **Grabación real**: el `Recorder` es UI; reemplazar con permisos de micrófono y `expo-av Recording` / `AVAudioRecorder`.
-- **Persistencia**: las grabaciones deben subirse al backend y aparecer en el feed familiar para todos los miembros con acceso al perfil del bebé.
-- **Accesibilidad**: todo botón táctil debe ser ≥44×44 (ya cumplido en mocks). Contraste accent/blanco sobre crema validado para AA en texto ≥14px bold.
-- **Microcopy**: en español de Chile, primera persona, sin tono clínico ("Tu bebé", "Sigamos juntos", "Acércate a Sofía"). Mantener.
+
+- **Audio real**: el `Recorder` simula con timer y waveform decorativa. Implementar con `expo-av` / `AVAudioRecorder` / `MediaRecorder` y exponer progreso real.
+- **Fotos**: el prototipo usa FileReader para base64. En producción, comprimir y subir al backend; las fotos del diario deben ser accesibles para todos los miembros de la familia.
+- **Persistencia remota**: `localStorage` es un atajo de prototipo. El backend debe sincronizar estado clínico, diario y grabaciones en tiempo real para todos los dispositivos.
+- **Multi-hijo**: el prototipo soporta múltiples hijos por familia con selector en Home. `childStatusKey` genera la clave de persistencia por hijo.
+- **Accesibilidad**: todos los elementos táctiles son ≥ 44×44 px. Contraste brick/blanco validado para AA ≥ 14 px bold. Mantener microcopy en español de Chile, primera persona, sin tono clínico.
+- **Íconos**: SVG inline en `VINK_ICONS`. Sustituir por set canónico del equipo (Lucide, SF Symbols, Material Symbols) manteniendo grosor ~1.7 px y `strokeLinecap: round`.
