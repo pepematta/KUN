@@ -1900,6 +1900,12 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
     setReportingPostId(null);
   };
   const handlePublishPost = ({ kind, title, body, tags, anon, hasPhoto }) => {
+    window.KUNAnalytics?.track('foro_publicacion_creada', {
+      tipo: kind === 'question' ? 'pregunta' : 'experiencia',
+      anonima: !!anon,
+      con_foto: !!hasPhoto,
+      hashtags_count: Array.isArray(tags) ? tags.length : 0,
+    });
     const id = `${kind}-${Date.now()}`;
     const author = anon ? 'Anonimo' : (currentUser || 'Tu');
     const avatar = anon ? { iconType: 'cloud', color: KUN.inkMuted, bgColor: KUN.cardSoft } : avatarPresetFor(author);

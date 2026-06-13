@@ -1286,7 +1286,13 @@ function KaraokeSection({ onRecord }) {
             <button onClick={() => alert(`Karaoke: ${option.title}`)} style={{ ...btnGhost, width: 'auto', flex: 1, borderRadius: 999, fontFamily: V_FT, fontWeight: 700 }}>
               Cantar ahora
             </button>
-            <button onClick={() => onRecord(option)} style={{ ...btnPrimary, flex: 1 }}>
+            <button onClick={() => {
+              window.KUNAnalytics?.track('actividad_respondida', {
+                tipo: 'karaoke',
+                categoria: option.title,
+              });
+              onRecord(option);
+            }} style={{ ...btnPrimary, flex: 1 }}>
               Grabar
             </button>
           </div>
@@ -1336,7 +1342,16 @@ function MusicaTab() {
             border: isOpen ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
             transition:'border .2s',
           }}>
-            <div onClick={() => setPlaying(isOpen ? null : i)} style={{
+            <div onClick={() => {
+              const next = isOpen ? null : i;
+              if (next !== null) {
+                window.KUNAnalytics?.track('musica_reproducida', {
+                  categoria: t.title,
+                  duracion_label: t.dur,
+                });
+              }
+              setPlaying(next);
+            }} style={{
               display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -1553,6 +1568,10 @@ function Recorder({ onClose, onSave, context }) {
 
   const save = () => {
     if (seconds === 0) { onClose(); return; }
+    window.KUNAnalytics?.track('vinculo_grabacion_guardada', {
+      recording_role: ctx.author || 'Mamá',
+      duration_seconds: seconds,
+    });
     onSave({
       name: ctx.name || 'Para Sofía',
       duration: fmt(seconds),
@@ -1708,6 +1727,9 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
           onBack={closeDetail}
           onRecord={() => {
             const isStory = detailItem.type === 'story';
+            window.KUNAnalytics?.track('actividad_respondida', {
+              tipo: isStory ? 'cuento' : 'cancion',
+            });
             closeDetail();
             startRecorder({
               author: 'Mamá',
@@ -2271,6 +2293,16 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
   const saveEntry = ({ text = '', selectedMedia = [], category, color, title, type = 'free', templateId }) => {
     const clean = text.trim();
     if (!clean && !selectedMedia.length) return;
+    const hasPhoto = selectedMedia.includes('photo');
+    const hasAudio = selectedMedia.includes('audio');
+    const hasVideo = selectedMedia.includes('video');
+    const entryKind = hasAudio ? 'voz' : hasPhoto ? 'foto' : hasVideo ? 'video' : 'texto';
+    window.KUNAnalytics?.track('diario_entrada_creada', {
+      tipo: entryKind,
+      modo: type,
+      template_id: templateId,
+      media_count: selectedMedia.length,
+    });
     const now = new Date();
     const media = diaryMediaFromTypes(selectedMedia);
     const entryTitle = title || clean.split('\n')[0] || (selectedMedia.includes('photo') ? 'Foto de hoy' : selectedMedia.includes('audio') ? 'Audio de hoy' : selectedMedia.includes('video') ? 'Video de hoy' : 'Recuerdo de hoy');

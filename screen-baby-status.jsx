@@ -314,7 +314,14 @@ function BabyStatusNarrative({ status, babyName, onEdit }) {
         key={i}
         label={seg.chip}
         colorKey={seg.chipColor}
-        onClick={() => { const info = getBabyStatusOptionInfo(seg.chip); if (info) setActiveInfo(info); }}
+        onClick={() => {
+          window.KUNAnalytics?.track('estado_bebe_chip_presionado', {
+            chip_label: seg.chip,
+            chip_color: seg.chipColor,
+          });
+          const info = getBabyStatusOptionInfo(seg.chip);
+          if (info) setActiveInfo(info);
+        }}
       />
     : <React.Fragment key={i}>{seg.text}</React.Fragment>;
 

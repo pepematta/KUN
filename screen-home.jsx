@@ -432,6 +432,135 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
 }
 
 // ─── Lactario card ────────────────────────────────────────────────────────────
+const BEREAVEMENT_CAPSULES = [
+  {
+    title: 'Qué puedo sentir en estos días',
+    desc: 'Emociones intensas, confusión, culpa, rabia o silencio pueden aparecer y cambiar durante el día. No hay una sola forma correcta de vivir esto.',
+    tag: 'Acompañamiento',
+  },
+  {
+    title: 'Recuerdos y despedida',
+    desc: 'Si la familia lo desea, el equipo puede orientar formas cuidadosas de despedirse, guardar recuerdos o pedir apoyo espiritual y cultural.',
+    tag: 'Decisiones con calma',
+  },
+  {
+    title: 'Cuidar el cuerpo después de la pérdida',
+    desc: 'El cuerpo puede seguir con cambios hormonales, producción de leche, cansancio o dolor. Pide ayuda al equipo si algo te preocupa.',
+    tag: 'Cuidado físico',
+  },
+  {
+    title: 'Cuándo pedir ayuda urgente',
+    desc: 'Busca apoyo inmediato si sientes que no puedes mantenerte a salvo, si la angustia te sobrepasa o si necesitas compañía ahora.',
+    tag: 'Apoyo humano',
+  },
+];
+
+function BereavementHome({ babyName, childrenList, activeChildId, onSelectChild }) {
+  const name = babyName || 'tu bebé';
+  return (
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: '8px 22px 0' }}>
+        <div style={{
+          fontFamily: HF_B, fontWeight: 500, fontSize: 12,
+          color: HC.ink2, letterSpacing: '0.2px',
+        }}>
+          Estamos contigo
+        </div>
+        <div style={{
+          fontFamily: HF_T, fontWeight: 700, fontSize: 26,
+          color: HC.ink, letterSpacing: '-0.5px',
+          marginTop: 4, lineHeight: 1.15,
+        }}>
+          Acompañamiento para este momento.
+        </div>
+      </div>
+
+      <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+
+      <div style={{
+        margin: '18px 22px 0',
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 24,
+        padding: '18px 18px 20px',
+      }}>
+        <div style={{
+          fontFamily: HF_T, fontSize: 19, fontWeight: 700,
+          color: HC.ink, letterSpacing: '-0.2px',
+        }}>
+          {name}
+        </div>
+        <div style={{
+          fontFamily: HF_B, fontSize: 13,
+          color: HC.ink2, lineHeight: 1.6,
+          marginTop: 8,
+        }}>
+          Sentimos mucho lo que están viviendo. Este espacio queda en pausa de controles y tareas, y reúne apoyo para atravesar estos días con el equipo de salud cerca.
+        </div>
+      </div>
+
+      <div style={{ margin: '24px 22px 0' }}>
+        <HSectionHead title="Para acompañarte" kicker="Cápsulas de duelo" />
+        {BEREAVEMENT_CAPSULES.map((cap) => (
+          <div key={cap.title} style={{
+            background: HC.paper,
+            border: `1px solid ${HC.hair}`,
+            borderRadius: 22,
+            padding: '15px 16px',
+            marginBottom: 10,
+          }}>
+            <div style={{
+              display: 'inline-flex',
+              borderRadius: 999,
+              padding: '5px 9px',
+              background: HC.sageSoft,
+              fontFamily: HF_B,
+              fontSize: 10.5,
+              fontWeight: 600,
+              color: HC.ink2,
+              marginBottom: 8,
+            }}>
+              {cap.tag}
+            </div>
+            <div style={{
+              fontFamily: HF_T,
+              fontSize: 15.5,
+              fontWeight: 700,
+              color: HC.ink,
+              letterSpacing: '-0.1px',
+            }}>
+              {cap.title}
+            </div>
+            <div style={{
+              fontFamily: HF_B,
+              fontSize: 12.5,
+              color: HC.ink2,
+              lineHeight: 1.55,
+              marginTop: 5,
+            }}>
+              {cap.desc}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        margin: '18px 22px 0',
+        background: HC.cardSoft,
+        borderRadius: 22,
+        padding: '16px 17px',
+      }}>
+        <div style={{ fontFamily: HF_T, fontSize: 15, fontWeight: 700, color: HC.ink }}>
+          Apoyo del equipo
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.55, marginTop: 5 }}>
+          Puedes pedir hablar con enfermería, psicología, trabajo social o acompañamiento espiritual si lo necesitas. No tienes que pasar por esto sin compañía.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LactarioCard({ reservation, onOpen, onCancel }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
 
@@ -646,10 +775,12 @@ function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        children: childrenList, activeChildId, onSelectChild,
+                       activeChildVitalStatus,
                        lactarioReservation, onOpenLactario, onCancelLactario,
                        completedCapsulas, babyStatus, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
+  const isBereavement = activeChildVitalStatus === 'deceased';
   return (
     <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%' }}>
       {/* subtle decorative shape — half moon rosehip behind content */}
@@ -668,15 +799,23 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       }}/>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <HomeGreeting parentName={parentName} />
-        <BabyHero babyName={bName} />
-        <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
-        <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
-        <LactarioCard
-          reservation={lactarioReservation}
-          onOpen={onOpenLactario}
-          onCancel={onCancelLactario}
-        />
+        {isBereavement ? (
+          <BereavementHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+        ) : (
+          <>
+            <HomeGreeting parentName={parentName} />
+            <BabyHero babyName={bName} />
+            <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+            <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
+            <LactarioCard
+              reservation={lactarioReservation}
+              onOpen={onOpenLactario}
+              onCancel={onCancelLactario}
+            />
+          </>
+        )}
+        {!isBereavement && (
+          <>
         <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
             title="Para ti, hoy"
@@ -703,6 +842,8 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
           />
         </div>
+          </>
+        )}
       </div>
     </div>
   );

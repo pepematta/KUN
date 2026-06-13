@@ -8,7 +8,7 @@ const STAFF_INITIAL_BABIES = [
   { id: 'c1', slot: 1, occupied: true, babyName: 'Sofia', sex: 'f', parentName: 'Mariana', parent2Name: 'Diego', rut: '12.345.678-9', condition: 'Prematura extrema, estable en incubadora', devices: ['Sonda orogastrica', 'CPAP'], weight: '2,1 kg', weeks: '34+2', traits: ['Prematuridad', 'Lactancia', 'Alimentacion por sonda'], recommended: [1, 2] },
   { id: 'c2', slot: 2, occupied: true, babyName: 'Tomas', sex: 'm', parentName: 'Pedro', parent2Name: 'Ana', rut: '11.222.333-4', condition: 'Postoperatorio cardiaco, vigilancia estrecha', devices: ['Ventilacion mecanica', 'Via central'], weight: '1,8 kg', weeks: '32+5', traits: ['Equipos y monitores', 'Prematuridad'], recommended: [4] },
   { id: 'c3', slot: 3, occupied: true, babyName: 'Emilia', sex: 'f', parentName: 'Carla', parent2Name: 'Ignacio', rut: '10.555.888-1', condition: 'Soporte ECMO, sedacion y monitorizacion continua', devices: ['ECMO', 'Ventilacion mecanica', 'Via arterial'], weight: '3,0 kg', weeks: '38+1', traits: ['ECMO', 'Equipos y monitores'], recommended: [9, 4] },
-  ...Array.from({ length: 5 }, (_, i) => ({ id: `empty-${i + 4}`, slot: i + 4, occupied: false, babyName: '', sex: 'm', parentName: '', parent2Name: '', rut: '', condition: '', devices: [], weight: '', weeks: '', traits: [], recommended: [] })),
+  ...Array.from({ length: 5 }, (_, i) => ({ id: `empty-${i + 4}`, slot: i + 4, occupied: false, babyName: '', sex: 'm', parentName: '', parent2Name: '', rut: '', condition: '', devices: [], weight: '', weeks: '', traits: [], recommended: [], vitalStatus: 'hospitalized' })),
 ];
 
 const STAFF_INITIAL_LACTARIO = [
@@ -41,6 +41,12 @@ const STAFF_TRAIT_OPTIONS = ['Prematuridad', 'Lactancia', 'Alimentacion por sond
 function loadStaffState(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key) || 'null') || fallback; }
   catch { return fallback; }
+}
+function normalizeStaffBabies(babies) {
+  return (Array.isArray(babies) ? babies : STAFF_INITIAL_BABIES).map(b => ({
+    ...b,
+    vitalStatus: b.vitalStatus || 'hospitalized',
+  }));
 }
 function loadStaffCapsules() {
   const stored = loadStaffState('kun_staff_capsules_v3', []);
@@ -132,11 +138,13 @@ function StaffField({ label, value, onChange, placeholder, multiline }) {
   );
 }
 
-function StaffActionMenu({ open, onEdit, onDelete, onDischarge }) {
+function StaffActionMenu({ open, onEdit, onDelete, onDischarge, onMarkDeceased, onUndoDeceased }) {
   if (!open) return null;
   return (
     <div style={{ position: 'absolute', top: 44, right: 0, zIndex: 20, background: '#fff', borderRadius: 14, border: `1px solid ${KUN.hair}`, boxShadow: '0 10px 24px rgba(42,35,32,0.14)', minWidth: 170, overflow: 'hidden' }}>
       {onEdit && <div onClick={onEdit} style={menuItemStyle}>Editar informacion</div>}
+      {onMarkDeceased && <div onClick={onMarkDeceased} style={{ ...menuItemStyle, color: '#7A4B3D' }}>Marcar fallecimiento</div>}
+      {onUndoDeceased && <div onClick={onUndoDeceased} style={menuItemStyle}>Reactivar hospitalizacion</div>}
       {onDischarge && <div onClick={onDischarge} style={{ ...menuItemStyle, color: '#D94F3D' }}>Dar de alta</div>}
       {onDelete && <div onClick={onDelete} style={{ ...menuItemStyle, color: '#D94F3D' }}>Borrar capsula</div>}
     </div>
@@ -149,11 +157,12 @@ function ToggleChip({ label, active, onClick }) {
 }
 
 function StaffBabyCard({ baby, onClick }) {
+  const isDeceased = baby.vitalStatus === 'deceased';
   return (
     <div onClick={onClick} style={{ background: '#fff', borderRadius: 20, padding: 14, border: `1px solid ${KUN.hair}`, cursor: 'pointer' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ fontFamily: STAFF_FT, fontSize: 14.5, fontWeight: 700, color: KUN.ink }}>Cupo {baby.slot}</div>
-        <StaffPill tone={baby.occupied ? KUN.sun : KUN.cardSoft}>{baby.occupied ? 'Ocupado' : 'Libre'}</StaffPill>
+        <StaffPill tone={isDeceased ? KUN.viola : baby.occupied ? KUN.sun : KUN.cardSoft}>{isDeceased ? 'Acompañamiento' : baby.occupied ? 'Ocupado' : 'Libre'}</StaffPill>
       </div>
       {baby.occupied ? (
         <>
@@ -213,12 +222,14 @@ const sectionLabel = { fontFamily: STAFF_FB, fontSize: 10.5, fontWeight: 600, co
 const primaryBtn = { flex: 1, border: 'none', borderRadius: 999, background: KUN.brick, color: '#fff', padding: '12px 14px', fontFamily: STAFF_FT, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' };
 const secondaryBtn = { flex: 1, border: `1px solid ${KUN.hair}`, borderRadius: 999, background: '#fff', color: KUN.ink, padding: '12px 14px', fontFamily: STAFF_FT, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' };
 
-function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onRecommend, askConfirm }) {
+function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDeceased, onUndoDeceased, onRecommend, askConfirm }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [query, setQuery] = React.useState('');
   const filteredCaps = capsules.filter(c => `${c.title} ${c.topic}`.toLowerCase().includes(query.toLowerCase()));
+  const isDeceased = baby.vitalStatus === 'deceased';
   const detailRows = [
+    ['Estado vital', isDeceased ? 'Fallecido · acompañamiento familiar' : 'Hospitalizado'],
     ['Padres', [baby.parentName, baby.parent2Name].filter(Boolean).join(' · ') || 'Sin registrar'],
     ['RUT guagua', baby.rut || 'Sin registrar'],
     ['Sexo', baby.sex === 'f' ? 'Femenino' : 'Masculino'],
@@ -239,7 +250,9 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onRecommend, 
           <StaffActionMenu
             open={menuOpen}
             onEdit={() => { setMenuOpen(false); setEditing(true); }}
-            onDischarge={baby.occupied ? () => { setMenuOpen(false); askConfirm('¿Seguro que quieres dar de alta?', `Se liberara el cupo ${baby.slot}.`, () => onDischarge(baby.id)); } : null}
+            onMarkDeceased={baby.occupied && !isDeceased ? () => { setMenuOpen(false); askConfirm('Confirmar fallecimiento', `Esta accion cambiara la experiencia familiar de ${baby.babyName || 'este bebe'} a acompanamiento en duelo.`, () => onMarkDeceased(baby.id)); } : null}
+            onUndoDeceased={baby.occupied && isDeceased ? () => { setMenuOpen(false); askConfirm('Reactivar hospitalizacion', `La familia volvera a ver la experiencia clinica habitual de ${baby.babyName || 'este bebe'}.`, () => onUndoDeceased(baby.id)); } : null}
+            onDischarge={baby.occupied && !isDeceased ? () => { setMenuOpen(false); askConfirm('¿Seguro que quieres dar de alta?', `Se liberara el cupo ${baby.slot}.`, () => onDischarge(baby.id)); } : null}
           />
         </div>
       </div>
@@ -271,6 +284,14 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onRecommend, 
         )}
       </div>
 
+      {isDeceased ? (
+        <div style={{ background: '#fff', borderRadius: 24, padding: 16, border: `1px solid ${KUN.hair}` }}>
+          <div style={{ fontFamily: STAFF_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, marginBottom: 8 }}>Acompañamiento activo</div>
+          <div style={{ fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.55 }}>
+            Las capsulas clinicas habituales quedan en pausa. La familia vera contenido de acompanamiento en duelo y apoyo del equipo.
+          </div>
+        </div>
+      ) : (
       <div style={{ background: '#fff', borderRadius: 24, padding: 16, border: `1px solid ${KUN.hair}` }}>
         <div style={{ fontFamily: STAFF_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, marginBottom: 10 }}>Recomendar capsulas</div>
         <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar por titulo o tema..." style={{ width: '100%', boxSizing: 'border-box', border: `1.5px solid ${KUN.hair}`, borderRadius: 16, padding: '12px 14px', fontFamily: STAFF_FB, fontSize: 13.5, outline: 'none', marginBottom: 10 }} />
@@ -286,12 +307,13 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onRecommend, 
           ))}
         </div>
       </div>
+      )}
     </div>
   );
 }
 
 function StaffLactario({ slots, setSlots, babies, askConfirm }) {
-  const occupiedBabies = babies.filter(b => b.occupied);
+  const occupiedBabies = babies.filter(b => b.occupied && b.vitalStatus !== 'deceased');
   const reserve = (idx, baby) => askConfirm('¿Seguro que quieres reservar este cupo?', `Se reservara ${slots[idx].time} para ${baby.parentName}.`, () => setSlots(slots.map((s, i) => i === idx ? { ...s, status: 'reservado', mother: baby.parentName, baby: baby.babyName } : s)));
   const free = (idx) => askConfirm('¿Seguro que quieres liberar este cupo?', `Se liberara el horario ${slots[idx].time}.`, () => setSlots(slots.map((s, i) => i === idx ? { ...s, status: 'libre', mother: '', baby: '' } : s)));
   return (
@@ -316,9 +338,11 @@ function StaffLactario({ slots, setSlots, babies, askConfirm }) {
 function StaffHome({ babies, setBabies, capsules, lactarioSlots, setLactarioSlots, onRecommend, askConfirm }) {
   const [detailId, setDetailId] = React.useState(null);
   const selected = babies.find(b => b.id === detailId);
-  const saveBaby = (baby) => setBabies(babies.map(b => b.id === baby.id ? { ...baby, occupied: !!baby.babyName.trim() } : b));
-  const discharge = (id) => setBabies(babies.map(b => b.id === id ? { ...b, occupied: false, babyName: '', sex: 'm', parentName: '', parent2Name: '', rut: '', condition: '', devices: [], weight: '', weeks: '', traits: [], recommended: [] } : b));
-  if (selected) return <BabyDetail baby={selected} capsules={capsules} onBack={() => setDetailId(null)} onSave={saveBaby} onDischarge={discharge} onRecommend={onRecommend} askConfirm={askConfirm} />;
+  const saveBaby = (baby) => setBabies(babies.map(b => b.id === baby.id ? { ...baby, occupied: !!baby.babyName.trim(), vitalStatus: baby.vitalStatus || 'hospitalized' } : b));
+  const discharge = (id) => setBabies(babies.map(b => b.id === id ? { ...b, occupied: false, babyName: '', sex: 'm', parentName: '', parent2Name: '', rut: '', condition: '', devices: [], weight: '', weeks: '', traits: [], recommended: [], vitalStatus: 'hospitalized' } : b));
+  const markDeceased = (id) => setBabies(babies.map(b => b.id === id ? { ...b, occupied: true, vitalStatus: 'deceased', deceasedAt: Date.now() } : b));
+  const undoDeceased = (id) => setBabies(babies.map(b => b.id === id ? { ...b, vitalStatus: 'hospitalized', deceasedAt: null } : b));
+  if (selected) return <BabyDetail baby={selected} capsules={capsules} onBack={() => setDetailId(null)} onSave={saveBaby} onDischarge={discharge} onMarkDeceased={markDeceased} onUndoDeceased={undoDeceased} onRecommend={onRecommend} askConfirm={askConfirm} />;
   return (
     <div style={{ padding: '0 18px 120px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -630,7 +654,7 @@ function ScreenStaffApp({ authData, onLogout, parentQuestions, forumReports = []
   const [tab, setTab] = React.useState('home');
   const [confirm, setConfirm] = React.useState(null);
   const [reportsOpen, setReportsOpen] = React.useState(false);
-  const [babies, setBabiesState] = React.useState(() => loadStaffState('kun_staff_babies_v1', STAFF_INITIAL_BABIES));
+  const [babies, setBabiesState] = React.useState(() => normalizeStaffBabies(loadStaffState('kun_staff_babies_v1', STAFF_INITIAL_BABIES)));
   const [lactarioSlots, setLactarioSlotsState] = React.useState(() => loadStaffState('kun_staff_lactario_v1', STAFF_INITIAL_LACTARIO));
   const [capsules, setCapsulesState] = React.useState(() => loadStaffCapsules());
 

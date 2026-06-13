@@ -48,19 +48,21 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="kun-env.js?v=1"></script>
+<script type="text/babel" src="analytics.jsx?v=1"></script>
 <script type="text/babel" src="edu-shared.jsx?v=12"></script>
 <script type="text/babel" src="screen-auth.jsx?v=11"></script>
-<script type="text/babel" src="screen-tour.jsx?v=4"></script>
+<script type="text/babel" src="screen-tour.jsx?v=5"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=6"></script>
-<script type="text/babel" src="screen-baby-status.jsx?v=9"></script>
-<script type="text/babel" src="screen-home.jsx?v=30"></script>
+<script type="text/babel" src="screen-baby-status.jsx?v=10"></script>
+<script type="text/babel" src="screen-home.jsx?v=31"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=38"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=18"></script>
-<script type="text/babel" src="screen-capsula.jsx?v=12"></script>
-<script type="text/babel" src="screen-staff.jsx?v=7"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=39"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=19"></script>
+<script type="text/babel" src="screen-capsula.jsx?v=13"></script>
+<script type="text/babel" src="screen-staff.jsx?v=8"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -108,6 +110,7 @@ function normalizeFamilyChildren(authData, clinicalBabies) {
       rut: child.rut || (index === 0 ? authData?.rut || '' : ''),
       name: clinical?.babyName || child.name || child.babyName || (index === 0 ? authData?.babyName || '' : '') || `Bebé ${index + 1}`,
       sex: clinical?.sex || child.sex || '',
+      vitalStatus: clinical?.vitalStatus || child.vitalStatus || 'hospitalized',
       clinical,
     };
   });
@@ -192,7 +195,7 @@ const NOTIF_GLYPH = {
   ),
 };
 
-function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactarioReservations = [], lactarioReminderMinutes = 60 }) {
+function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactarioReservations = [], lactarioReminderMinutes = 60, includeDefaults = true }) {
   const items = [
     ...lactarioReservations.map(time => ({
       kind: 'message',
@@ -210,7 +213,7 @@ function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactari
       color: r.color || KUN.brick,
       target: r.target || { capsuleId: r.id },
     })),
-    ...NOTIFICATIONS,
+    ...(includeDefaults ? NOTIFICATIONS : []),
   ];
   return (
     <div style={{
@@ -452,6 +455,13 @@ function Prototype() {
   // so a new user always sees the tour even on the same device.
   const [tourDone, setTourDone] = useState(() => !!authData?.tourDone);
 
+  React.useEffect(() => {
+    window.KUNAnalytics?.track('app_abierta', {
+      app_context: authData?.role || 'anonimo',
+      has_session: !!authData,
+    });
+  }, []);
+
   // Reset when a different user logs in/out
   React.useEffect(() => {
     setTourDone(!!authData?.tourDone);
@@ -461,6 +471,15 @@ function Prototype() {
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
   const [bondView, setBondView] = useState('entry'); // entry | journey | activities
+
+  React.useEffect(() => {
+    if (!authData || authData.role === 'staff') return;
+    window.KUNAnalytics?.track('pestana_vista', {
+      tab,
+      edu_sub: tab === 'edu' ? eduSub : undefined,
+      bond_view: tab === 'bond' ? bondView : undefined,
+    });
+  }, [authData?.role, tab, eduSub, bondView]);
   const [recordings, setRecordings] = useState([]);
   const [notifOpen, setNotifOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -526,6 +545,7 @@ function Prototype() {
   const parentName = authData?.parentName || '';
   const babyName   = activeChild?.name || linkedClinicalBaby?.babyName || authData?.babyName || 'Sofía';
   const primaryBabyName = primaryChild?.name || authData?.babyName || 'Sofía';
+  const activeChildIsDeceased = activeChild?.vitalStatus === 'deceased';
   const babyStatus = babyStatusByChild[activeChildKey] || null;
   const primaryBabyStatus = babyStatusByChild[primaryChildKey] || null;
   const babyStatusDoneByChild = authData?.babyStatusDoneByChild || {};
@@ -534,7 +554,7 @@ function Prototype() {
     return !!babyStatusDoneByChild[key] || childHasStatus(babyStatusByChild[key]) || (familyChildren.length <= 1 && !!authData?.babyStatusDone);
   };
   const pendingStatusChild = authData?.role === 'parent'
-    ? familyChildren.find(child => !isStatusDoneForChild(child))
+    ? familyChildren.find(child => child.vitalStatus !== 'deceased' && !isStatusDoneForChild(child))
     : null;
   const pendingStatusChildKey = childStatusKey(pendingStatusChild, activeChildKey);
   const pendingStatusBabyName = pendingStatusChild?.name || babyName;
@@ -566,6 +586,9 @@ function Prototype() {
   };
 
   const reserveLactarioSlot = (time) => {
+    window.KUNAnalytics?.track('lactario_reservado', {
+      reservation_count_before: Array.isArray(lactarioReservation) ? lactarioReservation.length : (lactarioReservation ? 1 : 0),
+    });
     setLactarioReservation(prev => {
       const current = Array.isArray(prev) ? prev : (prev ? [prev] : []);
       if (current.includes(time) || current.length >= 4) return current;
@@ -575,6 +598,9 @@ function Prototype() {
   };
 
   const cancelLactarioSlot = (time) => {
+    window.KUNAnalytics?.track('lactario_cancelado', {
+      reservation_count_before: Array.isArray(lactarioReservation) ? lactarioReservation.length : (lactarioReservation ? 1 : 0),
+    });
     setLactarioReservation(prev => {
       const current = Array.isArray(prev) ? prev : (prev ? [prev] : []);
       if (!time) return [];
@@ -600,6 +626,14 @@ function Prototype() {
   };
 
   const saveBabyStatus = (status) => {
+    window.KUNAnalytics?.track(babyStatusDone ? 'estado_bebe_editado' : 'onboarding_estado_bebe_completado', {
+      child_index: Math.max(0, familyChildren.findIndex(child => child.id === (pendingStatusChild || activeChild)?.id)),
+      has_lugar: !!status?.lugar,
+      has_respiracion: !!status?.respiracion,
+      alimentacion_count: Array.isArray(status?.alimentacion) ? status.alimentacion.length : 0,
+      accesos_count: Array.isArray(status?.accesos) ? status.accesos.length : 0,
+      diagnosticos_count: Array.isArray(status?.diagnosticos) ? status.diagnosticos.length : 0,
+    });
     const targetChild = pendingStatusChild || activeChild;
     const targetKey = childStatusKey(targetChild, activeChildKey);
     const next = { ...babyStatusByChild, [targetKey]: status };
@@ -623,6 +657,9 @@ function Prototype() {
   };
 
   const skipBabyStatus = () => {
+    window.KUNAnalytics?.track('onboarding_estado_bebe_saltado', {
+      child_index: Math.max(0, familyChildren.findIndex(child => child.id === (pendingStatusChild || activeChild)?.id)),
+    });
     const targetChild = pendingStatusChild || activeChild;
     const targetKey = childStatusKey(targetChild, activeChildKey);
     const nextDoneByChild = { ...babyStatusDoneByChild, [targetKey]: true };
@@ -721,7 +758,7 @@ function Prototype() {
   };
 
   // Called when user completes or skips the tour — saves flag per user
-  const handleTourDone = () => {
+  const finishTour = () => {
     const updated = { ...authData, tourDone: true };
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
@@ -732,6 +769,14 @@ function Prototype() {
     setEduSub('camino');
     setBondView('entry');
   };
+  const handleTourDone = () => {
+    window.KUNAnalytics?.track('tour_kun_completado');
+    finishTour();
+  };
+  const handleTourSkip = () => {
+    window.KUNAnalytics?.track('tour_kun_saltado');
+    finishTour();
+  };
 
   const goToEdu = (sub = 'camino') => {
     setEduSub(sub);
@@ -739,6 +784,13 @@ function Prototype() {
   };
 
   const openCapsula = (id = 1) => {
+    const cap = window.CAP_LIBRARY?.[id];
+    window.KUNAnalytics?.track('capsula_abierta', {
+      capsule_id: id,
+      capsule_title: cap?.headerTitle || cap?.title || `capsula_${id}`,
+      source_tab: tab,
+      source_subtab: eduSub,
+    });
     setCapsuleSource({ tab, sub: eduSub }); // remember where we came from
     setCapsuleId(id);
     setCapsulaOpen(true);
@@ -752,12 +804,21 @@ function Prototype() {
     setCompletedCapsulas(prev => [id, ...prev.filter(doneId => doneId !== id)]);
   };
   const completeCapsula = () => {
+    const cap = window.CAP_LIBRARY?.[capsuleId];
+    window.KUNAnalytics?.track('capsula_completada', {
+      capsule_id: capsuleId,
+      capsule_title: cap?.headerTitle || cap?.title || `capsula_${capsuleId}`,
+    });
     markCapsulaCompleted();
     setCapsulaOpen(false);
     setTab(capsuleSource.tab);
     if (capsuleSource.tab === 'edu') setEduSub(capsuleSource.sub);
   };
   const publishCapsulaQuestion = ({ text, capsuleTitle, capsuleId: publishedCapsuleId }) => {
+    window.KUNAnalytics?.track('foro_pregunta_desde_capsula_publicada', {
+      capsule_id: publishedCapsuleId || capsuleId,
+      capsule_title: capsuleTitle || `capsula_${publishedCapsuleId || capsuleId}`,
+    });
     const id = `capsula-${publishedCapsuleId || capsuleId}-${Date.now()}`;
     markCapsulaCompleted(publishedCapsuleId || capsuleId);
     const authorName = parentName || 'Tú';
@@ -789,6 +850,12 @@ function Prototype() {
     setTab('comm');
   };
   const saveQuizResult = (result) => {
+    window.KUNAnalytics?.track('capsula_repaso_respondido', {
+      capsule_id: capsuleId,
+      is_correct: !!result?.isCorrect,
+      selected_index: result?.selectedIndex,
+      correct_index: result?.correctIndex,
+    });
     setQuizResults(prev => ({
       ...prev,
       [capsuleId]: {
@@ -863,12 +930,18 @@ function Prototype() {
       children={familyChildren}
       activeChildId={activeChild?.id}
       onSelectChild={selectChild}
+      activeChildVitalStatus={activeChild?.vitalStatus}
       lactarioReservation={lactarioReservation}
       completedCapsulas={completedCapsulas}
       onOpenLactario={() => setLactarioOpen(true)}
       onCancelLactario={cancelLactarioSlot}
       babyStatus={babyStatus}
-      onEditBabyStatus={() => setBabyStatusEditOpen(true)}
+      onEditBabyStatus={() => {
+        window.KUNAnalytics?.track('estado_bebe_edicion_iniciada', {
+          has_existing_status: childHasStatus(babyStatus),
+        });
+        setBabyStatusEditOpen(true);
+      }}
     />;
   } else if (tab === 'edu') {
     hasSubtabs = true;
@@ -931,7 +1004,7 @@ function Prototype() {
             height:'calc(100% - 50px)', overflow:'hidden',
             display:'flex', flexDirection:'column',
           }}>
-            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={parentRecommendations.length > 0 || lactarioReservation.length > 0 || NOTIFICATIONS.length > 0} onSettings={() => setSettingsOpen(true)} />
+            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={activeChildIsDeceased ? false : (parentRecommendations.length > 0 || lactarioReservation.length > 0 || NOTIFICATIONS.length > 0)} onSettings={() => setSettingsOpen(true)} />
             {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
             <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub + '-' + activeChildKey + (lactarioOpen ? '-lact' : ''))} style={{
               flex: 1,
@@ -952,9 +1025,10 @@ function Prototype() {
           />
 
           {notifOpen    && <NotificationsPanel
-            recommendations={[...forumReplyNotifications, ...parentRecommendations]}
-            lactarioReservations={Array.isArray(lactarioReservation) ? lactarioReservation : (lactarioReservation ? [lactarioReservation] : [])}
+            recommendations={activeChildIsDeceased ? [] : [...forumReplyNotifications, ...parentRecommendations]}
+            lactarioReservations={activeChildIsDeceased ? [] : (Array.isArray(lactarioReservation) ? lactarioReservation : (lactarioReservation ? [lactarioReservation] : []))}
             lactarioReminderMinutes={lactarioReminderMinutes}
+            includeDefaults={!activeChildIsDeceased}
             onOpenItem={openNotificationItem}
             onClose={() => setNotifOpen(false)}
           />}
@@ -981,6 +1055,7 @@ function Prototype() {
           {authData.role !== 'staff' && babyStatusDone && !tourDone && typeof window.ScreenTour === 'function' && (
             <ScreenTour
               onDone={handleTourDone}
+              onSkip={handleTourSkip}
               onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
             />
           )}

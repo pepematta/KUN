@@ -118,7 +118,7 @@ function TourShapes() {
 }
 
 // ── Tour component ────────────────────────────────────────────────────────────
-function ScreenTour({ onDone, onStepChange }) {
+function ScreenTour({ onDone, onSkip, onStepChange }) {
   const [step, setStep] = React.useState(0);
   const [tabRect, setTabRect] = React.useState(null);
   const current = STEPS[step];
@@ -143,7 +143,7 @@ function ScreenTour({ onDone, onStepChange }) {
     if (isLast) { onDone(); }
     else setStep(s => s + 1);
   };
-  const skip = () => { onDone(); };
+  const skip = () => { onSkip ? onSkip() : onDone(); };
 
   // Step progress dots
   const Dots = ({ light }) => (

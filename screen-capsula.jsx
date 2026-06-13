@@ -1165,8 +1165,48 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
   const isFirst = idx === 0;
   const isLast = idx === CAP_TOTAL_PAGES - 1;
 
-  const goPrev = () => { if (!isFirst) setIdx(i => i - 1); };
-  const goNext = () => { if (!isLast) setIdx(i => i + 1); };
+  React.useEffect(() => {
+    window.KUNAnalytics?.track('capsula_pagina_vista', {
+      capsule_id: capsuleId,
+      capsule_title: capsule.headerTitle,
+      page_number: page.num,
+      page_index: idx,
+      total_pages: CAP_TOTAL_PAGES,
+    });
+  }, [capsuleId, idx]);
+
+  const goPrev = () => {
+    if (!isFirst) {
+      window.KUNAnalytics?.track('capsula_pagina_cambiada', {
+        capsule_id: capsuleId,
+        direction: 'prev',
+        from_page: page.num,
+        to_page: pages[idx - 1]?.num,
+      });
+      setIdx(i => i - 1);
+    }
+  };
+  const goNext = () => {
+    if (!isLast) {
+      window.KUNAnalytics?.track('capsula_pagina_cambiada', {
+        capsule_id: capsuleId,
+        direction: 'next',
+        from_page: page.num,
+        to_page: pages[idx + 1]?.num,
+      });
+      setIdx(i => i + 1);
+    }
+  };
+
+  const handleBack = () => {
+    window.KUNAnalytics?.track('capsula_abandonada', {
+      capsule_id: capsuleId,
+      capsule_title: capsule.headerTitle,
+      page_number: page.num,
+      progress_percent: Math.round((page.num / CAP_TOTAL_PAGES) * 100),
+    });
+    onBack();
+  };
 
   const handlePublish = () => {
     if (!question.trim()) return;
@@ -1215,7 +1255,7 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '4px 20px 10px', flexShrink: 0,
       }}>
-        <div onClick={onBack} style={{
+        <div onClick={handleBack} style={{
           width: 40, height: 40, borderRadius: '50%', background: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           border: `1px solid ${KUN.hair}`, cursor: 'pointer', flexShrink: 0,
@@ -1517,3 +1557,4 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
 }
 
 window.ScreenCapsula = ScreenCapsula;
+window.CAP_LIBRARY = CAP_LIBRARY;
