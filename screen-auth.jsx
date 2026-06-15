@@ -680,6 +680,11 @@ function ScreenAuth({ onAuthenticated }) {
               birthDate, gestWeeks, gestDays,
               children: prepared, activeChildId: first.id, babyName: first.name,
               sessionActive: true, createdAt: existing?.createdAt || Date.now(),
+              // Completar el alta es un setup nuevo: reinicia el onboarding para
+              // que siempre aparezcan el panel de estado del bebé y el tour guiado.
+              tourDone: false,
+              babyStatusDone: false,
+              babyStatusDoneByChild: {},
             });
           }}
         />

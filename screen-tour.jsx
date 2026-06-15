@@ -59,20 +59,20 @@ const STEPS = [
   },
   {
     type:     'nav',
-    tabIndex: 1,
-    mascotVariant: 'learning',
-    mascotPosition: 'heroTop',
-    mascotSize: 260,
-    bubble:   'Te iremos preparando con información especial para cada etapa de tu bebé. A tu ritmo, cuando puedas.',
-    btn:      'Siguiente',
-  },
-  {
-    type:     'nav',
     tabIndex: 2,
     mascotVariant: 'bondHero',
     mascotPosition: 'heroTop',
     mascotSize: 250,
     bubble:   'Aquí puedes guardar los momentos importantes, compartirlos con tu familia y leerle cuentos o cantarle a tu bebé.',
+    btn:      'Siguiente',
+  },
+  {
+    type:     'nav',
+    tabIndex: 1,
+    mascotVariant: 'learning',
+    mascotPosition: 'heroTop',
+    mascotSize: 260,
+    bubble:   'Te iremos preparando con información especial para cada etapa de tu bebé. A tu ritmo, cuando puedas.',
     btn:      'Siguiente',
   },
   {
@@ -117,7 +117,7 @@ function CutoutOverlay({ rect }) {
 }
 
 // Tab that should be visible in the background for each step
-const STEP_TAB = [null, 'home', 'edu', 'bond', 'comm', null];
+const STEP_TAB = [null, 'home', 'bond', 'edu', 'comm', null];
 
 // Decorative half-moons for full-screen steps
 function TourShapes() {
