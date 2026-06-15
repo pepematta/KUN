@@ -42,25 +42,25 @@ const STEPS = [
   },
   {
     type:     'nav',
-    tabIndex: 0,
+    tabIndex: 0, // Inicio (home)
     bubble:   'Aquí verás cómo está tu bebé hoy: su peso, sus días en el hospital y la enfermera que lo está cuidando.',
     btn:      'Siguiente',
   },
   {
     type:     'nav',
-    tabIndex: 1,
-    bubble:   'Te iremos preparando con información especial para cada etapa de tu bebé. A tu ritmo, cuando puedas.',
-    btn:      'Siguiente',
-  },
-  {
-    type:     'nav',
-    tabIndex: 2,
+    tabIndex: 2, // Vínculo (bond)
     bubble:   'Aquí puedes guardar los momentos importantes, compartirlos con tu familia y leerle cuentos o cantarle a tu bebé.',
     btn:      'Siguiente',
   },
   {
     type:     'nav',
-    tabIndex: 3,
+    tabIndex: 1, // Educación (edu)
+    bubble:   'Te iremos preparando con información especial para cada etapa de tu bebé. A tu ritmo, cuando puedas.',
+    btn:      'Siguiente',
+  },
+  {
+    type:     'nav',
+    tabIndex: 3, // Comunidad (comm)
     bubble:   'En Comunidad puedes conectarte con otros papás y mamás que están viviendo algo parecido. Recuerda que sus respuestas no están respaldadas por UC CHRISTUS y pueden contener información errónea; ante dudas médicas, consulta al equipo de salud.',
     btn:      'Siguiente',
   },
@@ -95,7 +95,7 @@ function CutoutOverlay({ rect }) {
 }
 
 // Tab that should be visible in the background for each step
-const STEP_TAB = [null, 'home', 'edu', 'bond', 'comm', null];
+const STEP_TAB = [null, 'home', 'bond', 'edu', 'comm', null];
 
 // Decorative half-moons for full-screen steps
 function TourShapes() {
