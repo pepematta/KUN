@@ -60,6 +60,12 @@ function sanitizeAnalyticsProps(props = {}) {
   }, {});
 }
 
+function getPosthogAssetUrl() {
+  const { host } = getKunPosthogConfig();
+  if (String(host).includes('eu.')) return 'https://eu-assets.i.posthog.com/static/array.js';
+  return 'https://us-assets.i.posthog.com/static/array.js';
+}
+
 function loadPosthogScript(callback) {
   if (window.posthog) return callback();
   if (document.getElementById('kun-posthog-js')) {
@@ -69,8 +75,9 @@ function loadPosthogScript(callback) {
   const script = document.createElement('script');
   script.id = 'kun-posthog-js';
   script.async = true;
-  script.src = 'https://cdn.jsdelivr.net/npm/posthog-js@1/dist/posthog.min.js';
+  script.src = getPosthogAssetUrl();
   script.onload = callback;
+  script.onerror = () => console.warn('KUNAnalytics: no se pudo cargar PostHog.');
   document.head.appendChild(script);
 }
 
