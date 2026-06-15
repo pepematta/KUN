@@ -102,7 +102,17 @@ const KUNAnalytics = {
         person_profiles: 'never',
         autocapture: false,
         capture_pageview: false,
-        disable_session_recording: true,
+        // Session replay ACTIVO pero en modo enmascarado total: registra
+        // navegación, clicks y layout para entender el uso, SIN capturar
+        // contenido sensible. KUN muestra fotos de bebés, datos clínicos de
+        // UCIN, nombres y texto del diario: nada de eso debe quedar grabado.
+        disable_session_recording: false,
+        session_recording: {
+          maskAllInputs: true,             // oculta todo lo que se escribe
+          maskTextSelector: '*',           // enmascara TODO el texto en pantalla
+          blockSelector: 'img, picture, video, canvas, svg image', // bloquea fotos/media
+          maskTextFn: () => '****',
+        },
         persistence: 'localStorage',
         loaded: (posthog) => {
           posthog.identify(this.deviceId);
