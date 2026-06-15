@@ -138,17 +138,122 @@ function PillStat({ value, label, onClick }) {
   );
 }
 
-function BabyHero({ babyName = 'Sofía' }) {
+// ─── Cálculo de edad cronológica y corregida ──────────────────────────────────
+// Diferencia entre dos fechas expresada en meses, semanas y días (calendario).
+function ageDiffMWD(from, to) {
+  if (!(from instanceof Date) || !(to instanceof Date) || to <= from) {
+    return { months: 0, weeks: 0, days: 0, totalDays: 0 };
+  }
+  let months = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
+  let dayDiff = to.getDate() - from.getDate();
+  if (dayDiff < 0) {
+    months -= 1;
+    // días del mes anterior al de la fecha "to"
+    const daysInPrevMonth = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
+    dayDiff += daysInPrevMonth;
+  }
+  if (months < 0) months = 0;
+  const weeks = Math.floor(dayDiff / 7);
+  const days = dayDiff % 7;
+  const totalDays = Math.floor((to.getTime() - from.getTime()) / 86400000);
+  return { months, weeks, days, totalDays };
+}
+
+// Texto "según corresponda": omite las unidades en cero.
+function formatAgeMWD(d) {
+  const parts = [];
+  if (d.months > 0) parts.push(`${d.months} ${d.months === 1 ? 'mes' : 'meses'}`);
+  if (d.weeks > 0)  parts.push(`${d.weeks} ${d.weeks === 1 ? 'semana' : 'semanas'}`);
+  if (d.days > 0)   parts.push(`${d.days} ${d.days === 1 ? 'día' : 'días'}`);
+  if (!parts.length) return 'Recién nacido';
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return `${parts[0]} y ${parts[1]}`;
+  return `${parts[0]}, ${parts[1]} y ${parts[2]}`;
+}
+
+// Calcula edad cronológica y corregida a partir de fecha de nacimiento y edad
+// gestacional al nacer. Reglas:
+//  • Cronológica: hoy − fecha de nacimiento.
+//  • Corregida (solo si nació < 37 semanas): cronológica − semanas faltantes
+//    para completar 40 semanas. Si resulta ≤ 0, el bebé "ya corrigió" su
+//    prematurez y se usa solo la cronológica.
+//  • ≥ 37 semanas: la corregida no aplica.
+function computeBabyAges(birthDateStr, gestWeeksRaw, gestDaysRaw) {
+  if (!birthDateStr) return null;
+  const birth = new Date(`${birthDateStr}T00:00:00`);
+  if (isNaN(birth.getTime())) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const chrono = ageDiffMWD(birth, today);
+
+  const gw = parseInt(gestWeeksRaw, 10);
+  const gd = parseInt(gestDaysRaw, 10) || 0;
+  const hasGest = Number.isFinite(gw);
+  const totalGestDays = hasGest ? gw * 7 + gd : null;
+  const isPreterm = hasGest && totalGestDays < 37 * 7; // estrictamente < 37 semanas
+
+  let corrected = { applies: false, beforeTerm: false };
+  if (isPreterm) {
+    const shiftDays = 40 * 7 - totalGestDays; // semanas de corrección (40 - EG), en días
+    // Fecha estimada de término (equivalente a 40 semanas de gestación).
+    const correctedBirth = new Date(birth.getTime() + shiftDays * 86400000);
+    const correctedTotalDays = Math.floor((today.getTime() - correctedBirth.getTime()) / 86400000);
+    if (correctedTotalDays <= 0) {
+      // Edad corregida ≤ 0: el bebé todavía NO alcanza su fecha estimada de
+      // término (40 sem). No "ya corrigió"; al contrario, aún no llega al término.
+      // Guardamos cuánto falta para esa fecha (today → término).
+      corrected = { applies: false, beforeTerm: true, ...ageDiffMWD(today, correctedBirth) };
+    } else {
+      corrected = { applies: true, beforeTerm: false, ...ageDiffMWD(correctedBirth, today) };
+    }
+  }
+  return { chrono, corrected, isPreterm, hasGest };
+}
+
+// Pastilla con etiqueta arriba y valor abajo (soporta texto largo con salto).
+function AgeStat({ label, value, onClick }) {
+  return (
+    <div onClick={onClick} style={{
+      background: 'rgba(255,255,255,0.92)',
+      backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+      borderRadius: 16, padding: '6px 12px',
+      maxWidth: '100%', cursor: onClick ? 'pointer' : 'default',
+    }}>
+      <div style={{
+        fontFamily: HF_B, fontWeight: 600, fontSize: 9, color: HC.ink2,
+        letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 1,
+      }}>{label}</div>
+      <div style={{
+        fontFamily: HF_T, fontWeight: 700, fontSize: 13, color: HC.ink,
+        lineHeight: 1.2,
+      }}>{value}</div>
+    </div>
+  );
+}
+
+function BabyHero({ babyName = 'Sofía', birthDate, gestWeeks, gestDays }) {
   const [ageInfo, setAgeInfo] = React.useState(null);
+  const ages = computeBabyAges(birthDate, gestWeeks, gestDays);
+  const chronoText = ages ? formatAgeMWD(ages.chrono) : 'Sin fecha';
+  let correctedText;
+  if (!ages) correctedText = '—';
+  else if (ages.corrected.applies) correctedText = formatAgeMWD(ages.corrected);
+  else if (ages.corrected.beforeTerm) correctedText = `Faltan ${formatAgeMWD(ages.corrected)} para el término`;
+  else correctedText = 'No aplica (nació a término)';
   const info = ageInfo === 'chrono'
     ? {
-        title: 'Semanas cronológicas',
-        text: 'Son las semanas que han pasado desde que tu guagüita nació.',
+        title: 'Edad cronológica',
+        text: 'Es el tiempo que ha pasado desde que tu guagüita nació hasta hoy.',
       }
     : ageInfo === 'corrected'
       ? {
-          title: 'Semanas corregidas',
-          text: 'Es la edad calculada según la fecha en que debería haber nacido. Ayuda a mirar su desarrollo con más justicia si nació antes de tiempo.',
+          title: 'Edad corregida',
+          text: ages && !ages.isPreterm
+            ? 'No aplica porque tu bebé nació a término (37 semanas o más). En ese caso usamos solo la edad cronológica.'
+            : (ages && ages.corrected.beforeTerm
+                ? 'Tu bebé todavía no alcanza su fecha estimada de término (40 semanas), así que la edad corregida aún es negativa. Por ahora nos guiamos por la edad cronológica.'
+                : 'Es la edad calculada según la fecha en que debería haber nacido (40 semanas). Ayuda a mirar su desarrollo con más justicia si nació antes de tiempo.'),
         }
       : null;
   return (
@@ -186,8 +291,8 @@ function BabyHero({ babyName = 'Sofía' }) {
             color: HC.ink, letterSpacing: '-0.4px', lineHeight: 1, marginBottom: 10,
           }}>{babyName}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <PillStat value="34" label="sem. cronológicas" onClick={() => setAgeInfo('chrono')} />
-            <PillStat value="32" label="sem. corregidas"   onClick={() => setAgeInfo('corrected')} />
+            <AgeStat label="Edad cronológica" value={chronoText}    onClick={() => setAgeInfo('chrono')} />
+            <AgeStat label="Edad corregida"   value={correctedText} onClick={() => setAgeInfo('corrected')} />
           </div>
         </div>
       </div>
@@ -766,7 +871,7 @@ function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        children: childrenList, activeChildId, onSelectChild,
-                       activeChildVitalStatus,
+                       activeChildVitalStatus, birthDate, gestWeeks, gestDays,
                        lactarioReservation, onOpenLactario, onCancelLactario,
                        completedCapsulas, babyStatus, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
@@ -795,7 +900,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         ) : (
           <>
             <HomeGreeting parentName={parentName} />
-            <BabyHero babyName={bName} />
+            <BabyHero babyName={bName} birthDate={birthDate} gestWeeks={gestWeeks} gestDays={gestDays} />
             <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
             <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
             <div style={{ padding: '20px 22px 0', boxSizing: 'border-box' }}>

@@ -55,7 +55,7 @@
 <script type="text/babel" src="screen-tour.jsx?v=13"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=6"></script>
 <script type="text/babel" src="screen-baby-status.jsx?v=10"></script>
-<script type="text/babel" src="screen-home.jsx?v=33"></script>
+<script type="text/babel" src="screen-home.jsx?v=35"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
@@ -1131,6 +1131,9 @@ function Prototype() {
       activeChildId={activeChild?.id}
       onSelectChild={selectChild}
       activeChildVitalStatus={activeChild?.vitalStatus}
+      birthDate={authData?.birthDate}
+      gestWeeks={authData?.gestWeeks}
+      gestDays={authData?.gestDays}
       lactarioReservation={lactarioReservation}
       completedCapsulas={completedCapsulas}
       onOpenLactario={() => setLactarioOpen(true)}
