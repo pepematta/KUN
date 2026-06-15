@@ -1,4 +1,4 @@
-// screen-tour.jsx — First-time welcome tour (shown once after login)
+﻿// screen-tour.jsx — First-time welcome tour (shown once after login)
 // Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs, pill buttons.
 
 const TOUR_KEY = 'kun_tour_v1';
@@ -12,6 +12,13 @@ window.KTour = KTour;
 
 const T_FT = 'Quicksand, sans-serif';
 const T_FB = 'Poppins, sans-serif';
+
+const TOUR_MASCOTS = {
+  guideDown: 'assets/kun/kun-guide-down.svg',
+  bondHero: 'assets/kun/kun-bond-hero.svg',
+  learning: 'assets/kun/kun-learning.svg',
+  support: 'assets/kun/kun-support.svg',
+};
 
 // ── Tab IDs matching data-nav-tab attributes in KBottomNav ──
 const TAB_IDS = ['home', 'edu', 'bond', 'comm'];
@@ -43,24 +50,39 @@ const STEPS = [
   {
     type:     'nav',
     tabIndex: 0,
+    mascotVariant: 'guideDown',
+    mascotPosition: 'guideHome',
+    mascotSize: 238,
+    mascotFlipX: true,
     bubble:   'Aquí verás cómo está tu bebé hoy: su peso, sus días en el hospital y la enfermera que lo está cuidando.',
     btn:      'Siguiente',
   },
   {
     type:     'nav',
     tabIndex: 1,
+    mascotVariant: 'learning',
+    mascotPosition: 'heroTop',
+    mascotSize: 260,
     bubble:   'Te iremos preparando con información especial para cada etapa de tu bebé. A tu ritmo, cuando puedas.',
     btn:      'Siguiente',
   },
   {
     type:     'nav',
     tabIndex: 2,
+    mascotVariant: 'bondHero',
+    mascotPosition: 'heroTop',
+    mascotSize: 250,
     bubble:   'Aquí puedes guardar los momentos importantes, compartirlos con tu familia y leerle cuentos o cantarle a tu bebé.',
     btn:      'Siguiente',
   },
   {
     type:     'nav',
     tabIndex: 3,
+    mascotVariant: 'support',
+    mascotPosition: 'heroTop',
+    mascotSize: 300,
+    mascotTop: -136,
+    mascotContentPaddingTop: 176,
     bubble:   'En Comunidad puedes conectarte con otros papás y mamás que están viviendo algo parecido. Recuerda que sus respuestas no están respaldadas por UC CHRISTUS y pueden contener información errónea; ante dudas médicas, consulta al equipo de salud.',
     btn:      'Siguiente',
   },
@@ -118,6 +140,50 @@ function TourShapes() {
 }
 
 // ── Tour component ────────────────────────────────────────────────────────────
+function TourMascot({ variant, size = 86, flipX = false }) {
+  const src = TOUR_MASCOTS[variant];
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt="Kun"
+      style={{
+        width: size,
+        height: size,
+        objectFit: 'contain',
+        display: 'block',
+        flexShrink: 0,
+        pointerEvents: 'none',
+        transform: flipX ? 'scaleX(-1)' : undefined,
+      }}
+    />
+  );
+}
+
+function getTourMascotStyle(step, tabRect) {
+  const size = step.mascotSize || 240;
+  if (step.mascotPosition === 'guideHome') {
+    return {
+      position:'absolute',
+      left: Math.max(-32, (tabRect?.x || 0) - 18),
+      bottom: -82,
+      width: size,
+      height: size,
+      zIndex: 12,
+      pointerEvents:'none',
+    };
+  }
+  return {
+    position:'absolute',
+    left:'50%',
+    top: step.mascotTop ?? -150,
+    transform:'translateX(-50%)',
+    width: size,
+    height: size,
+    zIndex: 12,
+    pointerEvents:'none',
+  };
+}
 function ScreenTour({ onDone, onSkip, onStepChange }) {
   const [step, setStep] = React.useState(0);
   const [tabRect, setTabRect] = React.useState(null);
@@ -143,6 +209,7 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
     if (isLast) { onDone(); }
     else setStep(s => s + 1);
   };
+  const back = () => setStep(s => Math.max(0, s - 1));
   const skip = () => { onSkip ? onSkip() : onDone(); };
 
   // Step progress dots
@@ -219,17 +286,32 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
 
         <div style={{ position:'relative', zIndex: 1 }}><Dots light /></div>
 
-        {/* Primary button — DS pill */}
-        <button onClick={advance} style={{
-          position:'relative', zIndex: 1,
-          width:'100%', padding: '14px 18px', height: 50, boxSizing:'border-box',
-          background: KUN.brick, color: '#fff',
-          border:'none', borderRadius: 999,
-          fontFamily: T_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
-          cursor:'pointer',
-        }}>
-          {current.btn}
-        </button>
+        <div style={{ position:'relative', zIndex: 1, width:'100%', display:'grid', gridTemplateColumns: step > 0 ? '104px 1fr' : '1fr', gap: 10, alignItems:'center' }}>
+          {step > 0 && (
+            <button onClick={back} style={{
+              height: 50,
+              border:`1px solid ${KUN.hair}`,
+              background:'#fff',
+              color: KUN.inkSoft,
+              borderRadius: 999,
+              fontFamily: T_FT, fontSize: 14, fontWeight: 700,
+              cursor:'pointer',
+            }}>
+              Atrás
+            </button>
+          )}
+
+          {/* Primary button — DS pill */}
+          <button onClick={advance} style={{
+            width:'100%', padding: '14px 18px', height: 50, boxSizing:'border-box',
+            background: KUN.brick, color: '#fff',
+            border:'none', borderRadius: 999,
+            fontFamily: T_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
+            cursor:'pointer',
+          }}>
+            {current.btn}
+          </button>
+        </div>
 
         {!isLast && <div style={{ position:'relative', zIndex: 1 }}><SkipLink light /></div>}
       </div>
@@ -260,10 +342,15 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
         bottom: tabRect.cardBottom,
         zIndex: 10,
       }}>
+        <div style={getTourMascotStyle(current, tabRect)}>
+          <TourMascot variant={current.mascotVariant} size={current.mascotSize} flipX={current.mascotFlipX} />
+        </div>
         <div style={{
+          position:'relative',
+          zIndex: 10,
           background: '#fff',
           borderRadius: 28,
-          overflow:'hidden',
+          overflow:'visible',
           border: `1px solid ${KUN.hair}`,
           boxShadow: '0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.12)',
         }}>
@@ -271,19 +358,12 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
           <div style={{ height: 4, background: KUN.brick }}/>
 
           <div style={{
-            padding: '18px 20px 22px',
+            padding: current.mascotPosition === 'guideHome'
+              ? '18px 20px 82px'
+              : `${current.mascotContentPaddingTop || 116}px 20px 22px`,
             display:'flex', flexDirection:'column',
             alignItems:'center', gap: 14,
           }}>
-            {/* KUN small */}
-            <div style={{
-              width: 58, height: 58, borderRadius: 20,
-              background: KUN.rosehip,
-              display:'flex', alignItems:'center', justifyContent:'center',
-            }}>
-              <KunImg size={42} />
-            </div>
-
             {/* Message */}
             <div style={{
               fontFamily: T_FB, fontSize: 14, fontWeight: 400, color: KUN.ink,
@@ -292,30 +372,32 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
               {current.bubble}
             </div>
 
-            {/* Arrow hint pointing down to the highlighted tab */}
-            <div style={{
-              display:'flex', alignItems:'center', gap: 6,
-              fontFamily: T_FT, fontSize: 12, fontWeight: 700, color: KUN.brick,
-              letterSpacing: 0.2,
-            }}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 2V12M7 12L3 8M7 12L11 8"
-                  stroke={KUN.brick} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Ver abajo
+            <div style={{ width:'100%', display:'grid', gridTemplateColumns: step > 0 ? '92px 1fr' : '1fr', gap: 10, alignItems:'center' }}>
+              {step > 0 && (
+                <button onClick={back} style={{
+                  height: 42,
+                  border:`1px solid ${KUN.hair}`,
+                  background:'#fff',
+                  color: KUN.inkSoft,
+                  borderRadius: 999,
+                  fontFamily: T_FT, fontSize: 13.5, fontWeight: 700,
+                  cursor:'pointer',
+                }}>
+                  Atrás
+                </button>
+              )}
+
+              {/* Next button — DS pill */}
+              <button onClick={advance} style={{
+                width:'100%', padding: '11px 18px', height: 42, boxSizing:'border-box',
+                background: KUN.brick, color: '#fff',
+                border:'none', borderRadius: 999,
+                fontFamily: T_FT, fontSize: 13.5, fontWeight: 700, letterSpacing: -0.1,
+                cursor:'pointer',
+              }}>
+                {current.btn}
+              </button>
             </div>
-
-            {/* Next button — DS pill */}
-            <button onClick={advance} style={{
-              width:'100%', padding: '11px 18px', height: 42, boxSizing:'border-box',
-              background: KUN.brick, color: '#fff',
-              border:'none', borderRadius: 999,
-              fontFamily: T_FT, fontSize: 13.5, fontWeight: 700, letterSpacing: -0.1,
-              cursor:'pointer',
-            }}>
-              {current.btn}
-            </button>
-
             <SkipLink />
           </div>
         </div>
@@ -325,3 +407,5 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
 }
 
 window.ScreenTour = ScreenTour;
+
+
