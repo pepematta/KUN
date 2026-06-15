@@ -616,11 +616,14 @@ function Prototype() {
     });
   }, []);
 
-  // Reset when a different user logs in/out
+  // Reset when a different user logs in/out.
+  // OJO: depende de activeChildId (ID con timestamp que se regenera en cada
+  // alta) y NO de authData?.rut, que ya no existe y quedaría siempre undefined,
+  // impidiendo el reseteo del tour al re-loguearse sin recargar la página.
   React.useEffect(() => {
     setTourDone(!WELCOME_TOUR_ENABLED || !!authData?.tourDone);
-    setActiveChildId(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
-  }, [authData?.rut]);
+    setActiveChildId(authData?.activeChildId || authData?.children?.[0]?.id || 'child-1');
+  }, [authData?.activeChildId, authData?.tourDone]);
 
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
