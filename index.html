@@ -49,9 +49,9 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="kun-env.js?v=1"></script>
-<script type="text/babel" src="analytics.jsx?v=3"></script>
+<script type="text/babel" src="analytics.jsx?v=4"></script>
 <script type="text/babel" src="edu-shared.jsx?v=12"></script>
-<script type="text/babel" src="screen-auth.jsx?v=11"></script>
+<script type="text/babel" src="screen-auth.jsx?v=20"></script>
 <script type="text/babel" src="screen-tour.jsx?v=5"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=6"></script>
 <script type="text/babel" src="screen-baby-status.jsx?v=10"></script>
@@ -279,13 +279,47 @@ function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactari
 
 function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMinutes = 60, onReminderChange }) {
   const [parentName, setParentName] = React.useState(authData?.parentName || '');
-  const [babyName,   setBabyName]   = React.useState(authData?.babyName   || '');
-  const [familyRole, setFamilyRole] = React.useState(authData?.familyRole || 'parent');
+  const [familyRole, setFamilyRole] = React.useState(authData?.familyRole || 'mama');
+  const [birthDate, setBirthDate] = React.useState(authData?.birthDate || '');
+  const [gestWeeks, setGestWeeks] = React.useState(
+    (authData?.gestWeeks === 0 || authData?.gestWeeks) ? String(authData.gestWeeks) : ''
+  );
+  const [gestDays, setGestDays] = React.useState(
+    (authData?.gestDays === 0 || authData?.gestDays) ? String(authData.gestDays) : '0'
+  );
+  const [children, setChildren] = React.useState(() => {
+    const list = Array.isArray(authData?.children) ? authData.children : [];
+    if (!list.length) {
+      return [{ id: 'child-1', name: authData?.babyName || '', sex: '' }];
+    }
+    return list.map((c, i) => ({
+      id: c.id || `child-${i + 1}`,
+      name: c.name || '',
+      sex: c.sex || '',
+    }));
+  });
   const [reminder, setReminder] = React.useState(String(lactarioReminderMinutes || 60));
+
+  const updateChild = (index, patch) => {
+    setChildren(prev => prev.map((c, i) => (i === index ? { ...c, ...patch } : c)));
+  };
 
   const handleSave = () => {
     onReminderChange && onReminderChange(Number(reminder));
-    onSave({ parentName: parentName.trim(), babyName: babyName.trim(), familyRole });
+    const weeksNum = parseInt(gestWeeks, 10);
+    const preparedChildren = children.map((c, i) => ({
+      id: c.id || `child-${i + 1}`,
+      name: (c.name || '').trim() || `Bebé ${i + 1}`,
+      sex: c.sex || '',
+    }));
+    onSave({
+      parentName: parentName.trim(),
+      familyRole,
+      birthDate,
+      gestWeeks: Number.isFinite(weeksNum) ? weeksNum : '',
+      gestDays: Math.min(6, Math.max(0, parseInt(gestDays, 10) || 0)),
+      children: preparedChildren,
+    });
     onClose();
   };
 
@@ -327,13 +361,26 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMi
 
       <div style={{ flex: 1, overflowY:'auto', padding: '8px 20px 30px', display:'flex', flexDirection:'column', gap: 12 }}>
 
-        {/* Profile card */}
+        {/* 1. Información del usuario */}
         <div style={{
           background: '#fff', borderRadius: 24, padding: '22px 20px',
           border: `1px solid ${KUN.hair}`,
           display:'flex', flexDirection:'column', gap: 18,
         }}>
-          <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>Información personal</div>
+          <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>Información del usuario</div>
+
+          <div>
+            <label style={labelStyle}>PARENTESCO</label>
+            <select
+              style={inputStyle}
+              value={familyRole}
+              onChange={e => setFamilyRole(e.target.value)}
+            >
+              <option value="mama">Mamá</option>
+              <option value="papa">Papá</option>
+              <option value="external">Invitado externo</option>
+            </select>
+          </div>
 
           <div>
             <label style={labelStyle}>TU NOMBRE</label>
@@ -345,46 +392,123 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMi
               onChange={e => setParentName(e.target.value)}
             />
           </div>
+        </div>
+
+        {/* 2. Información general de los bebés */}
+        <div style={{
+          background: '#fff', borderRadius: 24, padding: '22px 20px',
+          border: `1px solid ${KUN.hair}`,
+          display:'flex', flexDirection:'column', gap: 18,
+        }}>
+          <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>Información general</div>
 
           <div>
-            <label style={labelStyle}>NOMBRE DE TU BEBÉ</label>
+            <label style={labelStyle}>FECHA DE NACIMIENTO DEL BEBÉ</label>
             <input
               style={inputStyle}
-              type="text"
-              placeholder="Nombre del bebé"
-              value={babyName}
-              onChange={e => setBabyName(e.target.value)}
+              type="date"
+              max={new Date().toISOString().slice(0, 10)}
+              value={birthDate}
+              onChange={e => setBirthDate(e.target.value)}
             />
           </div>
 
           <div>
-            <label style={labelStyle}>RUT DEL RECIÉN NACIDO</label>
-            <div style={{
-              padding: '14px 16px', borderRadius: 16,
-              background: KUN.cardSoft,
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 14, fontWeight: 500, color: KUN.inkMuted,
-              letterSpacing: 0.2,
-            }}>
-              {authData?.rut || '—'}
+            <label style={labelStyle}>EDAD GESTACIONAL AL NACER</label>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ flex: 1 }}>
+                <input
+                  style={inputStyle}
+                  type="number"
+                  min={20}
+                  max={44}
+                  inputMode="numeric"
+                  placeholder="Semanas"
+                  value={gestWeeks}
+                  onChange={e => setGestWeeks(e.target.value)}
+                />
+                <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, color: KUN.inkMuted, marginTop: 6 }}>Semanas</div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <select
+                  style={inputStyle}
+                  value={gestDays}
+                  onChange={e => setGestDays(e.target.value)}
+                >
+                  {[0, 1, 2, 3, 4, 5, 6].map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, color: KUN.inkMuted, marginTop: 6 }}>Días</div>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div>
-            <label style={labelStyle}>PARENTESCO</label>
-            <select
-              style={inputStyle}
-              value={familyRole}
-              onChange={e => setFamilyRole(e.target.value)}
-            >
-              <option value="parent">Mamá / Papá</option>
-              <option value="abuela">Abuela</option>
-              <option value="abuelo">Abuelo</option>
-              <option value="family">Otro familiar</option>
-              <option value="external">Invitado externo</option>
-            </select>
+        {/* 3. Datos de cada bebé */}
+        <div style={{
+          background: '#fff', borderRadius: 24, padding: '22px 20px',
+          border: `1px solid ${KUN.hair}`,
+          display:'flex', flexDirection:'column', gap: 18,
+        }}>
+          <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
+            {children.length > 1 ? 'Datos de cada bebé' : 'Datos del bebé'}
           </div>
 
+          {children.map((child, index) => (
+            <div key={child.id || index} style={{ display:'flex', flexDirection:'column', gap: 14 }}>
+              {children.length > 1 && (
+                <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 13, fontWeight: 700, color: KUN.brick, letterSpacing: 0.2 }}>
+                  Hijo/a {index + 1}
+                </div>
+              )}
+              <div>
+                <label style={labelStyle}>NOMBRE</label>
+                <input
+                  style={inputStyle}
+                  type="text"
+                  placeholder={`Nombre de bebé ${index + 1}`}
+                  value={child.name}
+                  onChange={e => updateChild(index, { name: e.target.value })}
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>SEXO</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[{ value:'masculino', label:'Masculino' }, { value:'femenino', label:'Femenino' }].map(opt => {
+                    const selected = (child.sex || '') === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => updateChild(index, { sex: opt.value })}
+                        style={{
+                          height: 44, borderRadius: 14,
+                          border: `1.5px solid ${selected ? KUN.brick : KUN.hair}`,
+                          background: selected ? KUN.rosehip : '#fff',
+                          color: KUN.ink, fontFamily: 'Poppins, sans-serif',
+                          fontWeight: selected ? 700 : 500, fontSize: 14, cursor: 'pointer',
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {index < children.length - 1 && (
+                <div style={{ height: 1, background: KUN.hair, margin: '4px 0' }} />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* 4. Recordatorio lactario */}
+        <div style={{
+          background: '#fff', borderRadius: 24, padding: '22px 20px',
+          border: `1px solid ${KUN.hair}`,
+          display:'flex', flexDirection:'column', gap: 18,
+        }}>
+          <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>Recordatorio</div>
           <div>
             <label style={labelStyle}>RECORDATORIO LACTARIO</label>
             <select
@@ -433,7 +557,7 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMi
             <div>
               <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 15, fontWeight: 700, color: '#D94F3D' }}>Cerrar sesión</div>
               <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, marginTop: 1, letterSpacing: 0.2 }}>
-                RUT recién nacido {authData?.rut}
+                {authData?.babyName ? `Bebé: ${authData.babyName}` : 'Sesión activa'}
               </div>
             </div>
           </div>
@@ -542,6 +666,23 @@ function Prototype() {
   const linkedClinicalBaby = activeChild?.clinical || clinicalBabies.find(b => b.occupied && b.rut === authData?.rut);
 
   // Derived names (with fallbacks)
+  // Segmentación PostHog por tipo de usuario (sin datos personales):
+  // mamá/papá = familia del bebé; invitado externo = familiar/amigo, etc.
+  // "vinculado_neonatologia" indica si el RUT coincide con un bebé real
+  // hospitalizado (señal más fuerte de "padre/madre de UCIN").
+  React.useEffect(() => {
+    if (!authData) return;
+    const parentesco = authData.role === 'staff' ? 'staff' : (authData.familyRole || 'mama');
+    const tipoUsuario = authData.role === 'staff'
+      ? 'personal_salud'
+      : (parentesco === 'external' ? 'invitado_externo' : 'padre_madre');
+    window.KUNAnalytics?.register({
+      parentesco,
+      tipo_usuario: tipoUsuario,
+      vinculado_neonatologia: !!linkedClinicalBaby,
+    });
+  }, [authData?.role, authData?.familyRole, !!linkedClinicalBaby]);
+
   const parentName = authData?.parentName || '';
   const babyName   = activeChild?.name || linkedClinicalBaby?.babyName || authData?.babyName || 'Sofía';
   const primaryBabyName = primaryChild?.name || authData?.babyName || 'Sofía';
@@ -608,12 +749,18 @@ function Prototype() {
     });
   };
 
-  const saveSettings = ({ parentName: pn, babyName: bn, familyRole }) => {
-    const updatedChildren = familyChildren.map(child => {
-      const nextChild = child.id === activeChild?.id ? { ...child, name: bn } : child;
-      return { id: nextChild.id, rut: nextChild.rut, name: nextChild.name, sex: nextChild.sex };
+  const saveSettings = ({ parentName: pn, familyRole, birthDate, gestWeeks, gestDays, children: editedChildren }) => {
+    const incoming = Array.isArray(editedChildren) ? editedChildren : [];
+    const updatedChildren = incoming.map((child, i) => {
+      const existing = familyChildren.find(c => c.id === child.id) || {};
+      return { ...existing, id: child.id || `child-${i + 1}`, name: child.name, sex: child.sex };
     });
-    const updated = { ...authData, parentName: pn, babyName: bn, familyRole, children: updatedChildren };
+    const activeMatch = updatedChildren.find(c => c.id === activeChild?.id) || updatedChildren[0];
+    const updated = {
+      ...authData, parentName: pn, babyName: activeMatch?.name || authData?.babyName, familyRole,
+      birthDate, gestWeeks, gestDays,
+      children: updatedChildren,
+    };
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
   };
@@ -951,7 +1098,7 @@ function Prototype() {
       view={bondView} setView={setBondView}
       recordings={recordings} addRecording={addRecording}
       babyName={primaryBabyName}
-      canEditDiary={authData.role === 'parent' && (authData.familyRole || 'parent') === 'parent'}
+      canEditDiary={authData.role === 'parent' && ['mama', 'papa', 'parent'].includes(authData.familyRole || 'mama')}
     />;
   } else {
     body = <ScreenComunidad

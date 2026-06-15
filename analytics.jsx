@@ -86,6 +86,7 @@ const KUNAnalytics = {
   initialized: false,
   configured: false,
   queue: [],
+  superProps: {},
   deviceId: getAnonymousDeviceId(),
 
   init() {
@@ -116,12 +117,23 @@ const KUNAnalytics = {
         persistence: 'localStorage',
         loaded: (posthog) => {
           posthog.identify(this.deviceId);
-          posthog.register({ anonymous_device_id: this.deviceId });
+          posthog.register({ anonymous_device_id: this.deviceId, ...this.superProps });
           this.enabled = true;
           this.queue.splice(0).forEach(item => posthog.capture(item.eventName, item.props));
         },
       });
     });
+  },
+
+  // Registra "super properties" persistentes que se adjuntan a TODOS los
+  // eventos y a la grabación de sesión. Útil para segmentar por tipo de
+  // usuario (mamá / papá / invitado externo) sin datos personales.
+  register(props = {}) {
+    const safe = sanitizeAnalyticsProps(props);
+    this.superProps = { ...this.superProps, ...safe };
+    if (this.enabled && window.posthog) {
+      window.posthog.register(this.superProps);
+    }
   },
 
   track(eventName, props = {}) {

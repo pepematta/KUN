@@ -35,23 +35,6 @@ const A_FT = 'Quicksand, sans-serif';
 const A_FB = 'Poppins, sans-serif';
 
 // ── RUT helpers ─────────────────────────────────────
-function formatRut(value) {
-  let clean = String(value || '').replace(/[^0-9kK]/g, '').toUpperCase();
-  if (clean.length > 9) clean = clean.slice(0, 9);
-  if (clean.length < 2) return clean;
-  const dv = clean.slice(-1);
-  const body = clean.slice(0, -1);
-  let formatted = '';
-  for (let i = body.length; i > 0; i -= 3) {
-    const start = Math.max(0, i - 3);
-    formatted = body.slice(start, i) + (formatted ? '.' + formatted : '');
-  }
-  return formatted + '-' + dv;
-}
-function isValidRut(rut) {
-  const clean = String(rut || '').replace(/[^0-9kK]/g, '');
-  return clean.length >= 8;
-}
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
 }
@@ -379,292 +362,238 @@ function WorkerLoginView({ onBack, onSubmit }) {
   );
 }
 
-function RutEntryView({ onContinue, onBack, initial }) {
-  const [rut, setRut] = React.useState(initial || '');
-  const valid = isValidRut(rut);
-  return (
-    <>
-      <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1 }}>
-        <AuthBack onBack={onBack} />
-        <div style={{ padding: '18px 28px 0' }}>
-          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Ingresa el RUT de tu recién nacido
-          </div>
-          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Usaremos el RUT de tu hijo/a para encontrar su cuenta y proteger su información.
-          </div>
-        </div>
-        <div style={{ padding: '28px 28px 0' }}>
-          <div style={labelStyle}>RUT del recién nacido</div>
-          <input
-            value={rut}
-            onChange={(e) => setRut(formatRut(e.target.value))}
-            onKeyDown={(e) => e.key === 'Enter' && valid && onContinue(rut)}
-            placeholder="12.345.678-9"
-            inputMode="text"
-            autoComplete="off"
-            autoFocus
-            style={{ ...inputStyle, fontFamily: A_FT, fontSize: 16, fontWeight: 700 }}
-          />
-        </div>
-      </div>
-      <div style={{ flex: 1 }}/>
-      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={() => onContinue(rut)} disabled={!valid}>
-          Continuar
-        </PrimaryButton>
-      </div>
-    </>
-  );
-}
+const PARENTESCO_OPTIONS = [
+  { value: 'mama', label: 'Mamá' },
+  { value: 'papa', label: 'Papá' },
+  { value: 'external', label: 'Invitado externo' },
+];
 
-function CreatePasswordView({ rut, onSubmit, onBack }) {
-  const [pass, setPass] = React.useState('');
-  const [confirm, setConfirm] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [err, setErr] = React.useState('');
-  const mismatch = pass.length > 0 && confirm.length > 0 && pass !== confirm;
-  const valid = pass.length >= 6 && pass === confirm && isValidEmail(email);
-  const handle = () => {
-    if (pass.length < 6) return setErr('La contraseña debe tener al menos 6 caracteres.');
-    if (pass !== confirm) return setErr('Las contraseñas no coinciden.');
-    if (!isValidEmail(email)) return setErr('Ingresa un correo válido para recuperar tu contraseña.');
-    setErr('');
-    onSubmit(pass, email.trim());
+const MAX_CHILDREN = 4;
+
+function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName, initialChildren, initialBirthDate, initialGestWeeks, initialGestDays }) {
+  const [familyRole, setFamilyRole] = React.useState(initialFamilyRole || 'mama');
+  const [parentName, setParentName] = React.useState(initialParentName || '');
+  const [birthDate, setBirthDate] = React.useState(initialBirthDate || '');
+  const [gestWeeks, setGestWeeks] = React.useState(
+    (initialGestWeeks === 0 || initialGestWeeks) ? String(initialGestWeeks) : ''
+  );
+  const [gestDays, setGestDays] = React.useState(
+    (initialGestDays === 0 || initialGestDays) ? String(initialGestDays) : '0'
+  );
+  const [children, setChildren] = React.useState(
+    (Array.isArray(initialChildren) && initialChildren.length > 0)
+      ? initialChildren
+      : [{ id: makeChildId(0), name: '', sex: '' }]
+  );
+
+  const updateChild = (index, patch) => {
+    setChildren(prev => prev.map((child, i) => i === index ? { ...child, ...patch } : child));
   };
+  const addChild = () => {
+    setChildren(prev => prev.length >= MAX_CHILDREN ? prev : [...prev, { id: makeChildId(prev.length), name: '', sex: '' }]);
+  };
+  const removeChild = (index) => {
+    setChildren(prev => prev.length <= 1 ? prev : prev.filter((_, i) => i !== index));
+  };
+
+  const weeksNum = parseInt(gestWeeks, 10);
+  const daysNum = parseInt(gestDays, 10) || 0;
+  const gestValid = Number.isFinite(weeksNum) && weeksNum >= 20 && weeksNum <= 44;
+  const valid = !!birthDate && gestValid;
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const handleContinue = () => {
+    if (!valid) return;
+    const prepared = children.map((child, index) => ({
+      id: child.id || makeChildId(index),
+      name: (child.name || '').trim(),
+      sex: child.sex || '',
+    }));
+    onContinue({
+      familyRole, parentName: parentName.trim(), birthDate,
+      gestWeeks: weeksNum,
+      gestDays: Math.min(6, Math.max(0, daysNum)),
+      children: prepared,
+    });
+  };
+
   return (
     <>
       <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1 }}>
+      <div style={{ position:'relative', zIndex: 1, flex: 1, overflowY: 'auto', paddingBottom: 16 }}>
         <AuthBack onBack={onBack} />
         <div style={{ padding: '18px 28px 0' }}>
           <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Crea tu contraseña
+            Cuéntanos de tu recién nacido
           </div>
           <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Es la primera vez que ingresas con el RUT <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span>. Elige una contraseña y deja un correo de respaldo.
+            Con estos datos personalizamos el acompañamiento para tu bebé.
           </div>
         </div>
+
         <div style={{ padding: '24px 28px 0' }}>
-          <div style={labelStyle}>Nueva contraseña</div>
+          <div style={labelStyle}>¿Cuál es tu parentesco con el bebé?</div>
+          <select
+            value={familyRole}
+            onChange={(e) => setFamilyRole(e.target.value)}
+            style={{ ...inputStyle, fontFamily: A_FB, fontSize: 15 }}
+          >
+            {PARENTESCO_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ padding: '18px 28px 0' }}>
+          <div style={labelStyle}>¿Cómo te llamas?</div>
           <input
-            type="password" value={pass} onChange={(e) => setPass(e.target.value)}
-            placeholder="Mínimo 6 caracteres" autoFocus
-            style={inputStyle}
+            value={parentName}
+            onChange={(e) => setParentName(e.target.value)}
+            placeholder="Tu nombre"
+            autoComplete="name"
+            style={{ ...inputStyle, fontFamily: A_FB, fontSize: 15 }}
           />
-          <div style={{ height: 14 }} />
-          <div style={labelStyle}>Confirma tu contraseña</div>
+        </div>
+
+        <div style={{ padding: '18px 28px 0' }}>
+          <div style={labelStyle}>Fecha de nacimiento del bebé</div>
           <input
-            type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && valid && handle()}
-            placeholder="Repítela aquí"
-            style={{
-              ...inputStyle,
-              borderColor: mismatch ? '#D14B3A' : KUN.hair,
-            }}
+            type="date"
+            value={birthDate}
+            max={todayStr}
+            onChange={(e) => setBirthDate(e.target.value)}
+            style={{ ...inputStyle, fontFamily: A_FB, fontSize: 15 }}
           />
-          {mismatch && (
-            <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>
-              Las contraseñas no coinciden.
+        </div>
+
+        <div style={{ padding: '18px 28px 0' }}>
+          <div style={labelStyle}>Edad gestacional al nacer</div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{ flex: 1 }}>
+              <input
+                type="number"
+                value={gestWeeks}
+                min={20}
+                max={44}
+                onChange={(e) => setGestWeeks(e.target.value)}
+                placeholder="Semanas"
+                inputMode="numeric"
+                style={{ ...inputStyle, fontFamily: A_FT, fontSize: 15, fontWeight: 700 }}
+              />
+              <div style={{ marginTop: 6, fontFamily: A_FB, fontSize: 11.5, color: KUN.inkMuted, fontWeight: 400 }}>Semanas</div>
             </div>
-          )}
-          <div style={{ height: 14 }} />
-          <div style={labelStyle}>Correo de respaldo</div>
-          <input
-            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && valid && handle()}
-            placeholder="correo@ejemplo.cl"
-            autoComplete="email"
-            style={inputStyle}
-          />
-          {err && (
-            <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>
-          )}
+            <div style={{ flex: 1 }}>
+              <select
+                value={gestDays}
+                onChange={(e) => setGestDays(e.target.value)}
+                style={{ ...inputStyle, fontFamily: A_FT, fontSize: 15, fontWeight: 700 }}
+              >
+                {[0, 1, 2, 3, 4, 5, 6].map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <div style={{ marginTop: 6, fontFamily: A_FB, fontSize: 11.5, color: KUN.inkMuted, fontWeight: 400 }}>Días</div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div style={{ flex: 1 }}/>
-      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={handle} disabled={!valid}>
-          Crear cuenta
-        </PrimaryButton>
-      </div>
-    </>
-  );
-}
 
-function LoginPasswordView({ rut, expectedPassword, onSubmit, onBack, onForgot }) {
-  const [pass, setPass] = React.useState('');
-  const [err, setErr] = React.useState('');
-  const handle = () => {
-    if (pass === expectedPassword) { setErr(''); onSubmit(); }
-    else setErr('La contraseña no es correcta.');
-  };
-  return (
-    <>
-      <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1 }}>
-        <AuthBack onBack={onBack} />
-        <div style={{ padding: '18px 28px 0' }}>
-          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Ya tienes una cuenta
+        <div style={{ padding: '20px 28px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={labelStyle}>¿Cuántos hijos tienes internados?</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <div style={{
+                minWidth: 28, height: 28, borderRadius: 999, padding: '0 8px',
+                background: KUN.cream, border: `1px solid ${KUN.hair}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: A_FT, fontWeight: 700, fontSize: 14, color: KUN.ink,
+              }}>
+                {children.length}
+              </div>
+              <button
+                onClick={addChild}
+                disabled={children.length >= MAX_CHILDREN}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  height: 34, padding: '0 14px', borderRadius: 999,
+                  border: `1.5px solid ${children.length >= MAX_CHILDREN ? KUN.hair : KUN.brick}`,
+                  background: children.length >= MAX_CHILDREN ? '#fff' : KUN.rosehip,
+                  color: children.length >= MAX_CHILDREN ? KUN.inkMuted : KUN.ink,
+                  fontFamily: A_FT, fontWeight: 700, fontSize: 13.5,
+                  cursor: children.length >= MAX_CHILDREN ? 'default' : 'pointer',
+                }}
+              >
+                <span style={{ fontSize: 18, lineHeight: 1, marginTop: -1 }}>+</span>
+                Agregar
+              </button>
+            </div>
           </div>
-          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            El RUT <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span> ya está registrado. Ingresa tu contraseña para continuar.
+          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+            Si son mellizos, trillizos o más, podrás cambiar entre ellos desde Inicio y ver su estado por separado.
           </div>
         </div>
-        <div style={{ padding: '24px 28px 0' }}>
-          <div style={labelStyle}>Contraseña</div>
-          <input
-            type="password" value={pass} onChange={(e) => setPass(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && pass && handle()}
-            placeholder="Tu contraseña" autoFocus
-            style={inputStyle}
-          />
-          {err && (
-            <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>
-          )}
-          <div onClick={onForgot} style={{
-            marginTop: 14, fontFamily: A_FT, fontSize: 13, fontWeight: 700,
-            color: KUN.brick, cursor: 'pointer', display: 'inline-block',
-          }}>¿Olvidaste tu contraseña?</div>
-        </div>
-      </div>
-      <div style={{ flex: 1 }}/>
-      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={handle} disabled={!pass}>
-          Entrar
-        </PrimaryButton>
-      </div>
-    </>
-  );
-}
 
-function ForgotEmailView({ rut, backupEmail, onBack, onSendCode }) {
-  const [email, setEmail] = React.useState('');
-  const [err, setErr] = React.useState('');
-  const canContinue = isValidEmail(email);
-  const handle = () => {
-    if (!canContinue) return setErr('Ingresa un correo válido.');
-    if (backupEmail && email.trim().toLowerCase() !== backupEmail.toLowerCase()) {
-      return setErr('Ese correo no coincide con el correo de respaldo registrado.');
-    }
-    setErr('');
-    onSendCode(email.trim());
-  };
-  return (
-    <>
-      <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1 }}>
-        <AuthBack onBack={onBack} />
-        <div style={{ padding: '18px 28px 0' }}>
-          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Recupera tu contraseña
-          </div>
-          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Escribe el correo de respaldo asociado al RUT <span style={{ fontWeight: 600, color: KUN.ink }}>{rut}</span>. Te enviaremos un código para restablecerla.
-          </div>
-        </div>
-        <div style={{ padding: '24px 28px 0' }}>
-          <div style={labelStyle}>Correo de respaldo</div>
-          <input
-            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && canContinue && handle()}
-            placeholder="correo@ejemplo.cl" autoFocus autoComplete="email"
-            style={inputStyle}
-          />
-          {err && <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>}
+        <div style={{ padding: '14px 28px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {children.map((child, index) => (
+            <div key={child.id} style={{
+              background: '#fff', border: `1px solid ${KUN.hair}`, borderRadius: 18,
+              padding: 14,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <div style={labelStyle}>{`Hijo/a ${index + 1}`}</div>
+                {index > 0 && (
+                  <button
+                    onClick={() => removeChild(index)}
+                    style={{
+                      border: 'none', background: 'transparent', cursor: 'pointer',
+                      color: KUN.inkMuted, fontFamily: A_FB, fontSize: 12.5, fontWeight: 600,
+                      padding: 0,
+                    }}
+                  >
+                    Quitar
+                  </button>
+                )}
+              </div>
+              <input
+                value={children[index]?.name || ''}
+                onChange={(e) => updateChild(index, { name: e.target.value })}
+                onKeyDown={(e) => e.key === 'Enter' && valid && handleContinue()}
+                placeholder={`Nombre de bebé ${index + 1}`}
+                autoFocus={index === 0}
+                style={inputStyle}
+              />
+              <div style={{ height: 12 }} />
+              <div style={{ ...labelStyle, marginBottom: 8 }}>Sexo</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                {[
+                  { value: 'masculino', label: 'Masculino' },
+                  { value: 'femenino', label: 'Femenino' },
+                ].map(opt => {
+                  const selected = (children[index]?.sex || '') === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => updateChild(index, { sex: opt.value })}
+                      style={{
+                        height: 44, borderRadius: 14,
+                        border: `1.5px solid ${selected ? KUN.brick : KUN.hair}`,
+                        background: selected ? KUN.rosehip : '#fff',
+                        color: KUN.ink,
+                        fontFamily: A_FB, fontWeight: selected ? 700 : 500, fontSize: 14,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{ flex: 1 }}/>
       <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={handle} disabled={!canContinue}>
-          Enviar código
-        </PrimaryButton>
-      </div>
-    </>
-  );
-}
-
-function RecoveryCodeView({ email, code, onBack, onVerified }) {
-  const [typed, setTyped] = React.useState('');
-  const [err, setErr] = React.useState('');
-  const handle = () => {
-    if (typed.trim() !== code) return setErr('El código no coincide.');
-    setErr('');
-    onVerified();
-  };
-  return (
-    <>
-      <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1 }}>
-        <AuthBack onBack={onBack} />
-        <div style={{ padding: '18px 28px 0' }}>
-          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Ingresa el código
-          </div>
-          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            En este prototipo, el código enviado a <span style={{ fontWeight: 600, color: KUN.ink }}>{email}</span> es <span style={{ fontWeight: 700, color: KUN.brick }}>{code}</span>.
-          </div>
-        </div>
-        <div style={{ padding: '24px 28px 0' }}>
-          <div style={labelStyle}>Código de recuperación</div>
-          <input
-            value={typed} onChange={(e) => setTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
-            onKeyDown={(e) => e.key === 'Enter' && typed.length === 6 && handle()}
-            placeholder="123456" inputMode="numeric" autoFocus
-            style={{ ...inputStyle, fontFamily: A_FT, fontSize: 20, fontWeight: 700, letterSpacing: 4, textAlign: 'center' }}
-          />
-          {err && <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>}
-        </div>
-      </div>
-      <div style={{ flex: 1 }}/>
-      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={handle} disabled={typed.length !== 6}>
-          Verificar código
-        </PrimaryButton>
-      </div>
-    </>
-  );
-}
-
-function ResetPasswordView({ onBack, onSubmit }) {
-  const [pass, setPass] = React.useState('');
-  const [confirm, setConfirm] = React.useState('');
-  const [err, setErr] = React.useState('');
-  const valid = pass.length >= 6 && pass === confirm;
-  const handle = () => {
-    if (pass.length < 6) return setErr('La contraseña debe tener al menos 6 caracteres.');
-    if (pass !== confirm) return setErr('Las contraseñas no coinciden.');
-    setErr('');
-    onSubmit(pass);
-  };
-  return (
-    <>
-      <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1 }}>
-        <AuthBack onBack={onBack} />
-        <div style={{ padding: '18px 28px 0' }}>
-          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            Crea una nueva contraseña
-          </div>
-          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Usa una clave nueva para volver a entrar a KUN.
-          </div>
-        </div>
-        <div style={{ padding: '24px 28px 0' }}>
-          <div style={labelStyle}>Nueva contraseña</div>
-          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Mínimo 6 caracteres" autoFocus style={inputStyle} />
-          <div style={{ height: 14 }} />
-          <div style={labelStyle}>Confirma tu contraseña</div>
-          <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && valid && handle()} placeholder="Repítela aquí" style={inputStyle} />
-          {err && <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>}
-        </div>
-      </div>
-      <div style={{ flex: 1 }}/>
-      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={handle} disabled={!valid}>
-          Guardar nueva contraseña
+        <PrimaryButton onClick={handleContinue} disabled={!valid}>
+          Continuar
         </PrimaryButton>
       </div>
     </>
@@ -676,137 +605,21 @@ function makeChildId(index) {
   return `child-${index + 1}-${Date.now()}`;
 }
 
-function normalizeAuthChildren(data) {
-  const existing = Array.isArray(data?.children) ? data.children : [];
-  const children = existing.length > 0
-    ? existing
-    : [{ id: data?.rut || 'child-1', rut: data?.rut || '', name: data?.babyName || '' }];
-  return children.map((child, index) => ({
-    id: child.id || child.rut || makeChildId(index),
-    rut: child.rut || (index === 0 ? data?.rut || '' : ''),
-    name: child.name || child.babyName || (index === 0 ? data?.babyName || '' : ''),
-  }));
-}
-
-function ChildrenSetupView({ sessionData, onSubmit }) {
-  const initialChildren = normalizeAuthChildren(sessionData);
-  const [count, setCount] = React.useState(Math.max(1, initialChildren.length || 1));
-  const [children, setChildren] = React.useState(() => initialChildren);
-
-  React.useEffect(() => {
-    setChildren(prev => {
-      const next = [...prev];
-      while (next.length < count) next.push({ id: makeChildId(next.length), rut: '', name: '' });
-      return next.slice(0, count);
-    });
-  }, [count]);
-
-  const updateChild = (index, patch) => {
-    setChildren(prev => prev.map((child, i) => i === index ? { ...child, ...patch } : child));
-  };
-
-  const preparedChildren = children.slice(0, count).map((child, index) => ({
-    id: child.id || child.rut || makeChildId(index),
-    rut: index === 0 ? (child.rut || sessionData?.rut || '') : (child.rut || ''),
-    name: child.name || `Bebé ${index + 1}`,
-  }));
-
-  return (
-    <>
-      <AuthShapes/>
-      <div style={{ position:'relative', zIndex: 1, flex: 1, overflowY: 'auto', paddingBottom: 16 }}>
-        <div style={{ padding: '72px 28px 0' }}>
-          <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
-            ¿Tienes más de un hijo internado?
-          </div>
-          <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
-            Si son mellizos, trillizos o más, podrás cambiar entre ellos desde Inicio y ver su estado por separado.
-          </div>
-        </div>
-        <div style={{ padding: '24px 28px 0' }}>
-          <div style={labelStyle}>Hijos internados</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-            {[1, 2, 3, 4].map(n => (
-              <button
-                key={n}
-                onClick={() => setCount(n)}
-                style={{
-                  height: 42, borderRadius: 999,
-                  border: `1.5px solid ${count === n ? KUN.brick : KUN.hair}`,
-                  background: count === n ? KUN.rosehip : '#fff',
-                  color: KUN.ink,
-                  fontFamily: A_FT, fontWeight: 700, fontSize: 15,
-                  cursor: 'pointer',
-                }}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {preparedChildren.map((child, index) => (
-              <div key={child.id} style={{
-                background: '#fff', border: `1px solid ${KUN.hair}`, borderRadius: 18,
-                padding: 14,
-              }}>
-                <div style={{ ...labelStyle, marginBottom: 10 }}>Hijo/a {index + 1}</div>
-                <input
-                  value={children[index]?.name || ''}
-                  onChange={(e) => updateChild(index, { name: e.target.value })}
-                  placeholder={`Nombre de bebé ${index + 1}`}
-                  style={inputStyle}
-                />
-                <div style={{ height: 10 }} />
-                <input
-                  value={index === 0 ? (children[index]?.rut || sessionData?.rut || '') : (children[index]?.rut || '')}
-                  onChange={(e) => updateChild(index, { rut: formatRut(e.target.value) })}
-                  placeholder={index === 0 ? 'RUT principal' : 'RUT opcional'}
-                  style={{ ...inputStyle, fontSize: 13.5 }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div style={{ flex: 1 }}/>
-      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
-        <PrimaryButton onClick={() => {
-          const first = preparedChildren[0] || {};
-          onSubmit({
-            ...sessionData,
-            rut: first.rut || sessionData?.rut,
-            babyName: first.name || sessionData?.babyName,
-            children: preparedChildren,
-            activeChildId: sessionData?.activeChildId || first.id,
-            childrenSetupDone: true,
-          });
-        }}>
-          Continuar
-        </PrimaryButton>
-      </div>
-    </>
-  );
-}
 
 function ScreenAuth({ onAuthenticated }) {
   const stored = KAuth.load();
   const [view, setView] = React.useState('role');
-  const [pendingRut, setPendingRut] = React.useState(stored?.rut || '');
-  const [storedPass, setStoredPass] = React.useState(stored?.password || null);
-  const [backupEmail, setBackupEmail] = React.useState(stored?.backupEmail || '');
-  const [recoveryCode, setRecoveryCode] = React.useState('');
-  const [recoveryEmail, setRecoveryEmail] = React.useState('');
-  const [pendingSession, setPendingSession] = React.useState(null);
+  const [pendingFamilyRole, setPendingFamilyRole] = React.useState(stored?.familyRole || 'mama');
+  const [pendingParentName, setPendingParentName] = React.useState(stored?.parentName || '');
+  const [pendingChildren, setPendingChildren] = React.useState([]);
+  const [pendingBirthDate, setPendingBirthDate] = React.useState('');
+  const [pendingGestWeeks, setPendingGestWeeks] = React.useState('');
+  const [pendingGestDays, setPendingGestDays] = React.useState('');
 
   const finishParentLogin = (data) => {
-    if (data.role === 'parent' && !data.childrenSetupDone) {
-      setPendingSession(data);
-      setView('children-setup');
-      return;
-    }
-    KAuth.save(data);
-    onAuthenticated(data);
+    const ready = { ...data, childrenSetupDone: true };
+    KAuth.save(ready);
+    onAuthenticated(ready);
   };
 
   return (
@@ -835,93 +648,39 @@ function ScreenAuth({ onAuthenticated }) {
         />
       )}
       {view === 'rut' && (
-        <RutEntryView
-          initial={pendingRut}
+        <BabyInfoView
+          initialFamilyRole={pendingFamilyRole}
+          initialParentName={pendingParentName}
+          initialChildren={pendingChildren}
+          initialBirthDate={pendingBirthDate}
+          initialGestWeeks={pendingGestWeeks}
+          initialGestDays={pendingGestDays}
           onBack={() => setView('role')}
-          onContinue={(rut) => {
-            setPendingRut(rut);
+          onContinue={({ familyRole, parentName, birthDate, gestWeeks, gestDays, children }) => {
+            setPendingFamilyRole(familyRole);
+            setPendingParentName(parentName);
+            setPendingChildren(children);
+            setPendingBirthDate(birthDate);
+            setPendingGestWeeks(gestWeeks);
+            setPendingGestDays(gestDays);
             const existing = KAuth.load();
-            if (existing && existing.rut === rut && existing.password) {
-              setStoredPass(existing.password);
-              setBackupEmail(existing.backupEmail || '');
-              setView('login-pass');
-            } else {
-              setView('create-pass');
-            }
-          }}
-        />
-      )}
-      {view === 'create-pass' && (
-        <CreatePasswordView
-          rut={pendingRut}
-          onBack={() => setView('rut')}
-          onSubmit={(pass, email) => {
-            const data = {
-              role: 'parent', rut: pendingRut, password: pass, backupEmail: email,
-              sessionActive: true, createdAt: Date.now(),
-            };
-            finishParentLogin(data);
-          }}
-        />
-      )}
-      {view === 'login-pass' && (
-        <LoginPasswordView
-          rut={pendingRut}
-          expectedPassword={storedPass}
-          onBack={() => setView('rut')}
-          onForgot={() => {
-            setView('forgot-email');
-          }}
-          onSubmit={() => {
-            const existing = KAuth.load() || {};
-            const data = { ...existing, sessionActive: true };
-            finishParentLogin(data);
-          }}
-        />
-      )}
-      {view === 'forgot-email' && (
-        <ForgotEmailView
-          rut={pendingRut}
-          backupEmail={backupEmail}
-          onBack={() => setView('login-pass')}
-          onSendCode={(email) => {
-            setRecoveryEmail(email);
-            setRecoveryCode(String(Math.floor(100000 + Math.random() * 900000)));
-            setView('recovery-code');
-          }}
-        />
-      )}
-      {view === 'recovery-code' && (
-        <RecoveryCodeView
-          email={recoveryEmail}
-          code={recoveryCode}
-          onBack={() => setView('forgot-email')}
-          onVerified={() => setView('reset-pass')}
-        />
-      )}
-      {view === 'reset-pass' && (
-        <ResetPasswordView
-          onBack={() => setView('recovery-code')}
-          onSubmit={(pass) => {
-            const existing = KAuth.load() || {};
-            const data = {
-              ...existing,
-              role: 'parent',
-              rut: pendingRut,
-              password: pass,
-              backupEmail: existing.backupEmail || recoveryEmail,
-              sessionActive: true,
-            };
-            finishParentLogin(data);
-          }}
-        />
-      )}
-      {view === 'children-setup' && pendingSession && (
-        <ChildrenSetupView
-          sessionData={pendingSession}
-          onSubmit={(data) => {
-            KAuth.save(data);
-            onAuthenticated(data);
+            const source = (children && children.length)
+              ? children
+              : [{ id: 'child-1', name: '', sex: '' }];
+            const prepared = source.map((child, index) => ({
+              id: child.id || `child-${index + 1}`,
+              name: (child.name || '').trim() || `Bebé ${index + 1}`,
+              sex: child.sex || '',
+            }));
+            const first = prepared[0];
+            finishParentLogin({
+              ...(existing || {}),
+              role: 'parent', familyRole: familyRole || 'mama',
+              parentName: (parentName || '').trim(),
+              birthDate, gestWeeks, gestDays,
+              children: prepared, activeChildId: first.id, babyName: first.name,
+              sessionActive: true, createdAt: existing?.createdAt || Date.now(),
+            });
           }}
         />
       )}
