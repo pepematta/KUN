@@ -72,6 +72,7 @@ const { useState } = React;
 
 const BABY_STATUS_BY_CHILD_KEY = 'kun_baby_status_by_child_v1';
 const LEGACY_BABY_STATUS_KEY = 'kun_baby_status_v1';
+const WELCOME_TOUR_ENABLED = true;
 
 function childStatusKey(child, fallback = 'child-1') {
   return child?.id || child?.rut || fallback;
@@ -277,7 +278,7 @@ function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactari
   );
 }
 
-function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMinutes = 60, onReminderChange }) {
+function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lactarioReminderMinutes = 60, onReminderChange }) {
   const [parentName, setParentName] = React.useState(authData?.parentName || '');
   const [familyRole, setFamilyRole] = React.useState(authData?.familyRole || 'mama');
   const [birthDate, setBirthDate] = React.useState(authData?.birthDate || '');
@@ -535,6 +536,35 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, lactarioReminderMi
           Guardar cambios
         </button>
 
+        {/* Tutorial */}
+        <div style={{
+          background: '#fff', borderRadius: 22, padding: '4px 8px',
+          border: `1px solid ${KUN.hair}`,
+        }}>
+          <div onClick={onReplayTour} style={{
+            display:'flex', alignItems:'center', gap: 14, padding: '14px 10px',
+            cursor:'pointer',
+          }}>
+            <div style={{
+              width: 42, height: 42, borderRadius: 14,
+              background: KUN.accentSoft,
+              display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M5 5.8C5 4.8 5.8 4 6.8 4H12V20H6.8C5.8 20 5 19.2 5 18.2V5.8Z" stroke={KUN.brick} strokeWidth="1.7" strokeLinejoin="round"/>
+                <path d="M19 5.8C19 4.8 18.2 4 17.2 4H12V20H17.2C18.2 20 19 19.2 19 18.2V5.8Z" stroke={KUN.brick} strokeWidth="1.7" strokeLinejoin="round"/>
+                <path d="M8 8H10M14 8H16M8 11H10M14 11H16" stroke={KUN.brick} strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 15, fontWeight: 700, color: KUN.ink }}>Ver tutorial nuevamente</div>
+              <div style={{ fontSize: 12, color: KUN.inkMuted, fontWeight: 500, marginTop: 1, letterSpacing: 0.2 }}>
+                Recorre otra vez las secciones principales de KUN.
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Logout */}
         <div style={{
           background: '#fff', borderRadius: 22, padding: '4px 8px',
@@ -577,7 +607,7 @@ function Prototype() {
 
   // Tour: tied to each user's authData (not a global flag)
   // so a new user always sees the tour even on the same device.
-  const [tourDone, setTourDone] = useState(() => !!authData?.tourDone);
+  const [tourDone, setTourDone] = useState(() => !WELCOME_TOUR_ENABLED || !!authData?.tourDone);
 
   React.useEffect(() => {
     window.KUNAnalytics?.track('app_abierta', {
@@ -588,7 +618,7 @@ function Prototype() {
 
   // Reset when a different user logs in/out
   React.useEffect(() => {
-    setTourDone(!!authData?.tourDone);
+    setTourDone(!WELCOME_TOUR_ENABLED || !!authData?.tourDone);
     setActiveChildId(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
   }, [authData?.rut]);
 
@@ -607,6 +637,8 @@ function Prototype() {
   const [recordings, setRecordings] = useState([]);
   const [notifOpen, setNotifOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [manualTourOpen, setManualTourOpen] = useState(false);
+  const [manualTourReturn, setManualTourReturn] = useState(null);
   const [capsulaOpen, setCapsulaOpen] = useState(false);
   const [capsuleId, setCapsuleId] = useState(1);
   const [lactarioOpen,        setLactarioOpen]        = useState(false);
@@ -924,6 +956,24 @@ function Prototype() {
     window.KUNAnalytics?.track('tour_kun_saltado');
     finishTour();
   };
+  const replayTour = () => {
+    setManualTourReturn({ tab, eduSub, bondView, capsulaOpen, capsuleSource });
+    setSettingsOpen(false);
+    setCapsulaOpen(false);
+    setManualTourOpen(true);
+  };
+  const closeManualTour = () => {
+    const previous = manualTourReturn;
+    setManualTourOpen(false);
+    if (previous) {
+      setTab(previous.tab || 'home');
+      setEduSub(previous.eduSub || 'camino');
+      setBondView(previous.bondView || 'entry');
+      setCapsuleSource(previous.capsuleSource || { tab: 'edu', sub: 'camino' });
+      setCapsulaOpen(!!previous.capsulaOpen);
+    }
+    setManualTourReturn(null);
+  };
 
   const goToEdu = (sub = 'camino') => {
     setEduSub(sub);
@@ -1184,6 +1234,7 @@ function Prototype() {
             onSave={saveSettings}
             onClose={() => setSettingsOpen(false)}
             onLogout={handleLogout}
+            onReplayTour={replayTour}
             lactarioReminderMinutes={lactarioReminderMinutes}
             onReminderChange={setLactarioReminderMinutes}
           />}
@@ -1199,10 +1250,18 @@ function Prototype() {
           )}
 
           {/* Welcome tour — overlaid on top of the real app so nav is visible through cutout */}
-          {authData.role !== 'staff' && babyStatusDone && !tourDone && typeof window.ScreenTour === 'function' && (
+          {WELCOME_TOUR_ENABLED && authData.role !== 'staff' && babyStatusDone && !tourDone && typeof window.ScreenTour === 'function' && (
             <ScreenTour
               onDone={handleTourDone}
               onSkip={handleTourSkip}
+              onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
+            />
+          )}
+
+          {manualTourOpen && typeof window.ScreenTour === 'function' && (
+            <ScreenTour
+              onDone={closeManualTour}
+              onSkip={closeManualTour}
               onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
             />
           )}
