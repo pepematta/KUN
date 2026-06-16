@@ -54,8 +54,13 @@
 <script type="text/babel" src="screen-auth.jsx?v=21"></script>
 <script type="text/babel" src="screen-tour.jsx?v=31"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=6"></script>
+<<<<<<< HEAD
 <script type="text/babel" src="screen-baby-status.jsx?v=12"></script>
 <script type="text/babel" src="screen-home.jsx?v=33"></script>
+=======
+<script type="text/babel" src="screen-baby-status.jsx?v=10"></script>
+<script type="text/babel" src="screen-home.jsx?v=35"></script>
+>>>>>>> 6f7752a601df10dd0b5f36a54c79e81a361b596a
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
@@ -616,11 +621,14 @@ function Prototype() {
     });
   }, []);
 
-  // Reset when a different user logs in/out
+  // Reset when a different user logs in/out.
+  // OJO: depende de activeChildId (ID con timestamp que se regenera en cada
+  // alta) y NO de authData?.rut, que ya no existe y quedaría siempre undefined,
+  // impidiendo el reseteo del tour al re-loguearse sin recargar la página.
   React.useEffect(() => {
     setTourDone(!WELCOME_TOUR_ENABLED || !!authData?.tourDone);
-    setActiveChildId(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
-  }, [authData?.rut]);
+    setActiveChildId(authData?.activeChildId || authData?.children?.[0]?.id || 'child-1');
+  }, [authData?.activeChildId, authData?.tourDone]);
 
   const [tab, setTab] = useState('home');         // home | edu | bond | comm
   const [eduSub, setEduSub] = useState('camino'); // camino | perso | biblio
@@ -1128,6 +1136,9 @@ function Prototype() {
       activeChildId={activeChild?.id}
       onSelectChild={selectChild}
       activeChildVitalStatus={activeChild?.vitalStatus}
+      birthDate={authData?.birthDate}
+      gestWeeks={authData?.gestWeeks}
+      gestDays={authData?.gestDays}
       lactarioReservation={lactarioReservation}
       completedCapsulas={completedCapsulas}
       onOpenLactario={() => setLactarioOpen(true)}
