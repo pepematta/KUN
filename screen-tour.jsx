@@ -14,6 +14,7 @@ const T_FT = 'Quicksand, sans-serif';
 const T_FB = 'Poppins, sans-serif';
 
 const TOUR_MASCOTS = {
+  wave: 'assets/kun/kun-wave.svg',
   guideDown: 'assets/kun/kun-guide-down.svg',
   bondHero: 'assets/kun/kun-bond-hero.svg',
   learning: 'assets/kun/kun-learning.svg',
@@ -44,6 +45,8 @@ function measureTabRect(tabId) {
 const STEPS = [
   {
     type:   'full',
+    mascotVariant: 'wave',
+    mascotSize: 250,
     bubble: '¡Hola! Soy KUN. Voy a mostrarte todo lo que puedes hacer aquí para acompañar a tu bebé en este proceso. ¿Empezamos?',
     btn:    '¡Vamos!',
   },
@@ -91,6 +94,8 @@ const STEPS = [
     bubble: 'Ya estás listo. Recuerda que no estás solo en esto. Aquí estaremos contigo en cada paso. 🧡',
     btn:    'Comenzar',
     isLast: true,
+    mascotVariant: null,
+    videoAsset: './assets/kun/kun-tutorial-final.mp4?v=8',
   },
 ];
 
@@ -157,6 +162,95 @@ function TourMascot({ variant, size = 86, flipX = false }) {
         transform: flipX ? 'scaleX(-1)' : undefined,
       }}
     />
+  );
+}
+
+function TourFinalVideo({ src }) {
+  const videoRef = React.useRef(null);
+
+  const showVideoFrame = React.useCallback((video, time = 0.04) => {
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    try {
+      video.currentTime = Math.min(time, Math.max(video.duration - 0.04, 0));
+    } catch (error) {
+      // Some browsers reject seeking before enough metadata is available.
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (!src) return;
+    const video = videoRef.current;
+    if (video) {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.loop = false;
+      video.load?.();
+    }
+    const id = setTimeout(() => {
+      if (!videoRef.current) return;
+      const video = videoRef.current;
+      try {
+        if (video.readyState > 0) video.currentTime = 0;
+      } catch (error) {
+        // Keep playing even if the browser cannot seek yet.
+      }
+      video.play?.().catch?.(() => {});
+    }, 600);
+    return () => clearTimeout(id);
+  }, [src]);
+  if (!src) return null;
+  return (
+    <div style={{
+      width: 'min(350px, 86vw)',
+      height: 242,
+      margin: '0 auto 4px',
+      position: 'relative',
+      zIndex: 20,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      pointerEvents: 'none',
+      overflow: 'visible',
+      background: 'transparent',
+    }}>
+      <video
+        ref={videoRef}
+        key={src}
+        src={src}
+        autoPlay
+        defaultMuted
+        muted
+        playsInline
+        preload="auto"
+        aria-label="Kun"
+        controls={false}
+        onLoadedMetadata={(event) => {
+          showVideoFrame(event.currentTarget, 0.18);
+        }}
+        onCanPlay={(event) => {
+          showVideoFrame(event.currentTarget, 0.18);
+        }}
+        onEnded={(event) => {
+          const video = event.currentTarget;
+          video.pause?.();
+          showVideoFrame(video, 0.18);
+        }}
+        style={{
+          width: 350,
+          maxWidth: '86vw',
+          height: 242,
+          objectFit: 'contain',
+          display: 'block',
+          pointerEvents: 'none',
+          position: 'relative',
+          zIndex: 20,
+          opacity: 1,
+          clipPath: 'inset(2px 0 0 0)',
+        }}
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+    </div>
   );
 }
 
@@ -256,20 +350,40 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
         alignItems:'center', justifyContent:'center',
         padding: '48px 32px',
         gap: 22,
-        overflow: 'hidden',
+        overflow: isLast ? 'visible' : 'hidden',
         fontFamily: T_FB,
       }}>
         <TourShapes/>
 
-        {/* KUN mascot */}
-        <div style={{
-          position:'relative', zIndex: 1,
-          width: 120, height: 120, borderRadius: 40,
-          background: KUN.rosehip,
-          display:'flex', alignItems:'center', justifyContent:'center',
-        }}>
-          <KunImg size={88} />
-        </div>
+        {isLast && current.videoAsset ? (
+          <TourFinalVideo key={current.videoAsset} src={current.videoAsset} />
+        ) : current.mascotVariant ? (
+          <div style={{
+            position:'relative',
+            zIndex: 1,
+            width: current.mascotSize || 250,
+            height: current.mascotSize || 250,
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            pointerEvents:'none',
+          }}>
+            <TourMascot
+              variant={current.mascotVariant}
+              size={current.mascotSize || 250}
+              flipX={current.mascotFlipX}
+            />
+          </div>
+        ) : (
+          <div style={{
+            position:'relative', zIndex: 1,
+            width: 120, height: 120, borderRadius: 40,
+            background: KUN.rosehip,
+            display:'flex', alignItems:'center', justifyContent:'center',
+          }}>
+            <KunImg size={88} />
+          </div>
+        )}
 
         {/* Speech bubble */}
         <div style={{
@@ -354,9 +468,6 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
           border: `1px solid ${KUN.hair}`,
           boxShadow: '0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.12)',
         }}>
-          {/* accent top stripe */}
-          <div style={{ height: 4, background: KUN.brick }}/>
-
           <div style={{
             padding: current.mascotPosition === 'guideHome'
               ? '18px 20px 82px'

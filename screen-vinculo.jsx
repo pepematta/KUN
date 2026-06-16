@@ -1247,14 +1247,66 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
 }
 
 // ── Actividades con mi hijo ─────────────────────────────────
+const activityCardStyle = {
+  background: '#fff',
+  borderRadius: 22,
+  padding: '16px 18px',
+  border: `1px solid ${KUN.hair}`,
+  boxShadow: '0 8px 18px rgba(42,35,32,0.045)',
+};
+
+const activityTintCardStyle = (color, selected = false) => ({
+  ...activityCardStyle,
+  background: tint(color, 0.26),
+  border: selected ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
+});
+
+const activityPrimaryButtonStyle = {
+  width: '100%',
+  height: 50,
+  padding: '14px 22px',
+  borderRadius: 999,
+  border: 'none',
+  background: KUN.brick,
+  color: '#fff',
+  fontFamily: V_FT,
+  fontSize: 15,
+  fontWeight: 700,
+  letterSpacing: -0.1,
+  cursor: 'pointer',
+  boxSizing: 'border-box',
+};
+
+const activitySecondaryButtonStyle = {
+  width: '100%',
+  height: 50,
+  padding: '14px 18px',
+  borderRadius: 999,
+  border: `1px solid ${KUN.hair}`,
+  background: '#fff',
+  color: KUN.brick,
+  fontFamily: V_FT,
+  fontSize: 15,
+  fontWeight: 700,
+  letterSpacing: -0.1,
+  cursor: 'pointer',
+  boxSizing: 'border-box',
+};
+
+const activityMetaStyle = {
+  fontFamily: V_FT,
+  fontSize: 11,
+  fontWeight: 700,
+  color: KUN.brick,
+  letterSpacing: 0.6,
+  textTransform: 'uppercase',
+};
+
 function SiblingRecordCard({ onRecord }) {
   return (
     <div style={{
+      ...activityTintCardStyle(KUN.viola),
       margin: '0 20px 14px',
-      background: KUN.viola,
-      borderRadius: 22,
-      padding: '16px 18px',
-      border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
         Grabacion del hermanito
@@ -1262,18 +1314,7 @@ function SiblingRecordCard({ onRecord }) {
       <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 4 }}>
         Un hermano puede dejarle una voz o saludo especial a la guaguita.
       </div>
-      <button onClick={onRecord} style={{
-        width: '100%', marginTop: 12,
-        padding: '11px 14px',
-        borderRadius: 999,
-        border: 'none',
-        background: KUN.brick,
-        color: '#fff',
-        fontFamily: V_FT,
-        fontSize: 12.5,
-        fontWeight: 700,
-        cursor: 'pointer',
-      }}>
+      <button onClick={onRecord} style={{ ...activityPrimaryButtonStyle, marginTop: 12 }}>
         Grabar como hermanito
       </button>
     </div>
@@ -1296,8 +1337,8 @@ function KaraokeSection({ onRecord }) {
       </div>
       {karaokeOptions.map((option, i) => (
         <div key={option.title} style={{
-          background:'#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10,
-          border: `1px solid ${KUN.hair}`,
+          ...activityCardStyle,
+          marginBottom: 10,
         }}>
           <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
             <div style={{
@@ -1312,7 +1353,7 @@ function KaraokeSection({ onRecord }) {
             </div>
           </div>
           <div style={{ display:'flex', gap: 8, marginTop: 12 }}>
-            <button onClick={() => alert(`Karaoke: ${option.title}`)} style={{ ...btnGhost, width: 'auto', flex: 1, borderRadius: 999, fontFamily: V_FT, fontWeight: 700 }}>
+            <button onClick={() => alert(`Karaoke: ${option.title}`)} style={{ ...activitySecondaryButtonStyle, flex: 1 }}>
               Cantar ahora
             </button>
             <button onClick={() => {
@@ -1321,7 +1362,7 @@ function KaraokeSection({ onRecord }) {
                 categoria: option.title,
               });
               onRecord(option);
-            }} style={{ ...btnPrimary, flex: 1 }}>
+            }} style={{ ...activityPrimaryButtonStyle, flex: 1 }}>
               Grabar
             </button>
           </div>
@@ -1361,14 +1402,12 @@ function MusicaTab() {
     { title: 'Brisa de tarde',   dur: '15 min', color: KUN.clear   },
   ];
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px' }}>
+    <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px 24px' }}>
       {tracks.map((t, i) => {
         const isOpen = playing === i;
         return (
           <div key={i} style={{
-            background: tint(t.color, 0.45), borderRadius: 22,
-            padding: '16px 18px',
-            border: isOpen ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
+            ...activityTintCardStyle(t.color, isOpen),
             transition:'border .2s',
           }}>
             <div onClick={() => {
@@ -1389,8 +1428,7 @@ function MusicaTab() {
                   color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
                 }}>{t.title}</div>
                 <div style={{
-                  fontFamily: V_FT, fontSize: 11, fontWeight: 700,
-                  color: KUN.brick, letterSpacing: 0.6, textTransform: 'uppercase',
+                  ...activityMetaStyle,
                 }}>{t.dur}</div>
               </div>
               <WaveIcon color={KUN.brick}/>
@@ -1446,14 +1484,15 @@ const STORIES = [
 function StoryRow({ story, onOpen }) {
   return (
     <div onClick={onOpen} style={{
-      background: tint(story.color, 0.45), borderRadius: 22, padding: '16px 18px', marginBottom: 10,
-      border: `1px solid ${KUN.hair}`, cursor:'pointer',
+      ...activityTintCardStyle(story.color),
+      marginBottom: 10,
+      cursor:'pointer',
       display:'flex', alignItems:'center', gap: 14,
     }}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{story.title}</div>
         <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.4, marginBottom: 6 }}>{story.description}</div>
-        <div style={{ fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.brick, letterSpacing: 0.6, textTransform: 'uppercase' }}>{story.duration}</div>
+        <div style={activityMetaStyle}>{story.duration}</div>
       </div>
     </div>
   );
@@ -1461,7 +1500,7 @@ function StoryRow({ story, onOpen }) {
 
 function CuentosTab({ onOpenStory }) {
   return (
-    <div style={{ padding: '0 20px' }}>
+    <div style={{ padding: '0 20px 24px' }}>
       {STORIES.map((s, i) => <StoryRow key={i} story={s} onOpen={() => onOpenStory(s)} />)}
     </div>
   );
@@ -1494,13 +1533,14 @@ const CANCIONES_DATA = [
 function CancionRow({ cancion, onOpen }) {
   return (
     <div onClick={onOpen} style={{
-      background: tint(cancion.color, 0.45), borderRadius: 22, padding: '16px 18px', marginBottom: 10,
-      border: `1px solid ${KUN.hair}`, cursor:'pointer',
+      ...activityTintCardStyle(cancion.color),
+      marginBottom: 10,
+      cursor:'pointer',
       display:'flex', alignItems:'center', gap: 14,
     }}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{cancion.title}</div>
-        <div style={{ fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.brick, letterSpacing: 0.6, textTransform: 'uppercase' }}>{cancion.duration}</div>
+        <div style={activityMetaStyle}>{cancion.duration}</div>
       </div>
       <WaveIcon color={KUN.brick}/>
     </div>
@@ -1509,7 +1549,7 @@ function CancionRow({ cancion, onOpen }) {
 
 function CancionesTab({ onOpenCancion }) {
   return (
-    <div style={{ padding: '0 20px' }}>
+    <div style={{ padding: '0 20px 24px' }}>
       {CANCIONES_DATA.map((c, i) => (
         <CancionRow key={i} cancion={c} onOpen={() => onOpenCancion(c)} />
       ))}
@@ -1552,8 +1592,8 @@ function ContentDetailView({ item, type, onBack, onRecord }) {
       {/* Content */}
       <div style={{ padding: '0 20px 22px' }}>
         <div style={{
-          background:'#fff', borderRadius: 22, padding: '22px 20px',
-          border: `1px solid ${KUN.hair}`,
+          ...activityCardStyle,
+          padding: '22px 20px',
           fontFamily: V_FB, fontSize: 15, color: KUN.ink, fontWeight: 400,
           lineHeight: 1.85, whiteSpace: 'pre-line', letterSpacing: 0.1,
         }}>
@@ -1564,11 +1604,8 @@ function ContentDetailView({ item, type, onBack, onRecord }) {
       {/* Record CTA */}
       <div style={{ padding: '0 20px' }}>
         <button onClick={onRecord} style={{
-          width:'100%', padding: '14px 16px', height: 52, borderRadius: 999, border:'none',
-          background: KUN.brick, color:'#fff',
-          fontFamily: V_FT, fontSize: 15, fontWeight: 700, letterSpacing: -0.1,
+          ...activityPrimaryButtonStyle,
           display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
-          cursor:'pointer',
         }}>
           {VINK_ICONS.mic('#fff')}
           {isStory ? 'Grabar mientras leo' : 'Grabar cantando'}
@@ -1661,9 +1698,11 @@ function Recorder({ onClose, onSave, context }) {
 
         {seconds > 0 && !recording && (
           <button onClick={save} style={{
-            marginTop: 28, padding: '12px 24px', height: 46, borderRadius: 999, border:'none',
-            background: KUN.ink, color:'#fff',
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1, cursor:'pointer',
+            ...activityPrimaryButtonStyle,
+            width: 'auto',
+            marginTop: 28,
+            padding: '14px 24px',
+            background: KUN.brick,
           }}>
             Guardar para Sofía
           </button>
@@ -1713,18 +1752,20 @@ function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
     <div style={{ overflowX:'hidden', maxWidth:'100%', position:'relative', minHeight:'100%' }}>
       <SubHeader title="Actividades con mi hijo" onBack={onBack} />
 
-      {/* Tab pills — same style as Comunidad */}
-      <div style={{ margin: '0 20px 20px', display:'flex', gap: 8 }}>
+      {/* Tab pills */}
+      <div style={{ margin: '0 20px 18px', display:'flex', gap: 8 }}>
         {TABS.map(t => {
           const isA = t.id === sub;
           const iconColor = isA ? '#fff' : KUN.inkSoft;
           return (
             <div key={t.id} onClick={() => setSub(t.id)} style={{
               cursor: 'pointer',
-              padding: '10px 14px', borderRadius: 10,
+              padding: '10px 13px',
+              borderRadius: 999,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
               fontFamily: V_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
+              border: isA ? 'none' : `1px solid ${KUN.hair}`,
               transition: 'all .2s',
               display: 'flex', alignItems: 'center', gap: 6,
             }}>

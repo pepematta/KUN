@@ -1193,7 +1193,7 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
         </div>
       )}
 
-      <PostActions likes={q.likes} replies={q.replies} />
+      <PostActions likes={q.likes} replies={q.replies} onReply={() => onOpen(q.id)} />
     </div>
   );
 }

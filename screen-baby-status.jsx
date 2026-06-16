@@ -430,6 +430,8 @@ function InfoTooltip({ text, open, onToggle }) {
       <button
         onClick={(e) => { e.stopPropagation(); onToggle(); }}
         style={{
+          position: 'relative',
+          zIndex: 11,
           width: 24,
           height: 24,
           borderRadius: '50%',
@@ -467,7 +469,7 @@ function InfoTooltip({ text, open, onToggle }) {
             fontSize: 12,
             color: KUN.ink,
             lineHeight: 1.55,
-            zIndex: 10,
+            zIndex: 12,
           }}
         >
           {text}
@@ -478,9 +480,8 @@ function InfoTooltip({ text, open, onToggle }) {
 }
 
 // ─── OptionRow ───────────────────────────────────────────────────────────────
-function OptionRow({ label, info, selected, onToggle, isRadio, tone = KUN.rosehip }) {
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
-
+function OptionRow({ id, label, info, selected, onToggle, isRadio, tone = KUN.rosehip, activeInfoId, onToggleInfo }) {
+  const tooltipOpen = activeInfoId === id;
   return (
     <div
       onClick={onToggle}
@@ -542,7 +543,7 @@ function OptionRow({ label, info, selected, onToggle, isRadio, tone = KUN.rosehi
           <InfoTooltip
             text={info}
             open={tooltipOpen}
-            onToggle={() => setTooltipOpen(v => !v)}
+            onToggle={() => onToggleInfo(id)}
           />
         </div>
       )}
@@ -563,7 +564,7 @@ function babyStatusTopicColor(catId) {
   return tones[catId] || KUN.cardSoft;
 }
 
-function CategoryBlock({ cat, values, onChange }) {
+function CategoryBlock({ cat, values, onChange, activeInfoId, onToggleInfo }) {
   const isRadio = cat.type === 'radio';
 
   const handleToggle = (label) => {
@@ -596,12 +597,15 @@ function CategoryBlock({ cat, values, onChange }) {
         return (
           <OptionRow
             key={opt.label}
+            id={`${cat.id}:${opt.label}`}
             label={opt.label}
             info={opt.info}
             selected={selected}
             onToggle={() => handleToggle(opt.label)}
             isRadio={isRadio}
             tone={babyStatusTopicColor(cat.id)}
+            activeInfoId={activeInfoId}
+            onToggleInfo={onToggleInfo}
           />
         );
       })}
@@ -619,13 +623,18 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
     accesos: [],
     diagnosticos: [],
   });
+  const [activeInfoId, setActiveInfoId] = React.useState(null);
 
   const handleChange = (catId, value) => {
     setStatus(prev => ({ ...prev, [catId]: value }));
   };
 
+  const toggleInfo = (id) => {
+    setActiveInfoId(current => current === id ? null : id);
+  };
+
   return (
-    <div style={{
+    <div onClick={() => setActiveInfoId(null)} style={{
       position: 'absolute',
       inset: 0,
       zIndex: 300,
@@ -734,6 +743,8 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
             cat={cat}
             values={status[cat.id]}
             onChange={handleChange}
+            activeInfoId={activeInfoId}
+            onToggleInfo={toggleInfo}
           />
         ))}
 
@@ -777,6 +788,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
     ...(normalizedCurrentStatus || {}),
   });
   const [openCat, setOpenCat] = React.useState(null);
+  const [activeInfoId, setActiveInfoId] = React.useState(null);
   const bodyRef = React.useRef(null);
   const sectionRefs = React.useRef({});
 
@@ -785,6 +797,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
   };
 
   const toggleCategory = (catId) => {
+    setActiveInfoId(null);
     const nextOpen = openCat === catId ? null : catId;
     setOpenCat(nextOpen);
     if (nextOpen) {
@@ -809,8 +822,12 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
 
   const stripQuestion = (title) => title.replace(/^¿/, '').replace(/\?$/, '');
 
+  const toggleInfo = (id) => {
+    setActiveInfoId(current => current === id ? null : id);
+  };
+
   return (
-    <div style={{
+    <div onClick={() => setActiveInfoId(null)} style={{
       position: 'absolute',
       inset: 0,
       zIndex: 300,
@@ -893,7 +910,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
         minHeight: 0,
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
-        padding: '4px 20px 24px',
+        padding: '4px 20px 112px',
         position: 'relative',
         zIndex: 1,
         display: 'flex',
@@ -993,6 +1010,8 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
                     cat={cat}
                     values={status[cat.id]}
                     onChange={handleChange}
+                    activeInfoId={activeInfoId}
+                    onToggleInfo={toggleInfo}
                   />
                 </div>
               )}
@@ -1005,7 +1024,9 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
           onClick={() => onSave(status)}
           style={{
             width: '100%',
+            boxSizing: 'border-box',
             height: 50,
+            padding: '14px 22px',
             borderRadius: 999,
             background: KUN.brick,
             color: '#fff',
@@ -1013,8 +1034,10 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
             fontFamily: BST_FT,
             fontSize: 15,
             fontWeight: 700,
+            letterSpacing: -0.1,
             cursor: 'pointer',
-            marginTop: 8,
+            marginTop: 14,
+            flexShrink: 0,
           }}
         >
           Guardar cambios
