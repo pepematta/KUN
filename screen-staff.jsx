@@ -85,6 +85,66 @@ function StaffConfirm({ title, text, onCancel, onConfirm }) {
   );
 }
 
+function StaffDeceasedVerification({ baby, onCancel, onConfirm }) {
+  const [step, setStep] = React.useState(1);
+  const [typed, setTyped] = React.useState('');
+  const expected = 'CONFIRMAR';
+  const canConfirm = typed.trim().toUpperCase() === expected;
+  const babyName = baby?.babyName || 'este bebe';
+  return (
+    <div style={{ position: 'absolute', inset: 0, zIndex: 320, background: 'rgba(42,35,32,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 22 }}>
+      <div style={{ width: '100%', background: '#fff', borderRadius: 26, padding: 20, boxShadow: '0 24px 48px rgba(42,35,32,0.22)' }}>
+        <div style={{ fontFamily: STAFF_FB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 7 }}>
+          Verificacion {step} de 2
+        </div>
+        {step === 1 ? (
+          <>
+            <div style={{ fontFamily: STAFF_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, marginBottom: 8 }}>
+              Marcar fallecimiento
+            </div>
+            <div style={{ fontFamily: STAFF_FB, fontSize: 13, color: KUN.inkSoft, lineHeight: 1.55, marginBottom: 12 }}>
+              Esta accion cambia la experiencia familiar de {babyName}: pausa el contenido clinico habitual, oculta recordatorios operativos y muestra acompanamiento en duelo.
+            </div>
+            <div style={{ background: KUN.sunSoft, borderRadius: 18, padding: 13, fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.ink, lineHeight: 1.45, marginBottom: 14 }}>
+              Verifica que la informacion fue confirmada por el equipo tratante antes de continuar.
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={onCancel} style={secondaryBtn}>Cancelar</button>
+              <button onClick={() => setStep(2)} style={primaryBtn}>Continuar</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ fontFamily: STAFF_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, marginBottom: 8 }}>
+              Confirmacion final
+            </div>
+            <div style={{ fontFamily: STAFF_FB, fontSize: 13, color: KUN.inkSoft, lineHeight: 1.55, marginBottom: 12 }}>
+              Para confirmar, escribe <strong>{expected}</strong>. Esta verificacion evita cambios accidentales.
+            </div>
+            <input
+              value={typed}
+              onChange={e => setTyped(e.target.value)}
+              placeholder={expected}
+              autoFocus
+              style={{ width: '100%', boxSizing: 'border-box', border: `1.5px solid ${canConfirm ? KUN.brick : KUN.hair}`, borderRadius: 16, padding: '13px 14px', fontFamily: STAFF_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, outline: 'none', marginBottom: 14 }}
+            />
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => setStep(1)} style={secondaryBtn}>Volver</button>
+              <button
+                onClick={() => canConfirm && onConfirm()}
+                disabled={!canConfirm}
+                style={{ ...primaryBtn, background: canConfirm ? KUN.brick : KUN.hair, cursor: canConfirm ? 'pointer' : 'default' }}
+              >
+                Confirmar fallecimiento
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function StaffTop({ title, subtitle, onLogout, reports = [], onReports }) {
   return (
     <div style={{ padding: '8px 20px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -226,6 +286,7 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [query, setQuery] = React.useState('');
+  const [deceasedVerifyOpen, setDeceasedVerifyOpen] = React.useState(false);
   const filteredCaps = capsules.filter(c => `${c.title} ${c.topic}`.toLowerCase().includes(query.toLowerCase()));
   const isDeceased = baby.vitalStatus === 'deceased';
   const detailRows = [
@@ -250,7 +311,7 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
           <StaffActionMenu
             open={menuOpen}
             onEdit={() => { setMenuOpen(false); setEditing(true); }}
-            onMarkDeceased={baby.occupied && !isDeceased ? () => { setMenuOpen(false); askConfirm('Confirmar fallecimiento', `Esta accion cambiara la experiencia familiar de ${baby.babyName || 'este bebe'} a acompanamiento en duelo.`, () => onMarkDeceased(baby.id)); } : null}
+            onMarkDeceased={baby.occupied && !isDeceased ? () => { setMenuOpen(false); setDeceasedVerifyOpen(true); } : null}
             onUndoDeceased={baby.occupied && isDeceased ? () => { setMenuOpen(false); askConfirm('Reactivar hospitalizacion', `La familia volvera a ver la experiencia clinica habitual de ${baby.babyName || 'este bebe'}.`, () => onUndoDeceased(baby.id)); } : null}
             onDischarge={baby.occupied && !isDeceased ? () => { setMenuOpen(false); askConfirm('¿Seguro que quieres dar de alta?', `Se liberara el cupo ${baby.slot}.`, () => onDischarge(baby.id)); } : null}
           />
@@ -308,6 +369,16 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
         </div>
       </div>
       )}
+      {deceasedVerifyOpen && (
+        <StaffDeceasedVerification
+          baby={baby}
+          onCancel={() => setDeceasedVerifyOpen(false)}
+          onConfirm={() => {
+            setDeceasedVerifyOpen(false);
+            onMarkDeceased(baby.id);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -340,7 +411,10 @@ function StaffHome({ babies, setBabies, capsules, lactarioSlots, setLactarioSlot
   const selected = babies.find(b => b.id === detailId);
   const saveBaby = (baby) => setBabies(babies.map(b => b.id === baby.id ? { ...baby, occupied: !!baby.babyName.trim(), vitalStatus: baby.vitalStatus || 'hospitalized' } : b));
   const discharge = (id) => setBabies(babies.map(b => b.id === id ? { ...b, occupied: false, babyName: '', sex: 'm', parentName: '', parent2Name: '', rut: '', condition: '', devices: [], weight: '', weeks: '', traits: [], recommended: [], vitalStatus: 'hospitalized' } : b));
-  const markDeceased = (id) => setBabies(babies.map(b => b.id === id ? { ...b, occupied: true, vitalStatus: 'deceased', deceasedAt: Date.now() } : b));
+  const markDeceased = (id) => {
+    window.KUNAnalytics?.track('staff_bebe_marcado_difunto');
+    setBabies(babies.map(b => b.id === id ? { ...b, occupied: true, vitalStatus: 'deceased', deceasedAt: Date.now(), deceasedMarkedBy: 'staff_2_step' } : b));
+  };
   const undoDeceased = (id) => setBabies(babies.map(b => b.id === id ? { ...b, vitalStatus: 'hospitalized', deceasedAt: null } : b));
   if (selected) return <BabyDetail baby={selected} capsules={capsules} onBack={() => setDetailId(null)} onSave={saveBaby} onDischarge={discharge} onMarkDeceased={markDeceased} onUndoDeceased={undoDeceased} onRecommend={onRecommend} askConfirm={askConfirm} />;
   return (

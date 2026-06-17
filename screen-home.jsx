@@ -610,6 +610,64 @@ const BEREAVEMENT_CAPSULES = [
   },
 ];
 
+const BEREAVEMENT_LIBRARY = [
+  {
+    title: 'Primeras horas: no hay una forma correcta',
+    tag: 'Duelo temprano',
+    tone: HC.viola,
+    points: [
+      'Puedes sentir tristeza, calma, rabia, culpa, desconcierto o nada por momentos.',
+      'No tienes que decidir todo de inmediato. Pide que te repitan la informacion si la necesitas.',
+      'Puedes pedir estar acompanada/o por alguien de confianza o por el equipo.',
+    ],
+  },
+  {
+    title: 'Recuerdos y despedida',
+    tag: 'Memoria',
+    tone: HC.rosehip,
+    points: [
+      'Si lo desean, pueden preguntar por formas de despedirse y guardar recuerdos.',
+      'Algunas familias eligen fotos, huellas, una manta, una carta o una bendicion/ritual.',
+      'Tambien es valido no querer hacerlo ahora. El equipo puede cuidar ese ritmo.',
+    ],
+  },
+  {
+    title: 'Cuidar el cuerpo',
+    tag: 'Cuidado fisico',
+    tone: HC.apple,
+    points: [
+      'El cuerpo puede seguir con cambios hormonales, cansancio, dolor o produccion de leche.',
+      'Pregunta por manejo de dolor, lactancia/inhibicion o senales por las que consultar.',
+      'Comer, hidratarse y dormir puede sentirse dificil; pequenos pasos tambien cuentan.',
+    ],
+  },
+  {
+    title: 'Cuando pedir ayuda ahora',
+    tag: 'Apoyo urgente',
+    tone: HC.sun,
+    points: [
+      'Pide ayuda inmediata si sientes que no puedes mantenerte a salvo.',
+      'Tambien si la angustia te sobrepasa o necesitas compania en este momento.',
+      'Puedes pedir hablar con enfermeria, psicologia, trabajo social o apoyo espiritual.',
+    ],
+  },
+];
+
+const BEREAVEMENT_RESOURCES = [
+  {
+    name: 'Sands',
+    text: 'Ofrece apoyo para personas afectadas por la muerte de un bebe, incluyendo linea de ayuda, chat, comunidades y materiales de duelo.',
+  },
+  {
+    name: 'Bliss',
+    text: 'Organizacion enfocada en bebes prematuros y enfermos; incluye orientacion para familias que viven perdida neonatal.',
+  },
+  {
+    name: 'March of Dimes',
+    text: 'Tiene recursos sobre perdida, duelo y apoyo a familias durante embarazo, parto y etapa neonatal.',
+  },
+];
+
 function BereavementHome({ babyName, childrenList, activeChildId, onSelectChild }) {
   const name = babyName || 'tu bebé';
   return (
@@ -656,6 +714,52 @@ function BereavementHome({ babyName, childrenList, activeChildId, onSelectChild 
 
       <div style={{ margin: '24px 22px 0' }}>
         <HSectionHead title="Para acompañarte" kicker="Cápsulas de duelo" />
+        <div style={{ marginBottom: 14 }}>
+          <HSectionHead title="Biblioteca de apoyo" kicker="Solo para este momento" />
+          {BEREAVEMENT_LIBRARY.map((item) => (
+            <div key={item.title} style={{
+              background: HC.paper,
+              border: `1px solid ${HC.hair}`,
+              borderRadius: 22,
+              padding: '15px 16px',
+              marginBottom: 10,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 15,
+                  background: item.tone,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                  fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink,
+                }}>
+                  {item.tag.slice(0, 1)}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{
+                    fontFamily: HF_B, fontSize: 10.5, fontWeight: 700,
+                    color: HC.ink3, letterSpacing: 0.8, textTransform: 'uppercase',
+                    marginBottom: 4,
+                  }}>
+                    {item.tag}
+                  </div>
+                  <div style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink, letterSpacing: '-0.1px' }}>
+                    {item.title}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 9 }}>
+                    {item.points.map(point => (
+                      <div key={point} style={{ display: 'flex', gap: 7, alignItems: 'flex-start' }}>
+                        <div style={{ width: 5, height: 5, borderRadius: '50%', background: HC.brick, marginTop: 8, flexShrink: 0 }} />
+                        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.5 }}>
+                          {point}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
         {BEREAVEMENT_CAPSULES.map((cap) => (
           <div key={cap.title} style={{
             background: HC.paper,
@@ -710,6 +814,39 @@ function BereavementHome({ babyName, childrenList, activeChildId, onSelectChild 
         </div>
         <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.55, marginTop: 5 }}>
           Puedes pedir hablar con enfermería, psicología, trabajo social o acompañamiento espiritual si lo necesitas. No tienes que pasar por esto sin compañía.
+        </div>
+      </div>
+      <BereavementResourcesBlock />
+    </div>
+  );
+}
+
+function BereavementResourcesBlock() {
+  return (
+    <div style={{ margin: '14px 22px 0' }}>
+      <div style={{
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 22,
+        padding: '15px 16px',
+      }}>
+        <div style={{ fontFamily: HF_T, fontSize: 15, fontWeight: 700, color: HC.ink }}>
+          Recursos externos
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.55, marginTop: 6 }}>
+          Estos recursos pueden servir como complemento al acompanamiento local del equipo.
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
+          {BEREAVEMENT_RESOURCES.map(resource => (
+            <div key={resource.name} style={{ background: HC.cardSoft, borderRadius: 16, padding: '11px 12px' }}>
+              <div style={{ fontFamily: HF_T, fontSize: 13.5, fontWeight: 700, color: HC.ink }}>
+                {resource.name}
+              </div>
+              <div style={{ fontFamily: HF_B, fontSize: 12, color: HC.ink2, lineHeight: 1.45, marginTop: 3 }}>
+                {resource.text}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

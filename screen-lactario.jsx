@@ -417,6 +417,313 @@ function UcinLactarioBox({ reservation, onOpen, reminderMinutes = 60 }) {
   );
 }
 
+const UCIN_FAQ_ITEMS = [
+  {
+    tag: 'Visitas',
+    question: 'Quienes pueden entrar a ver a mi bebe?',
+    answer: 'Las visitas son idealmente para ambos padres. Tambien puede asistir un tercero significativo junto a uno de los padres, segun indicacion del servicio y condicion del bebe.',
+    keywords: ['visita', 'entrar', 'padres', 'familiar', 'tercero', 'acompanante'],
+  },
+  {
+    tag: 'Visitas',
+    question: 'En que horario puedo ir a Neonatologia?',
+    answer: 'Los padres son esperados todos los dias entre las 8:00 y las 20:30 hrs. Ante emergencias o procedimientos especiales, el equipo puede pedirles esperar antes de ingresar.',
+    keywords: ['horario', 'visitas', 'neonatologia', 'ingreso', 'procedimiento'],
+  },
+  {
+    tag: 'Higiene y seguridad',
+    question: 'Que debo hacer antes de tocar a mi bebe?',
+    answer: 'Al ingresar, retiren joyas de manos y antebrazos, guarden sus pertenencias y laven sus manos. Usen agua y jabon o alcohol gel antes de tocar a su hijo/a y despues de tocar objetos externos.',
+    keywords: ['lavado', 'manos', 'joyas', 'alcohol', 'gel', 'higiene', 'seguridad'],
+  },
+  {
+    tag: 'Higiene y seguridad',
+    question: 'Puedo visitar si estoy resfriada o con fiebre?',
+    answer: 'No visiten la unidad si tienen diarrea, resfrio, fiebre, infecciones de piel u otra enfermedad que pueda contagiar a su bebe o a otros pacientes.',
+    keywords: ['resfrio', 'fiebre', 'diarrea', 'enfermedad', 'contagio', 'infeccion'],
+  },
+  {
+    tag: 'Lactancia',
+    question: 'Puedo amamantar a mi bebe en la UCIN?',
+    answer: 'Si la condicion del bebe lo permite, la madre podra amamantarlo en horarios coordinados por enfermera o matrona. Si no es posible, el equipo ensenara extraccion de leche.',
+    keywords: ['lactancia', 'amamantar', 'pecho', 'leche', 'extraccion', 'matrona'],
+  },
+  {
+    tag: 'Lactancia',
+    question: 'Donde entrego la leche extraida?',
+    answer: 'La leche extraida se entrega en SEDILE general, donde se almacena y distribuye para cada paciente. Telefono SEDILE: 223543299.',
+    keywords: ['sedile', 'leche', 'extraida', 'entregar', 'almacenar', 'telefono'],
+  },
+  {
+    tag: 'Cuidados',
+    question: 'Puedo participar en cuidados como muda o temperatura?',
+    answer: 'Durante las visitas pueden hablarle, acariciarlo y, si el equipo lo autoriza, tomarlo en brazos o participar en tareas como muda y control de temperatura.',
+    keywords: ['muda', 'temperatura', 'cuidados', 'brazos', 'acariciar', 'participar'],
+  },
+  {
+    tag: 'Comunicacion',
+    question: 'A que numero puedo llamar para preguntar por mi bebe?',
+    answer: 'Solo los padres pueden comunicarse con enfermera o medico a cargo. UCI Neonatal: 22-3543224. Cuidados Intermedio A: 22-3546436. Cuidados Intermedios B: 22-3543708.',
+    keywords: ['llamar', 'telefono', 'uci', 'intermedio', 'comunicacion', 'estado'],
+  },
+  {
+    tag: 'Apoyo familiar',
+    question: 'Puedo pedir apoyo psicologico o espiritual?',
+    answer: 'Existe apoyo continuo de psicologas para los padres. Tambien pueden solicitar apoyo espiritual para ustedes y su hijo/a, segun sus creencias o credo.',
+    keywords: ['psicologia', 'psicologa', 'apoyo', 'espiritual', 'creencias', 'familia'],
+  },
+];
+
+function ucinTextKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+function UcinFaqBox({ onOpen }) {
+  return (
+    <button
+      onClick={onOpen}
+      style={{
+        width: '100%',
+        border: `1px solid ${KUN.hair}`,
+        background: '#fff',
+        borderRadius: 24,
+        padding: '16px 16px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        textAlign: 'left',
+        boxShadow: '0 10px 24px rgba(42,35,32,0.05)',
+        marginBottom: 14,
+      }}
+    >
+      <div style={{
+        width: 40, height: 40, borderRadius: 16,
+        background: KUN.clear,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        <span style={{ fontFamily: KUN.fontT, fontSize: 21, fontWeight: 800, color: KUN.ink }}>?</span>
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>
+          Preguntas frecuentes
+        </div>
+        <div style={{ fontFamily: KUN.fontB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 3 }}>
+          Busca por tema o deja una pregunta para el equipo.
+        </div>
+      </div>
+      <div style={{
+        color: KUN.brick,
+        fontFamily: KUN.fontT,
+        fontSize: 22,
+        fontWeight: 800,
+      }}>
+        ›
+      </div>
+    </button>
+  );
+}
+
+function UcinFaqSection() {
+  const [query, setQuery] = React.useState('');
+  const [expanded, setExpanded] = React.useState(null);
+  const [draft, setDraft] = React.useState('');
+  const [tag, setTag] = React.useState('Visitas');
+  const [sent, setSent] = React.useState(false);
+  const [pendingQuestions, setPendingQuestions] = React.useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('kun_ucin_pending_questions_v1') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const tags = Array.from(new Set(UCIN_FAQ_ITEMS.map(item => item.tag)));
+  const queryKey = ucinTextKey(query);
+  const filtered = UCIN_FAQ_ITEMS.filter(item => {
+    if (!queryKey) return true;
+    return ucinTextKey(`${item.tag} ${item.question} ${item.answer} ${(item.keywords || []).join(' ')}`).includes(queryKey);
+  });
+  const grouped = tags
+    .map(name => ({ tag: name, items: filtered.filter(item => item.tag === name) }))
+    .filter(group => group.items.length > 0);
+
+  const submitQuestion = () => {
+    const text = draft.trim();
+    if (!text) return;
+    const next = [
+      { id: `ucin-q-${Date.now()}`, text, tag, status: 'pendiente', createdAt: new Date().toISOString() },
+      ...pendingQuestions,
+    ];
+    setPendingQuestions(next);
+    try { localStorage.setItem('kun_ucin_pending_questions_v1', JSON.stringify(next)); } catch {}
+    window.KUNAnalytics?.track('ucin_pregunta_frecuente_enviada', { tag });
+    setDraft('');
+    setSent(true);
+    window.setTimeout(() => setSent(false), 2600);
+  };
+
+  return (
+    <div style={{ marginBottom: 14 }}>
+        <div style={{
+          background: '#fff',
+          border: `1px solid ${KUN.hair}`,
+          borderRadius: 24,
+          padding: '14px 14px 16px',
+        }}>
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Buscar por lactancia, visitas, telefono..."
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              border: `1.5px solid ${KUN.hair}`,
+              borderRadius: 18,
+              padding: '12px 14px',
+              fontFamily: KUN.fontB,
+              fontSize: 13,
+              color: KUN.ink,
+              outline: 'none',
+              marginBottom: 12,
+            }}
+          />
+
+          {grouped.length === 0 ? (
+            <div style={{ background: KUN.cardSoft, borderRadius: 18, padding: 14, fontFamily: KUN.fontB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginBottom: 12 }}>
+              No encontramos una respuesta parecida. Puedes dejar tu pregunta abajo para que el personal la responda cuando tenga disponibilidad.
+            </div>
+          ) : grouped.map(group => (
+            <div key={group.tag} style={{ marginBottom: 12 }}>
+              <div style={{ fontFamily: KUN.fontB, fontSize: 11, fontWeight: 800, color: KUN.inkMuted, letterSpacing: .8, textTransform: 'uppercase', margin: '0 2px 8px' }}>
+                {group.tag}
+              </div>
+              {group.items.map(item => {
+                const id = `${item.tag}-${item.question}`;
+                const isOpen = expanded === id;
+                return (
+                  <div key={id} style={{
+                    border: `1px solid ${KUN.hair}`,
+                    borderRadius: 18,
+                    marginBottom: 8,
+                    overflow: 'hidden',
+                    background: isOpen ? KUN.cardSoft : '#fff',
+                  }}>
+                    <button
+                      onClick={() => setExpanded(isOpen ? null : id)}
+                      style={{
+                        width: '100%',
+                        border: 'none',
+                        background: 'transparent',
+                        padding: '12px 13px',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        gap: 10,
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <div style={{ flex: 1, fontFamily: KUN.fontT, fontSize: 14.5, fontWeight: 800, color: KUN.ink, lineHeight: 1.3 }}>
+                        {item.question}
+                      </div>
+                      <div style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800, color: KUN.brick, lineHeight: 1 }}>
+                        {isOpen ? '-' : '+'}
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div style={{ padding: '0 13px 13px', fontFamily: KUN.fontB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.55 }}>
+                        {item.answer}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+
+          <div style={{ borderTop: `1px dashed ${KUN.hair}`, paddingTop: 14 }}>
+            <div style={{ fontFamily: KUN.fontT, fontSize: 16, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>
+              No encontre mi pregunta
+            </div>
+            <div style={{ fontFamily: KUN.fontB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginBottom: 10 }}>
+              Dejala aqui. El personal podra responderla segun disponibilidad.
+            </div>
+            <select
+              value={tag}
+              onChange={e => setTag(e.target.value)}
+              style={{
+                width: '100%',
+                border: `1.5px solid ${KUN.hair}`,
+                borderRadius: 16,
+                padding: '11px 12px',
+                fontFamily: KUN.fontB,
+                fontSize: 13,
+                color: KUN.ink,
+                background: '#fff',
+                outline: 'none',
+                marginBottom: 9,
+              }}
+            >
+              {tags.map(name => <option key={name} value={name}>{name}</option>)}
+            </select>
+            <textarea
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+              placeholder="Escribe tu pregunta..."
+              style={{
+                width: '100%',
+                minHeight: 86,
+                resize: 'none',
+                boxSizing: 'border-box',
+                border: `1.5px solid ${KUN.hair}`,
+                borderRadius: 18,
+                padding: '12px 13px',
+                fontFamily: KUN.fontB,
+                fontSize: 13,
+                color: KUN.ink,
+                outline: 'none',
+                lineHeight: 1.45,
+              }}
+            />
+            {sent && (
+              <div style={{ marginTop: 8, fontFamily: KUN.fontB, fontSize: 12, color: '#3D9156', fontWeight: 700 }}>
+                Pregunta enviada. Quedara pendiente para el equipo.
+              </div>
+            )}
+            {pendingQuestions.length > 0 && (
+              <div style={{ marginTop: 8, fontFamily: KUN.fontB, fontSize: 11.5, color: KUN.inkMuted }}>
+                {pendingQuestions.length} pregunta{pendingQuestions.length === 1 ? '' : 's'} pendiente{pendingQuestions.length === 1 ? '' : 's'} en este dispositivo.
+              </div>
+            )}
+            <button
+              onClick={submitQuestion}
+              disabled={!draft.trim()}
+              style={{
+                width: '100%',
+                border: 'none',
+                borderRadius: 999,
+                background: draft.trim() ? KUN.brick : KUN.hair,
+                color: '#fff',
+                padding: '13px 16px',
+                fontFamily: KUN.fontT,
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: draft.trim() ? 'pointer' : 'default',
+                marginTop: 10,
+              }}
+            >
+              Enviar pregunta
+            </button>
+          </div>
+        </div>
+    </div>
+  );
+}
+
 function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60 }) {
   const [view, setView] = React.useState('main');
 
@@ -431,6 +738,42 @@ function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60 }) 
           title="Reservas al lactario"
           onBack={() => setView('main')}
         />
+      </div>
+    );
+  }
+
+  if (view === 'faq') {
+    return (
+      <div style={{ minHeight: '100%', background: KUN.bg, paddingBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 20px 16px' }}>
+          <div
+            onClick={() => setView('main')}
+            style={{
+              width: 40, height: 40, borderRadius: 20, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 1px 2px rgba(46,42,38,0.04)', cursor: 'pointer',
+              flexShrink: 0,
+              border: `1px solid ${KUN.hair}`,
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M12 4L6 10L12 16"
+                stroke={KUN.ink} strokeWidth="2"
+                strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div style={{ fontFamily: KUN.fontT, fontSize: 20, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
+              Preguntas frecuentes
+            </div>
+            <div style={{ fontFamily: KUN.fontB, fontSize: 12.5, color: KUN.inkSoft, marginTop: 2 }}>
+              Busca respuestas o deja una pregunta pendiente.
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '0 20px 24px' }}>
+          <UcinFaqSection />
+        </div>
       </div>
     );
   }
@@ -513,6 +856,11 @@ function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60 }) 
             La leche extraida se entrega en SEDILE general. Telefono SEDILE: 223543299.
           </div>
         </div>
+
+        <UcinFaqBox onOpen={() => {
+          window.KUNAnalytics?.track('ucin_faq_abierta');
+          setView('faq');
+        }} />
 
         <div style={{ fontFamily: KUN.fontB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.8, textTransform: 'uppercase', margin: '4px 2px 10px' }}>
           Informacion importante
