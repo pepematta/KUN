@@ -348,6 +348,7 @@ function formatWeightDate(date) {
 }
 
 function WeightTracker({ history = [], onSave }) {
+  const today = new Date().toISOString().slice(0, 10);
   const sorted = Array.isArray(history)
     ? [...history].filter(item => item && item.grams).sort((a, b) => String(a.date).localeCompare(String(b.date)))
     : [];
@@ -355,20 +356,34 @@ function WeightTracker({ history = [], onSave }) {
   const previous = sorted[sorted.length - 2] || null;
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(latest?.grams ? String(latest.grams) : '');
+  const [draftDate, setDraftDate] = React.useState(today);
 
   React.useEffect(() => {
-    if (!editing) setDraft(latest?.grams ? String(latest.grams) : '');
-  }, [latest?.grams, editing]);
+    if (!editing) {
+      const todayEntry = sorted.find(item => item.date === today);
+      setDraft(todayEntry?.grams ? String(todayEntry.grams) : (latest?.grams ? String(latest.grams) : ''));
+      setDraftDate(today);
+    }
+  }, [latest?.grams, editing, history?.length]);
 
-  const recent = sorted.slice(-5);
+  const recent = sorted.slice(-7);
   const min = recent.length ? Math.min(...recent.map(item => item.grams)) : 0;
   const max = recent.length ? Math.max(...recent.map(item => item.grams)) : 0;
   const delta = latest && previous ? latest.grams - previous.grams : null;
+  const chartW = 286;
+  const chartH = 96;
+  const points = recent.map((item, index) => {
+    const x = recent.length === 1 ? chartW / 2 : (index / (recent.length - 1)) * chartW;
+    const ratio = max === min ? 0.5 : (item.grams - min) / (max - min);
+    const y = chartH - 18 - ratio * (chartH - 34);
+    return { ...item, x, y };
+  });
+  const polyline = points.map(point => `${point.x},${point.y}`).join(' ');
 
   const save = () => {
     const grams = parseInt(draft, 10);
     if (!Number.isFinite(grams) || grams <= 0) return;
-    onSave && onSave(grams);
+    onSave && onSave(grams, draftDate || today);
     setEditing(false);
   };
 
@@ -422,26 +437,26 @@ function WeightTracker({ history = [], onSave }) {
           </button>
         </div>
 
-        {recent.length > 1 && (
-          <div style={{ display: 'flex', alignItems: 'end', gap: 8, height: 58, marginTop: 14 }}>
-            {recent.map(item => {
-              const pct = max === min ? 0.72 : 0.34 + ((item.grams - min) / (max - min)) * 0.5;
-              return (
-                <div key={item.date} style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-                  <div style={{
-                    width: '100%',
-                    maxWidth: 34,
-                    height: Math.round(42 * pct),
-                    minHeight: 14,
-                    borderRadius: '9px 9px 4px 4px',
-                    background: HC.apple,
-                  }} />
-                  <div style={{ fontFamily: HF_B, fontSize: 10.5, color: HC.ink3, whiteSpace: 'nowrap' }}>
-                    {formatWeightDate(item.date)}
-                  </div>
+        {recent.length > 0 && (
+          <div style={{ marginTop: 14, background: HC.appleSoft, borderRadius: 18, padding: '12px 12px 10px' }}>
+            <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+              <line x1="0" y1={chartH - 18} x2={chartW} y2={chartH - 18} stroke="rgba(42,35,32,0.10)" strokeWidth="1" />
+              {points.length > 1 && <polyline points={polyline} fill="none" stroke={HC.brick} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />}
+              {points.map(point => (
+                <circle key={point.date} cx={point.x} cy={point.y} r="4" fill={HC.brick} vectorEffect="non-scaling-stroke" />
+              ))}
+            </svg>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6, marginTop: -2 }}>
+              {recent.map(item => (
+                <div key={item.date} style={{ fontFamily: HF_B, fontSize: 10.5, color: HC.ink3, minWidth: 0 }}>
+                  {formatWeightDate(item.date)}
                 </div>
-              );
-            })}
+              ))}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 7, fontFamily: HF_B, fontSize: 11, color: HC.ink2 }}>
+              <span>{min} g</span>
+              <span>{max} g</span>
+            </div>
           </div>
         )}
 
@@ -450,49 +465,84 @@ function WeightTracker({ history = [], onSave }) {
             marginTop: 14,
             paddingTop: 14,
             borderTop: `1px dashed ${HC.hair}`,
-            display: 'flex',
-            gap: 9,
-            alignItems: 'center',
           }}>
-            <input
-              type="number"
-              value={draft}
-              onChange={e => setDraft(e.target.value)}
-              placeholder="Peso de hoy"
-              inputMode="numeric"
-              min={0}
-              style={{
-                flex: 1,
-                minWidth: 0,
-                boxSizing: 'border-box',
-                border: `1.5px solid ${HC.hair}`,
-                borderRadius: 16,
-                padding: '12px 13px',
-                fontFamily: HF_T,
-                fontSize: 15,
-                fontWeight: 800,
-                color: HC.ink,
-                outline: 'none',
-                background: '#fff',
-              }}
-            />
-            <div style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 800, color: HC.ink2 }}>g</div>
-            <button
-              onClick={save}
-              style={{
-                border: 'none',
-                background: HC.brick,
-                color: '#fff',
-                borderRadius: 999,
-                padding: '11px 13px',
-                fontFamily: HF_T,
-                fontSize: 13,
-                fontWeight: 800,
-                cursor: 'pointer',
-              }}
-            >
-              Guardar
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginBottom: 9 }}>
+              <input
+                type="date"
+                value={draftDate}
+                max={today}
+                onChange={e => setDraftDate(e.target.value)}
+                style={{
+                  minWidth: 0,
+                  boxSizing: 'border-box',
+                  border: `1.5px solid ${HC.hair}`,
+                  borderRadius: 16,
+                  padding: '12px 11px',
+                  fontFamily: HF_B,
+                  fontSize: 12.5,
+                  color: HC.ink,
+                  outline: 'none',
+                  background: '#fff',
+                }}
+              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <input
+                  type="number"
+                  value={draft}
+                  onChange={e => setDraft(e.target.value)}
+                  placeholder="Peso"
+                  inputMode="numeric"
+                  min={0}
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    boxSizing: 'border-box',
+                    border: `1.5px solid ${HC.hair}`,
+                    borderRadius: 16,
+                    padding: '12px 11px',
+                    fontFamily: HF_T,
+                    fontSize: 15,
+                    fontWeight: 800,
+                    color: HC.ink,
+                    outline: 'none',
+                    background: '#fff',
+                  }}
+                />
+                <div style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 800, color: HC.ink2 }}>g</div>
+              </div>
+            </div>
+            <button onClick={save} style={{
+              width: '100%',
+              border: 'none',
+              background: HC.brick,
+              color: '#fff',
+              borderRadius: 999,
+              padding: '12px 13px',
+              fontFamily: HF_T,
+              fontSize: 13,
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}>
+              Guardar registro diario
             </button>
+          </div>
+        )}
+
+        {sorted.length > 0 && (
+          <div style={{ marginTop: 13, display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
+            {sorted.slice(-6).reverse().map(item => (
+              <div key={item.date} style={{
+                flex: '0 0 auto',
+                background: '#fff',
+                border: `1px solid ${HC.hair}`,
+                borderRadius: 14,
+                padding: '8px 10px',
+                minWidth: 70,
+              }}>
+                <div style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 800, color: HC.ink }}>{item.grams} g</div>
+                <div style={{ fontFamily: HF_B, fontSize: 10.5, color: HC.ink3, marginTop: 2 }}>{formatWeightDate(item.date)}</div>
+              </div>
+            ))}
           </div>
         )}
       </div>

@@ -55,11 +55,11 @@
 <script type="text/babel" src="screen-tour.jsx?v=31"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=12"></script>
 <script type="text/babel" src="screen-baby-status.jsx?v=13"></script>
-<script type="text/babel" src="screen-home.jsx?v=37"></script>
+<script type="text/babel" src="screen-home.jsx?v=38"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=50"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=52"></script>
 <script type="text/babel" src="screen-comunidad.jsx?v=19"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=13"></script>
 <script type="text/babel" src="screen-staff.jsx?v=10"></script>
@@ -803,8 +803,8 @@ function Prototype() {
     try { localStorage.setItem('kun_lactario_reminder_minutes_v1', String(minutes)); } catch {}
   };
 
-  const saveBabyWeight = (grams) => {
-    const nextEntry = normalizeWeightEntry({ date: todayISO(), grams });
+  const saveBabyWeight = (grams, date = todayISO()) => {
+    const nextEntry = normalizeWeightEntry({ date, grams });
     if (!nextEntry || !activeChildKey) return;
     window.KUNAnalytics?.track('peso_bebe_editado', {
       child_index: Math.max(0, familyChildren.findIndex(child => child.id === activeChild?.id)),

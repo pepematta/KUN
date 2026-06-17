@@ -1481,27 +1481,68 @@ const STORIES = [
   },
 ];
 
-function StoryRow({ story, onOpen }) {
+function ActivityRecordingList({ recordings = [] }) {
+  if (!recordings.length) return null;
   return (
-    <div onClick={onOpen} style={{
-      ...activityTintCardStyle(story.color),
-      marginBottom: 10,
-      cursor:'pointer',
-      display:'flex', alignItems:'center', gap: 14,
-    }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{story.title}</div>
-        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.4, marginBottom: 6 }}>{story.description}</div>
-        <div style={activityMetaStyle}>{story.duration}</div>
-      </div>
+    <div style={{ margin: '-2px 0 12px 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+      {recordings.map((r, i) => (
+        <div key={`${r.name}-${r.duration}-${i}`} style={{
+          background: '#fff',
+          border: `1px solid ${KUN.hair}`,
+          borderRadius: 16,
+          padding: '9px 11px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 9,
+        }}>
+          <div style={{ width: 28, height: 28, borderRadius: 14, background: r.color || KUN.rosehip, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {VINK_ICONS.mic(KUN.ink)}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {r.author || 'Mamá'} · {r.duration}
+            </div>
+            <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, marginTop: 1 }}>
+              {r.time || 'Hace un momento'}{r.readingSpeed ? ` · ${r.readingSpeed}` : ''}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-function CuentosTab({ onOpenStory }) {
+function StoryRow({ story, onOpen, recordings = [] }) {
+  return (
+    <>
+      <div onClick={onOpen} style={{
+        ...activityTintCardStyle(story.color),
+        marginBottom: recordings.length ? 8 : 10,
+        cursor:'pointer',
+        display:'flex', alignItems:'center', gap: 14,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{story.title}</div>
+          <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.4, marginBottom: 6 }}>{story.description}</div>
+          <div style={activityMetaStyle}>{story.duration}{recordings.length ? ` · ${recordings.length} grabacion${recordings.length === 1 ? '' : 'es'}` : ''}</div>
+        </div>
+      </div>
+      <ActivityRecordingList recordings={recordings} />
+    </>
+  );
+}
+
+function CuentosTab({ onOpenStory, recordings = [] }) {
   return (
     <div style={{ padding: '0 20px 24px' }}>
-      {STORIES.map((s, i) => <StoryRow key={i} story={s} onOpen={() => onOpenStory(s)} />)}
+      {STORIES.map((s, i) => (
+        <StoryRow
+          key={i}
+          story={s}
+          onOpen={() => onOpenStory(s)}
+          recordings={recordings.filter(r => r.contentType === 'story' && r.contentTitle === s.title)}
+        />
+      ))}
     </div>
   );
 }
@@ -1530,28 +1571,36 @@ const CANCIONES_DATA = [
   },
 ];
 
-function CancionRow({ cancion, onOpen }) {
+function CancionRow({ cancion, onOpen, recordings = [] }) {
   return (
-    <div onClick={onOpen} style={{
-      ...activityTintCardStyle(cancion.color),
-      marginBottom: 10,
-      cursor:'pointer',
-      display:'flex', alignItems:'center', gap: 14,
-    }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{cancion.title}</div>
-        <div style={activityMetaStyle}>{cancion.duration}</div>
+    <>
+      <div onClick={onOpen} style={{
+        ...activityTintCardStyle(cancion.color),
+        marginBottom: recordings.length ? 8 : 10,
+        cursor:'pointer',
+        display:'flex', alignItems:'center', gap: 14,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{cancion.title}</div>
+          <div style={activityMetaStyle}>{cancion.duration}{recordings.length ? ` · ${recordings.length} grabacion${recordings.length === 1 ? '' : 'es'}` : ''}</div>
+        </div>
+        <WaveIcon color={KUN.brick}/>
       </div>
-      <WaveIcon color={KUN.brick}/>
-    </div>
+      <ActivityRecordingList recordings={recordings} />
+    </>
   );
 }
 
-function CancionesTab({ onOpenCancion }) {
+function CancionesTab({ onOpenCancion, recordings = [] }) {
   return (
     <div style={{ padding: '0 20px 24px' }}>
       {CANCIONES_DATA.map((c, i) => (
-        <CancionRow key={i} cancion={c} onOpen={() => onOpenCancion(c)} />
+        <CancionRow
+          key={i}
+          cancion={c}
+          onOpen={() => onOpenCancion(c)}
+          recordings={recordings.filter(r => r.contentType === 'cancion' && r.contentTitle === c.title)}
+        />
       ))}
     </div>
   );
@@ -1659,6 +1708,8 @@ function Recorder({ onClose, onSave, context }) {
       role: ctx.role || 'Mamá - Voz para Sofía',
       color: ctx.color || KUN.rosehip,
       readingSpeed: hasScript ? readingSpeed : undefined,
+      contentType: ctx.contentType,
+      contentTitle: ctx.contentTitle || ctx.name,
     });
     onClose();
   };
@@ -1868,10 +1919,10 @@ function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
       </div>
 
       {sub === 'cuentos' && (
-        <CuentosTab onOpenStory={(s) => openDetail(s, 'story')} />
+        <CuentosTab onOpenStory={(s) => openDetail(s, 'story')} recordings={recordings || []} />
       )}
       {sub === 'canciones' && (
-        <CancionesTab onOpenCancion={(c) => openDetail(c, 'cancion')} />
+        <CancionesTab onOpenCancion={(c) => openDetail(c, 'cancion')} recordings={recordings || []} />
       )}
       {sub === 'musica' && <MusicaTab />}
 
@@ -1892,6 +1943,8 @@ function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
               role: `Mamá - ${isStory ? 'Cuento' : 'Canción'} para Sofía`,
               color: KUN.rosehip,
               name: detailItem.item.title,
+              contentTitle: detailItem.item.title,
+              contentType: isStory ? 'story' : 'cancion',
               scriptText: isStory ? detailItem.item.text : '',
               scriptType: isStory ? 'cuento' : 'cancion',
             });
@@ -2154,9 +2207,9 @@ function getDiaryEntryTemplate(templateId) {
   return DIARY_ENTRY_TEMPLATES.find(t => t.id === templateId) || null;
 }
 
-function DiaryFeedPhotoCard({ entry }) {
+function DiaryFeedPhotoCard({ entry, onOpen }) {
   return (
-    <div style={{ borderRadius:16, overflow:'hidden', position:'relative' }}>
+    <button onClick={onOpen} style={{ border:'none', padding:0, width:'100%', display:'block', borderRadius:16, overflow:'hidden', position:'relative', background:'transparent', cursor:'pointer', textAlign:'left' }}>
       <img src={entry.imageSrc} alt="" style={{ width:'100%', display:'block', objectFit:'cover' }}/>
       {entry.text && (
         <div style={{
@@ -2167,21 +2220,24 @@ function DiaryFeedPhotoCard({ entry }) {
           <div style={{ fontFamily:V_FB, fontSize:12, color:'#fff', lineHeight:1.35 }}>{entry.text}</div>
         </div>
       )}
-    </div>
+    </button>
   );
 }
 
-function DiaryFeedTemplateCard({ entry }) {
+function DiaryFeedTemplateCard({ entry, onOpen }) {
   const template = getDiaryEntryTemplate(entry.templateId);
   if (!template?.Preview) return null;
   const Preview = template.Preview;
   return (
-    <div style={{
+    <button onClick={onOpen} style={{
+      width:'100%',
+      textAlign:'left',
       background:'#fff',
       borderRadius:18,
       padding:10,
       border:`1px solid ${KUN.hair}`,
       boxShadow:'0 8px 18px rgba(42,35,32,0.045)',
+      cursor:'pointer',
     }}>
       <div style={{ display:'flex', alignItems:'center', gap:8, margin:'2px 2px 9px' }}>
         <div style={{ width:28, height:28, borderRadius:10, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -2193,14 +2249,14 @@ function DiaryFeedTemplateCard({ entry }) {
         </div>
       </div>
       <Preview data={entry.templateData || {}} compact />
-    </div>
+    </button>
   );
 }
 
-function DiaryFeedNoteCard({ entry }) {
+function DiaryFeedNoteCard({ entry, onOpen }) {
   const bg = entry.color ? tint(entry.color, 0.32) : KUN.cardSoft;
   return (
-    <div style={{ background:bg, borderRadius:16, padding:'13px 13px' }}>
+    <button onClick={onOpen} style={{ width:'100%', border:'none', background:bg, borderRadius:16, padding:'13px 13px', textAlign:'left', cursor:'pointer' }}>
       {entry.category && (
         <div style={{
           fontFamily:V_FT, fontSize:10, fontWeight:700, color:KUN.inkSoft,
@@ -2210,26 +2266,29 @@ function DiaryFeedNoteCard({ entry }) {
       <div style={{ fontFamily:V_FB, fontSize:13.5, color:KUN.ink, lineHeight:1.55 }}>
         {entry.text}
       </div>
-    </div>
+    </button>
   );
 }
 
-function DiaryFeedAudioCard({ entry }) {
+function DiaryFeedAudioCard({ entry, onOpen }) {
   const [playing, setPlaying] = React.useState(false);
   return (
-    <div style={{
+    <button onClick={onOpen} style={{
+      width:'100%',
+      textAlign:'left',
       background:'#fff', borderRadius:16, padding:'12px 11px',
       border:`1px solid ${KUN.hair}`,
+      cursor:'pointer',
     }}>
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-        <button onClick={() => setPlaying(p => !p)} style={{
+        <span onClick={(e) => { e.stopPropagation(); setPlaying(p => !p); }} style={{
           width:34, height:34, borderRadius:'50%', border:'none',
           background:KUN.brick,
           display:'flex', alignItems:'center', justifyContent:'center',
           cursor:'pointer', flexShrink:0,
         }}>
           {playing ? VINK_ICONS.pause('#fff', 11) : VINK_ICONS.play('#fff', 11)}
-        </button>
+        </span>
         <svg viewBox="0 0 80 22" style={{ flex:1, height:18, minWidth:0 }}>
           {Array.from({length:18}).map((_,i) => {
             const h = 4 + Math.abs(Math.sin(i * 0.8)) * 13;
@@ -2240,6 +2299,289 @@ function DiaryFeedAudioCard({ entry }) {
         <span style={{ fontFamily:V_FT, fontSize:10.5, fontWeight:700, color:KUN.inkMuted, flexShrink:0 }}>
           {entry.audioDuration || '0:42'}
         </span>
+      </div>
+    </button>
+  );
+}
+
+const EXPORT_FORMATS = [
+  { id:'story', label:'Historia', size:'9:16', width:1080, height:1920 },
+  { id:'feed', label:'Feed', size:'1:1', width:1080, height:1080 },
+  { id:'whatsapp', label:'WhatsApp', size:'4:5', width:1080, height:1350 },
+];
+
+function getExportEntryTitle(entry = {}) {
+  if (entry.title) return entry.title;
+  if (entry.type === 'photo') return entry.text || 'Foto de hoy';
+  if (entry.type === 'audio') return 'Audio guardado';
+  return entry.category || 'Recuerdo KUN';
+}
+
+function getExportEntryKind(entry = {}) {
+  if (entry.type === 'photo' || entry.imageSrc) return 'photo';
+  if (entry.type === 'audio') return 'audio';
+  if (entry.templateId) return 'template';
+  return 'text';
+}
+
+function loadExportImage(src) {
+  return new Promise((resolve) => {
+    if (!src) return resolve(null);
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 4) {
+  const words = String(text || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  lines.slice(0, maxLines).forEach((ln, i) => {
+    const finalLine = i === maxLines - 1 && lines.length > maxLines ? `${ln.replace(/[.,;:!?]*$/, '')}...` : ln;
+    ctx.fillText(finalLine, x, y + i * lineHeight);
+  });
+  return Math.min(lines.length, maxLines) * lineHeight;
+}
+
+function drawKangarooMark(ctx, x, y, size, color) {
+  const s = size / 40;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(s, s);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = '#F6C3AE';
+  ctx.lineWidth = 2.1;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(10, 30);
+  ctx.bezierCurveTo(10, 22, 13, 17, 17, 15);
+  ctx.bezierCurveTo(16, 13, 16.5, 10.5, 18.5, 9.5);
+  ctx.bezierCurveTo(20.5, 8.5, 23, 9.5, 23.5, 11.5);
+  ctx.bezierCurveTo(24, 13, 23.5, 14.5, 22.5, 15.5);
+  ctx.bezierCurveTo(25.5, 16.5, 28, 19, 29, 22.5);
+  ctx.bezierCurveTo(29.5, 24, 29.5, 26, 29, 27.5);
+  ctx.bezierCurveTo(28.5, 29, 27.5, 30.5, 26, 31);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(10, 30);
+  ctx.bezierCurveTo(8, 30.5, 7, 31.5, 7.5, 33);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(21, 10.5);
+  ctx.bezierCurveTo(21.3, 9, 21.8, 8, 22.5, 7.5);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(18, 24, 4.6, 3.9, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(17.2, 23.2, 0.9, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawExportWave(ctx, x, y, w, h, color) {
+  const count = 36;
+  const gap = w / count;
+  ctx.fillStyle = color;
+  for (let i = 0; i < count; i += 1) {
+    const barH = h * (0.18 + Math.abs(Math.sin(i * 0.72)) * 0.78);
+    const bx = x + i * gap + gap * 0.28;
+    const by = y + (h - barH) / 2;
+    drawRoundedRect(ctx, bx, by, gap * 0.42, barH, gap * 0.2);
+    ctx.globalAlpha = i < 24 ? 0.95 : 0.34;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+async function buildDiaryExportImage(entry, format) {
+  const canvas = document.createElement('canvas');
+  canvas.width = format.width;
+  canvas.height = format.height;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  const kind = getExportEntryKind(entry);
+  const photo = await loadExportImage(entry.imageSrc || getEntryPhotos(entry)[0]);
+  const bg = entry.color || (kind === 'photo' ? KUN.ink : KUN.bg);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (photo) {
+    const coverScale = Math.max(W / photo.width, H / photo.height);
+    const iw = photo.width * coverScale;
+    const ih = photo.height * coverScale;
+    ctx.drawImage(photo, (W - iw) / 2, (H - ih) / 2, iw, ih);
+    const gradient = ctx.createLinearGradient(0, 0, 0, H);
+    gradient.addColorStop(0, 'rgba(42,35,32,0.18)');
+    gradient.addColorStop(0.45, 'rgba(42,35,32,0.05)');
+    gradient.addColorStop(1, 'rgba(42,35,32,0.68)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const soft = ctx.createLinearGradient(0, 0, W, H);
+    soft.addColorStop(0, '#FAF6F1');
+    soft.addColorStop(0.52, entry.color || '#F6C3AE');
+    soft.addColorStop(1, '#F2EBE0');
+    ctx.fillStyle = soft;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 0.42;
+    ctx.fillStyle = KUN.rosehip;
+    ctx.beginPath();
+    ctx.arc(W * 0.15, H * 0.14, W * 0.34, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = KUN.viola;
+    ctx.beginPath();
+    ctx.arc(W * 0.92, H * 0.28, W * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  const pad = Math.round(W * 0.065);
+  const logoColor = photo ? '#fff' : KUN.ink;
+  drawKangarooMark(ctx, pad, pad, Math.round(W * 0.082), logoColor);
+  ctx.fillStyle = logoColor;
+  ctx.font = `800 ${Math.round(W * 0.052)}px Quicksand, sans-serif`;
+  ctx.fillText('KUN', pad + Math.round(W * 0.095), pad + Math.round(W * 0.057));
+
+  const footerH = kind === 'audio' ? Math.round(H * 0.33) : Math.round(H * 0.26);
+  const boxY = H - footerH - pad;
+  const boxX = pad;
+  const boxW = W - pad * 2;
+  drawRoundedRect(ctx, boxX, boxY, boxW, footerH, Math.round(W * 0.04));
+  ctx.fillStyle = photo ? 'rgba(250,246,241,0.92)' : 'rgba(255,255,255,0.82)';
+  ctx.fill();
+
+  ctx.fillStyle = KUN.inkMuted;
+  ctx.font = `700 ${Math.round(W * 0.026)}px Poppins, sans-serif`;
+  ctx.fillText((entry.category || 'Album de vinculo').toUpperCase(), boxX + pad * 0.55, boxY + Math.round(W * 0.072));
+
+  ctx.fillStyle = KUN.ink;
+  ctx.font = `800 ${Math.round(W * 0.053)}px Quicksand, sans-serif`;
+  const titleY = boxY + Math.round(W * 0.125);
+  const titleHeight = wrapCanvasText(ctx, getExportEntryTitle(entry), boxX + pad * 0.55, titleY, boxW - pad * 1.1, Math.round(W * 0.06), 2);
+
+  if (kind === 'audio') {
+    const waveY = titleY + titleHeight + Math.round(W * 0.03);
+    drawExportWave(ctx, boxX + pad * 0.55, waveY, boxW - pad * 1.1, Math.round(W * 0.11), KUN.brick);
+    ctx.font = `700 ${Math.round(W * 0.032)}px Quicksand, sans-serif`;
+    ctx.fillStyle = KUN.inkSoft;
+    ctx.fillText(entry.audioDuration || '0:42', boxX + pad * 0.55, waveY + Math.round(W * 0.16));
+  } else {
+    ctx.fillStyle = KUN.inkSoft;
+    ctx.font = `500 ${Math.round(W * 0.035)}px Poppins, sans-serif`;
+    wrapCanvasText(ctx, entry.text || 'Un recuerdo guardado en el album de vinculo.', boxX + pad * 0.55, titleY + titleHeight + Math.round(W * 0.025), boxW - pad * 1.1, Math.round(W * 0.047), 4);
+  }
+
+  return new Promise(resolve => {
+    canvas.toBlob(blob => resolve({ blob, dataUrl: canvas.toDataURL('image/png') }), 'image/png', 0.95);
+  });
+}
+
+function DiaryExportSheet({ entry, onClose }) {
+  const [formatId, setFormatId] = React.useState('story');
+  const [image, setImage] = React.useState(null);
+  const [busy, setBusy] = React.useState(true);
+  const format = EXPORT_FORMATS.find(f => f.id === formatId) || EXPORT_FORMATS[0];
+
+  React.useEffect(() => {
+    let alive = true;
+    setBusy(true);
+    buildDiaryExportImage(entry, format).then(next => {
+      if (!alive) return;
+      setImage(next);
+      setBusy(false);
+    });
+    return () => { alive = false; };
+  }, [entry?.id, formatId]);
+
+  const fileName = `kun-recuerdo-${format.id}.png`;
+  const downloadImage = () => {
+    if (!image?.dataUrl) return;
+    const link = document.createElement('a');
+    link.href = image.dataUrl;
+    link.download = fileName;
+    link.click();
+    window.KUNAnalytics?.track('diario_recuerdo_exportado', { formato: format.id, destino: 'descarga', tipo: getExportEntryKind(entry) });
+  };
+  const shareImage = async (destino) => {
+    if (!image?.blob) return;
+    const file = new File([image.blob], fileName, { type:'image/png' });
+    try {
+      if (navigator.canShare?.({ files:[file] }) && navigator.share) {
+        await navigator.share({ title:'Recuerdo KUN', text:'Un recuerdo de nuestro album KUN', files:[file] });
+        window.KUNAnalytics?.track('diario_recuerdo_exportado', { formato: format.id, destino, tipo: getExportEntryKind(entry) });
+      } else {
+        downloadImage();
+      }
+    } catch (err) {
+      if (err?.name !== 'AbortError') downloadImage();
+    }
+  };
+
+  return (
+    <div onClick={onClose} style={{ position:'absolute', inset:0, zIndex:240, background:'rgba(42,35,32,0.42)', display:'flex', alignItems:'flex-end' }}>
+      <div onClick={e => e.stopPropagation()} style={{ width:'100%', maxHeight:'92%', overflowY:'auto', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 18px 28px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, marginBottom:14 }}>
+          <div>
+            <div style={{ fontFamily:V_FT, fontSize:20, fontWeight:700, color:KUN.ink }}>Compartir recuerdo</div>
+            <div style={{ fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, marginTop:3 }}>Exporta una imagen lista para redes.</div>
+          </div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer' }}>Cerrar</button>
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:8, marginBottom:14 }}>
+          {EXPORT_FORMATS.map(opt => {
+            const active = opt.id === formatId;
+            return (
+              <button key={opt.id} onClick={() => setFormatId(opt.id)} style={{ border:active ? 'none' : `1px solid ${KUN.hair}`, background:active ? KUN.brick : '#fff', color:active ? '#fff' : KUN.ink, borderRadius:16, padding:'10px 6px', fontFamily:V_FT, fontSize:12.5, fontWeight:700, cursor:'pointer' }}>
+                <span style={{ display:'block' }}>{opt.label}</span>
+                <span style={{ display:'block', marginTop:2, fontFamily:V_FB, fontSize:10.5, fontWeight:500, opacity:.78 }}>{opt.size}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:22, padding:12, display:'flex', justifyContent:'center', marginBottom:14 }}>
+          {busy && <div style={{ height:320, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:V_FB, fontSize:13, color:KUN.inkMuted }}>Preparando imagen...</div>}
+          {!busy && image?.dataUrl && (
+            <img src={image.dataUrl} alt="Vista previa de exportacion" style={{ width: format.id === 'feed' ? '82%' : '58%', maxHeight:420, objectFit:'contain', borderRadius:18, boxShadow:'0 10px 28px rgba(42,35,32,0.14)' }} />
+          )}
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:9 }}>
+          <button onClick={() => shareImage('instagram')} disabled={busy} style={{ height:46, borderRadius:999, border:'none', background:KUN.viola, color:KUN.ink, fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>Instagram</button>
+          <button onClick={() => shareImage('whatsapp')} disabled={busy} style={{ height:46, borderRadius:999, border:'none', background:KUN.apple, color:KUN.ink, fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>WhatsApp</button>
+          <button onClick={() => shareImage('otros')} disabled={busy} style={{ height:46, borderRadius:999, border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.ink, fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>Otros</button>
+          <button onClick={downloadImage} disabled={busy} style={{ height:46, borderRadius:999, border:'none', background:KUN.brick, color:'#fff', fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>Descargar</button>
+        </div>
       </div>
     </div>
   );
@@ -2277,6 +2619,32 @@ function DiaryNoteSheet({ onClose, onSave }) {
         <button onClick={() => { if (!text.trim()) return; onSave({ type:'text', text:text.trim(), color, category:categoria }); onClose(); }}
           disabled={!text.trim()} style={{ width:'100%', marginTop:14, height:48, borderRadius:999, border:'none', background:text.trim()?KUN.brick:'rgba(42,35,32,0.10)', color:text.trim()?'#fff':KUN.inkMuted, fontFamily:V_FT, fontSize:15, fontWeight:700, cursor:text.trim()?'pointer':'not-allowed' }}>
           Guardar nota
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DiaryPhotoCaptionSheet({ imageSrc, onClose, onSave }) {
+  const [text, setText] = React.useState('');
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.35)', display:'flex', alignItems:'flex-end' }}>
+      <div style={{ width:'100%', maxHeight:'88%', overflowY:'auto', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 20px 30px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+          <div>
+            <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Foto del dia</div>
+            <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkMuted, marginTop:2 }}>Puedes sumar una frase breve.</div>
+          </div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>Cancelar</button>
+        </div>
+        <img src={imageSrc} alt="" style={{ width:'100%', maxHeight:260, objectFit:'cover', borderRadius:22, display:'block', marginBottom:12 }} />
+        <textarea autoFocus value={text} onChange={e => setText(e.target.value)}
+          placeholder="Escribe algo que quieras recordar de esta foto..."
+          style={{ width:'100%', minHeight:112, resize:'none', boxSizing:'border-box', border:`1.5px solid ${KUN.hair}`, borderRadius:20, background:'#fff', padding:'14px 16px', outline:'none', fontFamily:V_FB, fontSize:15, color:KUN.ink, lineHeight:1.55 }}/>
+        <button onClick={() => onSave({ type:'photo', imageSrc, text:text.trim() || null })}
+          style={{ width:'100%', marginTop:14, height:48, borderRadius:999, border:'none', background:KUN.brick, color:'#fff', fontFamily:V_FT, fontSize:15, fontWeight:700, cursor:'pointer' }}>
+          Guardar foto
         </button>
       </div>
     </div>
@@ -3178,6 +3546,8 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
 
   const [fab,   setFab]   = React.useState(false);
   const [sheet, setSheet] = React.useState(null); // null | 'note' | 'recorder' | 'guide'
+  const [exportEntry, setExportEntry] = React.useState(null);
+  const [pendingPhoto, setPendingPhoto] = React.useState(null);
   const photoRef  = React.useRef(null);
   const bottomRef = React.useRef(null);
 
@@ -3213,7 +3583,10 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
   const handlePhotoFile = (file) => {
     if (!file?.type?.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onload = () => addEntry({ type:'photo', imageSrc:reader.result });
+    reader.onload = () => {
+      setPendingPhoto(reader.result);
+      setSheet('photo-caption');
+    };
     reader.readAsDataURL(file);
   };
 
@@ -3264,10 +3637,10 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
             <div style={{ columnCount:2, columnGap:8, marginBottom:6 }}>
               {group.entries.map(entry => (
                 <div key={entry.id} style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom:8 }}>
-                  {entry.type === 'photo' && <DiaryFeedPhotoCard entry={entry}/>}
-                  {entry.type === 'text'  && <DiaryFeedNoteCard  entry={entry}/>}
-                  {entry.type === 'audio' && <DiaryFeedAudioCard entry={entry}/>}
-                  {entry.type === 'template' && <DiaryFeedTemplateCard entry={entry}/>}
+                  {entry.type === 'photo' && <DiaryFeedPhotoCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                  {entry.type === 'text'  && <DiaryFeedNoteCard  entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                  {entry.type === 'audio' && <DiaryFeedAudioCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                  {entry.type === 'template' && <DiaryFeedTemplateCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
                 </div>
               ))}
             </div>
@@ -3356,6 +3729,13 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
           onSave={(data) => { addEntry(data); setSheet(null); }}
         />
       )}
+      {sheet === 'photo-caption' && pendingPhoto && (
+        <DiaryPhotoCaptionSheet
+          imageSrc={pendingPhoto}
+          onClose={() => { setPendingPhoto(null); setSheet(null); }}
+          onSave={(data) => { addEntry(data); setPendingPhoto(null); setSheet(null); }}
+        />
+      )}
       {sheet === 'recorder' && (
         <Recorder
           onClose={() => setSheet(null)}
@@ -3373,6 +3753,12 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
         <DiaryTemplateSheet
           onClose={() => setSheet(null)}
           onSave={(data) => { addEntry(data); setSheet(null); }}
+        />
+      )}
+      {exportEntry && (
+        <DiaryExportSheet
+          entry={exportEntry}
+          onClose={() => setExportEntry(null)}
         />
       )}
     </div>
