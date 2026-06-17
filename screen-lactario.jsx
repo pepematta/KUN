@@ -724,8 +724,57 @@ function UcinFaqSection() {
   );
 }
 
-function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60 }) {
+function UcinPostAltaView() {
+  const items = [
+    { title: 'Controles y seguimiento', text: 'Revisa fechas, direcciones, telefonos utiles y preguntas para el proximo control.', tone: KUN.clear },
+    { title: 'Signos de alarma', text: 'Ten visible cuando consultar: respiracion dificil, color azulado, fiebre, rechazo de alimentacion o decaimiento marcado.', tone: KUN.rosehip },
+    { title: 'Rutina en casa', text: 'Organiza tomas, medicamentos, panales y descanso con indicaciones escritas del equipo.', tone: KUN.apple },
+    { title: 'Red de apoyo', text: 'Pide ayuda concreta: comidas, traslados, compras o cuidado de hermanos. El alta tambien cansa.', tone: KUN.viola },
+  ];
+  return (
+    <div style={{ minHeight: '100%', background: '#FFF9E8', paddingBottom: 24 }}>
+      <div style={{ padding: '8px 20px 16px' }}>
+        <div style={{
+          background: '#fff',
+          border: `1px solid ${KUN.hair}`,
+          borderRadius: 24,
+          padding: '18px 18px 16px',
+          boxShadow: '0 12px 24px rgba(154,120,51,0.10)',
+        }}>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 6 }}>
+            Post alta
+          </div>
+          <div style={{ fontFamily: KUN.fontT, fontSize: 25, fontWeight: 800, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.1 }}>
+            Acompañamiento en casa
+          </div>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 13, color: KUN.inkSoft, lineHeight: 1.55, marginTop: 8 }}>
+            Esta etapa deja atras lactario, SEDILE y rutinas de UCIN. Aqui reunimos informacion util para los primeros dias fuera del hospital.
+          </div>
+        </div>
+      </div>
+      <div style={{ padding: '0 20px' }}>
+        {items.map(item => (
+          <div key={item.title} style={{ background: '#fff', border: `1px solid ${KUN.hair}`, borderRadius: 22, padding: '15px 16px', marginBottom: 10, display: 'flex', gap: 11 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 15, background: item.tone, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: KUN.fontT, fontWeight: 800, color: KUN.ink }}>
+              {item.title.slice(0, 1)}
+            </div>
+            <div>
+              <div style={{ fontFamily: KUN.fontT, fontSize: 16, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>{item.title}</div>
+              <div style={{ fontFamily: KUN.fontB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 5 }}>{item.text}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60, isDischarged = false }) {
   const [view, setView] = React.useState('main');
+
+  if (isDischarged) {
+    return <UcinPostAltaView />;
+  }
 
   if (view === 'lactario') {
     return (

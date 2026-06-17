@@ -668,6 +668,21 @@ const BEREAVEMENT_RESOURCES = [
   },
 ];
 
+const POST_DISCHARGE_CAPSULES = [
+  { id: 51, title: 'Primeros dias en casa', desc: 'Rutinas simples, visitas y registro de lo importante.', tag: 'Casa', color: HC.sun },
+  { id: 52, title: 'Controles y seguimiento', desc: 'Como preparar controles y llevar preguntas utiles.', tag: 'Seguimiento', color: HC.clear },
+  { id: 53, title: 'Signos de alarma', desc: 'Cuando llamar o consultar de inmediato.', tag: 'Seguridad', color: HC.rosehip },
+  { id: 54, title: 'Alimentacion y medicamentos', desc: 'Horarios, tomas, dosis e indicaciones en casa.', tag: 'Rutina', color: HC.apple },
+  { id: 55, title: 'Cuidar tambien a la familia', desc: 'Cansancio, apoyo concreto y emociones despues del alta.', tag: 'Familia', color: HC.viola },
+];
+
+const POST_DISCHARGE_TIPS = [
+  'Ten a mano controles, telefonos utiles e indicaciones escritas.',
+  'Registra tomas, panales, medicamentos o temperatura si eso te ordena.',
+  'Limita visitas al inicio y pide lavado de manos a quienes entren.',
+  'Consulta si notas dificultad respiratoria, color azulado, fiebre, rechazo persistente de alimentacion o decaimiento marcado.',
+];
+
 function BereavementHome({ babyName, childrenList, activeChildId, onSelectChild }) {
   const name = babyName || 'tu bebé';
   return (
@@ -848,6 +863,143 @@ function BereavementResourcesBlock() {
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PostDischargeHome({ babyName, childrenList, activeChildId, onSelectChild, onGoToCapsula }) {
+  const name = babyName || 'tu bebe';
+  return (
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: '8px 22px 0' }}>
+        <div style={{ fontFamily: HF_B, fontWeight: 700, fontSize: 12, color: HC.ink2, letterSpacing: 0.7, textTransform: 'uppercase' }}>
+          Hito de alta
+        </div>
+        <div style={{
+          fontFamily: HF_T, fontWeight: 800, fontSize: 27,
+          color: HC.ink, letterSpacing: '-0.5px',
+          marginTop: 4, lineHeight: 1.12,
+        }}>
+          Ya estan en camino a casa.
+        </div>
+      </div>
+
+      <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+
+      <div style={{
+        margin: '18px 22px 0',
+        background: '#fff',
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 26,
+        padding: '18px 18px 20px',
+        boxShadow: '0 16px 30px rgba(154,120,51,0.10)',
+      }}>
+        <div style={{
+          display: 'inline-flex',
+          borderRadius: 999,
+          padding: '6px 10px',
+          background: HC.sunSoft,
+          fontFamily: HF_B,
+          fontSize: 11,
+          fontWeight: 700,
+          color: HC.ink2,
+          marginBottom: 10,
+        }}>
+          Nuevo comienzo
+        </div>
+        <div style={{ fontFamily: HF_T, fontSize: 20, fontWeight: 800, color: HC.ink, letterSpacing: '-0.2px' }}>
+          {name}
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 13, color: HC.ink2, lineHeight: 1.6, marginTop: 8 }}>
+          Este espacio cambia para acompanarlos fuera del hospital. Dejamos atras lactario y SEDILE, y priorizamos controles, rutinas en casa, signos de alarma y cuidado familiar.
+        </div>
+      </div>
+
+      <div style={{ margin: '24px 22px 0' }}>
+        <HSectionHead title="Capsulas post alta" kicker="Para casa" />
+        {POST_DISCHARGE_CAPSULES.map(cap => (
+          <div
+            key={cap.id}
+            onClick={() => onGoToCapsula && onGoToCapsula(cap.id)}
+            style={{
+              background: '#fff',
+              border: `1px solid ${HC.hair}`,
+              borderRadius: 22,
+              padding: '14px 15px',
+              marginBottom: 10,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{
+              width: 38, height: 38, borderRadius: 16,
+              background: cap.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              fontFamily: HF_T, fontSize: 16, fontWeight: 800, color: HC.ink,
+            }}>
+              {cap.tag.slice(0, 1)}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: HF_T, fontSize: 15.5, fontWeight: 800, color: HC.ink, letterSpacing: '-0.1px' }}>
+                {cap.title}
+              </div>
+              <div style={{ fontFamily: HF_B, fontSize: 12.3, color: HC.ink2, lineHeight: 1.45, marginTop: 3 }}>
+                {cap.desc}
+              </div>
+            </div>
+            {HIcon.chevR(HC.ink3)}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ margin: '22px 22px 0' }}>
+        <HSectionHead title="Checklist en casa" kicker="Primeros dias" />
+        <div style={{ background: '#fff', border: `1px solid ${HC.hair}`, borderRadius: 22, padding: '15px 16px' }}>
+          {POST_DISCHARGE_TIPS.map(tip => (
+            <div key={tip} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', marginBottom: 10 }}>
+              <div style={{ width: 18, height: 18, borderRadius: 9, background: HC.apple, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+                <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 800, color: HC.ink }}>✓</span>
+              </div>
+              <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.5 }}>
+                {tip}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DischargePrompt({ onConfirm }) {
+  const [confirming, setConfirming] = React.useState(false);
+  return (
+    <div style={{ margin: '18px 22px 0' }}>
+      <div style={{ background: HC.sunSoft, border: `1px solid ${HC.hair}`, borderRadius: 22, padding: '15px 16px' }}>
+        <div style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 800, color: HC.ink, letterSpacing: '-0.1px' }}>
+          ¿Ya les dieron el alta?
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.5, marginTop: 5 }}>
+          Si el equipo ya confirmo el alta, puedes cambiar KUN al modo post alta.
+        </div>
+        {confirming ? (
+          <div style={{ display: 'flex', gap: 9, marginTop: 12 }}>
+            <button onClick={() => setConfirming(false)} style={{ flex: 1, border: `1px solid ${HC.hair}`, background: '#fff', color: HC.ink, borderRadius: 999, padding: '11px 12px', fontFamily: HF_T, fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>
+              Volver
+            </button>
+            <button onClick={onConfirm} style={{ flex: 1, border: 'none', background: HC.brick, color: '#fff', borderRadius: 999, padding: '11px 12px', fontFamily: HF_T, fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>
+              Confirmar alta
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setConfirming(true)} style={{ width: '100%', border: 'none', background: HC.brick, color: '#fff', borderRadius: 999, padding: '12px 14px', fontFamily: HF_T, fontSize: 13.5, fontWeight: 800, cursor: 'pointer', marginTop: 12 }}>
+            Cambiar a post alta
+          </button>
+        )}
       </div>
     </div>
   );
@@ -1063,14 +1215,15 @@ function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        children: childrenList, activeChildId, onSelectChild,
-                       activeChildVitalStatus,
+                       activeChildVitalStatus, onMarkDischarged,
                        lactarioReservation, onOpenLactario, onCancelLactario,
                        completedCapsulas, babyStatus, babyWeightHistory, onSaveBabyWeight, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
   const isBereavement = activeChildVitalStatus === 'deceased';
+  const isDischarged = activeChildVitalStatus === 'discharged';
   return (
-    <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%' }}>
+    <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%', minHeight: '100%', background: isDischarged ? '#FFF9E8' : 'transparent' }}>
       {/* subtle decorative shape — half moon rosehip behind content */}
       <div style={{
         position: 'absolute', top: 420, right: -80,
@@ -1089,6 +1242,8 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       <div style={{ position: 'relative', zIndex: 1 }}>
         {isBereavement ? (
           <BereavementHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+        ) : isDischarged ? (
+          <PostDischargeHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} onGoToCapsula={onGoToCapsula} />
         ) : (
           <>
             <HomeGreeting parentName={parentName} />
@@ -1096,9 +1251,10 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
             <WeightTracker history={babyWeightHistory} onSave={onSaveBabyWeight} />
             <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
+            <DischargePrompt onConfirm={onMarkDischarged} />
           </>
         )}
-        {!isBereavement && (
+        {!isBereavement && !isDischarged && (
           <>
         <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead

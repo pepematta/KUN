@@ -53,16 +53,16 @@
 <script type="text/babel" src="edu-shared.jsx?v=13"></script>
 <script type="text/babel" src="screen-auth.jsx?v=22"></script>
 <script type="text/babel" src="screen-tour.jsx?v=31"></script>
-<script type="text/babel" src="screen-lactario.jsx?v=11"></script>
+<script type="text/babel" src="screen-lactario.jsx?v=12"></script>
 <script type="text/babel" src="screen-baby-status.jsx?v=13"></script>
-<script type="text/babel" src="screen-home.jsx?v=36"></script>
+<script type="text/babel" src="screen-home.jsx?v=37"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
 <script type="text/babel" src="screen-vinculo.jsx?v=50"></script>
 <script type="text/babel" src="screen-comunidad.jsx?v=19"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=13"></script>
-<script type="text/babel" src="screen-staff.jsx?v=9"></script>
+<script type="text/babel" src="screen-staff.jsx?v=10"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -113,7 +113,9 @@ function normalizeFamilyChildren(authData, clinicalBabies) {
       name: clinical?.babyName || child.name || child.babyName || (index === 0 ? authData?.babyName || '' : '') || `Bebé ${index + 1}`,
       sex: clinical?.sex || child.sex || '',
       weightGrams: child.weightGrams || '',
-      vitalStatus: clinical?.vitalStatus || child.vitalStatus || 'hospitalized',
+      vitalStatus: clinical?.vitalStatus === 'deceased'
+        ? 'deceased'
+        : (child.vitalStatus === 'discharged' ? 'discharged' : (clinical?.vitalStatus || child.vitalStatus || 'hospitalized')),
       clinical,
     };
   });
@@ -778,6 +780,7 @@ function Prototype() {
   const babyName   = activeChild?.name || linkedClinicalBaby?.babyName || authData?.babyName || 'Sofía';
   const primaryBabyName = primaryChild?.name || authData?.babyName || 'Sofía';
   const activeChildIsDeceased = activeChild?.vitalStatus === 'deceased';
+  const activeChildIsDischarged = activeChild?.vitalStatus === 'discharged';
   const babyStatus = babyStatusByChild[activeChildKey] || null;
   const babyWeightHistory = babyWeightByChild[activeChildKey] || [];
   const primaryBabyStatus = babyStatusByChild[primaryChildKey] || null;
@@ -819,6 +822,20 @@ function Prototype() {
       childStatusKey(child) === activeChildKey ? { ...child, weightGrams: nextEntry.grams } : child
     ));
     const updated = { ...authData, children: updatedChildren, babyName: activeChild?.name || authData?.babyName };
+    if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
+    setAuthData(updated);
+  };
+
+  const markActiveChildDischarged = () => {
+    if (!activeChildKey) return;
+    window.KUNAnalytics?.track('familia_bebe_marcado_alta');
+    const currentChildren = Array.isArray(authData?.children) && authData.children.length ? authData.children : familyChildren;
+    const updatedChildren = currentChildren.map(child => (
+      childStatusKey(child) === activeChildKey
+        ? { ...child, vitalStatus: 'discharged', dischargedAt: Date.now(), dischargeMarkedBy: 'parent' }
+        : child
+    ));
+    const updated = { ...authData, children: updatedChildren, activeChildId: activeChild?.id || activeChildId };
     if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
     setAuthData(updated);
   };
@@ -1206,6 +1223,7 @@ function Prototype() {
       activeChildId={activeChild?.id}
       onSelectChild={selectChild}
       activeChildVitalStatus={activeChild?.vitalStatus}
+      onMarkDischarged={markActiveChildDischarged}
       lactarioReservation={lactarioReservation}
       completedCapsulas={completedCapsulas}
       onOpenLactario={() => setLactarioOpen(true)}
@@ -1236,6 +1254,7 @@ function Prototype() {
       onReserve={reserveLactarioSlot}
       onCancel={cancelLactarioSlot}
       reminderMinutes={lactarioReminderMinutes}
+      isDischarged={activeChildIsDischarged}
     />;
   } else {
     body = <ScreenComunidad
@@ -1256,7 +1275,7 @@ function Prototype() {
   return (
     <div data-screen-label={screenLabel} className="kun-device" style={{
       width: 390, height: 844,
-      background: KUN.bg,
+      background: activeChildIsDischarged ? '#FFF9E8' : KUN.bg,
       borderRadius: 54,
       position:'relative', overflow:'hidden',
       boxShadow: '0 40px 80px rgba(42,35,32,0.18), 0 0 0 1px rgba(42,35,32,0.08)',
@@ -1289,7 +1308,7 @@ function Prototype() {
             height:'calc(100% - 50px)', overflow:'hidden',
             display:'flex', flexDirection:'column',
           }}>
-            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={activeChildIsDeceased ? false : (parentRecommendations.length > 0 || lactarioReservation.length > 0 || NOTIFICATIONS.length > 0)} onSettings={() => setSettingsOpen(true)} />
+            <KTopBar onBell={() => setNotifOpen(true)} hasNotif={(activeChildIsDeceased || activeChildIsDischarged) ? false : (parentRecommendations.length > 0 || lactarioReservation.length > 0 || NOTIFICATIONS.length > 0)} onSettings={() => setSettingsOpen(true)} />
             {hasSubtabs && !capsulaOpen && <KSubTabs active={eduSub} onChange={setEduSub} />}
             <div key={capsulaOpen ? 'capsula' : (tab + '-' + eduSub + '-' + activeChildKey + (lactarioOpen ? '-lact' : ''))} style={{
               flex: 1,
@@ -1310,10 +1329,10 @@ function Prototype() {
           />
 
           {notifOpen    && <NotificationsPanel
-            recommendations={activeChildIsDeceased ? [] : [...forumReplyNotifications, ...parentRecommendations]}
-            lactarioReservations={activeChildIsDeceased ? [] : (Array.isArray(lactarioReservation) ? lactarioReservation : (lactarioReservation ? [lactarioReservation] : []))}
+            recommendations={(activeChildIsDeceased || activeChildIsDischarged) ? [] : [...forumReplyNotifications, ...parentRecommendations]}
+            lactarioReservations={(activeChildIsDeceased || activeChildIsDischarged) ? [] : (Array.isArray(lactarioReservation) ? lactarioReservation : (lactarioReservation ? [lactarioReservation] : []))}
             lactarioReminderMinutes={lactarioReminderMinutes}
-            includeDefaults={!activeChildIsDeceased}
+            includeDefaults={!activeChildIsDeceased && !activeChildIsDischarged}
             onOpenItem={openNotificationItem}
             onClose={() => setNotifOpen(false)}
           />}

@@ -218,11 +218,12 @@ function ToggleChip({ label, active, onClick }) {
 
 function StaffBabyCard({ baby, onClick }) {
   const isDeceased = baby.vitalStatus === 'deceased';
+  const isDischarged = baby.vitalStatus === 'discharged';
   return (
     <div onClick={onClick} style={{ background: '#fff', borderRadius: 20, padding: 14, border: `1px solid ${KUN.hair}`, cursor: 'pointer' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ fontFamily: STAFF_FT, fontSize: 14.5, fontWeight: 700, color: KUN.ink }}>Cupo {baby.slot}</div>
-        <StaffPill tone={isDeceased ? KUN.viola : baby.occupied ? KUN.sun : KUN.cardSoft}>{isDeceased ? 'Acompañamiento' : baby.occupied ? 'Ocupado' : 'Libre'}</StaffPill>
+        <StaffPill tone={isDeceased ? KUN.viola : isDischarged ? KUN.apple : baby.occupied ? KUN.sun : KUN.cardSoft}>{isDeceased ? 'Acompañamiento' : isDischarged ? 'Alta' : baby.occupied ? 'Ocupado' : 'Libre'}</StaffPill>
       </div>
       {baby.occupied ? (
         <>
@@ -289,8 +290,9 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
   const [deceasedVerifyOpen, setDeceasedVerifyOpen] = React.useState(false);
   const filteredCaps = capsules.filter(c => `${c.title} ${c.topic}`.toLowerCase().includes(query.toLowerCase()));
   const isDeceased = baby.vitalStatus === 'deceased';
+  const isDischarged = baby.vitalStatus === 'discharged';
   const detailRows = [
-    ['Estado vital', isDeceased ? 'Fallecido · acompañamiento familiar' : 'Hospitalizado'],
+    ['Estado', isDeceased ? 'Fallecido · acompañamiento familiar' : isDischarged ? 'Alta · seguimiento en casa' : 'Hospitalizado'],
     ['Padres', [baby.parentName, baby.parent2Name].filter(Boolean).join(' · ') || 'Sin registrar'],
     ['RUT guagua', baby.rut || 'Sin registrar'],
     ['Sexo', baby.sex === 'f' ? 'Femenino' : 'Masculino'],
@@ -312,8 +314,8 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
             open={menuOpen}
             onEdit={() => { setMenuOpen(false); setEditing(true); }}
             onMarkDeceased={baby.occupied && !isDeceased ? () => { setMenuOpen(false); setDeceasedVerifyOpen(true); } : null}
-            onUndoDeceased={baby.occupied && isDeceased ? () => { setMenuOpen(false); askConfirm('Reactivar hospitalizacion', `La familia volvera a ver la experiencia clinica habitual de ${baby.babyName || 'este bebe'}.`, () => onUndoDeceased(baby.id)); } : null}
-            onDischarge={baby.occupied && !isDeceased ? () => { setMenuOpen(false); askConfirm('¿Seguro que quieres dar de alta?', `Se liberara el cupo ${baby.slot}.`, () => onDischarge(baby.id)); } : null}
+            onUndoDeceased={baby.occupied && (isDeceased || isDischarged) ? () => { setMenuOpen(false); askConfirm('Reactivar hospitalizacion', `La familia volvera a ver la experiencia clinica habitual de ${baby.babyName || 'este bebe'}.`, () => onUndoDeceased(baby.id)); } : null}
+            onDischarge={baby.occupied && !isDeceased && !isDischarged ? () => { setMenuOpen(false); askConfirm('Marcar alta', `La familia de ${baby.babyName || 'este bebe'} vera la experiencia post alta y se ocultaran lactario y SEDILE.`, () => onDischarge(baby.id)); } : null}
           />
         </div>
       </div>
@@ -352,6 +354,13 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
             Las capsulas clinicas habituales quedan en pausa. La familia vera contenido de acompanamiento en duelo y apoyo del equipo.
           </div>
         </div>
+      ) : isDischarged ? (
+        <div style={{ background: '#fff', borderRadius: 24, padding: 16, border: `1px solid ${KUN.hair}` }}>
+          <div style={{ fontFamily: STAFF_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, marginBottom: 8 }}>Post alta activo</div>
+          <div style={{ fontFamily: STAFF_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.55 }}>
+            La familia vera una experiencia enfocada en casa, controles, signos de alarma y capsulas post alta. Lactario y SEDILE quedan ocultos.
+          </div>
+        </div>
       ) : (
       <div style={{ background: '#fff', borderRadius: 24, padding: 16, border: `1px solid ${KUN.hair}` }}>
         <div style={{ fontFamily: STAFF_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, marginBottom: 10 }}>Recomendar capsulas</div>
@@ -384,7 +393,7 @@ function BabyDetail({ baby, capsules, onBack, onSave, onDischarge, onMarkDecease
 }
 
 function StaffLactario({ slots, setSlots, babies, askConfirm }) {
-  const occupiedBabies = babies.filter(b => b.occupied && b.vitalStatus !== 'deceased');
+  const occupiedBabies = babies.filter(b => b.occupied && !['deceased', 'discharged'].includes(b.vitalStatus));
   const reserve = (idx, baby) => askConfirm('¿Seguro que quieres reservar este cupo?', `Se reservara ${slots[idx].time} para ${baby.parentName}.`, () => setSlots(slots.map((s, i) => i === idx ? { ...s, status: 'reservado', mother: baby.parentName, baby: baby.babyName } : s)));
   const free = (idx) => askConfirm('¿Seguro que quieres liberar este cupo?', `Se liberara el horario ${slots[idx].time}.`, () => setSlots(slots.map((s, i) => i === idx ? { ...s, status: 'libre', mother: '', baby: '' } : s)));
   return (
@@ -410,7 +419,10 @@ function StaffHome({ babies, setBabies, capsules, lactarioSlots, setLactarioSlot
   const [detailId, setDetailId] = React.useState(null);
   const selected = babies.find(b => b.id === detailId);
   const saveBaby = (baby) => setBabies(babies.map(b => b.id === baby.id ? { ...baby, occupied: !!baby.babyName.trim(), vitalStatus: baby.vitalStatus || 'hospitalized' } : b));
-  const discharge = (id) => setBabies(babies.map(b => b.id === id ? { ...b, occupied: false, babyName: '', sex: 'm', parentName: '', parent2Name: '', rut: '', condition: '', devices: [], weight: '', weeks: '', traits: [], recommended: [], vitalStatus: 'hospitalized' } : b));
+  const discharge = (id) => {
+    window.KUNAnalytics?.track('staff_bebe_marcado_alta');
+    setBabies(babies.map(b => b.id === id ? { ...b, occupied: true, vitalStatus: 'discharged', dischargedAt: Date.now() } : b));
+  };
   const markDeceased = (id) => {
     window.KUNAnalytics?.track('staff_bebe_marcado_difunto');
     setBabies(babies.map(b => b.id === id ? { ...b, occupied: true, vitalStatus: 'deceased', deceasedAt: Date.now(), deceasedMarkedBy: 'staff_2_step' } : b));
