@@ -119,6 +119,15 @@ const KIcon = {
       <path d="M16 20C16 17.5 18 15.5 21 15.5C23.5 15.5 25 17 25 19" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
+  hospital: (c) => (
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none">
+      <path d="M6 21V7.5C6 6.7 6.7 6 7.5 6H18.5C19.3 6 20 6.7 20 7.5V21" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M4.5 21.5H21.5" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M13 9.5V15.5" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M10 12.5H16" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M10 21V17H16V21" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+    </svg>
+  ),
   check: (c = '#fff') => (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M3.5 8.2L6.5 11L12.5 4.8" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -374,6 +383,7 @@ function KBottomNav({ active = 'edu', onChange }) {
     { id: 'bond',  label: 'Vínculo', icon: KIcon.heart },
     { id: 'edu',   label: 'Educación', icon: KIcon.book },
     { id: 'comm',  label: 'Comunidad', icon: KIcon.people },
+    { id: 'ucin',  label: 'UCIN',      icon: KIcon.hospital },
   ];
   return (
     <div style={{
@@ -399,8 +409,8 @@ function KBottomNav({ active = 'edu', onChange }) {
               onClick={() => onChange && onChange(t.id)}
               style={{
                 display:'flex', flexDirection:'column', alignItems:'center', gap: 4,
-                padding: '6px 12px', borderRadius: 18,
-                minWidth: 60, position:'relative',
+                padding: '6px 7px', borderRadius: 18,
+                minWidth: 54, position:'relative',
                 cursor:'pointer',
                 background: isActive ? KUN.cream : 'transparent',
               }}>

@@ -146,7 +146,7 @@ function SlotRow({ slot, idx, isReserved, isExpanded, onToggle, onConfirm, onCan
   );
 }
 
-function ScreenLactario({ reservation, onReserve, onCancel, onBack, reminderMinutes = 60 }) {
+function ScreenLactario({ reservation, onReserve, onCancel, onBack, reminderMinutes = 60, title = 'Reservar lactario' }) {
   const [expandedIdx, setExpandedIdx] = React.useState(null);
   const [slots, setSlots] = React.useState(LACTARIO_SLOTS.map(s => ({ ...s })));
   const reservations = Array.isArray(reservation) ? reservation : (reservation ? [reservation] : []);
@@ -178,23 +178,25 @@ function ScreenLactario({ reservation, onReserve, onCancel, onBack, reminderMinu
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '4px 20px 14px',
       }}>
-        <div
-          onClick={onBack}
-          style={{
-            width: 40, height: 40, borderRadius: 20, background: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 1px 2px rgba(46,42,38,0.04)', cursor: 'pointer',
-            flexShrink: 0,
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M12 4L6 10L12 16"
-              stroke={KUN.ink} strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+        {onBack && (
+          <div
+            onClick={onBack}
+            style={{
+              width: 40, height: 40, borderRadius: 20, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 1px 2px rgba(46,42,38,0.04)', cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M12 4L6 10L12 16"
+                stroke={KUN.ink} strokeWidth="2"
+                strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        )}
         <div style={{ fontSize: 20, fontWeight: 800, color: KUN.ink, letterSpacing: -0.3 }}>
-          Reservar lactario
+          {title}
         </div>
       </div>
 
@@ -263,4 +265,274 @@ function ScreenLactario({ reservation, onReserve, onCancel, onBack, reminderMinu
   );
 }
 
+const UCIN_INFO_SECTIONS = [
+  {
+    title: 'Servicio de Neonatologia',
+    tone: KUN.clear,
+    items: [
+      'Tu hijo/a esta internado en Neonatologia del Hospital UC-Christus, un centro especializado en recien nacidos prematuros y enfermos.',
+      'Los padres son esperados todos los dias entre las 8:00 y las 20:30 hrs. En emergencias o procedimientos especiales, el equipo puede pedirles esperar antes de ingresar.',
+    ],
+  },
+  {
+    title: 'Equipo medico y apoyo',
+    tone: KUN.apple,
+    items: [
+      'Al ingreso se asigna un medico semanal, disponible en horario habil. Fuera de ese horario queda a cargo el medico de turno.',
+      'El equipo incluye enfermeras, matronas, TENS, kinesiologos y otros especialistas.',
+      'Pueden pedir informacion sobre estado y tratamiento diariamente, idealmente durante la manana.',
+      'Existe apoyo continuo de psicologas y se puede solicitar apoyo espiritual segun sus creencias.',
+    ],
+  },
+  {
+    title: 'Visitas y seguridad',
+    tone: KUN.rosehip,
+    items: [
+      'Las visitas son idealmente para ambos padres. Tambien puede asistir un tercero significativo junto a uno de los padres.',
+      'Al ingresar, retiren joyas de manos y antebrazos, guarden sus pertenencias y laven sus manos en el lavamanos de entrada.',
+      'Usen agua y jabon o alcohol gel antes de tocar a su hijo/a y despues de tocar objetos externos.',
+      'No visiten la unidad si tienen diarrea, resfrio, fiebre, infecciones de piel u otra enfermedad contagiosa.',
+    ],
+  },
+  {
+    title: 'Participacion en cuidados',
+    tone: KUN.viola,
+    items: [
+      'Si la condicion del bebe lo permite, la madre podra amamantarlo en horarios coordinados por enfermera o matrona.',
+      'Si no es posible amamantar, el equipo ensenara extraccion de leche y entregara indicaciones para el procedimiento.',
+      'Durante las visitas pueden hablarle, acariciarlo y, si el equipo lo autoriza, tomarlo en brazos o participar en muda y control de temperatura.',
+      'Pueden traer gorros o botines. No se recomiendan munecos ni juguetes de peluche, lana o genero porque no se pueden limpiar bien.',
+    ],
+  },
+  {
+    title: 'Comunicacion',
+    tone: KUN.sun,
+    items: [
+      'Para preguntar por el estado del bebe, solamente los padres pueden comunicarse con la enfermera o medico a cargo.',
+      'UCI Neonatal: 22-3543224',
+      'Cuidados Intermedio A: 22-3546436',
+      'Cuidados Intermedios B: 22-3543708',
+      'No se entregara informacion a otros familiares o amigos; ellos deben comunicarse con los padres.',
+    ],
+  },
+];
+
+function UcinInfoCard({ section }) {
+  return (
+    <div style={{
+      background: '#fff',
+      border: `1px solid ${KUN.hair}`,
+      borderRadius: 22,
+      padding: '15px 16px',
+      marginBottom: 10,
+      boxShadow: '0 1px 3px rgba(46,42,38,0.04)',
+    }}>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+        <div style={{
+          width: 34, height: 34, borderRadius: 14,
+          background: section.tone,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          {KIcon.hospital(KUN.ink)}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontFamily: KUN.fontT, fontSize: 16, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>
+            {section.title}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 9 }}>
+            {section.items.map((item) => (
+              <div key={item} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                <div style={{ width: 5, height: 5, borderRadius: '50%', background: KUN.brick, marginTop: 8, flexShrink: 0 }} />
+                <div style={{ fontFamily: KUN.fontB, fontSize: 12.5, lineHeight: 1.55, color: KUN.inkSoft, fontWeight: 500 }}>
+                  {item}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UcinLactarioBox({ reservation, onOpen, reminderMinutes = 60 }) {
+  const reservations = Array.isArray(reservation) ? reservation : (reservation ? [reservation] : []);
+  const nextSlot = LACTARIO_SLOTS.find(s => s.used < LACT_CAP);
+  const hasReservation = reservations.length > 0;
+  const summary = hasReservation
+    ? (reservations.length === 1 ? `Turno reservado: ${reservations[0]}` : `${reservations.length} turnos reservados hoy`)
+    : `Proximo turno disponible: ${nextSlot ? nextSlot.time : 'sin cupos'}`;
+
+  return (
+    <div style={{ padding: '0 20px 16px' }}>
+      <button
+        onClick={onOpen}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          border: `1px solid ${KUN.hair}`,
+          background: '#fff',
+          borderRadius: 24,
+          padding: '16px 16px',
+          cursor: 'pointer',
+          boxShadow: '0 10px 24px rgba(42,35,32,0.05)',
+          display: 'flex',
+          gap: 13,
+          alignItems: 'center',
+        }}
+      >
+        <img
+          src="assets/mamadera-3.svg?v=2"
+          alt="Mamadera"
+          style={{ width: 42, height: 50, objectFit: 'contain', flexShrink: 0, display: 'block' }}
+        />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>
+            Reservar lactario
+          </div>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 12.5, lineHeight: 1.45, color: KUN.inkSoft, marginTop: 4 }}>
+            {summary}
+          </div>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 11.5, color: KUN.inkMuted, marginTop: 6 }}>
+            Recordatorio {reminderMinutes} min antes
+          </div>
+        </div>
+        <div style={{
+          width: 34,
+          height: 34,
+          borderRadius: 17,
+          background: KUN.brick,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path d="M8 5L13 10L8 15" stroke="#fff" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60 }) {
+  const [view, setView] = React.useState('main');
+
+  if (view === 'lactario') {
+    return (
+      <div style={{ minHeight: '100%', background: KUN.bg, paddingBottom: 24 }}>
+        <ScreenLactario
+          reservation={reservation}
+          onReserve={onReserve}
+          onCancel={onCancel}
+          reminderMinutes={reminderMinutes}
+          title="Reservas al lactario"
+          onBack={() => setView('main')}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: '100%', background: KUN.bg, paddingBottom: 24 }}>
+      <div style={{ padding: '8px 20px 16px' }}>
+        <div style={{
+          background: '#fff',
+          border: `1px solid ${KUN.hair}`,
+          borderRadius: 24,
+          padding: '18px 18px 16px',
+          boxShadow: '0 10px 24px rgba(42,35,32,0.05)',
+        }}>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 6 }}>
+            Red UC Christus
+          </div>
+          <div style={{ fontFamily: KUN.fontT, fontSize: 25, fontWeight: 800, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.1 }}>
+            UCIN
+          </div>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 13, color: KUN.inkSoft, lineHeight: 1.55, marginTop: 8 }}>
+            Reservas al lactario e informacion importante para acompanarlos durante la hospitalizacion.
+          </div>
+        </div>
+      </div>
+
+      <UcinLactarioBox
+        reservation={reservation}
+        reminderMinutes={reminderMinutes}
+        onOpen={() => setView('lactario')}
+      />
+
+      <div style={{ padding: '2px 20px 0' }}>
+        <div style={{
+          background: KUN.sageSoft,
+          color: KUN.ink,
+          border: `1px solid rgba(170,213,158,0.55)`,
+          borderRadius: 24,
+          padding: '17px 18px',
+          marginBottom: 14,
+          boxShadow: '0 10px 24px rgba(92,132,82,0.10)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{
+              width: 36,
+              height: 36,
+              borderRadius: 16,
+              background: KUN.apple,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <img src="assets/mamadera-4.svg?v=2" alt="" style={{ width: 20, height: 26, objectFit: 'contain' }} />
+            </div>
+            <div>
+              <div style={{ fontFamily: KUN.fontB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 2 }}>
+                Lactancia y alimentacion
+              </div>
+              <div style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800, color: KUN.ink, letterSpacing: -0.2 }}>
+                Horario SEDILE
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline', background: '#fff', borderRadius: 16, padding: '10px 12px' }}>
+              <span style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800 }}>08:15 - 13:30</span>
+              <span style={{ fontFamily: KUN.fontB, fontSize: 12, fontWeight: 800, color: '#3D9156' }}>Abierto</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline', background: KUN.sunSoft, borderRadius: 16, padding: '10px 12px' }}>
+              <span style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800 }}>13:30 - 17:30</span>
+              <span style={{ fontFamily: KUN.fontB, fontSize: 12, fontWeight: 800, color: '#9C7410' }}>Cerrado</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline', background: '#fff', borderRadius: 16, padding: '10px 12px' }}>
+              <span style={{ fontFamily: KUN.fontT, fontSize: 18, fontWeight: 800 }}>17:30 - 19:45</span>
+              <span style={{ fontFamily: KUN.fontB, fontSize: 12, fontWeight: 800, color: '#3D9156' }}>Abierto</span>
+            </div>
+          </div>
+          <div style={{ fontFamily: KUN.fontB, fontSize: 12, lineHeight: 1.45, color: KUN.inkSoft, marginTop: 12 }}>
+            La leche extraida se entrega en SEDILE general. Telefono SEDILE: 223543299.
+          </div>
+        </div>
+
+        <div style={{ fontFamily: KUN.fontB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: 0.8, textTransform: 'uppercase', margin: '4px 2px 10px' }}>
+          Informacion importante
+        </div>
+        {UCIN_INFO_SECTIONS.map(section => <UcinInfoCard key={section.title} section={section} />)}
+        <div style={{
+          background: KUN.cardSoft,
+          borderRadius: 20,
+          padding: '14px 16px',
+          fontFamily: KUN.fontB,
+          fontSize: 12.5,
+          color: KUN.inkSoft,
+          lineHeight: 1.55,
+        }}>
+          Unidad de Atencion al Paciente y Familia: pueden hacer sugerencias, felicitaciones u observaciones en el primer piso del hall central o en el buzon de sugerencias y reclamos ubicado en el acceso del servicio.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 window.ScreenLactario = ScreenLactario;
+window.ScreenUCIN = ScreenUCIN;

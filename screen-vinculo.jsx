@@ -1618,12 +1618,29 @@ function ContentDetailView({ item, type, onBack, onRecord }) {
 function Recorder({ onClose, onSave, context }) {
   const [recording, setRecording] = React.useState(false);
   const [seconds, setSeconds] = React.useState(0);
+  const [readingSpeed, setReadingSpeed] = React.useState('normal');
+  const scriptRef = React.useRef(null);
   const ctx = context || { author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' };
+  const hasScript = !!ctx.scriptText;
+  const speedOptions = [
+    { id: 'lenta', label: 'Lenta', px: 10 },
+    { id: 'normal', label: 'Normal', px: 17 },
+    { id: 'rapida', label: 'Rapida', px: 25 },
+  ];
+  const activeSpeed = speedOptions.find(opt => opt.id === readingSpeed) || speedOptions[1];
+
   React.useEffect(() => {
     if (!recording) return;
     const id = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => clearInterval(id);
   }, [recording]);
+
+  React.useEffect(() => {
+    if (!hasScript || !scriptRef.current) return;
+    const el = scriptRef.current;
+    const target = recording ? seconds * activeSpeed.px : 0;
+    el.scrollTo({ top: Math.min(target, el.scrollHeight), behavior: 'smooth' });
+  }, [hasScript, recording, seconds, activeSpeed.px]);
 
   const fmt = (s) => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
 
@@ -1632,6 +1649,7 @@ function Recorder({ onClose, onSave, context }) {
     window.KUNAnalytics?.track('vinculo_grabacion_guardada', {
       recording_role: ctx.author || 'Mamá',
       duration_seconds: seconds,
+      reading_speed: hasScript ? readingSpeed : undefined,
     });
     onSave({
       name: ctx.name || 'Para Sofía',
@@ -1640,6 +1658,7 @@ function Recorder({ onClose, onSave, context }) {
       author: ctx.author || 'Mamá',
       role: ctx.role || 'Mamá - Voz para Sofía',
       color: ctx.color || KUN.rosehip,
+      readingSpeed: hasScript ? readingSpeed : undefined,
     });
     onClose();
   };
@@ -1661,7 +1680,79 @@ function Recorder({ onClose, onSave, context }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding: 20 }}>
+      <div style={{ flex: 1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent: hasScript ? 'flex-start' : 'center', padding: hasScript ? '0 20px 20px' : 20 }}>
+        {hasScript && (
+          <div style={{
+            width: '100%',
+            background: '#fff',
+            border: `1px solid ${KUN.hair}`,
+            borderRadius: 24,
+            padding: '15px 16px',
+            marginBottom: 16,
+            boxSizing: 'border-box',
+            boxShadow: '0 8px 18px rgba(42,35,32,0.05)',
+          }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 10, marginBottom: 10 }}>
+              <div>
+                <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: .8, textTransform:'uppercase', marginBottom: 2 }}>
+                  Lectura guiada
+                </div>
+                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
+                  {ctx.name || 'Cuento'}
+                </div>
+              </div>
+            </div>
+
+            <div
+              ref={scriptRef}
+              style={{
+                maxHeight: 178,
+                overflowY: 'auto',
+                padding: '14px 14px',
+                borderRadius: 18,
+                background: KUN.cardSoft,
+                fontFamily: V_FB,
+                fontSize: 15,
+                lineHeight: 1.85,
+                color: KUN.ink,
+                whiteSpace: 'pre-line',
+                scrollBehavior: 'smooth',
+              }}
+            >
+              {ctx.scriptText}
+            </div>
+
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: .7, textTransform:'uppercase', marginBottom: 8 }}>
+                Velocidad del texto
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 8 }}>
+                {speedOptions.map(opt => {
+                  const selected = opt.id === readingSpeed;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => setReadingSpeed(opt.id)}
+                      style={{
+                        height: 38,
+                        borderRadius: 999,
+                        border: `1.5px solid ${selected ? KUN.brick : KUN.hair}`,
+                        background: selected ? KUN.rosehip : '#fff',
+                        color: KUN.ink,
+                        fontFamily: V_FT,
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
         <div style={{
           fontFamily: V_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400, marginBottom: 16, textAlign:'center',
         }}>
@@ -1801,6 +1892,8 @@ function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
               role: `Mamá - ${isStory ? 'Cuento' : 'Canción'} para Sofía`,
               color: KUN.rosehip,
               name: detailItem.item.title,
+              scriptText: isStory ? detailItem.item.text : '',
+              scriptType: isStory ? 'cuento' : 'cancion',
             });
           }}
         />

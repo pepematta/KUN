@@ -383,14 +383,14 @@ function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName
   const [children, setChildren] = React.useState(
     (Array.isArray(initialChildren) && initialChildren.length > 0)
       ? initialChildren
-      : [{ id: makeChildId(0), name: '', sex: '' }]
+      : [{ id: makeChildId(0), name: '', sex: '', weightGrams: '' }]
   );
 
   const updateChild = (index, patch) => {
     setChildren(prev => prev.map((child, i) => i === index ? { ...child, ...patch } : child));
   };
   const addChild = () => {
-    setChildren(prev => prev.length >= MAX_CHILDREN ? prev : [...prev, { id: makeChildId(prev.length), name: '', sex: '' }]);
+    setChildren(prev => prev.length >= MAX_CHILDREN ? prev : [...prev, { id: makeChildId(prev.length), name: '', sex: '', weightGrams: '' }]);
   };
   const removeChild = (index) => {
     setChildren(prev => prev.length <= 1 ? prev : prev.filter((_, i) => i !== index));
@@ -408,6 +408,7 @@ function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName
       id: child.id || makeChildId(index),
       name: (child.name || '').trim(),
       sex: child.sex || '',
+      weightGrams: child.weightGrams ? Math.max(0, parseInt(child.weightGrams, 10) || 0) : '',
     }));
     onContinue({
       familyRole, parentName: parentName.trim(), birthDate,
@@ -562,6 +563,25 @@ function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName
                 style={inputStyle}
               />
               <div style={{ height: 12 }} />
+              <div style={labelStyle}>Peso actual</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <input
+                  type="number"
+                  value={children[index]?.weightGrams || ''}
+                  onChange={(e) => updateChild(index, { weightGrams: e.target.value })}
+                  placeholder="Ej: 1850"
+                  inputMode="numeric"
+                  min={0}
+                  style={{ ...inputStyle, fontFamily: A_FT, fontSize: 15, fontWeight: 700 }}
+                />
+                <div style={{ fontFamily: A_FT, fontSize: 14, fontWeight: 700, color: KUN.inkSoft, flexShrink: 0 }}>
+                  gramos
+                </div>
+              </div>
+              <div style={{ marginTop: 6, fontFamily: A_FB, fontSize: 11.5, color: KUN.inkMuted, fontWeight: 400 }}>
+                Luego podras actualizarlo dia a dia desde Inicio.
+              </div>
+              <div style={{ height: 12 }} />
               <div style={{ ...labelStyle, marginBottom: 8 }}>Sexo</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {[
@@ -671,6 +691,7 @@ function ScreenAuth({ onAuthenticated }) {
               id: child.id || `child-${index + 1}`,
               name: (child.name || '').trim() || `Bebé ${index + 1}`,
               sex: child.sex || '',
+              weightGrams: child.weightGrams ? Math.max(0, parseInt(child.weightGrams, 10) || 0) : '',
             }));
             const first = prepared[0];
             finishParentLogin({

@@ -753,16 +753,18 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
           onClick={() => onSave(status)}
           style={{
             width: '100%',
-            height: 50,
+            height: 56,
+            padding: '16px 22px',
             borderRadius: 999,
             background: KUN.brick,
             color: '#fff',
             border: 'none',
             fontFamily: BST_FT,
-            fontSize: 15,
+            fontSize: 16,
             fontWeight: 700,
             cursor: 'pointer',
             marginTop: 8,
+            flexShrink: 0,
           }}
         >
           Guardar y continuar

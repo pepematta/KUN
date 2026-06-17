@@ -340,6 +340,166 @@ function ChildSwitcher({ childrenList, activeChildId, onSelectChild }) {
   );
 }
 
+function formatWeightDate(date) {
+  if (!date) return 'Hoy';
+  const [year, month, day] = String(date).split('-');
+  if (!day) return date;
+  return `${day}/${month}`;
+}
+
+function WeightTracker({ history = [], onSave }) {
+  const sorted = Array.isArray(history)
+    ? [...history].filter(item => item && item.grams).sort((a, b) => String(a.date).localeCompare(String(b.date)))
+    : [];
+  const latest = sorted[sorted.length - 1] || null;
+  const previous = sorted[sorted.length - 2] || null;
+  const [editing, setEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState(latest?.grams ? String(latest.grams) : '');
+
+  React.useEffect(() => {
+    if (!editing) setDraft(latest?.grams ? String(latest.grams) : '');
+  }, [latest?.grams, editing]);
+
+  const recent = sorted.slice(-5);
+  const min = recent.length ? Math.min(...recent.map(item => item.grams)) : 0;
+  const max = recent.length ? Math.max(...recent.map(item => item.grams)) : 0;
+  const delta = latest && previous ? latest.grams - previous.grams : null;
+
+  const save = () => {
+    const grams = parseInt(draft, 10);
+    if (!Number.isFinite(grams) || grams <= 0) return;
+    onSave && onSave(grams);
+    setEditing(false);
+  };
+
+  return (
+    <div style={{ margin: '18px 22px 0' }}>
+      <div style={{
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 24,
+        padding: '16px 16px 15px',
+        boxShadow: '0 1px 3px rgba(46,42,38,0.04)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+          <div>
+            <div style={{
+              fontFamily: HF_B,
+              fontSize: 11,
+              fontWeight: 700,
+              color: HC.ink3,
+              letterSpacing: 0.8,
+              textTransform: 'uppercase',
+              marginBottom: 4,
+            }}>
+              Peso
+            </div>
+            <div style={{ fontFamily: HF_T, fontSize: 25, fontWeight: 800, color: HC.ink, letterSpacing: -0.5 }}>
+              {latest ? latest.grams : '--'} <span style={{ fontFamily: HF_B, fontSize: 13, fontWeight: 600, color: HC.ink2 }}>g</span>
+            </div>
+            <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.45, marginTop: 3 }}>
+              {latest
+                ? `${delta === null ? 'Primer registro' : delta >= 0 ? `+${delta} g desde el registro anterior` : `${delta} g desde el registro anterior`}`
+                : 'Agrega el primer peso para ver su evolucion.'}
+            </div>
+          </div>
+          <button
+            onClick={() => setEditing(true)}
+            style={{
+              border: `1.5px solid ${HC.apple}`,
+              background: HC.appleSoft,
+              color: HC.ink,
+              borderRadius: 999,
+              padding: '9px 13px',
+              fontFamily: HF_T,
+              fontSize: 13,
+              fontWeight: 800,
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            Editar
+          </button>
+        </div>
+
+        {recent.length > 1 && (
+          <div style={{ display: 'flex', alignItems: 'end', gap: 8, height: 58, marginTop: 14 }}>
+            {recent.map(item => {
+              const pct = max === min ? 0.72 : 0.34 + ((item.grams - min) / (max - min)) * 0.5;
+              return (
+                <div key={item.date} style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                  <div style={{
+                    width: '100%',
+                    maxWidth: 34,
+                    height: Math.round(42 * pct),
+                    minHeight: 14,
+                    borderRadius: '9px 9px 4px 4px',
+                    background: HC.apple,
+                  }} />
+                  <div style={{ fontFamily: HF_B, fontSize: 10.5, color: HC.ink3, whiteSpace: 'nowrap' }}>
+                    {formatWeightDate(item.date)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {editing && (
+          <div style={{
+            marginTop: 14,
+            paddingTop: 14,
+            borderTop: `1px dashed ${HC.hair}`,
+            display: 'flex',
+            gap: 9,
+            alignItems: 'center',
+          }}>
+            <input
+              type="number"
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+              placeholder="Peso de hoy"
+              inputMode="numeric"
+              min={0}
+              style={{
+                flex: 1,
+                minWidth: 0,
+                boxSizing: 'border-box',
+                border: `1.5px solid ${HC.hair}`,
+                borderRadius: 16,
+                padding: '12px 13px',
+                fontFamily: HF_T,
+                fontSize: 15,
+                fontWeight: 800,
+                color: HC.ink,
+                outline: 'none',
+                background: '#fff',
+              }}
+            />
+            <div style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 800, color: HC.ink2 }}>g</div>
+            <button
+              onClick={save}
+              style={{
+                border: 'none',
+                background: HC.brick,
+                color: '#fff',
+                borderRadius: 999,
+                padding: '11px 13px',
+                fontFamily: HF_T,
+                fontSize: 13,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              Guardar
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DailySummary({ babyName, babyStatus, onEditStatus }) {
   const bName = babyName || 'Sofía';
   const hasStatus = babyStatus && (
@@ -768,7 +928,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        children: childrenList, activeChildId, onSelectChild,
                        activeChildVitalStatus,
                        lactarioReservation, onOpenLactario, onCancelLactario,
-                       completedCapsulas, babyStatus, onEditBabyStatus }) {
+                       completedCapsulas, babyStatus, babyWeightHistory, onSaveBabyWeight, onEditBabyStatus }) {
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
   const isBereavement = activeChildVitalStatus === 'deceased';
@@ -797,17 +957,8 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             <HomeGreeting parentName={parentName} />
             <BabyHero babyName={bName} />
             <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+            <WeightTracker history={babyWeightHistory} onSave={onSaveBabyWeight} />
             <DailySummary babyName={bName} babyStatus={babyStatus} onEditStatus={onEditBabyStatus} />
-            <div style={{ padding: '20px 22px 0', boxSizing: 'border-box' }}>
-              <div style={{ fontFamily: HF_T, fontWeight: 700, fontSize: 19, color: HC.ink, letterSpacing: '-0.3px' }}>
-                Lactario
-              </div>
-            </div>
-            <LactarioCard
-              reservation={lactarioReservation}
-              onOpen={onOpenLactario}
-              onCancel={onCancelLactario}
-            />
           </>
         )}
         {!isBereavement && (

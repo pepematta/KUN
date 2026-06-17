@@ -50,16 +50,16 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="kun-env.js?v=1"></script>
 <script type="text/babel" src="analytics.jsx?v=4"></script>
-<script type="text/babel" src="edu-shared.jsx?v=12"></script>
-<script type="text/babel" src="screen-auth.jsx?v=21"></script>
+<script type="text/babel" src="edu-shared.jsx?v=13"></script>
+<script type="text/babel" src="screen-auth.jsx?v=22"></script>
 <script type="text/babel" src="screen-tour.jsx?v=31"></script>
-<script type="text/babel" src="screen-lactario.jsx?v=6"></script>
-<script type="text/babel" src="screen-baby-status.jsx?v=12"></script>
-<script type="text/babel" src="screen-home.jsx?v=33"></script>
+<script type="text/babel" src="screen-lactario.jsx?v=9"></script>
+<script type="text/babel" src="screen-baby-status.jsx?v=13"></script>
+<script type="text/babel" src="screen-home.jsx?v=35"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=49"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=50"></script>
 <script type="text/babel" src="screen-comunidad.jsx?v=19"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=13"></script>
 <script type="text/babel" src="screen-staff.jsx?v=8"></script>
@@ -72,6 +72,7 @@ const { useState } = React;
 
 const BABY_STATUS_BY_CHILD_KEY = 'kun_baby_status_by_child_v1';
 const LEGACY_BABY_STATUS_KEY = 'kun_baby_status_v1';
+const BABY_WEIGHT_BY_CHILD_KEY = 'kun_baby_weight_by_child_v1';
 const WELCOME_TOUR_ENABLED = true;
 
 function childStatusKey(child, fallback = 'child-1') {
@@ -111,10 +112,41 @@ function normalizeFamilyChildren(authData, clinicalBabies) {
       rut: child.rut || (index === 0 ? authData?.rut || '' : ''),
       name: clinical?.babyName || child.name || child.babyName || (index === 0 ? authData?.babyName || '' : '') || `Bebé ${index + 1}`,
       sex: clinical?.sex || child.sex || '',
+      weightGrams: child.weightGrams || '',
       vitalStatus: clinical?.vitalStatus || child.vitalStatus || 'hospitalized',
       clinical,
     };
   });
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function normalizeWeightEntry(entry) {
+  const grams = parseInt(entry?.grams, 10);
+  if (!Number.isFinite(grams) || grams <= 0) return null;
+  return { date: entry?.date || todayISO(), grams };
+}
+
+function loadBabyWeightByChild(children = []) {
+  let stored = {};
+  try {
+    const parsed = JSON.parse(localStorage.getItem(BABY_WEIGHT_BY_CHILD_KEY) || '{}');
+    if (parsed && typeof parsed === 'object') stored = parsed;
+  } catch {}
+  const seeded = { ...stored };
+  children.forEach(child => {
+    const key = childStatusKey(child);
+    const existing = Array.isArray(seeded[key]) ? seeded[key].map(normalizeWeightEntry).filter(Boolean) : [];
+    if (existing.length > 0) {
+      seeded[key] = existing;
+      return;
+    }
+    const initial = normalizeWeightEntry({ date: todayISO(), grams: child?.weightGrams });
+    if (initial) seeded[key] = [initial];
+  });
+  return seeded;
 }
 
 function PlaceholderScreen({ title, subtitle, icon }) {
@@ -204,7 +236,7 @@ function NotificationsPanel({ onClose, onOpenItem, recommendations = [], lactari
       desc: `Tienes un turno ${time}. Te avisaremos ${minutesBeforeLabel(lactarioReminderMinutes)}.`,
       time: 'Programado',
       color: KUN.sage,
-      target: { tab: 'home', lactario: true },
+      target: { tab: 'ucin', lactario: true },
     })),
     ...recommendations.map(r => ({
       kind: r.kind || 'capsule',
@@ -297,6 +329,7 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lact
       id: c.id || `child-${i + 1}`,
       name: c.name || '',
       sex: c.sex || '',
+      weightGrams: c.weightGrams || '',
     }));
   });
   const [reminder, setReminder] = React.useState(String(lactarioReminderMinutes || 60));
@@ -312,6 +345,7 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lact
       id: c.id || `child-${i + 1}`,
       name: (c.name || '').trim() || `Bebé ${i + 1}`,
       sex: c.sex || '',
+      weightGrams: c.weightGrams ? Math.max(0, parseInt(c.weightGrams, 10) || 0) : '',
     }));
     onSave({
       parentName: parentName.trim(),
@@ -472,6 +506,23 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lact
                   value={child.name}
                   onChange={e => updateChild(index, { name: e.target.value })}
                 />
+              </div>
+              <div>
+                <label style={labelStyle}>PESO ACTUAL</label>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <input
+                    style={{ ...inputStyle, fontWeight: 700 }}
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    placeholder="Ej: 1850"
+                    value={child.weightGrams || ''}
+                    onChange={e => updateChild(index, { weightGrams: e.target.value })}
+                  />
+                  <div style={{ fontFamily: 'Quicksand, sans-serif', fontSize: 14, fontWeight: 700, color: KUN.inkSoft, flexShrink: 0 }}>
+                    gramos
+                  </div>
+                </div>
               </div>
               <div>
                 <label style={labelStyle}>SEXO</label>
@@ -654,6 +705,7 @@ function Prototype() {
   const [quizResults, setQuizResults] = useState({});
   const [activeChildId, setActiveChildId] = useState(() => authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
   const [babyStatusByChild, setBabyStatusByChild] = useState(() => loadBabyStatusByChild(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1'));
+  const [babyWeightByChild, setBabyWeightByChild] = useState(() => loadBabyWeightByChild(authData?.children || []));
   const [babyStatusEditOpen, setBabyStatusEditOpen] = useState(false);
   const [forumQuestions, setForumQuestions] = useState([]);
   const [forumReplyNotifications, setForumReplyNotifications] = useState([]);
@@ -691,6 +743,13 @@ function Prototype() {
     }
   })();
   const familyChildren = normalizeFamilyChildren(authData, clinicalBabies);
+  React.useEffect(() => {
+    if (!authData || authData.role === 'staff') return;
+    setBabyWeightByChild(prev => {
+      const seeded = loadBabyWeightByChild(familyChildren);
+      return { ...seeded, ...prev };
+    });
+  }, [authData?.rut, authData?.children?.length]);
   const activeChild = familyChildren.find(child => child.id === activeChildId) || familyChildren[0] || null;
   const primaryChild = familyChildren[0] || null;
   const activeChildKey = childStatusKey(activeChild, activeChildId || authData?.rut || 'child-1');
@@ -720,6 +779,7 @@ function Prototype() {
   const primaryBabyName = primaryChild?.name || authData?.babyName || 'Sofía';
   const activeChildIsDeceased = activeChild?.vitalStatus === 'deceased';
   const babyStatus = babyStatusByChild[activeChildKey] || null;
+  const babyWeightHistory = babyWeightByChild[activeChildKey] || [];
   const primaryBabyStatus = babyStatusByChild[primaryChildKey] || null;
   const babyStatusDoneByChild = authData?.babyStatusDoneByChild || {};
   const isStatusDoneForChild = (child) => {
@@ -738,6 +798,29 @@ function Prototype() {
   const setLactarioReminderMinutes = (minutes) => {
     setLactarioReminderMinutesState(minutes);
     try { localStorage.setItem('kun_lactario_reminder_minutes_v1', String(minutes)); } catch {}
+  };
+
+  const saveBabyWeight = (grams) => {
+    const nextEntry = normalizeWeightEntry({ date: todayISO(), grams });
+    if (!nextEntry || !activeChildKey) return;
+    window.KUNAnalytics?.track('peso_bebe_editado', {
+      child_index: Math.max(0, familyChildren.findIndex(child => child.id === activeChild?.id)),
+    });
+    setBabyWeightByChild(prev => {
+      const current = Array.isArray(prev[activeChildKey]) ? prev[activeChildKey] : [];
+      const withoutToday = current.filter(entry => entry.date !== nextEntry.date);
+      const nextHistory = [...withoutToday, nextEntry].sort((a, b) => a.date.localeCompare(b.date));
+      const next = { ...prev, [activeChildKey]: nextHistory };
+      try { localStorage.setItem(BABY_WEIGHT_BY_CHILD_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+    const currentChildren = Array.isArray(authData?.children) && authData.children.length ? authData.children : familyChildren;
+    const updatedChildren = currentChildren.map(child => (
+      childStatusKey(child) === activeChildKey ? { ...child, weightGrams: nextEntry.grams } : child
+    ));
+    const updated = { ...authData, children: updatedChildren, babyName: activeChild?.name || authData?.babyName };
+    if (typeof window.KAuth !== 'undefined') window.KAuth.save(updated);
+    setAuthData(updated);
   };
 
   const scheduleLactarioReminder = (time) => {
@@ -785,7 +868,7 @@ function Prototype() {
     const incoming = Array.isArray(editedChildren) ? editedChildren : [];
     const updatedChildren = incoming.map((child, i) => {
       const existing = familyChildren.find(c => c.id === child.id) || {};
-      return { ...existing, id: child.id || `child-${i + 1}`, name: child.name, sex: child.sex };
+      return { ...existing, id: child.id || `child-${i + 1}`, name: child.name, sex: child.sex, weightGrams: child.weightGrams || existing.weightGrams || '' };
     });
     const activeMatch = updatedChildren.find(c => c.id === activeChild?.id) || updatedChildren[0];
     const updated = {
@@ -1092,8 +1175,11 @@ function Prototype() {
       setBondView(target.bondView || 'entry');
       return;
     }
+    if (target.tab === 'ucin' || target.lactario) {
+      setTab('ucin');
+      return;
+    }
     setTab('home');
-    if (target.lactario) setLactarioOpen(true);
   };
 
   const renderEdu = () => {
@@ -1112,14 +1198,6 @@ function Prototype() {
       onQuizAnswer={saveQuizResult}
       onPublishForum={publishCapsulaQuestion}
     />;
-  } else if (tab === 'home' && lactarioOpen) {
-    body = <ScreenLactario
-      reservation={lactarioReservation}
-      onReserve={reserveLactarioSlot}
-      onCancel={cancelLactarioSlot}
-      onBack={() => setLactarioOpen(false)}
-      reminderMinutes={lactarioReminderMinutes}
-    />;
   } else if (tab === 'home') {
     body = <ScreenHome
       onGoToEdu={() => goToEdu('biblio')} onGoToCapsula={openCapsula}
@@ -1133,6 +1211,8 @@ function Prototype() {
       onOpenLactario={() => setLactarioOpen(true)}
       onCancelLactario={cancelLactarioSlot}
       babyStatus={babyStatus}
+      babyWeightHistory={babyWeightHistory}
+      onSaveBabyWeight={saveBabyWeight}
       onEditBabyStatus={() => {
         window.KUNAnalytics?.track('estado_bebe_edicion_iniciada', {
           has_existing_status: childHasStatus(babyStatus),
@@ -1150,6 +1230,13 @@ function Prototype() {
       babyName={primaryBabyName}
       canEditDiary={authData.role === 'parent' && ['mama', 'papa', 'parent'].includes(authData.familyRole || 'mama')}
     />;
+  } else if (tab === 'ucin') {
+    body = <ScreenUCIN
+      reservation={lactarioReservation}
+      onReserve={reserveLactarioSlot}
+      onCancel={cancelLactarioSlot}
+      reminderMinutes={lactarioReminderMinutes}
+    />;
   } else {
     body = <ScreenComunidad
       focusQuestionId={communityStart.focusQuestionId}
@@ -1163,6 +1250,7 @@ function Prototype() {
     tab === 'home' ? '01 Inicio'
     : tab === 'edu' ? `02 Educación · ${eduSub === 'camino' ? 'Cuidados básicos' : eduSub === 'perso' ? `Especial para mi ${childLabel}` : 'Aprender más'}`
     : tab === 'bond' ? `03 Vínculo · ${bondView === 'entry' ? 'Inicio' : bondView === 'journey' ? 'Diario de vida' : 'Actividades con mi hijo'}`
+    : tab === 'ucin' ? '05 UCIN'
     : '04 Comunidad';
 
   return (
@@ -1302,6 +1390,7 @@ function Prototype() {
     typeof window.ScreenAuth === 'function' &&
     typeof window.ScreenTour === 'function' &&
     typeof window.ScreenLactario === 'function' &&
+    typeof window.ScreenUCIN === 'function' &&
     typeof window.ScreenBabyStatusOnboarding === 'function' &&
     typeof window.ScreenHome === 'function' &&
     typeof window.ScreenCamino === 'function' &&
