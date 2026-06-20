@@ -116,26 +116,9 @@ function HistorySection({ completedCapsulas, quizResults, onOpenCapsula, onGoToB
                 marginBottom: 4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
               }}>{it.title}</div>
               <div style={{ display:'flex', alignItems:'center', gap: 8, fontFamily: P_FB, fontSize: 11.5, color: KUN.inkSoft, fontWeight: 400 }}>
-                <span style={{
-                  padding: '2px 8px', borderRadius: 999,
-                  background: KUN.apple, color: KUN.ink,
-                  fontFamily: P_FT, fontSize: 10, fontWeight: 700, letterSpacing: 0.3,
-                }}>VISTA</span>
                 <span>{it.dur}</span>
                 <span style={{ width: 3, height: 3, borderRadius:'50%', background: KUN.inkFaint }}/>
                 <span>{it.when}</span>
-                {it.quiz?.answered && (
-                  <>
-                    <span style={{ width: 3, height: 3, borderRadius:'50%', background: KUN.inkFaint }}/>
-                    <span style={{
-                      padding: '2px 8px', borderRadius: 999,
-                      background: KUN.rosehip, color: KUN.ink,
-                      fontFamily: P_FT, fontSize: 10, fontWeight: 700, letterSpacing: 0.3,
-                    }}>
-                      REPASO
-                    </span>
-                  </>
-                )}
               </div>
             </div>
             {KIcon.chevRight(KUN.inkFaint)}

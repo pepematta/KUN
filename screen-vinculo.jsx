@@ -111,59 +111,88 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
           </div>
         </div>
 
-        {/* Cards — fill remaining space; Diario takes 2/3, Actividades 1/3 */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14, paddingBottom: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 12 }}>
 
           {/* Featured card — Diario de vida */}
           <div onClick={() => onPick('journey')} style={{
-            flex: 2, background: KUN.brick, borderRadius: 30, padding: '24px 22px',
+            background: KUN.brick, borderRadius: 30, padding: '18px 22px',
             color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
           }}>
             <div style={{ position:'absolute', top:-40, right:-40, width: 180, height: 180, borderRadius:'50%', background:'rgba(255,255,255,0.10)' }}/>
             <div style={{ position:'absolute', bottom:-60, left:-30, width: 140, height: 140, borderRadius:'50%', background:'rgba(255,255,255,0.08)' }}/>
             <div style={{
-              width: 60, height: 60, borderRadius: 20,
+              width: 56, height: 56, borderRadius: 18,
               background:'rgba(255,255,255,0.20)',
               display:'flex', alignItems:'center', justifyContent:'center',
-              marginBottom: 16, position:'relative',
+              marginBottom: 14, position:'relative',
             }}>{VINK_ICONS.journey('#fff')}</div>
             <div style={{
-              fontFamily: V_FT, fontSize: 24, fontWeight: 700,
-              letterSpacing: -0.4, marginBottom: 4, position:'relative',
+              fontFamily: V_FT, fontSize: 20, fontWeight: 700,
+              letterSpacing: -0.4, marginBottom: 3, position:'relative',
             }}>
               Diario de vida
             </div>
             <div style={{
-              fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, opacity: 0.92, position:'relative',
+              fontFamily: V_FB, fontSize: 13, fontWeight: 400, opacity: 0.92, position:'relative',
             }}>
               Registra tus momentos
             </div>
           </div>
 
-          {/* Standard card — Actividades con mi hijo */}
-          <div onClick={() => onPick('activities')} style={{
-            flex: 1, background:'#fff', borderRadius: 30, padding: '24px 22px',
-            cursor:'pointer', position:'relative', overflow:'hidden',
-            border: `1px solid ${KUN.hair}`,
-          }}>
-            <div style={{ position:'absolute', top:-30, right:-30, width: 130, height: 130, borderRadius:'50%', background: KUN.apple, opacity: 0.40 }}/>
-            <div style={{
-              width: 60, height: 60, borderRadius: 20,
-              background: KUN.apple,
-              display:'flex', alignItems:'center', justifyContent:'center',
-              marginBottom: 16, position:'relative',
-            }}>{VINK_ICONS.music(KUN.ink)}</div>
-            <div style={{
-              fontFamily: V_FT, fontSize: 22, fontWeight: 700,
-              letterSpacing: -0.4, marginBottom: 4, position:'relative', color: KUN.ink,
-            }}>
-              Actividades con mi hijo
-            </div>
-            <div style={{
-              fontFamily: V_FB, fontSize: 13.5, fontWeight: 400, color: KUN.inkSoft, position:'relative',
-            }}>
-              Tu voz y la música que la calma
-            </div>
+          {/* 3 activity blocks */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            {[
+              {
+                id: 'cuentos', label: 'Cuentos', color: KUN.viola,
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke={KUN.ink} strokeWidth="1.8" strokeLinecap="round"/>
+                    <path d="M6.5 2H20V22H6.5C5.1 22 4 20.9 4 19.5V4.5C4 3.1 5.1 2 6.5 2Z" stroke={KUN.ink} strokeWidth="1.8" strokeLinejoin="round"/>
+                  </svg>
+                ),
+              },
+              {
+                id: 'canciones', label: 'Canciones', color: KUN.rosehip,
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18V6l12-2v12" stroke={KUN.ink} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="6" cy="18" r="3" stroke={KUN.ink} strokeWidth="1.8"/>
+                    <circle cx="18" cy="16" r="3" stroke={KUN.ink} strokeWidth="1.8"/>
+                  </svg>
+                ),
+              },
+              {
+                id: 'musica', label: 'Música', color: KUN.apple,
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 22 22" fill="none">
+                    <rect x="1"  y="9"  width="3" height="4"  rx="1.5" fill={KUN.ink}/>
+                    <rect x="6"  y="5"  width="3" height="12" rx="1.5" fill={KUN.ink}/>
+                    <rect x="11" y="7"  width="3" height="8"  rx="1.5" fill={KUN.ink}/>
+                    <rect x="16" y="10" width="3" height="3"  rx="1.5" fill={KUN.ink}/>
+                  </svg>
+                ),
+              },
+            ].map(item => (
+              <div key={item.id} onClick={() => onPick(`activities-${item.id}`)} style={{
+                flex: 1, background: item.color, borderRadius: 22, padding: '18px 10px 16px',
+                cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', gap: 12,
+              }}>
+                <div style={{
+                  width: 52, height: 52, borderRadius: 16,
+                  background: 'rgba(255,255,255,0.45)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {item.icon}
+                </div>
+                <div style={{
+                  fontFamily: V_FT, fontSize: 13, fontWeight: 700,
+                  color: KUN.ink, textAlign: 'center', letterSpacing: -0.1,
+                }}>
+                  {item.label}
+                </div>
+              </div>
+            ))}
           </div>
 
         </div>
@@ -466,10 +495,10 @@ function AddEntrySheet({ onClose, onPickPhoto, onPickText, onPickVoice }) {
               }}>{o.icon(KUN.ink)}</div>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
+                  fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
                 }}>{o.label}</div>
                 <div style={{
-                  fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3,
+                  fontFamily: V_FB, fontSize: 13, color: KUN.inkSoft, fontWeight: 400, marginTop: 3,
                 }}>{o.desc}</div>
               </div>
               {KIcon.chevRight(KUN.inkFaint)}
@@ -482,9 +511,9 @@ function AddEntrySheet({ onClose, onPickPhoto, onPickText, onPickVoice }) {
 }
 
 const DIARY_PHOTOS = [
-  { src: 'premature.jpg', title: 'Hoy', date: '20 Junio 2026' },
-  { src: 'tens2.webp', title: 'Hace 1 mes', date: '20 Mayo 2026' },
-  { src: 'tens.avif', title: 'Primer dibujo', date: '17 Junio 2026' },
+  { src: 'guaguas/guagua1.jpg', title: 'Hoy', date: '20 Junio 2026' },
+  { src: 'guaguas/guagua2.jpg', title: 'Hace 1 mes', date: '20 Mayo 2026' },
+  { src: 'guaguas/guagua3.jpg', title: 'Primer dibujo', date: '17 Junio 2026' },
 ];
 
 const DIARY_TEXT = 'Hoy fuimos orem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut pulvinar ante, nec cursus lorem. Donec tellus nisl, tincidunt ut risus nec, dignissim sollicitudin mauris.';
@@ -653,7 +682,7 @@ function NoteEditorSheet({ onClose, onSave }) {
         <div style={{ width: 44, height: 5, borderRadius: 3, background: KUN.inkFaint, margin:'0 auto 16px' }} />
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 14 }}>
           <div>
-            <div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Nueva nota</div>
+            <div style={{ fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3 }}>Nueva nota</div>
             <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkMuted, marginTop: 2 }}>Se guardará en el diario de hoy</div>
           </div>
           <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.brick, cursor:'pointer' }}>Cancelar</button>
@@ -691,7 +720,7 @@ function NoteEditorSheet({ onClose, onSave }) {
                   background: active ? KUN.brick : KUN.cardSoft,
                   color: active ? '#fff' : KUN.inkSoft,
                   borderRadius: 999, padding: '8px 12px',
-                  fontFamily: V_FT, fontSize: 12.5, fontWeight: 700, cursor:'pointer',
+                  fontFamily: V_FT, fontSize: 13, fontWeight: 700, cursor:'pointer',
                 }}>{c}</button>
               );
             })}
@@ -721,10 +750,10 @@ const diarySectionLabel = {
 
 function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntries = [] }) {
   const entries = [
-    { id:'today', title:'dfghj', date:'HOY - 20 Junio 2026', detailTitle:'Hoy', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg'], text: DIARY_TEXT },
-    { id:'yesterday', title:'akgsdli', date:'AYER - 19 Junio 2026', detailTitle:'Ayer', photoCount:4, audioCount:2, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'], text: 'Ayer fue un dia de avances pequenos. Guardamos fotos, audios y recuerdos de quienes vinieron a acompanar.' },
-    { id:'monday', title:'dfghj', date:'LUN - 17 Junio 2026', detailTitle:'Lun 17', photoCount:3, audioCount:0, photos:['tens.avif','tens2.webp','premature.jpg','tens2.webp'], text: 'Este dia dejamos registro de nuevas fotos y de como fue cambiando su rutina de cuidados.' },
-    { id:'saturday', title:'rtgha', date:'SAB - 15 Junio 2026', detailTitle:'Sab 15', photoCount:2, audioCount:1, photos:['tens.avif','premature.jpg','tens2.webp','premature.jpg'], text: 'Un recuerdo de fin de semana para mirar despues con calma.' },
+    { id:'today', title:'dfghj', date:'HOY - 20 Junio 2026', detailTitle:'Hoy', photoCount:3, audioCount:0, photos:['guaguas/guagua4.jpg','guaguas/guagua5.jpeg','guaguas/guagua6.webp'], text: DIARY_TEXT },
+    { id:'yesterday', title:'akgsdli', date:'AYER - 19 Junio 2026', detailTitle:'Ayer', photoCount:4, audioCount:2, photos:['guaguas/guagua7.jpg','guaguas/guagua8.jpeg','guaguas/guagua9.jpg','guaguas/guagua10.jpg'], text: 'Ayer fue un dia de avances pequenos. Guardamos fotos, audios y recuerdos de quienes vinieron a acompanar.' },
+    { id:'monday', title:'dfghj', date:'LUN - 17 Junio 2026', detailTitle:'Lun 17', photoCount:3, audioCount:0, photos:['guaguas/guagua1.jpg','guaguas/guagua2.jpg','guaguas/guagua3.jpg'], text: 'Este dia dejamos registro de nuevas fotos y de como fue cambiando su rutina de cuidados.' },
+    { id:'saturday', title:'rtgha', date:'SAB - 15 Junio 2026', detailTitle:'Sab 15', photoCount:2, audioCount:1, photos:['guaguas/guagua4.jpg','guaguas/guagua5.jpeg','guaguas/guagua6.webp'], text: 'Un recuerdo de fin de semana para mirar despues con calma.' },
   ];
   const photoMemories = diaryEntries
     .filter(e => e.kind === 'photo' && e.imageSrc)
@@ -734,7 +763,7 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
       date: e.time || 'Ahora',
       id: e.id || `photo-${i}`,
       detailTitle: 'Hoy',
-      photos: [e.imageSrc, 'premature.jpg', 'tens2.webp', 'tens.avif'],
+      photos: [e.imageSrc, 'guaguas/guagua2.jpg', 'guaguas/guagua3.jpg', 'guaguas/guagua4.jpg'],
       text: e.content || 'Nuevo recuerdo guardado en el diario.',
       photoCount: 1,
       audioCount: 0,
@@ -745,7 +774,7 @@ function DiaryListView({ onBack, onOpenDay, onOpenAdd, canEditDiary, diaryEntrie
       ...item,
       id: `seed-${i}`,
       detailTitle: item.title,
-      photos: [item.src, i === 0 ? 'tens2.webp' : 'premature.jpg', i === 1 ? 'tens.avif' : 'tens2.webp'],
+      photos: [item.src, i === 0 ? 'guaguas/guagua5.jpeg' : 'guaguas/guagua6.webp', i === 1 ? 'guaguas/guagua7.jpg' : 'guaguas/guagua8.jpeg'],
       text: i === 0 ? DIARY_TEXT : `Recuerdo guardado de ${item.date}.`,
       photoCount: i === 0 ? 5 : 3,
       audioCount: i === 0 ? 2 : 1,
@@ -976,11 +1005,11 @@ function DiaryDetailView({ onBack, onOpenAdd, onOpenPhoto, onOpenText, onOpenVoi
             ? <DiaryNote tall {...primaryNote} onOpen={() => openExpandedNote(primaryNote)} />
             : <DiaryNote tall onOpen={() => openExpandedNote(primaryNote)} />}
           <DiaryAudioBar duration="01:09" />
-          <DiaryPhotoTile entry={dayPhotos[1] || photoEntries[1]} fallbackSrc="tens2.webp" height={128} onOpen={() => openExpandedPhoto(dayPhotos[1] || photoEntries[1], 'tens2.webp')} />
-          <DiaryPhotoTile entry={dayPhotos[2] || photoEntries[2]} fallbackSrc="tens.avif" height={141} onOpen={() => openExpandedPhoto(dayPhotos[2] || photoEntries[2], 'tens.avif')} />
+          <DiaryPhotoTile entry={dayPhotos[1] || photoEntries[1]} fallbackSrc="guaguas/guagua2.jpg" height={128} onOpen={() => openExpandedPhoto(dayPhotos[1] || photoEntries[1], 'guaguas/guagua2.jpg')} />
+          <DiaryPhotoTile entry={dayPhotos[2] || photoEntries[2]} fallbackSrc="guaguas/guagua3.jpg" height={141} onOpen={() => openExpandedPhoto(dayPhotos[2] || photoEntries[2], 'guaguas/guagua3.jpg')} />
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap: 6, minWidth: 0 }}>
-          <DiaryPhotoTile entry={dayPhotos[0] || photoEntries[0]} fallbackSrc="premature.jpg" height={249} onOpen={() => openExpandedPhoto(dayPhotos[0] || photoEntries[0], 'premature.jpg')} />
+          <DiaryPhotoTile entry={dayPhotos[0] || photoEntries[0]} fallbackSrc="guaguas/guagua1.jpg" height={249} onOpen={() => openExpandedPhoto(dayPhotos[0] || photoEntries[0], 'guaguas/guagua1.jpg')} />
           <DiaryAudioBar duration={addOpen ? '01:09' : '00:29'} compact />
           <DiaryNote {...secondaryNote} onOpen={() => openExpandedNote(secondaryNote)} />
           {!addOpen && <DiaryNote title={milestoneNote.title} time={milestoneNote.time} strong onOpen={() => openExpandedNote(milestoneNote)} />}
@@ -1218,14 +1247,66 @@ function NuestroViaje({ onBack, recordings, addRecording, canEditDiary }) {
 }
 
 // ── Actividades con mi hijo ─────────────────────────────────
+const activityCardStyle = {
+  background: '#fff',
+  borderRadius: 22,
+  padding: '16px 18px',
+  border: `1px solid ${KUN.hair}`,
+  boxShadow: '0 8px 18px rgba(42,35,32,0.045)',
+};
+
+const activityTintCardStyle = (color, selected = false) => ({
+  ...activityCardStyle,
+  background: tint(color, 0.26),
+  border: selected ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
+});
+
+const activityPrimaryButtonStyle = {
+  width: '100%',
+  height: 50,
+  padding: '14px 22px',
+  borderRadius: 999,
+  border: 'none',
+  background: KUN.brick,
+  color: '#fff',
+  fontFamily: V_FT,
+  fontSize: 15,
+  fontWeight: 700,
+  letterSpacing: -0.1,
+  cursor: 'pointer',
+  boxSizing: 'border-box',
+};
+
+const activitySecondaryButtonStyle = {
+  width: '100%',
+  height: 50,
+  padding: '14px 18px',
+  borderRadius: 999,
+  border: `1px solid ${KUN.hair}`,
+  background: '#fff',
+  color: KUN.brick,
+  fontFamily: V_FT,
+  fontSize: 15,
+  fontWeight: 700,
+  letterSpacing: -0.1,
+  cursor: 'pointer',
+  boxSizing: 'border-box',
+};
+
+const activityMetaStyle = {
+  fontFamily: V_FT,
+  fontSize: 11,
+  fontWeight: 700,
+  color: KUN.brick,
+  letterSpacing: 0.6,
+  textTransform: 'uppercase',
+};
+
 function SiblingRecordCard({ onRecord }) {
   return (
     <div style={{
+      ...activityTintCardStyle(KUN.viola),
       margin: '0 20px 14px',
-      background: KUN.viola,
-      borderRadius: 22,
-      padding: '16px 18px',
-      border: `1px solid ${KUN.hair}`,
     }}>
       <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
         Grabacion del hermanito
@@ -1233,18 +1314,7 @@ function SiblingRecordCard({ onRecord }) {
       <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 4 }}>
         Un hermano puede dejarle una voz o saludo especial a la guaguita.
       </div>
-      <button onClick={onRecord} style={{
-        width: '100%', marginTop: 12,
-        padding: '11px 14px',
-        borderRadius: 999,
-        border: 'none',
-        background: KUN.brick,
-        color: '#fff',
-        fontFamily: V_FT,
-        fontSize: 13.5,
-        fontWeight: 700,
-        cursor: 'pointer',
-      }}>
+      <button onClick={onRecord} style={{ ...activityPrimaryButtonStyle, marginTop: 12 }}>
         Grabar como hermanito
       </button>
     </div>
@@ -1267,8 +1337,8 @@ function KaraokeSection({ onRecord }) {
       </div>
       {karaokeOptions.map((option, i) => (
         <div key={option.title} style={{
-          background:'#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10,
-          border: `1px solid ${KUN.hair}`,
+          ...activityCardStyle,
+          marginBottom: 10,
         }}>
           <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
             <div style={{
@@ -1283,10 +1353,16 @@ function KaraokeSection({ onRecord }) {
             </div>
           </div>
           <div style={{ display:'flex', gap: 8, marginTop: 12 }}>
-            <button onClick={() => alert(`Karaoke: ${option.title}`)} style={{ ...btnGhost, width: 'auto', flex: 1, borderRadius: 999, fontFamily: V_FT, fontWeight: 700 }}>
+            <button onClick={() => alert(`Karaoke: ${option.title}`)} style={{ ...activitySecondaryButtonStyle, flex: 1 }}>
               Cantar ahora
             </button>
-            <button onClick={() => onRecord(option)} style={{ ...btnPrimary, flex: 1 }}>
+            <button onClick={() => {
+              window.KUNAnalytics?.track('actividad_respondida', {
+                tipo: 'karaoke',
+                categoria: option.title,
+              });
+              onRecord(option);
+            }} style={{ ...activityPrimaryButtonStyle, flex: 1 }}>
               Grabar
             </button>
           </div>
@@ -1296,295 +1372,334 @@ function KaraokeSection({ onRecord }) {
   );
 }
 
-function MusicaTab({ onOpenRecorder, onOpenSiblingRecorder }) {
+// Low-opacity background helper — blends hex color with white to produce a solid tint
+function tint(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  const mix = (c) => Math.round(c * alpha + 255 * (1 - alpha)).toString(16).padStart(2,'0');
+  return `#${mix(r)}${mix(g)}${mix(b)}`;
+}
+
+// Waveform icon (right side of music tracks)
+function WaveIcon({ color, size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" fill="none">
+      <rect x="1"  y="9"  width="3" height="4"  rx="1.5" fill={color || KUN.rosehip}/>
+      <rect x="6"  y="5"  width="3" height="12" rx="1.5" fill={color || KUN.rosehip}/>
+      <rect x="11" y="7"  width="3" height="8"  rx="1.5" fill={color || KUN.rosehip}/>
+      <rect x="16" y="10" width="3" height="3"  rx="1.5" fill={color || KUN.rosehip}/>
+    </svg>
+  );
+}
+
+function MusicaTab() {
   const [playing, setPlaying] = React.useState(null);
   const tracks = [
-    { icon:'🌙', name:'Para dormir',    desc:'Sonidos suaves y latidos',  dur:'12:30', color: KUN.viola },
-    { icon:'☀️', name:'Para despertar', desc:'Tonos cálidos y delicados', dur:'8:15',  color: KUN.sun   },
-    { icon:'✨', name:'Para interactuar', desc:'Melodías estimulantes',   dur:'10:00', color: KUN.rosehip },
+    { title: 'Para dormir',      dur: '12 min', color: KUN.viola   },
+    { title: 'Para despertar',   dur: '8 min',  color: KUN.sun     },
+    { title: 'Para interactuar', dur: '10 min', color: KUN.apple   },
+    { title: 'Brisa de tarde',   dur: '15 min', color: KUN.clear   },
   ];
   return (
-    <>
-      <div style={{
-        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
-        padding: '4px 24px 14px',
-      }}>
-        ¿Qué necesita tu bebé ahora?
-      </div>
-
-      <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px' }}>
-        {tracks.map((t, i) => {
-          const isOpen = playing === i;
-          return (
-            <div key={i} style={{
-              background:'#fff', borderRadius: 22,
-              padding: '14px 16px',
-              border: isOpen ? `1.5px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
-              transition:'border .2s',
+    <div style={{ display:'flex', flexDirection:'column', gap: 10, padding: '0 20px 24px' }}>
+      {tracks.map((t, i) => {
+        const isOpen = playing === i;
+        return (
+          <div key={i} style={{
+            ...activityTintCardStyle(t.color, isOpen),
+            transition:'border .2s',
+          }}>
+            <div onClick={() => {
+              const next = isOpen ? null : i;
+              if (next !== null) {
+                window.KUNAnalytics?.track('musica_reproducida', {
+                  categoria: t.title,
+                  duracion_label: t.dur,
+                });
+              }
+              setPlaying(next);
+            }} style={{
+              display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
             }}>
-              <div onClick={() => setPlaying(isOpen ? null : i)} style={{
-                display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
-              }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  width: 52, height: 52, borderRadius: 16,
-                  background: t.color,
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  fontSize: 24, flexShrink: 0,
-                }}>{t.icon}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{t.name}</div>
-                  <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
-                    {t.desc} - {t.dur}
-                  </div>
+                  fontFamily: V_FT, fontSize: 16, fontWeight: 700,
+                  color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
+                }}>{t.title}</div>
+                <div style={{
+                  ...activityMetaStyle,
+                }}>{t.dur}</div>
+              </div>
+              <WaveIcon color={KUN.brick}/>
+            </div>
+
+            {isOpen && (
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
+                <div style={{ height: 6, borderRadius: 999, background: 'rgba(42,35,32,0.08)', position:'relative', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', top:0, left:0, height:'100%', width:'34%', background: KUN.brick, borderRadius: 999 }}/>
+                  <div style={{
+                    position:'absolute', top:'50%', left:'34%', transform:'translate(-50%, -50%)',
+                    width: 14, height: 14, borderRadius: '50%', background:'#fff',
+                    boxShadow:'0 1px 3px rgba(42,35,32,0.25)',
+                  }}/>
                 </div>
                 <div style={{
-                  width: 42, height: 42, borderRadius: '50%',
-                  background: isOpen ? KUN.brick : KUN.cream,
-                  border: isOpen ? 'none' : `1px solid ${KUN.hair}`,
-                  display:'flex', alignItems:'center', justifyContent:'center',
+                  display:'flex', justifyContent:'space-between',
+                  fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, marginTop: 8,
                 }}>
-                  {isOpen
-                    ? VINK_ICONS.pause('#fff', 14)
-                    : VINK_ICONS.play(KUN.brick, 14)}
+                  <span>4:14</span>
+                  <span>{t.dur}</span>
                 </div>
               </div>
-
-              {isOpen && (
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
-                  <div style={{ height: 6, borderRadius: 999, background: 'rgba(42,35,32,0.08)', position:'relative', overflow:'hidden' }}>
-                    <div style={{ position:'absolute', top:0, left:0, height:'100%', width:'34%', background: KUN.brick, borderRadius: 999 }}/>
-                    <div style={{
-                      position:'absolute', top:'50%', left:'34%', transform:'translate(-50%, -50%)',
-                      width: 14, height: 14, borderRadius: '50%', background:'#fff',
-                      boxShadow:'0 1px 3px rgba(42,35,32,0.25)',
-                    }}/>
-                  </div>
-                  <div style={{
-                    display:'flex', justifyContent:'space-between',
-                    fontFamily: V_FT, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, marginTop: 8,
-                  }}>
-                    <span>4:14</span>
-                    <span>{t.dur}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <KaraokeSection onRecord={onOpenRecorder} />
-      <SiblingRecordCard onRecord={onOpenSiblingRecorder} />
-    </>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
 const STORIES = [
   {
     title: 'La nube viajera',
+    description: 'Una nube aprende a viajar sin apuro, disfrutando el camino.',
+    duration: '2 min', color: KUN.clear,
     text: 'Una nube pequeña viajaba despacio por el cielo azul. No tenía prisa. Pasaba sobre los árboles y los saludaba con suavidad. Pasaba sobre el río y se miraba en el agua tranquila. A veces se detenía y dejaba caer una lluvia muy suave, casi un susurro. Las flores levantaban sus pétalos para recibirla. Los pájaros cantaban bajito. La nube seguía su camino sin apurarse, flotando, flotando. Sabía que no importaba llegar rápido. Lo importante era el viaje. Irse despacio. Sentir el viento. Mirar el mundo desde arriba, con calma. Como tú, que estás llegando al mundo poco a poco.',
-    open: false,
   },
   {
     title: 'El pez pequeño',
+    description: 'Un pez chiquito descubre que su tamaño no define su valentía.',
+    duration: '2 min', color: KUN.apple,
     text: 'En el fondo del mar vivía un pez muy pequeñito. Era tan chiquito que a veces se asustaba de su propia sombra. Un día se animó a salir y nadó entre corales rojos y amarillos. Conoció estrellas que brillaban en la arena y a una tortuga muy paciente que le dijo: "No tengas miedo de ser pequeño. Lo importante es seguir nadando, despacio, a tu ritmo." El pez aprendió que aunque era chiquito, tenía un corazón grande. Y con cada aleteo se hacía un poquito más fuerte. Como tú, mi amor, que cada día creces un poquito más.',
-    open: false,
   },
   {
     title: 'La semilla',
+    description: 'Una semilla que duerme bajo la tierra y florece con su propio tiempo.',
+    duration: '2 min', color: KUN.sun,
     text: 'Había una vez una semilla que dormía bajo la tierra. Estaba abrigada y tranquila, escuchando los sonidos del mundo. Un día sintió calor en su piel y unas gotitas de agua que la acariciaban. Muy despacio, comenzó a estirarse. Sacó una raíz hacia abajo y un brote suave hacia arriba. No tenía prisa. Sabía que crecer toma tiempo. Día tras día miró el sol asomarse y la luna pasar. Hasta que una mañana se convirtió en una flor. Tú también estás creciendo así, mi amor. Despacito, con tu propio tiempo, hasta florecer.',
-    open: false,
   },
 ];
 
-function StoryRow({ story, onRecord }) {
-  const [open, setOpen] = React.useState(!!story.open);
+function ActivityRecordingList({ recordings = [] }) {
+  if (!recordings.length) return null;
   return (
-    <div style={{
-      background:'#fff', borderRadius: 22, padding: '14px 16px', marginBottom: 10,
-      border: `1px solid ${KUN.hair}`,
-    }}>
-      <div onClick={() => setOpen(o => !o)} style={{
-        display:'flex', alignItems:'center', gap: 14, cursor:'pointer',
-      }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: 14,
-          background: KUN.viola,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          flexShrink: 0, fontSize: 18,
-        }}>📖</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>{story.title}</div>
-          <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, marginTop: 3 }}>
-            {open ? 'Toca el texto y léelo en voz alta' : 'Cuento corto - 2 min'}
-          </div>
-        </div>
-        <div style={{
-          width: 32, height: 32, borderRadius:'50%',
-          background: open ? KUN.brick : KUN.cream,
-          border: open ? 'none' : `1px solid ${KUN.hair}`,
-          display:'flex', alignItems:'center', justifyContent:'center',
+    <div style={{ margin: '-2px 0 12px 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+      {recordings.map((r, i) => (
+        <div key={`${r.name}-${r.duration}-${i}`} style={{
+          background: '#fff',
+          border: `1px solid ${KUN.hair}`,
+          borderRadius: 16,
+          padding: '9px 11px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 9,
         }}>
-          {open ? KIcon.chevDown('#fff') : KIcon.chevRight(KUN.brick)}
-        </div>
-      </div>
-
-      {open && story.text && story.text !== '...' && (
-        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px dashed ${KUN.hair}` }}>
-          <div style={{
-            fontFamily: V_FB, fontSize: 14, color: KUN.ink, fontWeight: 400,
-            lineHeight: 1.65, letterSpacing: 0.1,
-            background: KUN.cardSoft, borderRadius: 16, padding: 16,
-          }}>
-            {story.text}
+          <div style={{ width: 28, height: 28, borderRadius: 14, background: r.color || KUN.rosehip, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {VINK_ICONS.mic(KUN.ink)}
           </div>
-          <button onClick={onRecord} style={{
-            width:'100%', marginTop: 12,
-            padding: '12px 16px', height: 46, borderRadius: 999, border:'none',
-            background: KUN.brick, color:'#fff',
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
-            display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
-            cursor:'pointer',
-          }}>
-            {VINK_ICONS.mic('#fff')} Grabar mientras leo
-          </button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: V_FT, fontSize: 13, fontWeight: 700, color: KUN.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {r.author || 'Mamá'} · {r.duration}
+            </div>
+            <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, marginTop: 1 }}>
+              {r.time || 'Hace un momento'}{r.readingSpeed ? ` · ${r.readingSpeed}` : ''}
+            </div>
+          </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }
 
-const MUSIC_LYRICS = `Duérmete mi niño, duérmete sonriendo, que la luna llena te está protegiendo. Cierra tus ojitos, descansa tu alma, que aquí estoy contigo, llenándote de calma. Eres tan pequeño, tan lleno de vida, eres todo nuestro, nuestra maravilla.`;
-
-function CuentosTab({ recordings, onOpenRecorder, onOpenSiblingRecorder }) {
+function StoryRow({ story, onOpen, recordings = [] }) {
   return (
     <>
-      <div style={{
-        fontFamily: V_FT, fontSize: 19, fontWeight: 700, color: KUN.ink, letterSpacing: -0.3,
-        padding: '4px 24px 14px',
+      <div onClick={onOpen} style={{
+        ...activityTintCardStyle(story.color),
+        marginBottom: recordings.length ? 8 : 10,
+        cursor:'pointer',
+        display:'flex', alignItems:'center', gap: 14,
       }}>
-        Cuentos para tu bebé
-      </div>
-
-      {/* Cuentos */}
-      <div style={{ padding: '0 20px 6px' }}>
-        <div style={{
-          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
-          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
-        }}>
-          Cuentos
-        </div>
-        {STORIES.map((s, i) => <StoryRow key={i} story={s} onRecord={onOpenRecorder}/>)}
-      </div>
-
-      <SiblingRecordCard onRecord={onOpenSiblingRecorder} />
-
-      {/* Lectura musical */}
-      <div style={{ padding: '14px 20px 6px' }}>
-        <div style={{
-          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
-          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
-        }}>
-          Lectura musical
-        </div>
-        <div style={{
-          background: KUN.apple, borderRadius: 22, padding: '18px 20px',
-        }}>
-          <div style={{
-            fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4,
-          }}>
-            Nana de la luna llena
-          </div>
-          <div style={{
-            fontFamily: V_FB, fontSize: 12, fontWeight: 400, color: KUN.inkSoft, marginBottom: 12,
-          }}>
-            Texto para leer o cantar a tu ritmo
-          </div>
-          <div style={{
-            background:'#fff', borderRadius: 16, padding: 16,
-            fontFamily: V_FB, fontSize: 13.5, color: KUN.ink, fontWeight: 400, fontStyle:'italic',
-            lineHeight: 1.7, marginBottom: 14,
-          }}>
-            {MUSIC_LYRICS}
-          </div>
-          <button onClick={onOpenRecorder} style={{
-            width:'100%', padding: '12px 16px', height: 46, borderRadius: 999, border:'none',
-            background: KUN.brick, color:'#fff',
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
-            display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
-            cursor:'pointer',
-          }}>
-            {VINK_ICONS.mic('#fff')} Grabar lectura libre
-          </button>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{story.title}</div>
+          <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.4, marginBottom: 6 }}>{story.description}</div>
+          <div style={activityMetaStyle}>{story.duration}{recordings.length ? ` · ${recordings.length} grabacion${recordings.length === 1 ? '' : 'es'}` : ''}</div>
         </div>
       </div>
-
-      {/* Grabaciones guardadas */}
-      <div style={{ padding: '18px 20px 0' }}>
-        <div style={{
-          fontFamily: V_FB, fontSize: 11, fontWeight: 500, color: KUN.inkMuted,
-          letterSpacing: 1, padding: '0 8px 10px', textTransform: 'uppercase',
-        }}>
-          Grabaciones guardadas
-        </div>
-        {(!recordings || recordings.length === 0) ? (
-          <div style={{
-            background:'#fff', borderRadius: 22,
-            padding: '24px 20px', textAlign:'center',
-            border: `1.5px dashed ${KUN.inkFaint}`,
-          }}>
-            <div style={{ fontSize: 30, marginBottom: 8 }}>🎙️</div>
-            <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, marginBottom: 4 }}>
-              Aún no tienes grabaciones
-            </div>
-            <div style={{
-              fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5,
-            }}>
-              Cuando grabes algo, aparecerá aquí y en tu feed familiar.
-            </div>
-          </div>
-        ) : (
-          <div style={{ display:'flex', flexDirection:'column', gap: 10 }}>
-            {recordings.map((r, i) => (
-              <div key={i} style={{
-                background:'#fff', borderRadius: 18,
-                padding: '12px 14px',
-                display:'flex', alignItems:'center', gap: 12,
-                border: `1px solid ${KUN.hair}`,
-              }}>
-                <div style={{
-                  width: 42, height: 42, borderRadius: '50%',
-                  background: KUN.brick,
-                  display:'flex', alignItems:'center', justifyContent:'center', flexShrink: 0,
-                }}>{VINK_ICONS.play('#fff', 12)}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: V_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>{r.name}</div>
-                  <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted, fontWeight: 400, marginTop: 2, letterSpacing: 0.2 }}>
-                    {r.author ? `${r.author} - ` : ''}{r.duration} - {r.time}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <ActivityRecordingList recordings={recordings} />
     </>
+  );
+}
+
+function CuentosTab({ onOpenStory, recordings = [] }) {
+  return (
+    <div style={{ padding: '0 20px 24px' }}>
+      {STORIES.map((s, i) => (
+        <StoryRow
+          key={i}
+          story={s}
+          onOpen={() => onOpenStory(s)}
+          recordings={recordings.filter(r => r.contentType === 'story' && r.contentTitle === s.title)}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Canciones ────────────────────────────────────────────
+const CANCIONES_DATA = [
+  {
+    title: 'Arrorró mi niño',
+    duration: '2 min', color: KUN.viola,
+    lyrics: `Arrorró mi niño, arrorrón.\n\nDuérmete, mi niño,\nque tengo que hacer,\nlavar los pañales,\nsentarme a coser.\n\nArrorrón, mi niño, arrorrén.\nEl niño se duerme,\n¿qué le cantaré?`,
+  },
+  {
+    title: 'Duérmete, mi amor',
+    duration: '2 min', color: KUN.rosehip,
+    lyrics: `Duérmete mi niño,\nduérmete sonriendo,\nque la luna llena\nte está protegiendo.\n\nCierra tus ojitos,\ndescansa tu alma,\nque aquí estoy contigo,\nllenándote de calma.\n\nEres tan pequeño,\ntan lleno de vida,\neres todo nuestro,\nnuestra maravilla.`,
+  },
+  {
+    title: 'Estrellita dónde estás',
+    duration: '1 min', color: KUN.sun,
+    lyrics: `Estrellita, ¿dónde estás?\nMe pregunto qué serás.\nEn el cielo o en el mar,\nun diamante singular.\n\nEstrellita, ¿dónde estás?\nMe pregunto qué serás.`,
+  },
+  {
+    title: 'Buenos días, corazón',
+    duration: '1 min', color: KUN.apple,
+    lyrics: `Buenos días, corazón,\nnueva luz, nuevo calor.\nHoy te llamo suavecito,\nhoy te quiero un poquito más.\n\nBuenos días a tus ojos,\na tus manos, a tu voz.\nBuenos días, mi pequeño,\nhoy estamos aquí los dos.`,
+  },
+];
+
+function CancionRow({ cancion, onOpen, recordings = [] }) {
+  return (
+    <>
+      <div onClick={onOpen} style={{
+        ...activityTintCardStyle(cancion.color),
+        marginBottom: recordings.length ? 8 : 10,
+        cursor:'pointer',
+        display:'flex', alignItems:'center', gap: 14,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: V_FT, fontSize: 16, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2, marginBottom: 4 }}>{cancion.title}</div>
+          <div style={activityMetaStyle}>{cancion.duration}{recordings.length ? ` · ${recordings.length} grabacion${recordings.length === 1 ? '' : 'es'}` : ''}</div>
+        </div>
+        <WaveIcon color={KUN.brick}/>
+      </div>
+      <ActivityRecordingList recordings={recordings} />
+    </>
+  );
+}
+
+function CancionesTab({ onOpenCancion, recordings = [] }) {
+  return (
+    <div style={{ padding: '0 20px 24px' }}>
+      {CANCIONES_DATA.map((c, i) => (
+        <CancionRow
+          key={i}
+          cancion={c}
+          onOpen={() => onOpenCancion(c)}
+          recordings={recordings.filter(r => r.contentType === 'cancion' && r.contentTitle === c.title)}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Detail view for story or cancion ──────────────────────
+function ContentDetailView({ item, type, onBack, onRecord }) {
+  const isStory = type === 'story';
+  return (
+    <div style={{
+      position:'absolute', inset: 0, zIndex: 100,
+      background: KUN.bg, overflowY:'auto',
+      paddingBottom: 48,
+    }}>
+      {/* Header */}
+      <div style={{ display:'flex', alignItems:'center', gap: 12, padding:'4px 20px 18px' }}>
+        <div onClick={onBack} style={{
+          width: 40, height: 40, borderRadius:'50%', background:'#fff',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          border: `1px solid ${KUN.hair}`, cursor:'pointer', flexShrink: 0,
+        }}>{VINK_ICONS.back(KUN.ink)}</div>
+        <div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, letterSpacing: -0.4, lineHeight: 1.2 }}>
+          {item.title}
+        </div>
+      </div>
+
+      {/* Tag pill */}
+      <div style={{ padding: '0 24px 16px' }}>
+        <span style={{
+          fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, fontWeight: 400,
+        }}>
+          {isStory
+            ? `Cuento corto · ${item.duration} · Léelo en voz alta`
+            : `Canción · ${item.duration} · Cántala en voz alta`}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div style={{ padding: '0 20px 22px' }}>
+        <div style={{
+          ...activityCardStyle,
+          padding: '22px 20px',
+          fontFamily: V_FB, fontSize: 15, color: KUN.ink, fontWeight: 400,
+          lineHeight: 1.85, whiteSpace: 'pre-line', letterSpacing: 0.1,
+        }}>
+          {isStory ? item.text : item.lyrics}
+        </div>
+      </div>
+
+      {/* Record CTA */}
+      <div style={{ padding: '0 20px' }}>
+        <button onClick={onRecord} style={{
+          ...activityPrimaryButtonStyle,
+          display:'flex', alignItems:'center', justifyContent:'center', gap: 8,
+        }}>
+          {VINK_ICONS.mic('#fff')}
+          {isStory ? 'Grabar mientras leo' : 'Grabar cantando'}
+        </button>
+      </div>
+    </div>
   );
 }
 
 function Recorder({ onClose, onSave, context }) {
   const [recording, setRecording] = React.useState(false);
   const [seconds, setSeconds] = React.useState(0);
+  const [readingSpeed, setReadingSpeed] = React.useState('normal');
+  const scriptRef = React.useRef(null);
   const ctx = context || { author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.rosehip, name: 'Para Sofía' };
+  const hasScript = !!ctx.scriptText;
+  const speedOptions = [
+    { id: 'lenta', label: 'Lenta', px: 10 },
+    { id: 'normal', label: 'Normal', px: 17 },
+    { id: 'rapida', label: 'Rapida', px: 25 },
+  ];
+  const activeSpeed = speedOptions.find(opt => opt.id === readingSpeed) || speedOptions[1];
+
   React.useEffect(() => {
     if (!recording) return;
     const id = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => clearInterval(id);
   }, [recording]);
 
+  React.useEffect(() => {
+    if (!hasScript || !scriptRef.current) return;
+    const el = scriptRef.current;
+    const target = recording ? seconds * activeSpeed.px : 0;
+    el.scrollTo({ top: Math.min(target, el.scrollHeight), behavior: 'smooth' });
+  }, [hasScript, recording, seconds, activeSpeed.px]);
+
   const fmt = (s) => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
 
   const save = () => {
     if (seconds === 0) { onClose(); return; }
+    window.KUNAnalytics?.track('vinculo_grabacion_guardada', {
+      recording_role: ctx.author || 'Mamá',
+      duration_seconds: seconds,
+      reading_speed: hasScript ? readingSpeed : undefined,
+    });
     onSave({
       name: ctx.name || 'Para Sofía',
       duration: fmt(seconds),
@@ -1592,6 +1707,9 @@ function Recorder({ onClose, onSave, context }) {
       author: ctx.author || 'Mamá',
       role: ctx.role || 'Mamá - Voz para Sofía',
       color: ctx.color || KUN.rosehip,
+      readingSpeed: hasScript ? readingSpeed : undefined,
+      contentType: ctx.contentType,
+      contentTitle: ctx.contentTitle || ctx.name,
     });
     onClose();
   };
@@ -1613,7 +1731,79 @@ function Recorder({ onClose, onSave, context }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding: 20 }}>
+      <div style={{ flex: 1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent: hasScript ? 'flex-start' : 'center', padding: hasScript ? '0 20px 20px' : 20 }}>
+        {hasScript && (
+          <div style={{
+            width: '100%',
+            background: '#fff',
+            border: `1px solid ${KUN.hair}`,
+            borderRadius: 24,
+            padding: '15px 16px',
+            marginBottom: 16,
+            boxSizing: 'border-box',
+            boxShadow: '0 8px 18px rgba(42,35,32,0.05)',
+          }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 10, marginBottom: 10 }}>
+              <div>
+                <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: .8, textTransform:'uppercase', marginBottom: 2 }}>
+                  Lectura guiada
+                </div>
+                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, letterSpacing: -0.2 }}>
+                  {ctx.name || 'Cuento'}
+                </div>
+              </div>
+            </div>
+
+            <div
+              ref={scriptRef}
+              style={{
+                maxHeight: 178,
+                overflowY: 'auto',
+                padding: '14px 14px',
+                borderRadius: 18,
+                background: KUN.cardSoft,
+                fontFamily: V_FB,
+                fontSize: 15,
+                lineHeight: 1.85,
+                color: KUN.ink,
+                whiteSpace: 'pre-line',
+                scrollBehavior: 'smooth',
+              }}
+            >
+              {ctx.scriptText}
+            </div>
+
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 700, color: KUN.inkMuted, letterSpacing: .7, textTransform:'uppercase', marginBottom: 8 }}>
+                Velocidad del texto
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: 8 }}>
+                {speedOptions.map(opt => {
+                  const selected = opt.id === readingSpeed;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => setReadingSpeed(opt.id)}
+                      style={{
+                        height: 38,
+                        borderRadius: 999,
+                        border: `1.5px solid ${selected ? KUN.brick : KUN.hair}`,
+                        background: selected ? KUN.rosehip : '#fff',
+                        color: KUN.ink,
+                        fontFamily: V_FT,
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
         <div style={{
           fontFamily: V_FB, fontSize: 14, color: KUN.inkSoft, fontWeight: 400, marginBottom: 16, textAlign:'center',
         }}>
@@ -1650,9 +1840,11 @@ function Recorder({ onClose, onSave, context }) {
 
         {seconds > 0 && !recording && (
           <button onClick={save} style={{
-            marginTop: 28, padding: '12px 24px', height: 46, borderRadius: 999, border:'none',
-            background: KUN.ink, color:'#fff',
-            fontFamily: V_FT, fontSize: 14, fontWeight: 700, letterSpacing: -0.1, cursor:'pointer',
+            ...activityPrimaryButtonStyle,
+            width: 'auto',
+            marginTop: 28,
+            padding: '14px 24px',
+            background: KUN.brick,
           }}>
             Guardar para Sofía
           </button>
@@ -1662,8 +1854,9 @@ function Recorder({ onClose, onSave, context }) {
   );
 }
 
-function ActividadesGuagua({ onBack, recordings, addRecording }) {
-  const [sub, setSub] = React.useState('musica');
+function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
+  const [sub, setSub] = React.useState(initialTab || 'cuentos');
+  const [detailItem, setDetailItem] = React.useState(null); // { item, type }
   const [recording, setRecording] = React.useState(false);
   const [recordingContext, setRecordingContext] = React.useState({
     author: 'Mamá', role: 'Mamá - Actividades para Sofía', color: KUN.rosehip, name: 'Actividad para Sofía',
@@ -1672,50 +1865,92 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
     setRecordingContext(context);
     setRecording(true);
   };
+  const openDetail = (item, type) => setDetailItem({ item, type });
+  const closeDetail = () => setDetailItem(null);
+
+  const TABS = [
+    { id:'cuentos',   label:'Cuentos',   color: KUN.viola   },
+    { id:'canciones', label:'Canciones', color: KUN.rosehip },
+    { id:'musica',    label:'Música',    color: KUN.apple   },
+  ];
+  const tabIcon = (id, c) => {
+    if (id === 'cuentos') return (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke={c} strokeWidth="2.2" strokeLinecap="round"/>
+        <path d="M6.5 2H20V22H6.5C5.1 22 4 20.9 4 19.5V4.5C4 3.1 5.1 2 6.5 2Z" stroke={c} strokeWidth="2.2" strokeLinejoin="round"/>
+      </svg>
+    );
+    if (id === 'canciones') return (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M9 18V6l12-2v12" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="6" cy="18" r="3" stroke={c} strokeWidth="2.2"/>
+        <circle cx="18" cy="16" r="3" stroke={c} strokeWidth="2.2"/>
+      </svg>
+    );
+    return <WaveIcon color={c} size={14}/>;
+  };
 
   return (
-    <div style={{ overflowX:'hidden', maxWidth:'100%' }}>
+    <div style={{ overflowX:'hidden', maxWidth:'100%', position:'relative', minHeight:'100%' }}>
       <SubHeader title="Actividades con mi hijo" onBack={onBack} />
 
-      {/* sub-subtabs — DS pattern: pill shape, individual rounded, Brick activa, cream inactive con borde */}
-      <div style={{
-        margin: '0 20px 14px',
-        display:'flex', gap: 8,
-      }}>
-        {[
-          { id:'musica', label:'Música' },
-          { id:'cuentos', label:'Cuentos' },
-        ].map(t => {
+      {/* Tab pills */}
+      <div style={{ margin: '0 20px 18px', display:'flex', gap: 8 }}>
+        {TABS.map(t => {
           const isA = t.id === sub;
+          const iconColor = isA ? '#fff' : KUN.inkSoft;
           return (
             <div key={t.id} onClick={() => setSub(t.id)} style={{
-              flex: 1, textAlign:'center', cursor:'pointer',
-              padding: '10px 6px', borderRadius: 999,
+              cursor: 'pointer',
+              padding: '10px 13px',
+              borderRadius: 999,
               background: isA ? KUN.brick : KUN.cardSoft,
               color: isA ? '#fff' : KUN.inkSoft,
               fontFamily: V_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
               border: isA ? 'none' : `1px solid ${KUN.hair}`,
-              transition:'all .2s',
-            }}>{t.label}</div>
+              transition: 'all .2s',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              {tabIcon(t.id, iconColor)}
+              {t.label}
+            </div>
           );
         })}
       </div>
 
-      {sub === 'musica'
-        ? <MusicaTab
-            onOpenRecorder={(option) => startRecorder({
+      {sub === 'cuentos' && (
+        <CuentosTab onOpenStory={(s) => openDetail(s, 'story')} recordings={recordings || []} />
+      )}
+      {sub === 'canciones' && (
+        <CancionesTab onOpenCancion={(c) => openDetail(c, 'cancion')} recordings={recordings || []} />
+      )}
+      {sub === 'musica' && <MusicaTab />}
+
+      {/* Detail view overlay */}
+      {detailItem && (
+        <ContentDetailView
+          item={detailItem.item}
+          type={detailItem.type}
+          onBack={closeDetail}
+          onRecord={() => {
+            const isStory = detailItem.type === 'story';
+            window.KUNAnalytics?.track('actividad_respondida', {
+              tipo: isStory ? 'cuento' : 'cancion',
+            });
+            closeDetail();
+            startRecorder({
               author: 'Mamá',
-              role: 'Mamá - Karaoke para Sofía',
+              role: `Mamá - ${isStory ? 'Cuento' : 'Canción'} para Sofía`,
               color: KUN.rosehip,
-              name: option?.title ? `Karaoke - ${option.title}` : 'Musica para Sofía',
-            })}
-            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito - Voz para Sofía', color: KUN.viola, name: 'Mensaje del hermanito' })}
-          />
-        : <CuentosTab
-            recordings={recordings}
-            onOpenRecorder={() => startRecorder({ author: 'Mamá', role: 'Mamá - Cuento para Sofía', color: KUN.rosehip, name: 'Cuento para Sofía' })}
-            onOpenSiblingRecorder={() => startRecorder({ author: 'Hermanito', role: 'Hermanito - Cuento para Sofía', color: KUN.viola, name: 'Cuento del hermanito' })}
-          />}
+              name: detailItem.item.title,
+              contentTitle: detailItem.item.title,
+              contentType: isStory ? 'story' : 'cancion',
+              scriptText: isStory ? detailItem.item.text : '',
+              scriptType: isStory ? 'cuento' : 'cancion',
+            });
+          }}
+        />
+      )}
 
       {recording && <Recorder
         onClose={() => setRecording(false)}
@@ -1726,32 +1961,1064 @@ function ActividadesGuagua({ onBack, recordings, addRecording }) {
   );
 }
 
+// ── Diario de vida — feed mosaico (rediseño) ─────────────
+
+const DIARY_FEED_KEY = 'kun_diary_entries_v1';
+
+function diaryDateLabel(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const days   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${days[d.getDay()]}, ${d.getDate()} de ${months[d.getMonth()]}`;
+}
+
+function groupFeedByDate(entries) {
+  const map = {};
+  entries.forEach(e => { if (!map[e.date]) map[e.date] = []; map[e.date].push(e); });
+  return Object.keys(map).sort((a,b) => a.localeCompare(b)).map(d => ({
+    date: d, entries: map[d].sort((a,b) => a.ts - b.ts),
+  }));
+}
+
+const DIARY_FEED_SEED = [
+  // ── 2026-06-08 · 4 entradas (foto + texto + audio + foto) ──────────────
+  { id:'df1',  type:'photo', ts:new Date('2026-06-08T10:00').getTime(), date:'2026-06-08',
+    imageSrc:'guaguas/guagua1.jpg', text:'Hoy abriste los ojos cuando te hablé.',
+    color:null, category:null, audioDuration:null },
+  { id:'df2',  type:'text',  ts:new Date('2026-06-08T12:30').getTime(), date:'2026-06-08',
+    text:'Me quedé quieta mirándote un buen rato. Fue un momento chiquitito y enorme al mismo tiempo.',
+    color:KUN.rosehip, category:'Momento', imageSrc:null, audioDuration:null },
+  { id:'df3',  type:'audio', ts:new Date('2026-06-08T15:00').getTime(), date:'2026-06-08',
+    audioDuration:'0:34', text:null, imageSrc:null, color:null, category:null },
+  { id:'df4',  type:'photo', ts:new Date('2026-06-08T17:00').getTime(), date:'2026-06-08',
+    imageSrc:'guaguas/guagua2.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-06-07 · 3 entradas (foto + texto + foto) ──────────────────────
+  { id:'df5',  type:'photo', ts:new Date('2026-06-07T11:00').getTime(), date:'2026-06-07',
+    imageSrc:'guaguas/guagua3.jpg', text:'Piel con piel por primera vez.',
+    color:null, category:null, audioDuration:null },
+  { id:'df6',  type:'text',  ts:new Date('2026-06-07T14:00').getTime(), date:'2026-06-07',
+    text:'Tu calor es real. Por un rato el mundo bajó el volumen.',
+    color:KUN.viola, category:'Momento', imageSrc:null, audioDuration:null },
+  { id:'df7',  type:'photo', ts:new Date('2026-06-07T17:30').getTime(), date:'2026-06-07',
+    imageSrc:'guaguas/guagua4.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-06-05 · 2 entradas (texto + audio) ────────────────────────────
+  { id:'df8',  type:'text',  ts:new Date('2026-06-05T10:00').getTime(), date:'2026-06-05',
+    text:'Hoy te desconectaron de la ECMO. El equipo celebró contigo.',
+    color:KUN.sun, category:'Hito', imageSrc:null, audioDuration:null },
+  { id:'df9',  type:'audio', ts:new Date('2026-06-05T18:00').getTime(), date:'2026-06-05',
+    audioDuration:'1:09', text:null, imageSrc:null, color:null, category:null },
+
+  // ── 2026-06-03 · 1 entrada (foto) ──────────────────────────────────────
+  { id:'df10', type:'photo', ts:new Date('2026-06-03T13:00').getTime(), date:'2026-06-03',
+    imageSrc:'guaguas/guagua5.jpeg', text:null,
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-06-01 · 3 entradas (audio + foto + texto) ─────────────────────
+  { id:'df11', type:'audio', ts:new Date('2026-06-01T09:00').getTime(), date:'2026-06-01',
+    audioDuration:'0:58', text:null, imageSrc:null, color:null, category:null },
+  { id:'df12', type:'photo', ts:new Date('2026-06-01T12:00').getTime(), date:'2026-06-01',
+    imageSrc:'guaguas/guagua6.webp', text:'Tu primera semana.',
+    color:null, category:null, audioDuration:null },
+  { id:'df13', type:'text',  ts:new Date('2026-06-01T19:00').getTime(), date:'2026-06-01',
+    text:'La enfermera nos enseñó a cambiarte el pañal. Aprendimos una forma más de cuidarte.',
+    color:KUN.apple, category:'Avance', imageSrc:null, audioDuration:null },
+
+  // ── 2026-05-29 · 2 entradas (foto + foto) ──────────────────────────────
+  { id:'df14', type:'photo', ts:new Date('2026-05-29T11:00').getTime(), date:'2026-05-29',
+    imageSrc:'guaguas/guagua7.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+  { id:'df15', type:'photo', ts:new Date('2026-05-29T16:00').getTime(), date:'2026-05-29',
+    imageSrc:'guaguas/guagua8.jpeg', text:'Papá te tomó la mano.',
+    color:null, category:null, audioDuration:null },
+
+  // ── 2026-05-27 · 1 entrada (texto) ─────────────────────────────────────
+  { id:'df16', type:'text',  ts:new Date('2026-05-27T20:00').getTime(), date:'2026-05-27',
+    text:'Hoy fue difícil. No hubo grandes cambios. Pero estuvimos aquí de todas formas.',
+    color:KUN.clear, category:'Momento', imageSrc:null, audioDuration:null },
+
+  // ── 2026-05-25 · 4 entradas (foto + texto + audio + foto) ──────────────
+  { id:'df17', type:'photo', ts:new Date('2026-05-25T10:00').getTime(), date:'2026-05-25',
+    imageSrc:'guaguas/guagua9.jpg', text:'Primera foto juntos.',
+    color:null, category:null, audioDuration:null },
+  { id:'df18', type:'text',  ts:new Date('2026-05-25T11:30').getTime(), date:'2026-05-25',
+    text:'Querida Sofía, hoy quiero que sepas que desde el primer día estuvimos aquí. Y seguiremos estando.',
+    color:KUN.sun, category:'Carta', imageSrc:null, audioDuration:null },
+  { id:'df19', type:'audio', ts:new Date('2026-05-25T14:00').getTime(), date:'2026-05-25',
+    audioDuration:'1:42', text:null, imageSrc:null, color:null, category:null },
+  { id:'df20', type:'photo', ts:new Date('2026-05-25T16:30').getTime(), date:'2026-05-25',
+    imageSrc:'guaguas/guagua10.jpg', text:null,
+    color:null, category:null, audioDuration:null },
+];
+
+function diaryInitials(name = '') {
+  const clean = name.trim();
+  if (!clean) return '+';
+  return clean.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
+}
+
+function FamilyTreePerson({ person = {}, role, size = 58 }) {
+  const hasPhoto = !!person.photo;
+  return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, minWidth:size + 2 }}>
+      <div style={{
+        maxWidth: size + 28,
+        background:'#FFFDF9',
+        border:`1px solid ${KUN.hair}`,
+        borderRadius:999,
+        padding:'3px 8px',
+        fontFamily:V_FB,
+        fontSize:size < 44 ? 8.5 : 9.5,
+        fontWeight:600,
+        color:KUN.inkSoft,
+        lineHeight:1.1,
+        textAlign:'center',
+        transform:'rotate(-8deg)',
+        whiteSpace:'normal',
+      }}>{role}</div>
+      <div style={{
+        width:size,
+        height:size,
+        borderRadius:'50%',
+        background:hasPhoto ? '#fff' : '#EFEDE8',
+        border:'3px solid #fff',
+        boxShadow:'0 7px 16px rgba(42,35,32,0.12)',
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center',
+        overflow:'hidden',
+        fontFamily:V_FT,
+        fontSize:hasPhoto ? 0 : 21,
+        fontWeight:700,
+        color:KUN.ink,
+      }}>
+        {hasPhoto
+          ? <img src={person.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+          : diaryInitials(person.name)}
+      </div>
+      {person.name && (
+        <div style={{
+          maxWidth:72,
+          fontFamily:V_FB,
+          fontSize:9.5,
+          color:KUN.ink,
+          lineHeight:1.15,
+          textAlign:'center',
+          overflow:'hidden',
+          display:'-webkit-box',
+          WebkitLineClamp:2,
+          WebkitBoxOrient:'vertical',
+        }}>{person.name}</div>
+      )}
+    </div>
+  );
+}
+
+function FamilyTreePreview({ data = {}, compact = false }) {
+  const people = data.people || {};
+  const bg = data.color || '#FFF7E8';
+  return (
+    <div style={{
+      background:bg,
+      borderRadius:18,
+      padding:compact ? '12px 10px 14px' : '16px 12px 18px',
+      border:`1px solid ${KUN.hairSoft}`,
+      overflow:'hidden',
+      position:'relative',
+    }}>
+      <div style={{
+        position:'absolute',
+        left:'50%',
+        top:compact ? 68 : 82,
+        width:compact ? 110 : 150,
+        height:compact ? 110 : 145,
+        transform:'translateX(-50%)',
+        borderRadius:'48% 52% 46% 54%',
+        background:'radial-gradient(circle at 38% 28%, rgba(141,166,110,0.52) 0 16%, transparent 17%), radial-gradient(circle at 62% 26%, rgba(111,168,95,0.45) 0 15%, transparent 16%), radial-gradient(circle at 48% 48%, rgba(141,166,110,0.52) 0 22%, transparent 23%), radial-gradient(circle at 28% 58%, rgba(111,168,95,0.38) 0 16%, transparent 17%), radial-gradient(circle at 70% 58%, rgba(141,166,110,0.42) 0 18%, transparent 19%)',
+        opacity:.72,
+      }} />
+      <div style={{
+        position:'absolute',
+        left:'50%',
+        top:compact ? 146 : 174,
+        width:compact ? 26 : 34,
+        height:compact ? 82 : 102,
+        transform:'translateX(-50%)',
+        borderRadius:'50% 50% 12px 12px',
+        background:'linear-gradient(90deg, #A9825D, #7F6045)',
+        opacity:.42,
+      }} />
+      <div style={{ position:'relative', zIndex:1 }}>
+        <div style={{
+          display:'flex',
+          alignItems:'flex-start',
+          justifyContent:'space-between',
+          gap:3,
+          marginBottom:compact ? 12 : 18,
+        }}>
+          <FamilyTreePerson role="Abuelo paterno" person={people.paternalGrandfather} size={compact ? 34 : 52} />
+          <FamilyTreePerson role="Abuela paterna" person={people.paternalGrandmother} size={compact ? 34 : 52} />
+          <FamilyTreePerson role="Abuela materna" person={people.maternalGrandmother} size={compact ? 34 : 52} />
+          <FamilyTreePerson role="Abuelo materno" person={people.maternalGrandfather} size={compact ? 34 : 52} />
+        </div>
+        <div style={{
+          display:'flex',
+          alignItems:'flex-start',
+          justifyContent:'center',
+          gap:compact ? 46 : 64,
+          marginBottom:compact ? 12 : 18,
+        }}>
+          <FamilyTreePerson role="Papá" person={people.father} size={compact ? 42 : 58} />
+          <FamilyTreePerson role="Mamá" person={people.mother} size={compact ? 42 : 58} />
+        </div>
+        <div style={{ display:'flex', justifyContent:'center' }}>
+          <FamilyTreePerson role="Yo" person={people.me} size={compact ? 50 : 68} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Registro central: para sumar otra plantilla, agrega una entrada aqui con fields y Preview.
+const DIARY_ENTRY_TEMPLATES = [
+  {
+    id:'family-tree',
+    name:'Arbol genealogico',
+    icon:'tree',
+    color:'#FFF5DC',
+    shortDescription:'Guarda nombres y fotos de la familia cercana.',
+    fields:[
+      { id:'me', label:'Yo', type:'person' },
+      { id:'father', label:'Papa', type:'person' },
+      { id:'mother', label:'Mama', type:'person' },
+      { id:'paternalGrandfather', label:'Abuelo paterno', type:'person' },
+      { id:'paternalGrandmother', label:'Abuela paterna', type:'person' },
+      { id:'maternalGrandfather', label:'Abuelo materno', type:'person' },
+      { id:'maternalGrandmother', label:'Abuela materna', type:'person' },
+    ],
+    Preview: FamilyTreePreview,
+  },
+];
+
+function getDiaryEntryTemplate(templateId) {
+  return DIARY_ENTRY_TEMPLATES.find(t => t.id === templateId) || null;
+}
+
+function DiaryFeedPhotoCard({ entry, onOpen }) {
+  return (
+    <button onClick={onOpen} style={{ border:'none', padding:0, width:'100%', display:'block', borderRadius:16, overflow:'hidden', position:'relative', background:'transparent', cursor:'pointer', textAlign:'left' }}>
+      <img src={entry.imageSrc} alt="" style={{ width:'100%', display:'block', objectFit:'cover' }}/>
+      {entry.text && (
+        <div style={{
+          position:'absolute', bottom:0, left:0, right:0,
+          padding:'22px 10px 10px',
+          background:'linear-gradient(transparent, rgba(42,35,32,0.55))',
+        }}>
+          <div style={{ fontFamily:V_FB, fontSize:12, color:'#fff', lineHeight:1.35 }}>{entry.text}</div>
+        </div>
+      )}
+    </button>
+  );
+}
+
+function DiaryFeedTemplateCard({ entry, onOpen }) {
+  const template = getDiaryEntryTemplate(entry.templateId);
+  if (!template?.Preview) return null;
+  const Preview = template.Preview;
+  return (
+    <button onClick={onOpen} style={{
+      width:'100%',
+      textAlign:'left',
+      background:'#fff',
+      borderRadius:18,
+      padding:10,
+      border:`1px solid ${KUN.hair}`,
+      boxShadow:'0 8px 18px rgba(42,35,32,0.045)',
+      cursor:'pointer',
+    }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, margin:'2px 2px 9px' }}>
+        <div style={{ width:28, height:28, borderRadius:10, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <TemplateIcon icon={template.icon} color={KUN.ink} />
+        </div>
+        <div>
+          <div style={{ fontFamily:V_FT, fontSize:13.5, fontWeight:700, color:KUN.ink, lineHeight:1.1 }}>{entry.title || template.name}</div>
+          <div style={{ fontFamily:V_FB, fontSize:10.5, fontWeight:600, color:KUN.inkMuted, letterSpacing:.5, textTransform:'uppercase', marginTop:2 }}>Plantilla</div>
+        </div>
+      </div>
+      <Preview data={entry.templateData || {}} compact />
+    </button>
+  );
+}
+
+function DiaryFeedNoteCard({ entry, onOpen }) {
+  const bg = entry.color ? tint(entry.color, 0.32) : KUN.cardSoft;
+  return (
+    <button onClick={onOpen} style={{ width:'100%', border:'none', background:bg, borderRadius:16, padding:'13px 13px', textAlign:'left', cursor:'pointer' }}>
+      {entry.category && (
+        <div style={{
+          fontFamily:V_FT, fontSize:10, fontWeight:700, color:KUN.inkSoft,
+          letterSpacing:0.7, textTransform:'uppercase', marginBottom:5,
+        }}>{entry.category}</div>
+      )}
+      <div style={{ fontFamily:V_FB, fontSize:13.5, color:KUN.ink, lineHeight:1.55 }}>
+        {entry.text}
+      </div>
+    </button>
+  );
+}
+
+function DiaryFeedAudioCard({ entry, onOpen }) {
+  const [playing, setPlaying] = React.useState(false);
+  return (
+    <button onClick={onOpen} style={{
+      width:'100%',
+      textAlign:'left',
+      background:'#fff', borderRadius:16, padding:'12px 11px',
+      border:`1px solid ${KUN.hair}`,
+      cursor:'pointer',
+    }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+        <span onClick={(e) => { e.stopPropagation(); setPlaying(p => !p); }} style={{
+          width:34, height:34, borderRadius:'50%', border:'none',
+          background:KUN.brick,
+          display:'flex', alignItems:'center', justifyContent:'center',
+          cursor:'pointer', flexShrink:0,
+        }}>
+          {playing ? VINK_ICONS.pause('#fff', 11) : VINK_ICONS.play('#fff', 11)}
+        </span>
+        <svg viewBox="0 0 80 22" style={{ flex:1, height:18, minWidth:0 }}>
+          {Array.from({length:18}).map((_,i) => {
+            const h = 4 + Math.abs(Math.sin(i * 0.8)) * 13;
+            return <rect key={i} x={i*4.4} y={(22-h)/2} width="2.4" height={h} rx="1.2"
+              fill={KUN.brick} opacity={i < 10 ? 0.88 : 0.28}/>;
+          })}
+        </svg>
+        <span style={{ fontFamily:V_FT, fontSize:10.5, fontWeight:700, color:KUN.inkMuted, flexShrink:0 }}>
+          {entry.audioDuration || '0:42'}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+const EXPORT_FORMATS = [
+  { id:'story', label:'Historia', size:'9:16', width:1080, height:1920 },
+  { id:'feed', label:'Feed', size:'1:1', width:1080, height:1080 },
+  { id:'whatsapp', label:'WhatsApp', size:'4:5', width:1080, height:1350 },
+];
+
+function getExportEntryTitle(entry = {}) {
+  if (entry.title) return entry.title;
+  if (entry.type === 'photo') return entry.text || 'Foto de hoy';
+  if (entry.type === 'audio') return 'Audio guardado';
+  return entry.category || 'Recuerdo KUN';
+}
+
+function getExportEntryKind(entry = {}) {
+  if (entry.type === 'photo' || entry.imageSrc) return 'photo';
+  if (entry.type === 'audio') return 'audio';
+  if (entry.templateId) return 'template';
+  return 'text';
+}
+
+function loadExportImage(src) {
+  return new Promise((resolve) => {
+    if (!src) return resolve(null);
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 4) {
+  const words = String(text || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  lines.slice(0, maxLines).forEach((ln, i) => {
+    const finalLine = i === maxLines - 1 && lines.length > maxLines ? `${ln.replace(/[.,;:!?]*$/, '')}...` : ln;
+    ctx.fillText(finalLine, x, y + i * lineHeight);
+  });
+  return Math.min(lines.length, maxLines) * lineHeight;
+}
+
+function drawKangarooMark(ctx, x, y, size, color) {
+  const s = size / 40;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(s, s);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = '#F6C3AE';
+  ctx.lineWidth = 2.1;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(10, 30);
+  ctx.bezierCurveTo(10, 22, 13, 17, 17, 15);
+  ctx.bezierCurveTo(16, 13, 16.5, 10.5, 18.5, 9.5);
+  ctx.bezierCurveTo(20.5, 8.5, 23, 9.5, 23.5, 11.5);
+  ctx.bezierCurveTo(24, 13, 23.5, 14.5, 22.5, 15.5);
+  ctx.bezierCurveTo(25.5, 16.5, 28, 19, 29, 22.5);
+  ctx.bezierCurveTo(29.5, 24, 29.5, 26, 29, 27.5);
+  ctx.bezierCurveTo(28.5, 29, 27.5, 30.5, 26, 31);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(10, 30);
+  ctx.bezierCurveTo(8, 30.5, 7, 31.5, 7.5, 33);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(21, 10.5);
+  ctx.bezierCurveTo(21.3, 9, 21.8, 8, 22.5, 7.5);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(18, 24, 4.6, 3.9, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(17.2, 23.2, 0.9, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawExportWave(ctx, x, y, w, h, color) {
+  const count = 36;
+  const gap = w / count;
+  ctx.fillStyle = color;
+  for (let i = 0; i < count; i += 1) {
+    const barH = h * (0.18 + Math.abs(Math.sin(i * 0.72)) * 0.78);
+    const bx = x + i * gap + gap * 0.28;
+    const by = y + (h - barH) / 2;
+    drawRoundedRect(ctx, bx, by, gap * 0.42, barH, gap * 0.2);
+    ctx.globalAlpha = i < 24 ? 0.95 : 0.34;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+async function buildDiaryExportImage(entry, format) {
+  const canvas = document.createElement('canvas');
+  canvas.width = format.width;
+  canvas.height = format.height;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  const kind = getExportEntryKind(entry);
+  const photo = await loadExportImage(entry.imageSrc || getEntryPhotos(entry)[0]);
+  const bg = entry.color || (kind === 'photo' ? KUN.ink : KUN.bg);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (photo) {
+    const coverScale = Math.max(W / photo.width, H / photo.height);
+    const iw = photo.width * coverScale;
+    const ih = photo.height * coverScale;
+    ctx.drawImage(photo, (W - iw) / 2, (H - ih) / 2, iw, ih);
+    const gradient = ctx.createLinearGradient(0, 0, 0, H);
+    gradient.addColorStop(0, 'rgba(42,35,32,0.18)');
+    gradient.addColorStop(0.45, 'rgba(42,35,32,0.05)');
+    gradient.addColorStop(1, 'rgba(42,35,32,0.68)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const soft = ctx.createLinearGradient(0, 0, W, H);
+    soft.addColorStop(0, '#FAF6F1');
+    soft.addColorStop(0.52, entry.color || '#F6C3AE');
+    soft.addColorStop(1, '#F2EBE0');
+    ctx.fillStyle = soft;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 0.42;
+    ctx.fillStyle = KUN.rosehip;
+    ctx.beginPath();
+    ctx.arc(W * 0.15, H * 0.14, W * 0.34, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = KUN.viola;
+    ctx.beginPath();
+    ctx.arc(W * 0.92, H * 0.28, W * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  const pad = Math.round(W * 0.065);
+  const logoColor = photo ? '#fff' : KUN.ink;
+  drawKangarooMark(ctx, pad, pad, Math.round(W * 0.082), logoColor);
+  ctx.fillStyle = logoColor;
+  ctx.font = `800 ${Math.round(W * 0.052)}px Quicksand, sans-serif`;
+  ctx.fillText('KUN', pad + Math.round(W * 0.095), pad + Math.round(W * 0.057));
+
+  const footerH = kind === 'audio' ? Math.round(H * 0.33) : Math.round(H * 0.26);
+  const boxY = H - footerH - pad;
+  const boxX = pad;
+  const boxW = W - pad * 2;
+  drawRoundedRect(ctx, boxX, boxY, boxW, footerH, Math.round(W * 0.04));
+  ctx.fillStyle = photo ? 'rgba(250,246,241,0.92)' : 'rgba(255,255,255,0.82)';
+  ctx.fill();
+
+  ctx.fillStyle = KUN.inkMuted;
+  ctx.font = `700 ${Math.round(W * 0.026)}px Poppins, sans-serif`;
+  ctx.fillText((entry.category || 'Album de vinculo').toUpperCase(), boxX + pad * 0.55, boxY + Math.round(W * 0.072));
+
+  ctx.fillStyle = KUN.ink;
+  ctx.font = `800 ${Math.round(W * 0.053)}px Quicksand, sans-serif`;
+  const titleY = boxY + Math.round(W * 0.125);
+  const titleHeight = wrapCanvasText(ctx, getExportEntryTitle(entry), boxX + pad * 0.55, titleY, boxW - pad * 1.1, Math.round(W * 0.06), 2);
+
+  if (kind === 'audio') {
+    const waveY = titleY + titleHeight + Math.round(W * 0.03);
+    drawExportWave(ctx, boxX + pad * 0.55, waveY, boxW - pad * 1.1, Math.round(W * 0.11), KUN.brick);
+    ctx.font = `700 ${Math.round(W * 0.032)}px Quicksand, sans-serif`;
+    ctx.fillStyle = KUN.inkSoft;
+    ctx.fillText(entry.audioDuration || '0:42', boxX + pad * 0.55, waveY + Math.round(W * 0.16));
+  } else {
+    ctx.fillStyle = KUN.inkSoft;
+    ctx.font = `500 ${Math.round(W * 0.035)}px Poppins, sans-serif`;
+    wrapCanvasText(ctx, entry.text || 'Un recuerdo guardado en el album de vinculo.', boxX + pad * 0.55, titleY + titleHeight + Math.round(W * 0.025), boxW - pad * 1.1, Math.round(W * 0.047), 4);
+  }
+
+  return new Promise(resolve => {
+    canvas.toBlob(blob => resolve({ blob, dataUrl: canvas.toDataURL('image/png') }), 'image/png', 0.95);
+  });
+}
+
+function DiaryExportSheet({ entry, onClose }) {
+  const [formatId, setFormatId] = React.useState('story');
+  const [image, setImage] = React.useState(null);
+  const [busy, setBusy] = React.useState(true);
+  const format = EXPORT_FORMATS.find(f => f.id === formatId) || EXPORT_FORMATS[0];
+
+  React.useEffect(() => {
+    let alive = true;
+    setBusy(true);
+    buildDiaryExportImage(entry, format).then(next => {
+      if (!alive) return;
+      setImage(next);
+      setBusy(false);
+    });
+    return () => { alive = false; };
+  }, [entry?.id, formatId]);
+
+  const fileName = `kun-recuerdo-${format.id}.png`;
+  const downloadImage = () => {
+    if (!image?.dataUrl) return;
+    const link = document.createElement('a');
+    link.href = image.dataUrl;
+    link.download = fileName;
+    link.click();
+    window.KUNAnalytics?.track('diario_recuerdo_exportado', { formato: format.id, destino: 'descarga', tipo: getExportEntryKind(entry) });
+  };
+  const shareImage = async (destino) => {
+    if (!image?.blob) return;
+    const file = new File([image.blob], fileName, { type:'image/png' });
+    try {
+      if (navigator.canShare?.({ files:[file] }) && navigator.share) {
+        await navigator.share({ title:'Recuerdo KUN', text:'Un recuerdo de nuestro album KUN', files:[file] });
+        window.KUNAnalytics?.track('diario_recuerdo_exportado', { formato: format.id, destino, tipo: getExportEntryKind(entry) });
+      } else {
+        downloadImage();
+      }
+    } catch (err) {
+      if (err?.name !== 'AbortError') downloadImage();
+    }
+  };
+
+  return (
+    <div onClick={onClose} style={{ position:'absolute', inset:0, zIndex:240, background:'rgba(42,35,32,0.42)', display:'flex', alignItems:'flex-end' }}>
+      <div onClick={e => e.stopPropagation()} style={{ width:'100%', maxHeight:'92%', overflowY:'auto', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 18px 28px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, marginBottom:14 }}>
+          <div>
+            <div style={{ fontFamily:V_FT, fontSize:20, fontWeight:700, color:KUN.ink }}>Compartir recuerdo</div>
+            <div style={{ fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, marginTop:3 }}>Exporta una imagen lista para redes.</div>
+          </div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer' }}>Cerrar</button>
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:8, marginBottom:14 }}>
+          {EXPORT_FORMATS.map(opt => {
+            const active = opt.id === formatId;
+            return (
+              <button key={opt.id} onClick={() => setFormatId(opt.id)} style={{ border:active ? 'none' : `1px solid ${KUN.hair}`, background:active ? KUN.brick : '#fff', color:active ? '#fff' : KUN.ink, borderRadius:16, padding:'10px 6px', fontFamily:V_FT, fontSize:12.5, fontWeight:700, cursor:'pointer' }}>
+                <span style={{ display:'block' }}>{opt.label}</span>
+                <span style={{ display:'block', marginTop:2, fontFamily:V_FB, fontSize:10.5, fontWeight:500, opacity:.78 }}>{opt.size}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:22, padding:12, display:'flex', justifyContent:'center', marginBottom:14 }}>
+          {busy && <div style={{ height:320, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:V_FB, fontSize:13, color:KUN.inkMuted }}>Preparando imagen...</div>}
+          {!busy && image?.dataUrl && (
+            <img src={image.dataUrl} alt="Vista previa de exportacion" style={{ width: format.id === 'feed' ? '82%' : '58%', maxHeight:420, objectFit:'contain', borderRadius:18, boxShadow:'0 10px 28px rgba(42,35,32,0.14)' }} />
+          )}
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:9 }}>
+          <button onClick={() => shareImage('instagram')} disabled={busy} style={{ height:46, borderRadius:999, border:'none', background:KUN.viola, color:KUN.ink, fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>Instagram</button>
+          <button onClick={() => shareImage('whatsapp')} disabled={busy} style={{ height:46, borderRadius:999, border:'none', background:KUN.apple, color:KUN.ink, fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>WhatsApp</button>
+          <button onClick={() => shareImage('otros')} disabled={busy} style={{ height:46, borderRadius:999, border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.ink, fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>Otros</button>
+          <button onClick={downloadImage} disabled={busy} style={{ height:46, borderRadius:999, border:'none', background:KUN.brick, color:'#fff', fontFamily:V_FT, fontSize:13.5, fontWeight:700, cursor:busy?'wait':'pointer' }}>Descargar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DiaryNoteSheet({ onClose, onSave }) {
+  const [text, setText] = React.useState('');
+  const [color, setColor] = React.useState(KUN.rosehip);
+  const [categoria, setCategoria] = React.useState('Momento');
+  const colors = [KUN.rosehip, KUN.sun, KUN.apple, KUN.clear, KUN.viola];
+  const cats   = ['Momento', 'Avance', 'Emoción', 'Cuidado'];
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.35)', display:'flex', alignItems:'flex-end' }}>
+      <div style={{ width:'100%', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 20px 30px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+          <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Nueva nota</div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>Cancelar</button>
+        </div>
+        <textarea autoFocus value={text} onChange={e => setText(e.target.value)}
+          placeholder="Escribe lo que quieras recordar..."
+          style={{ width:'100%', minHeight:140, resize:'none', boxSizing:'border-box', border:`1.5px solid ${KUN.hair}`, borderRadius:20, background:'#fff', padding:'14px 16px', outline:'none', fontFamily:V_FB, fontSize:15, color:KUN.ink, lineHeight:1.55 }}/>
+        <div style={{ background:'#fff', borderRadius:20, border:`1px solid ${KUN.hair}`, padding:14, marginTop:10 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:0.7, textTransform:'uppercase', marginBottom:8 }}>Color</div>
+          <div style={{ display:'flex', gap:9, marginBottom:14 }}>
+            {colors.map(c => <button key={c} onClick={() => setColor(c)} style={{ width:28, height:28, borderRadius:'50%', background:c, border:color===c?`2px solid ${KUN.ink}`:'2px solid #fff', boxShadow:`0 0 0 1.5px ${KUN.hair}`, cursor:'pointer' }}/>)}
+          </div>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:0.7, textTransform:'uppercase', marginBottom:8 }}>Categoría</div>
+          <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+            {cats.map(c => (
+              <button key={c} onClick={() => setCategoria(c)} style={{ border:categoria===c?'none':`1px solid ${KUN.hair}`, background:categoria===c?KUN.brick:KUN.cardSoft, color:categoria===c?'#fff':KUN.inkSoft, borderRadius:999, padding:'8px 12px', fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer' }}>{c}</button>
+            ))}
+          </div>
+        </div>
+        <button onClick={() => { if (!text.trim()) return; onSave({ type:'text', text:text.trim(), color, category:categoria }); onClose(); }}
+          disabled={!text.trim()} style={{ width:'100%', marginTop:14, height:48, borderRadius:999, border:'none', background:text.trim()?KUN.brick:'rgba(42,35,32,0.10)', color:text.trim()?'#fff':KUN.inkMuted, fontFamily:V_FT, fontSize:15, fontWeight:700, cursor:text.trim()?'pointer':'not-allowed' }}>
+          Guardar nota
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DiaryPhotoCaptionSheet({ imageSrc, onClose, onSave }) {
+  const [text, setText] = React.useState('');
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.35)', display:'flex', alignItems:'flex-end' }}>
+      <div style={{ width:'100%', maxHeight:'88%', overflowY:'auto', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 20px 30px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+          <div>
+            <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Foto del dia</div>
+            <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkMuted, marginTop:2 }}>Puedes sumar una frase breve.</div>
+          </div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>Cancelar</button>
+        </div>
+        <img src={imageSrc} alt="" style={{ width:'100%', maxHeight:260, objectFit:'cover', borderRadius:22, display:'block', marginBottom:12 }} />
+        <textarea autoFocus value={text} onChange={e => setText(e.target.value)}
+          placeholder="Escribe algo que quieras recordar de esta foto..."
+          style={{ width:'100%', minHeight:112, resize:'none', boxSizing:'border-box', border:`1.5px solid ${KUN.hair}`, borderRadius:20, background:'#fff', padding:'14px 16px', outline:'none', fontFamily:V_FB, fontSize:15, color:KUN.ink, lineHeight:1.55 }}/>
+        <button onClick={() => onSave({ type:'photo', imageSrc, text:text.trim() || null })}
+          style={{ width:'100%', marginTop:14, height:48, borderRadius:999, border:'none', background:KUN.brick, color:'#fff', fontFamily:V_FT, fontSize:15, fontWeight:700, cursor:'pointer' }}>
+          Guardar foto
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DiaryGuideSheet({ onClose, onSave }) {
+  const [category, setCategory] = React.useState(null);
+  const [color,    setColor]    = React.useState(null);
+  const [text,     setText]     = React.useState('');
+
+  const swatches = ['#EAF2E7','#E9EEF7','#F6C3AE','#CDBCDB','#FFF5DC','#F2EBE0'];
+  const activeColor = color || (category ? category.color : null);
+  const canSave     = !!(category && text.trim());
+
+  const insertPrompt = (p) => setText(prev => prev ? prev + ' ' + p : p);
+
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.38)',
+      display:'flex', alignItems:'flex-end' }}>
+      <div style={{
+        width:'100%', maxHeight:'88%', overflowY:'auto',
+        background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28,
+        padding:'14px 20px 32px', boxSizing:'border-box',
+      }}>
+        {/* Handle */}
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+          <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Usar una guía</div>
+          <button onClick={onClose} style={{ border:'none', background:'transparent',
+            fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>
+            Cancelar
+          </button>
+        </div>
+
+        {/* 1 — CATEGORÍA */}
+        <div style={{ marginBottom:18 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
+            letterSpacing:0.7, textTransform:'uppercase', marginBottom:10 }}>Categoría</div>
+          <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
+            {guidedTemplates.map(t => {
+              const sel = category?.id === t.id;
+              return (
+                <button key={t.id}
+                  onClick={() => { setCategory(t); if (!color) setColor(t.color); }}
+                  style={{
+                    border: sel ? 'none' : `1px solid ${KUN.hair}`,
+                    background: sel ? KUN.brick : KUN.cardSoft,
+                    color: sel ? '#fff' : KUN.inkSoft,
+                    borderRadius:999, padding:'8px 14px',
+                    fontFamily:V_FT, fontSize:12.5, fontWeight:700, cursor:'pointer',
+                  }}>
+                  {t.category}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 2 — COLOR SUAVE */}
+        <div style={{ background:'#fff', borderRadius:20, border:`1px solid ${KUN.hair}`,
+          padding:'12px 14px', marginBottom:14 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
+            letterSpacing:0.7, textTransform:'uppercase', marginBottom:9 }}>Color suave</div>
+          <div style={{ display:'flex', gap:9 }}>
+            {swatches.map(c => (
+              <button key={c} onClick={() => setColor(c)} style={{
+                width:32, height:32, borderRadius:'50%', background:c,
+                border: activeColor === c ? `2.5px solid ${KUN.ink}` : '2px solid #fff',
+                boxShadow:`0 0 0 1.5px ${KUN.hair}`, cursor:'pointer', flexShrink:0,
+              }}/>
+            ))}
+          </div>
+        </div>
+
+        {/* 3 — TEXTO + prompts dinámicos */}
+        <div style={{ marginBottom:16 }}>
+          {category && (
+            <div style={{
+              background: activeColor || KUN.cardSoft,
+              borderRadius:16, padding:'12px 14px', marginBottom:10,
+              fontFamily:V_FT, fontSize:15, fontWeight:700, color:KUN.ink, lineHeight:1.4,
+            }}>
+              {category.mainPrompt}
+            </div>
+          )}
+
+          <textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder={category
+              ? (category.writingIdeas?.[0] || '¿Qué quieres contar?')
+              : 'Primero elige una categoría arriba...'}
+            style={{
+              width:'100%', minHeight:110, resize:'none', boxSizing:'border-box',
+              border:`1.5px solid ${KUN.hair}`, borderRadius:20, background:'#fff',
+              padding:'14px 16px', outline:'none',
+              fontFamily:V_FB, fontSize:14.5, color:KUN.ink, lineHeight:1.55,
+            }}
+          />
+
+          {category && (
+            <div style={{ marginTop:10 }}>
+              <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
+                letterSpacing:0.7, textTransform:'uppercase', marginBottom:8 }}>Ideas para escribir</div>
+              <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                {[...(category.writingIdeas || []), ...(category.examples || [])].map((p, i) => (
+                  <button key={i} onClick={() => insertPrompt(p)} style={{
+                    textAlign:'left', border:`1px solid ${KUN.hair}`, background:'#fff',
+                    borderRadius:12, padding:'9px 13px',
+                    fontFamily:V_FB, fontSize:13, color:KUN.inkSoft,
+                    cursor:'pointer', lineHeight:1.45,
+                  }}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Guardar */}
+        <button
+          onClick={() => {
+            if (!canSave) return;
+            onSave({ type:'text', text:text.trim(), color:activeColor || KUN.cardSoft, category:category.category });
+            onClose();
+          }}
+          disabled={!canSave}
+          style={{
+            width:'100%', height:50, borderRadius:999, border:'none',
+            background: canSave ? KUN.brick : 'rgba(42,35,32,0.10)',
+            color: canSave ? '#fff' : KUN.inkMuted,
+            fontFamily:V_FT, fontSize:15, fontWeight:700,
+            cursor: canSave ? 'pointer' : 'not-allowed',
+          }}>
+          Guardar en el diario
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DiaryTemplateGalleryCard({ template, onSelect }) {
+  return (
+    <button onClick={() => onSelect(template)} style={{
+      border:`1px solid ${KUN.hair}`,
+      background:'#fff',
+      borderRadius:20,
+      padding:14,
+      display:'flex',
+      gap:12,
+      alignItems:'flex-start',
+      textAlign:'left',
+      cursor:'pointer',
+      width:'100%',
+    }}>
+      <div style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        <TemplateIcon icon={template.icon} color={KUN.ink} />
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontFamily:V_FT, fontSize:15.5, fontWeight:700, color:KUN.ink, lineHeight:1.15 }}>{template.name}</div>
+        <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, lineHeight:1.45, marginTop:4 }}>{template.shortDescription}</div>
+      </div>
+    </button>
+  );
+}
+
+function DiaryTemplatePersonField({ field, value = {}, onChange }) {
+  const update = (patch) => onChange({ ...value, ...patch });
+  const handlePhoto = (file) => {
+    if (!file?.type?.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => update({ photo: reader.result });
+    reader.readAsDataURL(file);
+  };
+  return (
+    <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:18, padding:12 }}>
+      <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+        <div style={{
+          width:48,
+          height:48,
+          borderRadius:'50%',
+          background: value.photo ? '#fff' : KUN.cardSoft,
+          overflow:'hidden',
+          display:'flex',
+          alignItems:'center',
+          justifyContent:'center',
+          flexShrink:0,
+          fontFamily:V_FT,
+          fontSize:18,
+          fontWeight:700,
+          color:KUN.ink,
+          border:`1px solid ${KUN.hair}`,
+        }}>
+          {value.photo ? <img src={value.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : diaryInitials(value.name)}
+        </div>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:.7, textTransform:'uppercase', marginBottom:6 }}>{field.label}</div>
+          <input value={value.name || ''} onChange={e => update({ name:e.target.value })} placeholder="Nombre"
+            style={{ width:'100%', boxSizing:'border-box', border:'none', borderBottom:`1px solid ${KUN.hair}`, outline:'none', padding:'4px 0 7px', fontFamily:V_FB, fontSize:14, color:KUN.ink, background:'transparent' }} />
+        </div>
+      </div>
+      <label style={{
+        display:'inline-flex',
+        alignItems:'center',
+        gap:6,
+        marginTop:10,
+        border:`1px solid ${KUN.hair}`,
+        background:KUN.cardSoft,
+        borderRadius:999,
+        padding:'7px 10px',
+        fontFamily:V_FT,
+        fontSize:12,
+        fontWeight:700,
+        color:KUN.inkSoft,
+        cursor:'pointer',
+      }}>
+        {VINK_ICONS.camera(KUN.inkMuted)} {value.photo ? 'Cambiar foto' : 'Agregar foto'}
+        <input type="file" accept="image/*" style={{ display:'none' }} onChange={e => { handlePhoto(e.target.files?.[0]); e.target.value = ''; }} />
+      </label>
+    </div>
+  );
+}
+
+function DiaryTemplateDynamicField({ field, value, onChange }) {
+  if (field.type === 'person') return <DiaryTemplatePersonField field={field} value={value} onChange={onChange} />;
+  return (
+    <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:18, padding:12 }}>
+      <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:.7, textTransform:'uppercase', marginBottom:7 }}>{field.label}</div>
+      <input value={value || ''} onChange={e => onChange(e.target.value)} placeholder="Escribe aquí"
+        style={{ width:'100%', boxSizing:'border-box', border:'none', borderBottom:`1px solid ${KUN.hair}`, outline:'none', padding:'4px 0 7px', fontFamily:V_FB, fontSize:14, color:KUN.ink, background:'transparent' }} />
+    </div>
+  );
+}
+
+function DiaryTemplateForm({ template, onBackToGallery, onClose, onSave }) {
+  const [values, setValues] = React.useState({});
+  const Preview = template.Preview;
+  const setField = (field, value) => setValues(prev => ({ ...prev, [field.id]: value }));
+  const templateData = { people: values, color: template.color };
+  const hasContent = Object.values(values).some(value => {
+    if (!value) return false;
+    if (typeof value === 'string') return value.trim();
+    return value.name?.trim() || value.photo;
+  });
+
+  return (
+    <>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+        <button onClick={onBackToGallery} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', padding:0 }}>Volver</button>
+        <button onClick={onClose} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', padding:0 }}>Cancelar</button>
+      </div>
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:22, padding:14, marginBottom:12 }}>
+        <div style={{ display:'flex', gap:12, alignItems:'center' }}>
+          <div style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <TemplateIcon icon={template.icon} color={KUN.ink} />
+          </div>
+          <div>
+            <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink, lineHeight:1.1 }}>{template.name}</div>
+            <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkMuted, lineHeight:1.4, marginTop:3 }}>{template.shortDescription}</div>
+          </div>
+        </div>
+      </div>
+      {Preview && (
+        <div style={{ marginBottom:12 }}>
+          <Preview data={templateData} />
+        </div>
+      )}
+      <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:9, marginBottom:14 }}>
+        {template.fields.map(field => (
+          <DiaryTemplateDynamicField
+            key={field.id}
+            field={field}
+            value={values[field.id]}
+            onChange={(value) => setField(field, value)}
+          />
+        ))}
+      </div>
+      <button
+        onClick={() => {
+          if (!hasContent) return;
+          onSave({
+            type:'template',
+            templateId:template.id,
+            templateData,
+            title:template.name,
+            text:template.shortDescription,
+            color:template.color,
+            category:'Plantilla',
+          });
+          onClose();
+        }}
+        disabled={!hasContent}
+        style={{
+          width:'100%',
+          height:50,
+          borderRadius:999,
+          border:'none',
+          background:hasContent ? KUN.brick : 'rgba(42,35,32,0.10)',
+          color:hasContent ? '#fff' : KUN.inkMuted,
+          fontFamily:V_FT,
+          fontSize:15,
+          fontWeight:700,
+          cursor:hasContent ? 'pointer' : 'not-allowed',
+        }}>
+        Guardar plantilla
+      </button>
+    </>
+  );
+}
+
+function DiaryTemplateSheet({ onClose, onSave }) {
+  const [selectedTemplate, setSelectedTemplate] = React.useState(null);
+  return (
+    <div style={{ position:'absolute', inset:0, zIndex:220, background:'rgba(42,35,32,0.38)', display:'flex', alignItems:'flex-end' }}>
+      <div style={{ width:'100%', maxHeight:'90%', overflowY:'auto', background:KUN.bg, borderTopLeftRadius:28, borderTopRightRadius:28, padding:'14px 20px 32px', boxSizing:'border-box' }}>
+        <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+        {!selectedTemplate ? (
+          <>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
+              <div>
+                <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink }}>Plantillas</div>
+                <div style={{ fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, lineHeight:1.45, marginTop:3 }}>Elige una forma visual para guardar un recuerdo.</div>
+              </div>
+              <button onClick={onClose} style={{ border:'none', background:'transparent', fontFamily:V_FT, fontSize:13, fontWeight:700, color:KUN.brick, cursor:'pointer' }}>Cancelar</button>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:10 }}>
+              {DIARY_ENTRY_TEMPLATES.map(template => (
+                <DiaryTemplateGalleryCard key={template.id} template={template} onSelect={setSelectedTemplate} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <DiaryTemplateForm
+            template={selectedTemplate}
+            onBackToGallery={() => setSelectedTemplate(null)}
+            onClose={onClose}
+            onSave={onSave}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Public entry ────────────────────────────────────────
 
 // -- Diario de vida guiado - prototipo UCIN -------------------------------
 const DIARY_GUIDED_KEY = 'kun_diary_guided_entries_v2';
 
 const guidedTemplates = [
-  { id:'hoy-celebramos', name:'Hoy celebramos', category:'Hoy celebramos', icon:'spark', color:'#FFF5DC', shortDescription:'Avances pequenos que merecen quedar guardados.', mainPrompt:'Hoy celebramos que...', writingIdeas:['Que paso hoy?', 'Por que fue importante para ustedes?', 'Como se sintieron al verlo?'], examples:['Hoy celebramos que subiste de peso.', 'Hoy celebramos que respiraste mejor.', 'Hoy celebramos que abriste los ojos.', 'Hoy celebramos una noticia pequena pero enorme.'] },
+  { id:'hoy-celebramos', name:'Hoy celebramos', category:'Hoy celebramos', icon:'spark', color:'#F6C3AE', shortDescription:'Avances pequenos que merecen quedar guardados.', mainPrompt:'Hoy celebramos que...', writingIdeas:['Que paso hoy?', 'Por que fue importante para ustedes?', 'Como se sintieron al verlo?'], examples:['Hoy celebramos que subiste de peso.', 'Hoy celebramos que respiraste mejor.', 'Hoy celebramos que abriste los ojos.', 'Hoy celebramos una noticia pequena pero enorme.'] },
   { id:'hito-ucin', name:'Hito UCIN', category:'Hito UCIN', icon:'monitor', color:'#E9EEF7', shortDescription:'Cambios medicos o avances en los cuidados.', mainPrompt:'Hoy hubo un cambio importante en tus cuidados...', writingIdeas:['Que cambio hoy?', 'Como nos lo explico el equipo?', 'Como nos sentimos al saberlo?'], examples:['Primer dia sin ventilador.', 'Primer dia sin CPAP.', 'Primer dia sin oxigeno.', 'Primer dia sin sonda.', 'Primer dia sin via.', 'Primer dia sin fototerapia.', 'Primer dia fuera de incubadora.', 'Primer dia en cuna.', 'Primer dia con menos monitores.', 'Primer examen importante.', 'Primer resultado alentador.', 'Primer dia regulando mejor tu temperatura.'] },
-  { id:'respiracion', name:'Respiracion', category:'Respiracion', icon:'breath', color:'#EAF2F6', shortDescription:'Apoyos, cambios y senales al respirar.', mainPrompt:'Hoy tu respiracion estuvo...', writingIdeas:['Necesitaste mas o menos apoyo?', 'Que notamos al verte respirar?', 'Que sentimos nosotros?'], examples:['Hoy te vimos respirar mas tranquilo/a.', 'Hoy celebramos que necesitaste menos oxigeno.', 'Hoy dimos un pasito mas hacia respirar solito/a.', 'Hoy el equipo ajusto tu apoyo respiratorio.'] },
+  { id:'respiracion', name:'Respiracion', category:'Respiracion', icon:'breath', color:'#E9EEF7', shortDescription:'Apoyos, cambios y senales al respirar.', mainPrompt:'Hoy tu respiracion estuvo...', writingIdeas:['Necesitaste mas o menos apoyo?', 'Que notamos al verte respirar?', 'Que sentimos nosotros?'], examples:['Hoy te vimos respirar mas tranquilo/a.', 'Hoy celebramos que necesitaste menos oxigeno.', 'Hoy dimos un pasito mas hacia respirar solito/a.', 'Hoy el equipo ajusto tu apoyo respiratorio.'] },
   { id:'alimentacion', name:'Alimentacion', category:'Alimentacion', icon:'milk', color:'#EAF2E7', shortDescription:'Leche, sonda, pecho, mamadera o tolerancia.', mainPrompt:'Hoy tu alimentacion fue...', writingIdeas:['Como recibiste tu leche hoy?', 'Hubo algun avance?', 'Que aprendimos sobre tus senales?'], examples:['Hoy recibiste leche por sonda.', 'Hoy toleraste mejor la leche.', 'Hoy tomaste poquitos ml, pero para nosotros fue enorme.', 'Hoy mama logro extraerse leche para ti.', 'Hoy fue tu primera vez tomando por boca.', 'Hoy fue tu primera mamadera.', 'Hoy fue tu primera vez al pecho.', 'Hoy celebramos cada gotita.'] },
-  { id:'piel-con-piel', name:'Piel con piel', category:'Piel con piel', icon:'heart', color:'#EFE8F5', shortDescription:'Cercania, contacto y momentos de apego.', mainPrompt:'Hoy te tuve cerca y senti...', writingIdeas:['Cuanto tiempo estuvieron juntos?', 'Que recuerdas de ese momento?', 'Que te gustaria contarle cuando sea grande?'], examples:['Hoy pudimos hacer piel con piel por primera vez.', 'Hoy senti tu calor.', 'Hoy escuchaste mi voz muy cerquita.', 'Hoy te tome la mano.', 'Hoy no pude tomarte, pero pude estar contigo de otra forma.', 'Hoy papa hizo piel con piel.', 'Hoy mama hizo piel con piel.'] },
-  { id:'aprendimos-cuidarte', name:'Aprendimos a cuidarte', category:'Aprendizaje', icon:'hands', color:'#F4ECDD', shortDescription:'Tareas y cuidados que van aprendiendo.', mainPrompt:'Hoy aprendimos a cuidarte cuando...', writingIdeas:['Que aprendimos hoy?', 'Quien nos enseno?', 'Que sentimos al hacerlo por primera vez?'], examples:['Hoy aprendimos a cambiarte el panal.', 'Hoy aprendimos a tomarte la temperatura.', 'Hoy aprendimos como tocarte con cuidado.', 'Hoy aprendimos como contenerte.', 'Hoy ayudamos en tu aseo.', 'Hoy participamos en tus cuidados por primera vez.'] },
-  { id:'dia-dificil', name:'Hoy fue dificil', category:'Dia dificil', icon:'cloud', color:'#ECE7E1', shortDescription:'Para dias complejos, sin forzar optimismo.', mainPrompt:'Hoy fue un dia dificil porque...', writingIdeas:['Que fue lo que mas costo?', 'Que ayudo un poquito?', 'Que quieres dejar registrado de este dia?'], examples:['Hoy nos costo esperar.', 'Hoy tuvimos miedo.', 'Hoy no sabemos bien que escribir.', 'Hoy solo queremos dejar registrado que estuvimos aqui.', 'Hoy no hubo grandes cambios, pero seguimos contigo.', 'Hoy aprendimos que avanzar tambien puede ser lento.'] },
-  { id:'hoy-me-senti', name:'Hoy me senti', category:'Emocion', icon:'heart', color:'#FCE7DE', shortDescription:'Emociones de mama, papa o cuidador.', mainPrompt:'Hoy me senti...', writingIdeas:['Que emocion estuvo mas presente?', 'Que la provoco?', 'Que necesitabas en ese momento?'], examples:['Hoy me dio esperanza...', 'Hoy me dio miedo...', 'Hoy llore cuando...', 'Hoy sonrei cuando...', 'Hoy agradeci...', 'Hoy no tengo muchas palabras, pero quiero guardar este momento.'] },
-  { id:'personalidad', name:'Tu personalidad', category:'Personalidad', icon:'star', color:'#FFF0C9', shortDescription:'Gestos, rasgos y pequenas senales.', mainPrompt:'Hoy nos mostraste que eres...', writingIdeas:['Que gesto hiciste?', 'Que nos llamo la atencion?', 'A quien nos recordaste?'], examples:['Hoy abriste los ojos cuando te hablamos.', 'Hoy moviste tus manos como si quisieras saludar.', 'Hoy hiciste una cara que parecia enojo.', 'Hoy te vimos tranquilo/a cuando escuchaste nuestra voz.', 'Hoy nos hiciste reir porque...', 'Cada dia te vemos mas tu.'] },
-  { id:'cosas-calman', name:'Cosas que te calman', category:'Calma', icon:'music', color:'#E9EEF7', shortDescription:'Voces, sonidos y formas de contencion.', mainPrompt:'Hoy te calmo...', writingIdeas:['Que parecio ayudarte?', 'Que sonido, voz o gesto te tranquilizo?', 'Que descubrimos sobre ti?'], examples:['Hoy te calmo escuchar la voz de mama.', 'Hoy te gusto que te cantaramos.', 'Hoy te tranquilizaste con nuestras manos.', 'Hoy te leimos un cuento.', 'Hoy descubrimos algo que te gusta.', 'Hoy descubrimos algo que no te gusta tanto.'] },
-  { id:'familia-visitas', name:'Familia y visitas', category:'Familia', icon:'people', color:'#EAF2E7', shortDescription:'Visitas, mensajes y apoyo cercano o a distancia.', mainPrompt:'Hoy recibiste carino de...', writingIdeas:['Quien vino o pregunto por ti?', 'Que mensaje te enviaron?', 'Como se sintio ese apoyo?'], examples:['Hoy vino a verte...', 'Hoy tus abuelos preguntaron por ti.', 'Hoy recibiste carino desde lejos.', 'Hoy alguien rezo o penso en ti.', 'Hoy una persona importante para nosotros te conocio.', 'Hoy alguien dejo un mensaje para ti.'] },
-  { id:'equipo-salud', name:'Equipo de salud', category:'Equipo de salud', icon:'plus', color:'#EAF2F6', shortDescription:'Explicaciones, frases y acompanamiento del equipo.', mainPrompt:'Hoy alguien del equipo nos ayudo a...', writingIdeas:['Quien nos acompano hoy?', 'Que nos explico?', 'Que frase queremos recordar?'], examples:['Hoy una enfermera nos explico...', 'Hoy una persona del equipo nos dio tranquilidad.', 'Hoy aprendimos del equipo que...', 'Hoy queremos recordar el nombre de...', 'Hoy el equipo celebro contigo.', 'Hoy agradecemos especialmente a...'] },
-  { id:'foto-hoy', name:'Foto de hoy', category:'Foto del dia', icon:'camera', color:'#FCE7DE', shortDescription:'Una imagen que habla por este dia.', mainPrompt:'Hoy guardamos esta foto porque...', writingIdeas:['Que muestra esta foto?', 'Por que es importante?', 'Que emocion tiene este recuerdo?'], examples:['Foto de tu incubadora.', 'Foto de tus manitos.', 'Foto de tus piecitos.', 'Foto de piel con piel.', 'Foto de tu primera mantita.', 'Foto de una visita especial.', 'Foto de un hito medico.'] },
-  { id:'carta', name:'Carta para ti', category:'Carta', icon:'letter', color:'#EFE8F5', shortDescription:'Un mensaje directo para tu bebe.', mainPrompt:'Querido/a bebe, hoy quiero contarte que...', writingIdeas:['Que quieres que sepa?', 'Que le contarias cuando sea grande?', 'Que promesa o deseo quieres guardar?'], examples:['Hoy quiero que sepas que...', 'Tal vez no recuerdes estos dias, pero nosotros...', 'Hoy estuviste muy valiente.', 'Hoy nosotros tambien intentamos ser valientes.', 'Lo que sueno para ti es...', 'Gracias por ensenarme...'] },
-  { id:'preparando-casa', name:'Preparandonos para casa', category:'Camino a casa', icon:'home', color:'#EAF2E7', shortDescription:'Pasos, aprendizajes y emociones hacia el alta.', mainPrompt:'Hoy dimos un paso mas hacia casa cuando...', writingIdeas:['Que aprendimos para cuidarte en casa?', 'Que nos emociona?', 'Que nos da miedo?'], examples:['Hoy nos hablaron del alta.', 'Hoy empezamos a prepararnos para llevarte a casa.', 'Hoy aprendimos un cuidado que necesitaremos en casa.', 'Hoy imaginamos como sera tu llegada.', 'Hoy fue tu ultimo dia con...', 'Hoy saliste de la UCIN.'] },
+  { id:'piel-con-piel', name:'Piel con piel', category:'Piel con piel', icon:'heart', color:'#F6C3AE', shortDescription:'Cercania, contacto y momentos de apego.', mainPrompt:'Hoy te tuve cerca y senti...', writingIdeas:['Cuanto tiempo estuvieron juntos?', 'Que recuerdas de ese momento?', 'Que te gustaria contarle cuando sea grande?'], examples:['Hoy pudimos hacer piel con piel por primera vez.', 'Hoy senti tu calor.', 'Hoy escuchaste mi voz muy cerquita.', 'Hoy te tome la mano.', 'Hoy no pude tomarte, pero pude estar contigo de otra forma.', 'Hoy papa hizo piel con piel.', 'Hoy mama hizo piel con piel.'] },
+  { id:'aprendimos-cuidarte', name:'Aprendimos a cuidarte', category:'Aprendizaje', icon:'hands', color:'#F6C3AE', shortDescription:'Tareas y cuidados que van aprendiendo.', mainPrompt:'Hoy aprendimos a cuidarte cuando...', writingIdeas:['Que aprendimos hoy?', 'Quien nos enseno?', 'Que sentimos al hacerlo por primera vez?'], examples:['Hoy aprendimos a cambiarte el panal.', 'Hoy aprendimos a tomarte la temperatura.', 'Hoy aprendimos como tocarte con cuidado.', 'Hoy aprendimos como contenerte.', 'Hoy ayudamos en tu aseo.', 'Hoy participamos en tus cuidados por primera vez.'] },
+  { id:'dia-dificil', name:'Hoy fue dificil', category:'Dia dificil', icon:'cloud', color:'#F6C3AE', shortDescription:'Para dias complejos, sin forzar optimismo.', mainPrompt:'Hoy fue un dia dificil porque...', writingIdeas:['Que fue lo que mas costo?', 'Que ayudo un poquito?', 'Que quieres dejar registrado de este dia?'], examples:['Hoy nos costo esperar.', 'Hoy tuvimos miedo.', 'Hoy no sabemos bien que escribir.', 'Hoy solo queremos dejar registrado que estuvimos aqui.', 'Hoy no hubo grandes cambios, pero seguimos contigo.', 'Hoy aprendimos que avanzar tambien puede ser lento.'] },
+  { id:'hoy-me-senti', name:'Hoy me senti', category:'Emocion', icon:'heart', color:'#F6C3AE', shortDescription:'Emociones de mama, papa o cuidador.', mainPrompt:'Hoy me senti...', writingIdeas:['Que emocion estuvo mas presente?', 'Que la provoco?', 'Que necesitabas en ese momento?'], examples:['Hoy me dio esperanza...', 'Hoy me dio miedo...', 'Hoy llore cuando...', 'Hoy sonrei cuando...', 'Hoy agradeci...', 'Hoy no tengo muchas palabras, pero quiero guardar este momento.'] },
+  { id:'personalidad', name:'Tu personalidad', category:'Personalidad', icon:'star', color:'#F6C3AE', shortDescription:'Gestos, rasgos y pequenas senales.', mainPrompt:'Hoy nos mostraste que eres...', writingIdeas:['Que gesto hiciste?', 'Que nos llamo la atencion?', 'A quien nos recordaste?'], examples:['Hoy abriste los ojos cuando te hablamos.', 'Hoy moviste tus manos como si quisieras saludar.', 'Hoy hiciste una cara que parecia enojo.', 'Hoy te vimos tranquilo/a cuando escuchaste nuestra voz.', 'Hoy nos hiciste reir porque...', 'Cada dia te vemos mas tu.'] },
+  { id:'cosas-calman', name:'Cosas que te calman', category:'Calma', icon:'music', color:'#F6C3AE', shortDescription:'Voces, sonidos y formas de contencion.', mainPrompt:'Hoy te calmo...', writingIdeas:['Que parecio ayudarte?', 'Que sonido, voz o gesto te tranquilizo?', 'Que descubrimos sobre ti?'], examples:['Hoy te calmo escuchar la voz de mama.', 'Hoy te gusto que te cantaramos.', 'Hoy te tranquilizaste con nuestras manos.', 'Hoy te leimos un cuento.', 'Hoy descubrimos algo que te gusta.', 'Hoy descubrimos algo que no te gusta tanto.'] },
+  { id:'familia-visitas', name:'Familia y visitas', category:'Familia', icon:'people', color:'#F2EBE0', shortDescription:'Visitas, mensajes y apoyo cercano o a distancia.', mainPrompt:'Hoy recibiste carino de...', writingIdeas:['Quien vino o pregunto por ti?', 'Que mensaje te enviaron?', 'Como se sintio ese apoyo?'], examples:['Hoy vino a verte...', 'Hoy tus abuelos preguntaron por ti.', 'Hoy recibiste carino desde lejos.', 'Hoy alguien rezo o penso en ti.', 'Hoy una persona importante para nosotros te conocio.', 'Hoy alguien dejo un mensaje para ti.'] },
+  { id:'equipo-salud', name:'Equipo de salud', category:'Equipo de salud', icon:'plus', color:'#E9EEF7', shortDescription:'Explicaciones, frases y acompanamiento del equipo.', mainPrompt:'Hoy alguien del equipo nos ayudo a...', writingIdeas:['Quien nos acompano hoy?', 'Que nos explico?', 'Que frase queremos recordar?'], examples:['Hoy una enfermera nos explico...', 'Hoy una persona del equipo nos dio tranquilidad.', 'Hoy aprendimos del equipo que...', 'Hoy queremos recordar el nombre de...', 'Hoy el equipo celebro contigo.', 'Hoy agradecemos especialmente a...'] },
+  { id:'foto-hoy', name:'Foto de hoy', category:'Foto del dia', icon:'camera', color:'#F6C3AE', shortDescription:'Una imagen que habla por este dia.', mainPrompt:'Hoy guardamos esta foto porque...', writingIdeas:['Que muestra esta foto?', 'Por que es importante?', 'Que emocion tiene este recuerdo?'], examples:['Foto de tu incubadora.', 'Foto de tus manitos.', 'Foto de tus piecitos.', 'Foto de piel con piel.', 'Foto de tu primera mantita.', 'Foto de una visita especial.', 'Foto de un hito medico.'] },
+  { id:'carta', name:'Carta para ti', category:'Carta', icon:'letter', color:'#F6C3AE', shortDescription:'Un mensaje directo para tu bebe.', mainPrompt:'Querido/a bebe, hoy quiero contarte que...', writingIdeas:['Que quieres que sepa?', 'Que le contarias cuando sea grande?', 'Que promesa o deseo quieres guardar?'], examples:['Hoy quiero que sepas que...', 'Tal vez no recuerdes estos dias, pero nosotros...', 'Hoy estuviste muy valiente.', 'Hoy nosotros tambien intentamos ser valientes.', 'Lo que sueno para ti es...', 'Gracias por ensenarme...'] },
+  { id:'preparando-casa', name:'Preparandonos para casa', category:'Camino a casa', icon:'home', color:'#FFF5DC', shortDescription:'Pasos, aprendizajes y emociones hacia el alta.', mainPrompt:'Hoy dimos un paso mas hacia casa cuando...', writingIdeas:['Que aprendimos para cuidarte en casa?', 'Que nos emociona?', 'Que nos da miedo?'], examples:['Hoy nos hablaron del alta.', 'Hoy empezamos a prepararnos para llevarte a casa.', 'Hoy aprendimos un cuidado que necesitaremos en casa.', 'Hoy imaginamos como sera tu llegada.', 'Hoy fue tu ultimo dia con...', 'Hoy saliste de la UCIN.'] },
   { id:'llegada-casa', name:'Llegada a casa', category:'Llegada a casa', icon:'home', color:'#FFF5DC', shortDescription:'Para guardar el dia en que salieron de UCIN.', mainPrompt:'Llegaste a casa el dia...', writingIdeas:['Como fue ese momento?', 'Quienes estaban?', 'Que fue lo primero que hicieron?'], examples:['Te recibimos con...', 'Tu pieza estaba preparada con...', 'La primera noche en casa fue...', 'Despues de tantos dias en UCIN, llegar a casa se sintio...', 'Queremos recordar este dia porque...'] },
 ];
 
 const DIARY_TEMPLATES = guidedTemplates;
-const DIARY_COLORS = ['#FFF5DC', '#FCE7DE', '#EAF2E7', '#E9EEF7', '#EFE8F5', '#ECE7E1'];
+const DIARY_COLORS = ['#EAF2E7', '#E9EEF7', '#F6C3AE', '#CDBCDB', '#FFF5DC', '#F2EBE0'];
 const DIARY_CATEGORIES = ['Hoy celebramos', 'Hito UCIN', 'Respiracion', 'Alimentacion', 'Piel con piel', 'Aprendizaje', 'Dia dificil', 'Emocion', 'Personalidad', 'Calma', 'Familia', 'Equipo de salud', 'Foto del dia', 'Carta', 'Camino a casa', 'Llegada a casa'];
 
 const CLASSIC_MEMORY_PROMPTS = [
@@ -1770,7 +3037,7 @@ const CLASSIC_MEMORY_PROMPTS = [
 const emptyDiaryMedia = () => ({ photos: [], audios: [], videos: [] });
 function diaryMediaFromTypes(types = []) {
   return {
-    photos: types.includes('photo') ? ['premature.jpg'] : [],
+    photos: types.includes('photo') ? ['guaguas/guagua1.jpg'] : [],
     audios: types.includes('audio') ? ['audio-placeholder'] : [],
     videos: types.includes('video') ? ['video-placeholder'] : [],
   };
@@ -1782,7 +3049,7 @@ function getEntryMedia(entry = {}) {
     videos: entry.media.videos || [],
   };
   return {
-    photos: entry.photos || (entry.media?.includes?.('photo') ? ['premature.jpg'] : []),
+    photos: entry.photos || (entry.media?.includes?.('photo') ? ['guaguas/guagua1.jpg'] : []),
     audios: entry.media?.includes?.('audio') ? ['audio-placeholder'] : [],
     videos: entry.media?.includes?.('video') ? ['video-placeholder'] : [],
   };
@@ -1804,16 +3071,16 @@ function getTemplateByCategory(category, fallback) {
 }
 
 const DIARY_SEED_ENTRIES = [
-  { id:'seed-ecmo', date:'2026-06-20', type:'guided', templateId:'hito-ucin', title:'Hoy te desconectaron de la ECMO', text:'El equipo nos aviso temprano. Fue un dia inmenso, lleno de cuidado y de silencio compartido.', category:'Hito UCIN', color:'#E9EEF7', media:{ photos:['premature.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-20T15:40:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'15:40' },
-  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#FCE7DE', media:{ photos:['tens2.webp'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
-  { id:'seed-peso', date:'2026-06-19', type:'guided', templateId:'hoy-celebramos', title:'Subiste 20 gramos', text:'La enfermera nos dijo que era una buena noticia para guardar con calma.', category:'Hoy celebramos', color:'#FFF5DC', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T10:30:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'10:30' },
-  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#EFE8F5', media:{ photos:['premature.jpg','tens.avif'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
-  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F4ECDD', media:{ photos:['tens.avif'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
-  { id:'seed-oxigeno', date:'2026-06-17', type:'guided', templateId:'respiracion', title:'Hoy necesitaste menos oxigeno', text:'Mirarte respirar un poco mas tranquilo nos ayudo a respirar tambien a nosotros.', category:'Respiracion', color:'#EAF2F6', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-17T16:20:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'16:20' },
+  { id:'seed-ecmo', date:'2026-06-20', type:'guided', templateId:'hito-ucin', title:'Hoy te desconectaron de la ECMO', text:'El equipo nos aviso temprano. Fue un dia inmenso, lleno de cuidado y de silencio compartido.', category:'Hito UCIN', color:'#E9EEF7', media:{ photos:['guaguas/guagua4.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-20T15:40:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'15:40' },
+  { id:'seed-ojos', date:'2026-06-20', type:'guided', templateId:'personalidad', title:'Abriste los ojos cuando te hablamos', text:'Nos quedamos quietos, mirandote. Fue un momento chiquitito y enorme al mismo tiempo.', category:'Personalidad', color:'#F6C3AE', media:{ photos:['guaguas/guagua5.jpeg'], audios:[], videos:[] }, createdAt:'2026-06-20T12:15:00', dateLabel:'Hoy', fullDate:'20 junio 2026', time:'12:15' },
+  { id:'seed-peso', date:'2026-06-19', type:'guided', templateId:'hoy-celebramos', title:'Subiste 20 gramos', text:'La enfermera nos dijo que era una buena noticia para guardar con calma.', category:'Hoy celebramos', color:'#F6C3AE', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T10:30:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'10:30' },
+  { id:'seed-piel', date:'2026-06-19', type:'guided', templateId:'piel-con-piel', title:'Hoy pudimos hacer piel con piel', text:'Te senti cerca, tibio/a, respirando despacio. Por un rato el mundo bajo el volumen.', category:'Piel con piel', color:'#F6C3AE', media:{ photos:['guaguas/guagua6.webp','guaguas/guagua7.jpg'], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-19T17:05:00', dateLabel:'Ayer', fullDate:'19 junio 2026', time:'17:05' },
+  { id:'seed-panal', date:'2026-06-17', type:'guided', templateId:'aprendimos-cuidarte', title:'La enfermera nos enseno a cambiarte el panal', text:'Nos mostro paso a paso, sin apuro. Aprendimos una forma mas de cuidarte.', category:'Aprendizaje', color:'#F6C3AE', media:{ photos:['guaguas/guagua8.jpeg'], audios:[], videos:['video-placeholder'] }, createdAt:'2026-06-17T11:00:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'11:00' },
+  { id:'seed-oxigeno', date:'2026-06-17', type:'guided', templateId:'respiracion', title:'Hoy necesitaste menos oxigeno', text:'Mirarte respirar un poco mas tranquilo nos ayudo a respirar tambien a nosotros.', category:'Respiracion', color:'#E9EEF7', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-17T16:20:00', dateLabel:'Lun 17', fullDate:'17 junio 2026', time:'16:20' },
   { id:'seed-leche', date:'2026-06-16', type:'guided', templateId:'alimentacion', title:'Hoy toleraste mejor la leche', text:'Fue poquito a poquito, pero el equipo nos dijo que era una buena senal.', category:'Alimentacion', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-16T13:10:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'13:10' },
-  { id:'seed-dificil', date:'2026-06-16', type:'guided', templateId:'dia-dificil', title:'Hoy no hubo grandes cambios, pero estuvimos contigo', text:'No fue un dia facil. Vinimos igual, te hablamos suave y dejamos este recuerdo sin exigirnos mas.', category:'Dia dificil', color:'#ECE7E1', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-16T19:30:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'19:30' },
-  { id:'seed-abuelos', date:'2026-06-15', type:'guided', templateId:'familia-visitas', title:'Hoy tus abuelos te mandaron un mensaje', text:'Preguntaron por ti y nos pidieron contarte que te esperan con mucho carino.', category:'Familia', color:'#EAF2E7', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-15T18:00:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'18:00' },
-  { id:'seed-casa', date:'2026-06-15', type:'guided', templateId:'preparando-casa', title:'Hoy dimos un paso mas hacia casa', text:'Nos explicaron un cuidado que necesitaremos practicar. Da emocion y tambien un poco de miedo.', category:'Camino a casa', color:'#FFF5DC', media:{ photos:['premature.jpg'], audios:[], videos:[] }, createdAt:'2026-06-15T11:40:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'11:40' },
+  { id:'seed-dificil', date:'2026-06-16', type:'guided', templateId:'dia-dificil', title:'Hoy no hubo grandes cambios, pero estuvimos contigo', text:'No fue un dia facil. Vinimos igual, te hablamos suave y dejamos este recuerdo sin exigirnos mas.', category:'Dia dificil', color:'#F6C3AE', media:{ photos:[], audios:[], videos:[] }, createdAt:'2026-06-16T19:30:00', dateLabel:'Dom 16', fullDate:'16 junio 2026', time:'19:30' },
+  { id:'seed-abuelos', date:'2026-06-15', type:'guided', templateId:'familia-visitas', title:'Hoy tus abuelos te mandaron un mensaje', text:'Preguntaron por ti y nos pidieron contarte que te esperan con mucho carino.', category:'Familia', color:'#F2EBE0', media:{ photos:[], audios:['audio-placeholder'], videos:[] }, createdAt:'2026-06-15T18:00:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'18:00' },
+  { id:'seed-casa', date:'2026-06-15', type:'guided', templateId:'preparando-casa', title:'Hoy dimos un paso mas hacia casa', text:'Nos explicaron un cuidado que necesitaremos practicar. Da emocion y tambien un poco de miedo.', category:'Camino a casa', color:'#FFF5DC', media:{ photos:['guaguas/guagua9.jpg'], audios:[], videos:[] }, createdAt:'2026-06-15T11:40:00', dateLabel:'Sab 15', fullDate:'15 junio 2026', time:'11:40' },
 ];
 function DiaryMediaIcon({ type, color = KUN.inkMuted }) {
   if (type === 'audio') return VINK_ICONS.mic(color);
@@ -1882,7 +3149,7 @@ function CategorySelector({ value, onChange }) {
             borderRadius: 999,
             padding: '8px 11px',
             fontFamily: V_FT,
-            fontSize: 12,
+            fontSize: 12.5,
             fontWeight: 700,
             cursor:'pointer',
           }}>{category}</button>
@@ -1898,7 +3165,7 @@ function MemoryHighlights({ entries, onOpenDay }) {
     <section style={{ marginBottom: 20 }}>
       <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', padding:'0 22px 10px' }}>
         <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink }}>Recuerdos destacados</div>
-        <div style={{ fontFamily: V_FB, fontSize: 11.5, color: KUN.inkMuted }}>{entries.length} guardados</div>
+        <div style={{ fontFamily: V_FB, fontSize: 11, color: KUN.inkMuted }}>{entries.length} guardados</div>
       </div>
       <div style={{ display:'flex', gap: 12, overflowX:'auto', padding:'0 20px 4px', scrollSnapType:'x mandatory' }}>
         {featured.map(entry => {
@@ -1913,7 +3180,7 @@ function MemoryHighlights({ entries, onOpenDay }) {
               <div style={{ position:'absolute', inset:0, background: photos[0] ? 'linear-gradient(180deg, rgba(42,35,32,0.05), rgba(42,35,32,0.58))' : 'transparent' }} />
               <div style={{ position:'relative', zIndex:1, minHeight:132, padding: 16, display:'flex', flexDirection:'column', justifyContent:'flex-end', boxSizing:'border-box' }}>
                 <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: photos[0] ? 'rgba(255,255,255,0.84)' : KUN.inkMuted, marginBottom: 7 }}>{entry.dateLabel} - {entry.category}</div>
-                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: photos[0] ? '#fff' : KUN.ink, lineHeight: 1.12 }}>{entry.title}</div>
+                <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: photos[0] ? '#fff' : KUN.ink, lineHeight: 1.12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal', wordWrap: 'break-word' }}>{entry.title}</div>
               </div>
             </button>
           );
@@ -1941,7 +3208,7 @@ function DiaryEntryCard({ entry, onOpen }) {
           {isGuided && <span style={{ borderRadius:999, background:'#FFF1EA', color:KUN.brick, padding:'3px 7px', fontFamily:V_FT, fontSize:10.5, fontWeight:700 }}>Guia</span>}
         </div>
         <div style={{ fontFamily: V_FT, fontSize: 16.5, fontWeight: 700, color: KUN.ink, lineHeight: 1.15 }}>{entry.title}</div>
-        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 6, maxHeight: 38, overflow:'hidden' }}>{entry.text || 'Recuerdo guardado con medio adjunto.'}</div>
+        <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 6, maxHeight: 38, overflow:'hidden' }}>{entry.text || 'Recuerdo guardado con medio adjunto.'}</div>
         <div style={{ display:'flex', gap: 7, marginTop: 9 }}>
           {mediaTypes.map(m => <span key={m} style={{ width: 28, height: 28, borderRadius: 14, background: KUN.cardSoft, display:'flex', alignItems:'center', justifyContent:'center' }}><DiaryMediaIcon type={m} /></span>)}
         </div>
@@ -1957,10 +3224,7 @@ function DiaryEntryCard({ entry, onOpen }) {
 }
 
 function DiaryHome({ entries, onBack, onOpenDay, onCreate, canEditDiary }) {
-  const [categoryFilter, setCategoryFilter] = React.useState('Todos');
-  const categories = ['Todos', ...Array.from(new Set(entries.map(e => e.category).filter(Boolean)))];
-  const visibleEntries = categoryFilter === 'Todos' ? entries : entries.filter(e => e.category === categoryFilter);
-  const groups = visibleEntries.reduce((acc, entry) => {
+  const groups = entries.reduce((acc, entry) => {
     acc[entry.fullDate] = acc[entry.fullDate] || [];
     acc[entry.fullDate].push(entry);
     return acc;
@@ -1969,28 +3233,19 @@ function DiaryHome({ entries, onBack, onOpenDay, onCreate, canEditDiary }) {
     <div style={{ minHeight:'100%', background: KUN.bg, paddingBottom: 108, position:'relative' }}>
       <DiaryTopBar onBack={onBack} />
       {!canEditDiary && <ReadOnlyDiaryNotice />}
-      <div style={{ padding:'0 22px 16px' }}>
+      <div style={{ padding:'0 22px 16px', textAlign:'center' }}>
         <div style={{ fontFamily: V_FB, fontSize: 13.5, color: KUN.inkSoft, lineHeight: 1.55 }}>
           Este recuerdo es tuyo. Puedes escribirlo como quieras. No tiene que quedar perfecto.
         </div>
       </div>
       <MemoryHighlights entries={entries} onOpenDay={onOpenDay} />
-      <div style={{ padding:'0 20px 18px' }}>
-        <div style={{ fontFamily: V_FB, fontSize: 11, fontWeight: 600, color: KUN.inkMuted, letterSpacing: .8, textTransform:'uppercase', marginBottom: 9 }}>Filtrar por categoria</div>
-        <div style={{ display:'flex', gap: 8, overflowX:'auto', paddingBottom: 2 }}>
-          {categories.map(cat => {
-            const active = cat === categoryFilter;
-            return <button key={cat} onClick={() => setCategoryFilter(cat)} style={{ border:active ? 'none' : `1px solid ${KUN.hair}`, background:active ? KUN.brick : '#fff', color:active ? '#fff' : KUN.inkSoft, borderRadius:999, padding:'8px 12px', fontFamily:V_FT, fontSize:12, fontWeight:700, whiteSpace:'nowrap', cursor:'pointer' }}>{cat}</button>;
-          })}
-        </div>
-      </div>
       <div style={{ padding:'0 20px', display:'flex', flexDirection:'column', gap: 18 }}>
         {canEditDiary && (
           <button onClick={onCreate} style={{ width:'100%', border:'none', background:'#fff', borderRadius:22, padding:'14px 16px', display:'flex', alignItems:'center', gap:12, cursor:'pointer', boxShadow:'0 6px 18px rgba(42,35,32,0.045)', borderTop:`1px solid ${KUN.hairSoft}`, textAlign:'left' }}>
             <span style={{ width:38, height:38, borderRadius:19, background:KUN.brick, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{VINK_ICONS.plus('#fff')}</span>
             <span style={{ minWidth:0 }}>
               <span style={{ display:'block', fontFamily:V_FT, fontSize:15.5, fontWeight:700, color:KUN.ink }}>Agregar un recuerdo</span>
-              <span style={{ display:'block', fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, marginTop:2 }}>Puedes partir libremente o usar una guia suave.</span>
+              <span style={{ display:'block', fontFamily:V_FB, fontSize:12, color:KUN.inkSoft, marginTop:2 }}>Puedes partir libremente o usar una guia suave.</span>
             </span>
           </button>
         )}
@@ -2022,7 +3277,7 @@ function MemoryBlock({ block, onOpen }) {
         <span style={{ fontFamily: V_FT, fontSize: 11, color: KUN.inkMuted, fontWeight: 700 }}>{block.time}</span>
       </div>
       <div style={{ fontFamily: V_FT, fontSize: 17, fontWeight: 700, color: KUN.ink, lineHeight: 1.12 }}>{block.title}</div>
-      <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 8 }}>{block.text}</div>
+      <div style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 8 }}>{block.text}</div>
     </button>
   );
 }
@@ -2076,7 +3331,7 @@ function DayTimeline({ date, entries, onBack, onCreate }) {
           </div>
         ))}
         <div style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom: 10 }}>
-          <MemoryBlock block={{ kind:'note', label:'Para recordar', title:'Un detalle pequeno', text:'Hoy queremos recordar este momento tal como fue.', time:'Noche', color:'#FFF5DC' }} />
+          <MemoryBlock block={{ kind:'note', label:'Para recordar', title:'Un detalle pequeno', text:'Hoy queremos recordar este momento tal como fue.', time:'Noche', color:'#F6C3AE' }} />
         </div>
       </div>
       <DayFloatingAddButton onCreate={onCreate} />
@@ -2092,6 +3347,15 @@ function TemplateIcon({ icon, color = KUN.ink }) {
   if (icon === 'home') return KIcon.home(color);
   if (icon === 'book') return KIcon.book(color);
   if (icon === 'milk') return HIcon.bottle(color);
+  if (icon === 'tree') {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 19V10" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+        <path d="M12 13C9 13 6.5 11 6.5 8.2C6.5 5.9 8.3 4 10.6 4C11.2 4 11.7 4.1 12 4.4C12.4 4.1 12.9 4 13.4 4C15.7 4 17.5 5.9 17.5 8.2C17.5 11 15 13 12 13Z" stroke={color} strokeWidth="1.7" strokeLinejoin="round"/>
+        <path d="M8 20H16" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    );
+  }
   return KIcon.spark(color);
 }
 
@@ -2101,7 +3365,7 @@ function TemplateCard({ template, onSelect }) {
       <span style={{ width: 42, height: 42, borderRadius: 15, background: template.color, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><TemplateIcon icon={template.icon} color={KUN.ink} /></span>
       <span style={{ flex:1 }}>
         <span style={{ display:'block', fontFamily: V_FT, fontSize: 15.5, fontWeight: 700, color: KUN.ink }}>{template.name}</span>
-        <span style={{ display:'block', fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 3 }}>{template.shortDescription}</span>
+        <span style={{ display:'block', fontFamily: V_FB, fontSize: 12, color: KUN.inkSoft, lineHeight: 1.45, marginTop: 3 }}>{template.shortDescription}</span>
       </span>
     </button>
   );
@@ -2140,6 +3404,55 @@ function ExampleChips({ examples = [], onPick }) {
   return <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:2 }}>{examples.map(example => <button key={example} onClick={() => onPick(example)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.inkSoft, borderRadius:999, padding:'8px 11px', fontFamily:V_FB, fontSize:12, whiteSpace:'nowrap', cursor:'pointer' }}>{example}</button>)}</div>;
 }
 
+function GuidedWritingCard({ color, text, setText, ideas, examples, showSuggestions, onStartWriting }) {
+  const textareaRef = React.useRef(null);
+  const hasEditedText = text.trim().length > 0 && !showSuggestions;
+  const starterLineCount = Math.max(1, Math.ceil((text || '').length / 34));
+  const focusEditor = (event) => {
+    onStartWriting();
+    if (event.target.tagName !== 'TEXTAREA') {
+      textareaRef.current?.focus();
+      const end = textareaRef.current?.value.length || 0;
+      textareaRef.current?.setSelectionRange(end, end);
+    }
+  };
+  return (
+    <div onClick={focusEditor} style={{ border:`1px solid ${KUN.hair}`, borderRadius: 22, background: color, padding: 16, cursor:'text' }}>
+      <textarea
+        ref={textareaRef}
+        value={text}
+        onFocus={onStartWriting}
+        onChange={e => setText(e.target.value)}
+        placeholder=""
+        style={{
+          height: showSuggestions ? starterLineCount * 24 : 160,
+          minHeight: showSuggestions ? starterLineCount * 24 : 160,
+          width:'100%',
+          resize:'none',
+          boxSizing:'border-box',
+          border:'none',
+          background:'transparent',
+          padding: 0,
+          outline:'none',
+          fontFamily: V_FB,
+          fontSize: 15,
+          fontWeight: hasEditedText ? 400 : 600,
+          lineHeight: 1.55,
+          color: KUN.ink,
+          overflow:'hidden',
+          marginBottom: showSuggestions ? 4 : 0,
+        }}
+      />
+      {showSuggestions && (
+        <div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkMuted, lineHeight: 1.62, marginBottom: 14 }}>
+          {ideas.slice(0, 3).map(idea => <div key={idea}>{idea}</div>)}
+          {examples.slice(0, 3).map(example => <div key={example}>{example}</div>)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SoftColorSelector({ value, onChange }) {
   return <div style={{ display:'flex', gap: 9, marginBottom: 16 }}>{DIARY_COLORS.map(c => <button key={c} onClick={() => onChange(c)} style={{ width: 30, height: 30, borderRadius:'50%', background:c, border: value === c ? `2px solid ${KUN.ink}` : '2px solid #fff', boxShadow:`0 0 0 1px ${KUN.hair}`, cursor:'pointer' }} />)}</div>;
 }
@@ -2166,13 +3479,14 @@ function FreeEditor({ onSave, onUseGuide }) {
       <textarea value={text} onChange={e => setText(e.target.value)} placeholder="Escribe lo que quieras recordar de hoy..." style={{ minHeight: 190, width:'100%', resize:'none', boxSizing:'border-box', border:`1px solid ${KUN.hair}`, borderRadius: 22, background:'#fff', padding: 16, outline:'none', fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink }} />
       <MediaButtons selected={media} onToggle={toggleMedia} />
       {onUseGuide && <button onClick={onUseGuide} style={{ border:'none', background:'transparent', color:KUN.brick, fontFamily:V_FT, fontSize:13, fontWeight:700, cursor:'pointer', alignSelf:'flex-start' }}>Elige una guia si no sabes por donde partir</button>}
-      <button onClick={() => onSave({ text, selectedMedia:media, category:'Foto del dia', color:'#FFF5DC', title:saveTitle, type:'free' })} disabled={!canSave} style={{ height: 48, borderRadius: 999, border:'none', background: canSave ? KUN.brick : 'rgba(42,35,32,.12)', color: canSave ? '#fff' : KUN.inkMuted, fontFamily: V_FT, fontSize: 15, fontWeight: 700, cursor:canSave ? 'pointer' : 'not-allowed' }}>Guardar recuerdo</button>
+      <button onClick={() => onSave({ text, selectedMedia:media, category:'Foto del dia', color:'#F6C3AE', title:saveTitle, type:'free' })} disabled={!canSave} style={{ height: 48, borderRadius: 999, border:'none', background: canSave ? KUN.brick : 'rgba(42,35,32,.12)', color: canSave ? '#fff' : KUN.inkMuted, fontFamily: V_FT, fontSize: 15, fontWeight: 700, cursor:canSave ? 'pointer' : 'not-allowed' }}>Guardar recuerdo</button>
     </div>
   );
 }
 
 function GuidedEditor({ template, onSave, onFree }) {
-  const [text, setText] = React.useState('');
+  const [text, setText] = React.useState(template.mainPrompt || '');
+  const [hasStartedWriting, setHasStartedWriting] = React.useState(false);
   const [media, setMedia] = React.useState([]);
   const [color, setColor] = React.useState(template.color || '#FCE7DE');
   const [category, setCategoryState] = React.useState(template.category || 'Emocion');
@@ -2181,19 +3495,17 @@ function GuidedEditor({ template, onSave, onFree }) {
     const nextTemplate = getTemplateByCategory(nextCategory, template);
     setCategoryState(nextCategory);
     if (nextTemplate?.color) setColor(nextTemplate.color);
+    setText(nextTemplate?.mainPrompt || '');
+    setHasStartedWriting(false);
   };
   const toggleMedia = (type) => setMedia(prev => prev.includes(type) ? prev.filter(x => x !== type) : [...prev, type]);
-  const canSave = text.trim() || media.length;
-  const appendText = (snippet) => setText(prev => prev ? `${prev}\n${snippet} ` : `${snippet} `);
+  const canSave = (text.trim() && text.trim() !== (categoryTemplate.mainPrompt || '').trim()) || media.length;
   return (
     <div style={{ display:'flex', flexDirection:'column', gap: 14 }}>
       <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 24, padding: 16 }}>
         <div style={{ display:'flex', gap:12, alignItems:'center' }}><span style={{ width:42, height:42, borderRadius:15, background:template.color, display:'flex', alignItems:'center', justifyContent:'center' }}><TemplateIcon icon={template.icon} /></span><div><div style={{ fontFamily: V_FT, fontSize: 20, fontWeight: 700, color: KUN.ink, lineHeight: 1.12 }}>{template.name}</div><div style={{ fontFamily: V_FB, fontSize: 12.5, color: KUN.inkMuted, marginTop:3 }}>{template.shortDescription}</div></div></div>
-        <div style={{ fontFamily: V_FB, fontSize: 13.5, color: KUN.inkSoft, lineHeight: 1.5, marginTop: 14 }}>{template.mainPrompt}</div>
       </div>
-      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={template.mainPrompt} style={{ minHeight: 172, width:'100%', resize:'none', boxSizing:'border-box', border:`1px solid ${KUN.hair}`, borderRadius: 22, background: color, padding: 16, outline:'none', fontFamily: V_FB, fontSize: 15, lineHeight: 1.55, color: KUN.ink }} />
-      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}><div style={diarySectionLabel}>Ideas para escribir</div><WritingIdeas ideas={categoryTemplate.writingIdeas} onPick={appendText} /></div>
-      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}><div style={diarySectionLabel}>Ejemplos opcionales</div><ExampleChips examples={categoryTemplate.examples} onPick={appendText} /></div>
+      <GuidedWritingCard color={color} text={text} setText={setText} ideas={categoryTemplate.writingIdeas} examples={categoryTemplate.examples} showSuggestions={!hasStartedWriting} onStartWriting={() => setHasStartedWriting(true)} />
       <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius: 22, padding: 14 }}>
         <div style={diarySectionLabel}>Medios</div><MediaButtons selected={media} onToggle={toggleMedia} />
         <div style={{ ...diarySectionLabel, marginTop: 16 }}>Color suave</div><SoftColorSelector value={color} onChange={setColor} />
@@ -2223,33 +3535,241 @@ function CreateEntry({ onBack, onSave }) {
 }
 
 function DiaryPrototype({ onBack, canEditDiary = true }) {
-  const [view, setView] = React.useState('home');
-  const [selectedDate, setSelectedDate] = React.useState('20 junio 2026');
   const [entries, setEntries] = React.useState(() => {
-    try { const stored = JSON.parse(localStorage.getItem(DIARY_GUIDED_KEY) || '[]'); return [...stored, ...DIARY_SEED_ENTRIES]; }
-    catch { return DIARY_SEED_ENTRIES; }
+    try {
+      const stored = JSON.parse(localStorage.getItem(DIARY_FEED_KEY) || '[]');
+      const storedIds = new Set(stored.map(e => e.id));
+      const seeds = DIARY_FEED_SEED.filter(s => !storedIds.has(s.id));
+      return [...stored, ...seeds];
+    } catch { return DIARY_FEED_SEED; }
   });
-  const persist = (next) => { setEntries(next); try { localStorage.setItem(DIARY_GUIDED_KEY, JSON.stringify(next.filter(e => !String(e.id).startsWith('seed-')))); } catch {} };
-  const saveEntry = ({ text = '', selectedMedia = [], category, color, title, type = 'free', templateId }) => {
-    const clean = text.trim();
-    if (!clean && !selectedMedia.length) return;
-    const now = new Date();
-    const media = diaryMediaFromTypes(selectedMedia);
-    const entryTitle = title || clean.split('\n')[0] || (selectedMedia.includes('photo') ? 'Foto de hoy' : selectedMedia.includes('audio') ? 'Audio de hoy' : selectedMedia.includes('video') ? 'Video de hoy' : 'Recuerdo de hoy');
-    const newEntry = { id:`local-${Date.now()}`, date:'2026-06-20', type, templateId, title:entryTitle, text:clean, category, color, media, createdAt:now.toISOString(), dateLabel:'Hoy', fullDate:'20 junio 2026', time:now.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }) };
-    persist([newEntry, ...entries]);
-    setSelectedDate(newEntry.fullDate);
-    setView('day');
+
+  const [fab,   setFab]   = React.useState(false);
+  const [sheet, setSheet] = React.useState(null); // null | 'note' | 'recorder' | 'guide'
+  const [exportEntry, setExportEntry] = React.useState(null);
+  const [pendingPhoto, setPendingPhoto] = React.useState(null);
+  const photoRef  = React.useRef(null);
+  const bottomRef = React.useRef(null);
+
+  React.useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior:'instant' });
+  }, []);
+
+  const persist = (next) => {
+    setEntries(next);
+    try {
+      localStorage.setItem(DIARY_FEED_KEY, JSON.stringify(next.filter(e => !String(e.id).startsWith('df'))));
+    } catch {}
   };
-  const openDay = (date) => { setSelectedDate(date); setView('day'); };
-  const dayEntries = entries.filter(entry => entry.fullDate === selectedDate);
-  if (view === 'create') return <CreateEntry onBack={() => setView('home')} onSave={saveEntry} />;
-  if (view === 'day') return <DayTimeline date={selectedDate} entries={dayEntries.length ? dayEntries : entries.slice(0, 2)} onBack={() => setView('home')} onCreate={() => setView('create')} />;
-  return <DiaryHome entries={entries} canEditDiary={canEditDiary} onBack={onBack} onOpenDay={openDay} onCreate={() => setView('create')} />;
+
+  const addEntry = (data) => {
+    window.KUNAnalytics?.track('diario_entrada_creada', {
+      tipo: data?.type === 'audio' ? 'voz' : data?.type === 'photo' ? 'foto' : 'texto',
+      modo: data?.templateId ? 'guided' : 'free',
+      template_id: data?.templateId,
+      media_count: data?.type === 'photo' || data?.type === 'audio' ? 1 : 0,
+    });
+    const now = new Date();
+    const entry = {
+      id: `u${Date.now()}`,
+      ts: Date.now(),
+      date: now.toISOString().slice(0, 10),
+      text: null, imageSrc: null, audioDuration: null, color: null, category: null,
+      ...data,
+    };
+    persist([entry, ...entries]);
+  };
+
+  const handlePhotoFile = (file) => {
+    if (!file?.type?.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPendingPhoto(reader.result);
+      setSheet('photo-caption');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const groups = groupFeedByDate(entries);
+
+  return (
+    <div style={{ height:'100%', background:KUN.bg, position:'relative', display:'flex', flexDirection:'column', boxSizing:'border-box' }}>
+
+      {/* Header — no hace scroll */}
+      <div style={{ flexShrink:0 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 20px 14px' }}>
+          <button onClick={onBack} style={{
+            width:40, height:40, borderRadius:'50%', background:'#fff',
+            border:`1px solid ${KUN.hair}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer',
+          }}>
+            {VINK_ICONS.back(KUN.ink)}
+          </button>
+          <div style={{ fontFamily:V_FT, fontSize:22, fontWeight:700, color:KUN.ink, letterSpacing:-0.4 }}>
+            Diario de vida
+          </div>
+        </div>
+
+        {!canEditDiary && (
+          <div style={{ margin:'0 16px 12px', background:KUN.cardSoft, borderRadius:20, padding:'12px 14px', border:`1px solid ${KUN.hair}`, fontFamily:V_FB, fontSize:12.5, color:KUN.inkSoft, lineHeight:1.5 }}>
+            Solo mamá y papá pueden editar el diario.
+          </div>
+        )}
+      </div>
+
+      {/* Feed — scroll propio */}
+      <div style={{ flex:1, overflowY:'auto', overflowX:'hidden', padding:'0 12px 100px', boxSizing:'border-box' }}>
+        {groups.map(group => (
+          <div key={group.date}>
+
+            {/* Date separator */}
+            <div style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 2px 12px' }}>
+              <div style={{ flex:1, height:1, background:KUN.hair }}/>
+              <span style={{
+                fontFamily:V_FT, fontSize:12, fontWeight:700, color:KUN.inkMuted,
+                letterSpacing:0.1, whiteSpace:'nowrap',
+              }}>
+                {diaryDateLabel(group.date)}
+              </span>
+              <div style={{ flex:1, height:1, background:KUN.hair }}/>
+            </div>
+
+            {/* Two-column masonry */}
+            <div style={{ columnCount:2, columnGap:8, marginBottom:6 }}>
+              {group.entries.map(entry => (
+                <div key={entry.id} style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom:8 }}>
+                  {entry.type === 'photo' && <DiaryFeedPhotoCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                  {entry.type === 'text'  && <DiaryFeedNoteCard  entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                  {entry.type === 'audio' && <DiaryFeedAudioCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                  {entry.type === 'template' && <DiaryFeedTemplateCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
+                </div>
+              ))}
+            </div>
+
+          </div>
+        ))}
+
+        {/* Anchor para scroll al fondo */}
+        <div ref={bottomRef}/>
+      </div>{/* fin feed */}
+
+      {/* Hidden photo input */}
+      <input ref={photoRef} type="file" accept="image/*" style={{ display:'none' }}
+        onChange={e => { handlePhotoFile(e.target.files?.[0]); e.target.value = ''; }}/>
+
+      {/* FAB — fijo sobre el wrapper externo, no sigue el scroll */}
+      {canEditDiary && (
+        <>
+          {fab && (
+            <div onClick={() => setFab(false)} style={{
+              position:'absolute', inset:0, zIndex:190,
+              background:'rgba(42,35,32,0.35)', display:'flex', alignItems:'flex-end',
+            }}>
+              <div onClick={e => e.stopPropagation()} style={{
+                width:'100%', background:KUN.bg,
+                borderTopLeftRadius:28, borderTopRightRadius:28,
+                padding:'14px 20px 30px', boxSizing:'border-box',
+              }}>
+                <div style={{ width:44, height:5, borderRadius:3, background:KUN.inkFaint, margin:'0 auto 16px' }}/>
+                <div style={{ fontFamily:V_FT, fontSize:19, fontWeight:700, color:KUN.ink, letterSpacing:-0.3, marginBottom:16 }}>
+                  Agregar al diario
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                  {[
+                    { label:'Foto',         color:KUN.rosehip, icon:VINK_ICONS.camera(KUN.ink), cb:() => { setFab(false); photoRef.current?.click(); } },
+                    { label:'Texto',        color:KUN.viola,   icon:VINK_ICONS.text(KUN.ink),   cb:() => { setFab(false); setSheet('note'); } },
+                    { label:'Audio',        color:KUN.apple,   icon:VINK_ICONS.mic(KUN.ink),    cb:() => { setFab(false); setSheet('recorder'); } },
+                    { label:'Usar una guía', color:KUN.sun,
+                      icon:(
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 3C9.2 3 7 5.2 7 8c0 2 1.1 3.7 2.8 4.6L9 20h6l-.8-7.4C15.9 11.7 17 10 17 8c0-2.8-2.2-5-5-5z" stroke={KUN.ink} strokeWidth="1.6" strokeLinejoin="round"/>
+                          <path d="M9 20h6" stroke={KUN.ink} strokeWidth="1.6" strokeLinecap="round"/>
+                        </svg>
+                      ),
+                      cb:() => { setFab(false); setSheet('guide'); } },
+                    { label:'Plantillas', color:'#FFF5DC', icon:<TemplateIcon icon="tree" color={KUN.ink} />, cb:() => { setFab(false); setSheet('template'); } },
+                  ].map(o => (
+                    <button key={o.label} onClick={o.cb} style={{
+                      background:'#fff', border:`1px solid ${KUN.hair}`,
+                      borderRadius:20, padding:'16px 8px',
+                      display:'flex', flexDirection:'column', alignItems:'center', gap:12, cursor:'pointer',
+                    }}>
+                      <div style={{ width:46, height:46, borderRadius:14, background:o.color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        {o.icon}
+                      </div>
+                      <div style={{ fontFamily:V_FT, fontSize:14, fontWeight:700, color:KUN.ink, textAlign:'center' }}>
+                        {o.label}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          <button onClick={() => setFab(x => !x)} style={{
+            position:'absolute', right:20, bottom:100, zIndex:180,
+            width:52, height:52, borderRadius:'50%', border:'none',
+            background: fab ? KUN.ink : KUN.brick,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            cursor:'pointer',
+            boxShadow: fab ? '0 8px 20px rgba(42,35,32,0.28)' : '0 8px 22px rgba(240,116,62,0.36)',
+            transition:'background .18s',
+          }}>
+            {fab
+              ? <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M5 5L17 17M17 5L5 17" stroke="#fff" strokeWidth="2.4" strokeLinecap="round"/></svg>
+              : VINK_ICONS.plus('#fff')
+            }
+          </button>
+        </>
+      )}
+
+      {/* Sheets */}
+      {sheet === 'note' && (
+        <DiaryNoteSheet
+          onClose={() => setSheet(null)}
+          onSave={(data) => { addEntry(data); setSheet(null); }}
+        />
+      )}
+      {sheet === 'photo-caption' && pendingPhoto && (
+        <DiaryPhotoCaptionSheet
+          imageSrc={pendingPhoto}
+          onClose={() => { setPendingPhoto(null); setSheet(null); }}
+          onSave={(data) => { addEntry(data); setPendingPhoto(null); setSheet(null); }}
+        />
+      )}
+      {sheet === 'recorder' && (
+        <Recorder
+          onClose={() => setSheet(null)}
+          onSave={({ duration }) => addEntry({ type:'audio', audioDuration:duration })}
+          context={{ author:'Mamá', role:'Mamá', color:KUN.rosehip, name:'Audio para Sofía' }}
+        />
+      )}
+      {sheet === 'guide' && (
+        <DiaryGuideSheet
+          onClose={() => setSheet(null)}
+          onSave={(data) => { addEntry(data); setSheet(null); }}
+        />
+      )}
+      {sheet === 'template' && (
+        <DiaryTemplateSheet
+          onClose={() => setSheet(null)}
+          onSave={(data) => { addEntry(data); setSheet(null); }}
+        />
+      )}
+      {exportEntry && (
+        <DiaryExportSheet
+          entry={exportEntry}
+          onClose={() => setExportEntry(null)}
+        />
+      )}
+    </div>
+  );
 }
 function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía' }) {
   if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} />;
-  if (view === 'activities') return <ActividadesGuagua onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
+  if (view === 'activities' || view === 'activities-cuentos' || view === 'activities-canciones' || view === 'activities-musica') {
+    const tab = view.startsWith('activities-') ? view.replace('activities-', '') : 'cuentos';
+    return <ActividadesGuagua initialTab={tab} onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;
+  }
   return <VinkEntry onPick={setView} babyName={babyName} />;
 }
 

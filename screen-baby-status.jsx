@@ -100,7 +100,7 @@ function generateBabyStatusSegments(status, babyName) {
     const lugar = status.lugar;
     const temp  = status.temperatura;
     const intro = (lugar === 'UCI' || lugar === 'Intermedio B') ? `${name} está en ` : `${name} se encuentra en `;
-    push(intro); chip(lugar, 'apple');
+    push(intro); chip(lugar, lugar === 'Alta' || lugar === 'Dado de alta' ? 'sun' : 'viola');
 
     if (lugar === 'Recién ingresado') {
       if (temp === 'Incubadora')             { push(', protegida en su '); chip('incubadora', 'clear'); push(' mientras el equipo la evalúa. '); }
@@ -152,26 +152,26 @@ function generateBabyStatusSegments(status, babyName) {
     const sondaLbl = hasNaso ? 'sonda nasogástrica' : 'sonda orogástrica';
 
     if (al.length === 1) {
-      if (hasPecho)   { push('Se alimenta directamente del '); chip('pecho directo', 'clear'); push('. '); }
-      else if (hasMam){ push('Recibe su leche en '); chip('mamadera', 'clear'); push('. '); }
-      else if (hasNaso){ push('Recibe su alimentación por '); chip('sonda nasogástrica', 'clear'); push(', un tubito que llega hasta su estómago por la nariz. '); }
-      else if (hasOro) { push('Recibe su alimentación por '); chip('sonda orogástrica', 'clear'); push(', un tubito que llega hasta su estómago por la boca. '); }
-      else if (hasParent){ push('Recibe sus nutrientes directamente por la '); chip('nutrición parenteral', 'clear'); push(', mientras su sistema digestivo madura. '); }
+      if (hasPecho)   { push('Se alimenta directamente del '); chip('pecho directo', 'apple'); push('. '); }
+      else if (hasMam){ push('Recibe su leche en '); chip('mamadera', 'apple'); push('. '); }
+      else if (hasNaso){ push('Recibe su alimentación por '); chip('sonda nasogástrica', 'apple'); push(', un tubito que llega hasta su estómago por la nariz. '); }
+      else if (hasOro) { push('Recibe su alimentación por '); chip('sonda orogástrica', 'apple'); push(', un tubito que llega hasta su estómago por la boca. '); }
+      else if (hasParent){ push('Recibe sus nutrientes directamente por la '); chip('nutrición parenteral', 'apple'); push(', mientras su sistema digestivo madura. '); }
     } else if (al.length === 2) {
       if (hasPecho && hasSonda) {
-        push('Se alimenta combinando el '); chip('pecho directo', 'clear'); push(' con '); chip(sondaLbl, 'clear'); push(', para asegurarse de recibir todo lo que necesita. ');
+        push('Se alimenta combinando el '); chip('pecho directo', 'apple'); push(' con '); chip(sondaLbl, 'apple'); push(', para asegurarse de recibir todo lo que necesita. ');
       } else if (hasMam && hasSonda) {
-        push('Recibe su leche en '); chip('mamadera', 'clear'); push(' y por '); chip(sondaLbl, 'clear'); push(', según lo que necesita en cada momento. ');
+        push('Recibe su leche en '); chip('mamadera', 'apple'); push(' y por '); chip(sondaLbl, 'apple'); push(', según lo que necesita en cada momento. ');
       } else if (hasSonda && hasParent) {
-        push('Recibe su alimentación por '); chip(sondaLbl, 'clear'); push(' y también '); chip('nutrición parenteral', 'clear'); push(' por la vía. ');
+        push('Recibe su alimentación por '); chip(sondaLbl, 'apple'); push(' y también '); chip('nutrición parenteral', 'apple'); push(' por la vía. ');
       } else {
         push('Se alimenta de varias formas según sus necesidades del momento: ');
-        al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
+        al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'apple'); });
         push('. ');
       }
     } else {
       push('Se alimenta de varias formas según sus necesidades del momento: ');
-      al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
+      al.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'apple'); });
       push('. ');
     }
   }
@@ -181,13 +181,13 @@ function generateBabyStatusSegments(status, babyName) {
     const ac = status.accesos;
     if (ac.length === 1) {
       const a = ac[0];
-      if (a === 'Vía periférica')        { push('Tiene una '); chip('vía periférica', 'viola'); push(' para recibir sus medicamentos y fluidos. '); }
-      else if (a === 'PICC')             { push('Tiene un '); chip('PICC', 'viola'); push(', un catéter fino que le permite recibir medicamentos y nutrición de forma segura. '); }
-      else if (a === 'Catéter umbilical'){ push('Tiene un '); chip('catéter umbilical', 'viola'); push(', colocado en el cordón, para sus tratamientos. '); }
-      else if (a === 'Catéter venoso central'){ push('Tiene un '); chip('catéter venoso central', 'viola'); push(' para sus medicamentos y nutrición. '); }
+      if (a === 'Vía periférica')        { push('Tiene una '); chip('vía periférica', 'clear'); push(' para recibir sus medicamentos y fluidos. '); }
+      else if (a === 'PICC')             { push('Tiene un '); chip('PICC', 'clear'); push(', un catéter fino que le permite recibir medicamentos y nutrición de forma segura. '); }
+      else if (a === 'Catéter umbilical'){ push('Tiene un '); chip('catéter umbilical', 'clear'); push(', colocado en el cordón, para sus tratamientos. '); }
+      else if (a === 'Catéter venoso central'){ push('Tiene un '); chip('catéter venoso central', 'clear'); push(' para sus medicamentos y nutrición. '); }
     } else {
       push('Tiene ');
-      ac.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'viola'); });
+      ac.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
       push(' para recibir sus medicamentos y fluidos. ');
     }
   }
@@ -196,10 +196,10 @@ function generateBabyStatusSegments(status, babyName) {
   if (status.diagnosticos && status.diagnosticos.length > 0) {
     const dx = status.diagnosticos;
     if (dx.length === 1) {
-      push('Su diagnóstico es '); chip(lcLabel(dx[0]), 'viola'); push('. ');
+      push('Su diagnóstico es '); chip(lcLabel(dx[0]), 'clear'); push('. ');
     } else {
       push('Sus diagnósticos incluyen ');
-      dx.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'viola'); });
+      dx.forEach((item, i) => { if (i > 0) push(', '); chip(lcLabel(item), 'clear'); });
       push('. ');
     }
   }
@@ -255,6 +255,10 @@ function NarrativeChip({ label, colorKey, onClick }) {
     apple: KUN.apple,
     clear: KUN.clear,
     viola: KUN.viola,
+    sun: KUN.sun,
+    sunSoft: KUN.sunSoft,
+    sageSoft: KUN.sageSoft,
+    cardSoft: KUN.cardSoft,
   };
   const bg = colorMap[colorKey] || KUN.clear;
 
@@ -264,13 +268,13 @@ function NarrativeChip({ label, colorKey, onClick }) {
       alignItems: 'center',
       background: bg,
       borderRadius: 999,
-      padding: '2px 10px',
+      padding: '4px 12px',
       fontFamily: BST_FT,
       fontSize: 12.5,
       fontWeight: 700,
       lineHeight: 1.6,
       verticalAlign: 'middle',
-      margin: '0 2px',
+      margin: '6px 2px',
       color: KUN.ink,
       cursor: onClick ? 'pointer' : 'default',
     }}>
@@ -280,9 +284,46 @@ function NarrativeChip({ label, colorKey, onClick }) {
 }
 
 // ─── BabyStatusNarrative ─────────────────────────────────────────────────────
-function BabyStatusNarrative({ status, babyName, onEdit }) {
+function BabyStatusNarrative({ status, babyName, onEdit, forceFull }) {
   const segments = generateBabyStatusSegments(status, babyName);
   const [activeInfo, setActiveInfo] = React.useState(null);
+  const [expanded, setExpanded] = React.useState(!!forceFull);
+
+  // Split after the 2nd chip + its trailing text segments
+  const splitIdx = (() => {
+    let chips = 0;
+    for (let i = 0; i < segments.length; i++) {
+      if (segments[i].chip) {
+        chips++;
+        if (chips === 2) {
+          // include trailing text until next chip or end
+          let j = i + 1;
+          while (j < segments.length && !segments[j].chip) j++;
+          return j;
+        }
+      }
+    }
+    return segments.length; // fewer than 2 chips → show all
+  })();
+
+  const hasMore = !forceFull && (splitIdx < segments.length);
+  const visible = (!hasMore || expanded) ? segments : segments.slice(0, splitIdx);
+
+  const renderSeg = (seg, i) => seg.chip
+    ? <NarrativeChip
+        key={i}
+        label={seg.chip}
+        colorKey={seg.chipColor}
+        onClick={() => {
+          window.KUNAnalytics?.track('estado_bebe_chip_presionado', {
+            chip_label: seg.chip,
+            chip_color: seg.chipColor,
+          });
+          const info = getBabyStatusOptionInfo(seg.chip);
+          if (info) setActiveInfo(info);
+        }}
+      />
+    : <React.Fragment key={i}>{seg.text}</React.Fragment>;
 
   return (
     <div style={{
@@ -297,23 +338,38 @@ function BabyStatusNarrative({ status, babyName, onEdit }) {
         fontFamily: BST_FB,
         fontWeight: 400,
         fontSize: 13.5,
-        lineHeight: 1.85,
+        lineHeight: 2,
         color: KUN.ink,
       }}>
-        {segments.map((seg, i) =>
-          seg.chip
-            ? <NarrativeChip
-                key={i}
-                label={seg.chip}
-                colorKey={seg.chipColor}
-                onClick={() => {
-                  const info = getBabyStatusOptionInfo(seg.chip);
-                  if (info) setActiveInfo(info);
-                }}
-              />
-            : <React.Fragment key={i}>{seg.text}</React.Fragment>
-        )}
+        {visible.map(renderSeg)}
+        {!expanded && hasMore && <span style={{ color: KUN.inkMuted }}>...</span>}
       </p>
+
+      {hasMore && (
+        <div
+          onClick={() => setExpanded(e => !e)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            marginTop: 10, cursor: 'pointer', width: 'fit-content',
+          }}
+        >
+          <span style={{
+            fontFamily: BST_FT, fontSize: 12.5, fontWeight: 700, color: KUN.brick,
+          }}>{expanded ? 'Ver menos' : 'Ver más'}</span>
+          <div style={{
+            width: 22, height: 22, borderRadius: '50%',
+            background: KUN.accentSoft,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'transform .2s',
+            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 3.5L5 6.5L8 3.5" stroke={KUN.brick} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      )}
+
       {activeInfo && (
         <div onClick={() => setActiveInfo(null)} style={{
           position: 'absolute',
@@ -374,6 +430,8 @@ function InfoTooltip({ text, open, onToggle }) {
       <button
         onClick={(e) => { e.stopPropagation(); onToggle(); }}
         style={{
+          position: 'relative',
+          zIndex: 11,
           width: 24,
           height: 24,
           borderRadius: '50%',
@@ -411,7 +469,7 @@ function InfoTooltip({ text, open, onToggle }) {
             fontSize: 12,
             color: KUN.ink,
             lineHeight: 1.55,
-            zIndex: 10,
+            zIndex: 12,
           }}
         >
           {text}
@@ -422,9 +480,8 @@ function InfoTooltip({ text, open, onToggle }) {
 }
 
 // ─── OptionRow ───────────────────────────────────────────────────────────────
-function OptionRow({ label, info, selected, onToggle, isRadio }) {
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
-
+function OptionRow({ id, label, info, selected, onToggle, isRadio, tone = KUN.rosehip, activeInfoId, onToggleInfo }) {
+  const tooltipOpen = activeInfoId === id;
   return (
     <div
       onClick={onToggle}
@@ -435,7 +492,7 @@ function OptionRow({ label, info, selected, onToggle, isRadio }) {
         padding: '12px 14px',
         borderRadius: 16,
         border: selected ? `1.5px solid ${KUN.brick}` : `1.5px solid ${KUN.hair}`,
-        background: selected ? KUN.rosehip : '#fff',
+        background: selected ? tone : '#fff',
         marginBottom: 8,
         cursor: 'pointer',
         transition: 'all .15s',
@@ -486,7 +543,7 @@ function OptionRow({ label, info, selected, onToggle, isRadio }) {
           <InfoTooltip
             text={info}
             open={tooltipOpen}
-            onToggle={() => setTooltipOpen(v => !v)}
+            onToggle={() => onToggleInfo(id)}
           />
         </div>
       )}
@@ -495,7 +552,19 @@ function OptionRow({ label, info, selected, onToggle, isRadio }) {
 }
 
 // ─── CategoryBlock ────────────────────────────────────────────────────────────
-function CategoryBlock({ cat, values, onChange }) {
+function babyStatusTopicColor(catId) {
+  const tones = {
+    lugar: KUN.viola,
+    temperatura: KUN.clear,
+    respiracion: KUN.clear,
+    alimentacion: KUN.apple,
+    accesos: KUN.clear,
+    diagnosticos: KUN.clear,
+  };
+  return tones[catId] || KUN.cardSoft;
+}
+
+function CategoryBlock({ cat, values, onChange, activeInfoId, onToggleInfo }) {
   const isRadio = cat.type === 'radio';
 
   const handleToggle = (label) => {
@@ -528,11 +597,15 @@ function CategoryBlock({ cat, values, onChange }) {
         return (
           <OptionRow
             key={opt.label}
+            id={`${cat.id}:${opt.label}`}
             label={opt.label}
             info={opt.info}
             selected={selected}
             onToggle={() => handleToggle(opt.label)}
             isRadio={isRadio}
+            tone={babyStatusTopicColor(cat.id)}
+            activeInfoId={activeInfoId}
+            onToggleInfo={onToggleInfo}
           />
         );
       })}
@@ -550,13 +623,18 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
     accesos: [],
     diagnosticos: [],
   });
+  const [activeInfoId, setActiveInfoId] = React.useState(null);
 
   const handleChange = (catId, value) => {
     setStatus(prev => ({ ...prev, [catId]: value }));
   };
 
+  const toggleInfo = (id) => {
+    setActiveInfoId(current => current === id ? null : id);
+  };
+
   return (
-    <div style={{
+    <div onClick={() => setActiveInfoId(null)} style={{
       position: 'absolute',
       inset: 0,
       zIndex: 300,
@@ -612,7 +690,7 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
             color: KUN.ink,
             whiteSpace: 'pre-line',
           }}>
-            {'Cuéntanos sobre\ntu bebé'}
+            {`Cuéntanos sobre\n${babyName || 'tu bebé'}`}
           </div>
           <div style={{
             fontFamily: BST_FB,
@@ -665,6 +743,8 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
             cat={cat}
             values={status[cat.id]}
             onChange={handleChange}
+            activeInfoId={activeInfoId}
+            onToggleInfo={toggleInfo}
           />
         ))}
 
@@ -673,16 +753,18 @@ function ScreenBabyStatusOnboarding({ babyName, onSave, onSkip }) {
           onClick={() => onSave(status)}
           style={{
             width: '100%',
-            height: 50,
+            height: 56,
+            padding: '16px 22px',
             borderRadius: 999,
             background: KUN.brick,
             color: '#fff',
             border: 'none',
             fontFamily: BST_FT,
-            fontSize: 15,
+            fontSize: 16,
             fontWeight: 700,
             cursor: 'pointer',
             marginTop: 8,
+            flexShrink: 0,
           }}
         >
           Guardar y continuar
@@ -708,6 +790,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
     ...(normalizedCurrentStatus || {}),
   });
   const [openCat, setOpenCat] = React.useState(null);
+  const [activeInfoId, setActiveInfoId] = React.useState(null);
   const bodyRef = React.useRef(null);
   const sectionRefs = React.useRef({});
 
@@ -716,6 +799,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
   };
 
   const toggleCategory = (catId) => {
+    setActiveInfoId(null);
     const nextOpen = openCat === catId ? null : catId;
     setOpenCat(nextOpen);
     if (nextOpen) {
@@ -740,8 +824,12 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
 
   const stripQuestion = (title) => title.replace(/^¿/, '').replace(/\?$/, '');
 
+  const toggleInfo = (id) => {
+    setActiveInfoId(current => current === id ? null : id);
+  };
+
   return (
-    <div style={{
+    <div onClick={() => setActiveInfoId(null)} style={{
       position: 'absolute',
       inset: 0,
       zIndex: 300,
@@ -824,7 +912,7 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
         minHeight: 0,
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
-        padding: '4px 20px 24px',
+        padding: '4px 20px 112px',
         position: 'relative',
         zIndex: 1,
         display: 'flex',
@@ -924,6 +1012,8 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
                     cat={cat}
                     values={status[cat.id]}
                     onChange={handleChange}
+                    activeInfoId={activeInfoId}
+                    onToggleInfo={toggleInfo}
                   />
                 </div>
               )}
@@ -936,7 +1026,9 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
           onClick={() => onSave(status)}
           style={{
             width: '100%',
+            boxSizing: 'border-box',
             height: 50,
+            padding: '14px 22px',
             borderRadius: 999,
             background: KUN.brick,
             color: '#fff',
@@ -944,8 +1036,10 @@ function ScreenBabyStatusEdit({ babyName, currentStatus, onSave, onBack }) {
             fontFamily: BST_FT,
             fontSize: 15,
             fontWeight: 700,
+            letterSpacing: -0.1,
             cursor: 'pointer',
-            marginTop: 8,
+            marginTop: 14,
+            flexShrink: 0,
           }}
         >
           Guardar cambios

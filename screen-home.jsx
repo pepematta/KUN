@@ -10,8 +10,12 @@ const HC = {
   brick:    '#F0743E',
   viola:    '#CDBCDB',
   sun:      '#FDD848',
+  sunSoft:  '#FFF5DC',
   apple:    '#AAD59E',
+  appleSoft:'#EAF2E7',
   clear:    '#9AB2D4',
+  sageSoft: '#E4ECE4',
+  cardSoft: '#F2EBE0',
   ink:      '#2A2320',
   ink2:     '#5E544E',
   ink3:     '#8B827C',
@@ -138,104 +142,259 @@ function PillStat({ value, label, onClick }) {
   );
 }
 
-function BabyHero({ babyName = 'Sofía' }) {
+// ─── Cálculo de edad cronológica y corregida ───────────────────────────────────
+// Diferencia entre dos fechas expresada en meses, semanas y días (calendario).
+function ageDiffMWD(from, to) {
+  if (!(from instanceof Date) || !(to instanceof Date) || to <= from) {
+    return { months: 0, weeks: 0, days: 0, totalDays: 0 };
+  }
+  let months = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
+  let dayDiff = to.getDate() - from.getDate();
+  if (dayDiff < 0) {
+    months -= 1;
+    const daysInPrevMonth = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
+    dayDiff += daysInPrevMonth;
+  }
+  if (months < 0) months = 0;
+  const weeks = Math.floor(dayDiff / 7);
+  const days = dayDiff % 7;
+  const totalDays = Math.floor((to.getTime() - from.getTime()) / 86400000);
+  return { months, weeks, days, totalDays };
+}
+
+function formatAgeMWD(d) {
+  const parts = [];
+  if (d.months > 0) parts.push(`${d.months} ${d.months === 1 ? 'mes' : 'meses'}`);
+  if (d.weeks > 0)  parts.push(`${d.weeks} ${d.weeks === 1 ? 'semana' : 'semanas'}`);
+  if (d.days > 0)   parts.push(`${d.days} ${d.days === 1 ? 'día' : 'días'}`);
+  if (!parts.length) return 'Recién nacido';
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return `${parts[0]} y ${parts[1]}`;
+  return `${parts[0]}, ${parts[1]} y ${parts[2]}`;
+}
+
+function computeBabyAges(birthDateStr, gestWeeksRaw, gestDaysRaw) {
+  if (!birthDateStr) return null;
+  const birth = new Date(`${birthDateStr}T00:00:00`);
+  if (isNaN(birth.getTime())) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const chrono = ageDiffMWD(birth, today);
+
+  const gw = parseInt(gestWeeksRaw, 10);
+  const gd = parseInt(gestDaysRaw, 10) || 0;
+  const hasGest = Number.isFinite(gw);
+  const totalGestDays = hasGest ? gw * 7 + gd : null;
+  const isPreterm = hasGest && totalGestDays < 37 * 7; // estrictamente < 37 semanas
+
+  let corrected = { applies: false, beforeTerm: false };
+  if (isPreterm) {
+    const shiftDays = 40 * 7 - totalGestDays; // semanas de corrección (40 - EG), en días
+    // Fecha estimada de término (equivalente a 40 semanas de gestación).
+    const correctedBirth = new Date(birth.getTime() + shiftDays * 86400000);
+    const correctedTotalDays = Math.floor((today.getTime() - correctedBirth.getTime()) / 86400000);
+    if (correctedTotalDays <= 0) {
+      // Edad corregida ≤ 0: el bebé todavía NO alcanza su fecha estimada de
+      // término (40 sem). No "ya corrigió"; al contrario, aún no llega al término.
+      // Guardamos cuánto falta para esa fecha (today → término).
+      corrected = { applies: false, beforeTerm: true, ...ageDiffMWD(today, correctedBirth) };
+    } else {
+      corrected = { applies: true, beforeTerm: false, ...ageDiffMWD(correctedBirth, today) };
+    }
+  }
+  return { chrono, corrected, isPreterm, hasGest };
+}
+
+// Pastilla con etiqueta arriba y valor abajo (soporta texto largo con salto).
+function AgeStat({ label, value, onClick }) {
+  return (
+    <div onClick={onClick} style={{
+      background: 'rgba(255,255,255,0.92)',
+      backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+      borderRadius: 16, padding: '6px 12px',
+      maxWidth: '100%', cursor: onClick ? 'pointer' : 'default',
+    }}>
+      <div style={{
+        fontFamily: HF_B, fontWeight: 600, fontSize: 9, color: HC.ink2,
+        letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 1,
+      }}>{label}</div>
+      <div style={{
+        fontFamily: HF_T, fontWeight: 700, fontSize: 13, color: HC.ink,
+        lineHeight: 1.2,
+      }}>{value}</div>
+    </div>
+  );
+}
+
+function BabyHero({ babyName = 'Sofía', birthDate, gestWeeks, gestDays, onOpenSummary }) {
   const [ageInfo, setAgeInfo] = React.useState(null);
+  const ages = computeBabyAges(birthDate, gestWeeks, gestDays);
+  const chronoText = ages ? formatAgeMWD(ages.chrono) : 'Sin fecha';
+  let correctedText;
+  if (!ages) correctedText = '—';
+  else if (ages.corrected.applies) correctedText = formatAgeMWD(ages.corrected);
+  else if (ages.corrected.beforeTerm) correctedText = `Faltan ${formatAgeMWD(ages.corrected)} para el término`;
+  else correctedText = 'No aplica (nació a término)';
   const info = ageInfo === 'chrono'
     ? {
-        title: 'Semanas cronológicas',
-        text: 'Son las semanas que han pasado desde que tu guagüita nació.',
+        title: 'Edad cronológica',
+        text: 'Es el tiempo que ha pasado desde que tu guagüita nació hasta hoy.',
       }
     : ageInfo === 'corrected'
       ? {
-          title: 'Semanas corregidas',
-          text: 'Es la edad calculada según la fecha en que debería haber nacido. Ayuda a mirar su desarrollo con más justicia si nació antes de tiempo.',
+          title: 'Edad corregida',
+          text: ages && !ages.isPreterm
+            ? 'No aplica porque tu bebé nació a término (37 semanas o más). En ese caso usamos solo la edad cronológica.'
+            : (ages && ages.corrected.beforeTerm
+                ? 'Tu bebé todavía no alcanza su fecha estimada de término (40 semanas), así que la edad corregida aún es negativa. Por ahora nos guiamos por la edad cronológica.'
+                : 'Es la edad calculada según la fecha en que debería haber nacido (40 semanas). Ayuda a mirar su desarrollo con más justicia si nació antes de tiempo.'),
         }
       : null;
   return (
-    <div style={{ margin: '16px 18px 0' }}>
+    <div style={{ margin: '16px 18px 0', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative' }}>
+
+      {/* ── Compact baby card ── */}
       <div style={{
-        position: 'relative', borderRadius: 32, overflow: 'hidden',
-        aspectRatio: '1 / 1.18', background: HC.rosehip,
+        background: HC.rosehip,
+        borderRadius: 28, padding: '16px 18px',
+        display: 'flex', alignItems: 'center', gap: 16, overflow: 'hidden',
       }}>
-        {/* Full-bleed baby photo */}
-        <img src="premature.jpg" alt={babyName} style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'center 30%',
-        }}/>
-
-        {/* Bottom gradient covering name + nurse area for legibility */}
+        {/* Decorative circle */}
         <div style={{
-          position: 'absolute', left: 0, right: 0, bottom: 0, height: '60%',
-          background: 'linear-gradient(to top, rgba(42,35,32,0.85) 0%, rgba(42,35,32,0.55) 45%, rgba(42,35,32,0) 100%)',
+          position: 'absolute', top: -40, right: -40,
+          width: 130, height: 130, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.15)', pointerEvents: 'none',
         }}/>
 
-        {/* Stat pills top-right — edad cronológica + edad corregida */}
-        <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 'calc(100% - 32px)' }}>
-          <PillStat value="34" label="sem. cronológicas" onClick={() => setAgeInfo('chrono')} />
-          <PillStat value="32" label="sem. corregidas" onClick={() => setAgeInfo('corrected')} />
+        {/* Circular photo */}
+        <div style={{
+          width: 76, height: 76, borderRadius: '50%', flexShrink: 0,
+          overflow: 'hidden',
+          boxShadow: '0 0 0 3px rgba(255,255,255,0.7)',
+        }}>
+          <img src="guaguas/guagua1.jpg" alt={babyName} style={{
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center 30%',
+          }}/>
         </div>
 
-        {info && (
-          <div onClick={() => setAgeInfo(null)} style={{
-            position: 'absolute', inset: 0,
-            background: 'rgba(42,35,32,0.34)',
-            display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-            padding: '72px 16px 0',
-            boxSizing: 'border-box',
-          }}>
-            <div onClick={(e) => e.stopPropagation()} style={{
-              width: '100%',
-              background: 'rgba(255,255,255,0.96)',
-              borderRadius: 20,
-              padding: '16px 18px',
-              boxSizing: 'border-box',
-              border: `1px solid ${HC.hair}`,
-              boxShadow: '0 10px 28px rgba(42,35,32,0.18)',
-            }}>
-              <div style={{
-                fontFamily: HF_T, fontSize: 16, fontWeight: 700,
-                color: HC.ink, letterSpacing: '-0.2px', marginBottom: 6,
-              }}>{info.title}</div>
-              <div style={{
-                fontFamily: HF_B, fontSize: 12.5, fontWeight: 400,
-                color: HC.ink2, lineHeight: 1.5,
-              }}>{info.text}</div>
-              <div onClick={() => setAgeInfo(null)} style={{
-                marginTop: 10,
-                fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
-                color: HC.brick, cursor: 'pointer',
-              }}>Entendido</div>
-            </div>
-          </div>
-        )}
-
-        {/* Bottom content: name + nurse */}
-        <div style={{ position: 'absolute', left: 20, right: 20, bottom: 18, color: '#fff' }}>
+        {/* Name + age pills stacked vertically */}
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 34,
-            letterSpacing: '-0.4px', lineHeight: 1,
+            fontFamily: HF_T, fontWeight: 700, fontSize: 28,
+            color: HC.ink, letterSpacing: '-0.4px', lineHeight: 1, marginBottom: 10,
           }}>{babyName}</div>
-
-          {/* Divider */}
-          <div style={{
-            marginTop: 14, paddingTop: 14,
-            borderTop: '1px solid rgba(255,255,255,0.25)',
-            display: 'flex', alignItems: 'center', gap: 12,
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, minWidth: 0 }}>
-              <span style={{
-                fontFamily: HF_B, fontWeight: 500, fontSize: 9.5,
-                color: 'rgba(255,255,255,0.75)', letterSpacing: '0.7px', textTransform: 'uppercase',
-              }}>Enfermera de turno</span>
-              <span style={{
-                fontFamily: HF_T, fontWeight: 700, fontSize: 16,
-                color: '#fff', marginTop: 4, letterSpacing: '-0.2px',
-                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-              }}>Valentina Rojas</span>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <AgeStat label="Edad cronológica" value={chronoText}    onClick={() => setAgeInfo('chrono')} />
+            <AgeStat label="Edad corregida"   value={correctedText} onClick={() => setAgeInfo('corrected')} />
           </div>
         </div>
       </div>
+
+      {/* ── Nurse card ── */}
+      <div style={{
+        background: HC.paper, borderRadius: 22, padding: '13px 16px',
+        display: 'flex', alignItems: 'center', gap: 12,
+        border: `1px solid ${HC.hair}`,
+      }}>
+        {/* Avatar with initial */}
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+          background: HC.clear,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink }}>V</span>
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontFamily: HF_B, fontSize: 9.5, fontWeight: 600,
+            color: HC.ink3, letterSpacing: '0.7px', textTransform: 'uppercase', marginBottom: 3,
+          }}>Enfermera de turno</div>
+          <div style={{
+            fontFamily: HF_T, fontSize: 16, fontWeight: 700,
+            color: HC.ink, letterSpacing: '-0.2px',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>Valentina Rojas</div>
+        </div>
+        {/* Online indicator */}
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#52C17B', flexShrink: 0 }}/>
+      </div>
+
+      {/* ── Resumen de [Bebé] Button ── */}
+      <button
+        onClick={onOpenSummary}
+        style={{
+          width: '100%',
+          background: HC.paper,
+          border: `1px solid ${HC.hair}`,
+          borderRadius: 22,
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          cursor: 'pointer',
+          boxShadow: '0 1px 3px rgba(46,42,38,0.04)',
+          transition: 'all 0.2s ease',
+          outline: 'none',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: 10,
+            background: 'rgba(240, 116, 62, 0.08)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={HC.brick} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <span style={{
+            fontFamily: HF_T, fontWeight: 700, fontSize: 14.5,
+            color: HC.ink, letterSpacing: '-0.1px',
+          }}>
+            {`Resumen de ${babyName}`}
+          </span>
+        </div>
+        {HIcon.chevR(HC.brick)}
+      </button>
+
+      {/* ── Age info tooltip — lives OUTSIDE the card so it isn't clipped ── */}
+      {info && (
+        <div onClick={() => setAgeInfo(null)} style={{
+          position: 'absolute', inset: 0, zIndex: 10,
+          background: 'rgba(42,35,32,0.18)', borderRadius: 28,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '0 14px', boxSizing: 'border-box',
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            width: '100%',
+            background: 'rgba(255,255,255,0.97)',
+            borderRadius: 20, padding: '18px 20px',
+            border: `1px solid ${HC.hair}`,
+            boxShadow: '0 10px 28px rgba(42,35,32,0.18)',
+          }}>
+            <div style={{
+              fontFamily: HF_T, fontSize: 16, fontWeight: 700,
+              color: HC.ink, letterSpacing: '-0.2px', marginBottom: 6,
+            }}>{info.title}</div>
+            <div style={{
+              fontFamily: HF_B, fontSize: 12.5, fontWeight: 400,
+              color: HC.ink2, lineHeight: 1.6,
+            }}>{info.text}</div>
+            <div onClick={() => setAgeInfo(null)} style={{
+              marginTop: 12,
+              fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
+              color: HC.brick, cursor: 'pointer',
+            }}>Entendido</div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
@@ -244,8 +403,8 @@ function BabyHero({ babyName = 'Sofía' }) {
 const DAILY_SUMMARY = {
   text: 'Sofía tuvo una noche tranquila. Está respirando con un poco de ayuda del ventilador y recibiendo leche por sonda cada 3 horas. Su peso se mantiene estable.',
   concepts: [
-    { label: 'Ventilación mecánica',   capsuleId: 4, category: 'Cuidado',   color: HC.clear },
-    { label: 'Alimentación por sonda', capsuleId: 1, category: 'Lactancia', color: HC.viola },
+    { label: 'Ventilación mecánica',   capsuleId: 4, category: 'Cuidado médico', color: HC.clear },
+    { label: 'Alimentación por sonda', capsuleId: 1, category: 'Lactancia y alimentación', color: HC.apple },
   ],
 };
 
@@ -296,25 +455,55 @@ function DailySummaryModal({ isOpen, onClose, babyName, babyStatus, onEditStatus
   );
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)', display: 'flex',
-      alignItems: 'flex-end', justifyContent: 'center', zIndex: 1000,
-      backdropFilter: 'blur(4px)',
-    }} onClick={onClose}>
-      <div style={{
-        background: HC.cream, borderRadius: '24px 24px 0 0',
-        width: '100%', maxHeight: '85vh', overflow: 'auto',
-        boxSizing: 'border-box',
-      }} onClick={(e) => e.stopPropagation()}>
+    <div 
+      style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(42,35,32,0.45)',
+        backdropFilter: 'blur(3px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 2000,
+        touchAction: 'none',
+      }} 
+      onClick={onClose}
+      onWheel={(e) => {
+        e.preventDefault();
+      }}
+      onTouchMove={(e) => {
+        e.preventDefault();
+      }}
+    >
+      <div 
+        style={{
+          width: '90%',
+          maxWidth: 342,
+          maxHeight: '80%',
+          backgroundColor: HC.cream,
+          borderRadius: 24,
+          boxShadow: '0 12px 36px rgba(42,35,32,0.25)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          animation: 'modalSlideIn .3s ease-out forwards',
+        }} 
+        onClick={(e) => e.stopPropagation()}
+        onWheel={(e) => {
+          e.stopPropagation();
+        }}
+        onTouchMove={(e) => {
+          e.stopPropagation();
+        }}
+      >
         {/* Header with close button and edit button */}
         <div style={{
-          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-          padding: '22px 22px 12px', borderBottom: `1px solid ${HC.hair}`,
-          position: 'sticky', top: 0, background: HC.cream, zIndex: 10,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '16px 20px 14px 20px', borderBottom: `1px solid ${HC.hair}`,
+          background: HC.cream, flexShrink: 0,
         }}>
           {/* Edit button with pencil icon */}
-          <button onClick={onEditStatus} style={{
+          <button onClick={() => { onEditStatus && onEditStatus(); onClose && onClose(); }} style={{
             display: 'flex', alignItems: 'center', gap: 8,
             background: 'transparent', border: 'none', cursor: 'pointer',
             padding: 0, flexShrink: 0,
@@ -324,7 +513,7 @@ function DailySummaryModal({ isOpen, onClose, babyName, babyStatus, onEditStatus
                 stroke={HC.brick} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <span style={{
-              fontFamily: HF_B, fontWeight: 600, fontSize: 14,
+              fontFamily: HF_B, fontWeight: 600, fontSize: 14.5,
               color: HC.brick, letterSpacing: '0.1px',
             }}>Editar</span>
           </button>
@@ -333,46 +522,393 @@ function DailySummaryModal({ isOpen, onClose, babyName, babyStatus, onEditStatus
           <button onClick={onClose} style={{
             background: 'transparent', border: 'none', cursor: 'pointer',
             padding: '4px 8px', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', color: HC.ink, fontSize: 20,
-            flexShrink: 0,
+            justifyContent: 'center', color: HC.ink, fontSize: 22,
+            fontWeight: '300', flexShrink: 0,
           }}>
             ✕
           </button>
         </div>
 
         {/* Modal content */}
-        <div style={{ padding: '20px 22px 28px' }}>
+        <div style={{ 
+          padding: '20px 20px 24px', 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          overflowY: 'auto' 
+        }}>
           <div style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
+            fontFamily: HF_B, fontWeight: 500, fontSize: 11,
             color: HC.brick, letterSpacing: '0.7px', textTransform: 'uppercase',
             marginBottom: 8,
           }}>Resumen del día</div>
           <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 19,
-            color: HC.ink, letterSpacing: '-0.3px', marginBottom: 18,
+            fontFamily: HF_T, fontWeight: 700, fontSize: 20,
+            color: HC.ink, letterSpacing: '-0.3px', marginBottom: 14,
           }}>{`Cómo está ${bName} hoy`}</div>
 
           {hasStatus ? (() => {
             const StatusNarrative = window.BabyStatusNarrative;
             return StatusNarrative
               ? <div style={{ lineHeight: 1.85 }}>
-                  <StatusNarrative status={babyStatus} babyName={bName} onEdit={onEditStatus} />
+                  <StatusNarrative status={babyStatus} babyName={bName} onEdit={onEditStatus} forceFull={true} />
                 </div>
               : null;
           })() : (
             <div style={{
               background: HC.paper, border: `1px solid ${HC.hair}`,
-              borderRadius: 24, padding: '18px 18px',
+              borderRadius: 24, padding: '22px 20px',
             }}>
               <p style={{
                 margin: 0, fontFamily: HF_B, fontWeight: 400,
-                fontSize: 13.5, lineHeight: 1.85, color: HC.ink, letterSpacing: '0.1px',
+                fontSize: 14, lineHeight: 1.85, color: HC.ink, letterSpacing: '0.1px',
               }}>
                 {DAILY_SUMMARY.text.replace(/^Sofía/, bName)}
               </p>
             </div>
           )}
         </div>
+      </div>
+      <style>{`
+        @keyframes modalSlideIn {
+          from { opacity: 0; transform: scale(0.95) translateY(10px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+window.DailySummaryModal = DailySummaryModal;
+
+// ─── Daily activities data ────────────────────────────────────────────────────
+const DAILY_ACTIVITIES = [
+  "Saca una foto de tu bebé sonriendo o descansando.",
+  "Haz una foto de su mano con la tuya.",
+  "Escribe una canción de cuna que le hayas cantado hoy.",
+  "Escribe sobre tu primer contacto piel con piel de hoy.",
+  "Haz una foto en primer plano de un detalle de tu bebé (su orejita o su pelito).",
+  "Saca una foto de los pequeños pies de tu bebé.",
+  "Escribe un pensamiento bonito que hayas tenido hoy.",
+  "Anota qué sonidos o gestos hizo hoy al escuchar tu voz."
+];
+
+// ─── Daily activity widget component ──────────────────────────────────────────
+function DailyActivityWidget({ babyName, onGoToBond }) {
+  const dayOfMonth = new Date().getDate();
+  const rawPrompt = DAILY_ACTIVITIES[dayOfMonth % DAILY_ACTIVITIES.length];
+  const bName = babyName || 'tu bebé';
+  const prompt = rawPrompt.replace(/tu bebé/g, bName);
+
+  return (
+    <div
+      onClick={onGoToBond}
+      style={{
+        background: HC.brick,
+        borderRadius: 22,
+        padding: '18px 22px',
+        color: '#fff',
+        cursor: 'pointer',
+        boxShadow: '0 2px 8px rgba(240, 116, 62, 0.16)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'opacity 0.2s',
+      }}
+    >
+      {/* Decorative semi-transparent circles matching the Vinculo Diario de vida card */}
+      <div style={{ position:'absolute', top:-40, right:-40, width: 120, height: 120, borderRadius:'50%', background:'rgba(255,255,255,0.08)', pointerEvents:'none' }}/>
+      <div style={{ position:'absolute', bottom:-50, left:-20, width: 90, height: 90, borderRadius:'50%', background:'rgba(255,255,255,0.05)', pointerEvents:'none' }}/>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
+        <div style={{
+          width: 24, height: 24, borderRadius: 6,
+          background: 'rgba(255, 255, 255, 0.2)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <span style={{
+          fontFamily: HF_B, fontWeight: 700, fontSize: 10.5,
+          color: 'rgba(255, 255, 255, 0.9)', letterSpacing: '0.8px', textTransform: 'uppercase',
+        }}>
+          Actividad para el Diario
+        </span>
+      </div>
+
+      <div style={{
+        fontFamily: HF_T, fontSize: 15, fontWeight: 700,
+        color: '#fff', lineHeight: 1.35, position: 'relative',
+        marginTop: 2,
+      }}>
+        {prompt}
+      </div>
+      
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 4,
+        fontFamily: HF_B, fontSize: 11, fontWeight: 600,
+        color: 'rgba(255, 255, 255, 0.85)', position: 'relative',
+        marginTop: 4,
+      }}>
+        <span>Ir a registrar al diario</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function ChildSwitcher({ childrenList, activeChildId, onSelectChild }) {
+  const items = Array.isArray(childrenList) ? childrenList : [];
+  if (items.length <= 1) return null;
+
+  return (
+    <div style={{ margin: '12px 22px 0' }}>
+      <div style={{
+        display: 'flex', gap: 8, overflowX: 'auto',
+        padding: 4, borderRadius: 999,
+        background: 'rgba(255,255,255,0.72)',
+        border: `1px solid ${HC.hair}`,
+      }}>
+        {items.map((child, index) => {
+          const selected = child.id === activeChildId;
+          const label = child.name || `Bebé ${index + 1}`;
+          return (
+            <button
+              key={child.id || index}
+              onClick={() => onSelectChild && onSelectChild(child.id)}
+              style={{
+                minWidth: 92, maxWidth: 150, height: 36,
+                borderRadius: 999, border: 'none',
+                background: selected ? HC.brick : 'transparent',
+                color: selected ? '#fff' : HC.ink2,
+                fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
+                padding: '0 14px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                flexShrink: 0,
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function formatWeightDate(date) {
+  if (!date) return 'Hoy';
+  const [year, month, day] = String(date).split('-');
+  if (!day) return date;
+  return `${day}/${month}`;
+}
+
+function WeightTracker({ history = [], onSave }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const sorted = Array.isArray(history)
+    ? [...history].filter(item => item && item.grams).sort((a, b) => String(a.date).localeCompare(String(b.date)))
+    : [];
+  const latest = sorted[sorted.length - 1] || null;
+  const previous = sorted[sorted.length - 2] || null;
+  const [editing, setEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState(latest?.grams ? String(latest.grams) : '');
+  const [draftDate, setDraftDate] = React.useState(today);
+
+  React.useEffect(() => {
+    if (!editing) {
+      const todayEntry = sorted.find(item => item.date === today);
+      setDraft(todayEntry?.grams ? String(todayEntry.grams) : (latest?.grams ? String(latest.grams) : ''));
+      setDraftDate(today);
+    }
+  }, [latest?.grams, editing, history?.length]);
+
+  const recent = sorted.slice(-7);
+  const min = recent.length ? Math.min(...recent.map(item => item.grams)) : 0;
+  const max = recent.length ? Math.max(...recent.map(item => item.grams)) : 0;
+  const delta = latest && previous ? latest.grams - previous.grams : null;
+  const chartW = 286;
+  const chartH = 96;
+  const points = recent.map((item, index) => {
+    const x = recent.length === 1 ? chartW / 2 : (index / (recent.length - 1)) * chartW;
+    const ratio = max === min ? 0.5 : (item.grams - min) / (max - min);
+    const y = chartH - 18 - ratio * (chartH - 34);
+    return { ...item, x, y };
+  });
+  const polyline = points.map(point => `${point.x},${point.y}`).join(' ');
+
+  const save = () => {
+    const grams = parseInt(draft, 10);
+    if (!Number.isFinite(grams) || grams <= 0) return;
+    onSave && onSave(grams, draftDate || today);
+    setEditing(false);
+  };
+
+  return (
+    <div style={{ margin: '18px 22px 0' }}>
+      <div style={{
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 24,
+        padding: '16px 16px 15px',
+        boxShadow: '0 1px 3px rgba(46,42,38,0.04)',
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{
+            fontFamily: HF_B,
+            fontSize: 11,
+            fontWeight: 700,
+            color: HC.ink3,
+            letterSpacing: 0.8,
+            textTransform: 'uppercase',
+          }}>
+            Peso
+          </div>
+          <div style={{ fontFamily: HF_T, fontSize: 26, fontWeight: 800, color: HC.ink, letterSpacing: -0.5 }}>
+            {latest ? latest.grams : '--'} <span style={{ fontFamily: HF_B, fontSize: 13, fontWeight: 600, color: HC.ink2 }}>g</span>
+          </div>
+          <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.45 }}>
+            {latest
+              ? `${delta === null ? 'Primer registro' : delta >= 0 ? `+${delta} g desde el registro anterior` : `${delta} g desde el registro anterior`}`
+              : 'Agrega el primer peso para ver su evolucion.'}
+          </div>
+        </div>
+
+        <button
+          onClick={() => setEditing(!editing)}
+          style={{
+            width: '100%',
+            border: `1.5px solid ${HC.apple}`,
+            background: HC.appleSoft,
+            color: HC.ink,
+            borderRadius: 999,
+            padding: '10px 16px',
+            fontFamily: HF_T,
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: 'pointer',
+            marginTop: 12,
+            transition: 'all 0.2s',
+          }}
+        >
+          {editing ? 'Cancelar' : 'Ingresar peso de hoy'}
+        </button>
+
+        {recent.length > 0 && (
+          <div style={{ marginTop: 14, background: HC.appleSoft, borderRadius: 18, padding: '12px 12px 10px' }}>
+            <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+              <line x1="0" y1={chartH - 18} x2={chartW} y2={chartH - 18} stroke="rgba(42,35,32,0.10)" strokeWidth="1" />
+              {points.length > 1 && <polyline points={polyline} fill="none" stroke={HC.brick} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />}
+              {points.map(point => (
+                <circle key={point.date} cx={point.x} cy={point.y} r="4" fill={HC.brick} vectorEffect="non-scaling-stroke" />
+              ))}
+            </svg>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6, marginTop: -2 }}>
+              {recent.map(item => (
+                <div key={item.date} style={{ fontFamily: HF_B, fontSize: 10.5, color: HC.ink3, minWidth: 0 }}>
+                  {formatWeightDate(item.date)}
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 7, fontFamily: HF_B, fontSize: 11, color: HC.ink2 }}>
+              <span>{min} g</span>
+              <span>{max} g</span>
+            </div>
+          </div>
+        )}
+
+        {editing && (
+          <div style={{
+            marginTop: 14,
+            paddingTop: 14,
+            borderTop: `1px dashed ${HC.hair}`,
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginBottom: 9 }}>
+              <input
+                type="date"
+                value={draftDate}
+                max={today}
+                onChange={e => setDraftDate(e.target.value)}
+                style={{
+                  minWidth: 0,
+                  boxSizing: 'border-box',
+                  border: `1.5px solid ${HC.hair}`,
+                  borderRadius: 16,
+                  padding: '12px 11px',
+                  fontFamily: HF_B,
+                  fontSize: 12.5,
+                  color: HC.ink,
+                  outline: 'none',
+                  background: '#fff',
+                }}
+              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <input
+                  type="number"
+                  value={draft}
+                  onChange={e => setDraft(e.target.value)}
+                  placeholder="Peso"
+                  inputMode="numeric"
+                  min={0}
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    boxSizing: 'border-box',
+                    border: `1.5px solid ${HC.hair}`,
+                    borderRadius: 16,
+                    padding: '12px 11px',
+                    fontFamily: HF_T,
+                    fontSize: 15,
+                    fontWeight: 800,
+                    color: HC.ink,
+                    outline: 'none',
+                    background: '#fff',
+                  }}
+                />
+                <div style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 800, color: HC.ink2 }}>g</div>
+              </div>
+            </div>
+            <button onClick={save} style={{
+              width: '100%',
+              border: 'none',
+              background: HC.brick,
+              color: '#fff',
+              borderRadius: 999,
+              padding: '12px 13px',
+              fontFamily: HF_T,
+              fontSize: 13,
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}>
+              Guardar registro diario
+            </button>
+          </div>
+        )}
+
+        {sorted.length > 0 && (
+          <div style={{ marginTop: 13, display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }}>
+            {sorted.slice(-6).reverse().map(item => (
+              <div key={item.date} style={{
+                flex: '0 0 auto',
+                background: '#fff',
+                border: `1px solid ${HC.hair}`,
+                borderRadius: 14,
+                padding: '8px 10px',
+                minWidth: 70,
+              }}>
+                <div style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 800, color: HC.ink }}>{item.grams} g</div>
+                <div style={{ fontFamily: HF_B, fontSize: 10.5, color: HC.ink3, marginTop: 2 }}>{formatWeightDate(item.date)}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -396,26 +932,26 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
       }}>
         <div>
           <div style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
-            color: HC.brick, letterSpacing: '0.7px', textTransform: 'uppercase',
-            marginBottom: 4,
-          }}>Resumen del día</div>
-          <div style={{
             fontFamily: HF_T, fontWeight: 700, fontSize: 19,
             color: HC.ink, letterSpacing: '-0.3px',
-          }}>{`Cómo está ${bName} hoy`}</div>
+          }}>{`Resumen de ${bName}`}</div>
         </div>
         {onEditStatus && (
           <button onClick={onEditStatus} style={{
-            width: 34, height: 34, borderRadius: '50%',
+            height: 34, borderRadius: 999,
             background: '#fff', border: `1px solid ${HC.hair}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '0 12px 0 10px',
             cursor: 'pointer', flexShrink: 0,
           }}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z"
                 stroke={HC.brick} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
+            <span style={{
+              fontFamily: HF_T, fontSize: 12, fontWeight: 700,
+              color: HC.brick, letterSpacing: '-0.1px',
+            }}>Actualizar estado</span>
           </button>
         )}
       </div>
@@ -426,67 +962,458 @@ function DailySummary({ babyName, babyStatus, onEditStatus }) {
           ? <StatusNarrative status={babyStatus} babyName={bName} onEdit={onEditStatus} />
           : null;
       })() : (
-        <div style={{
-          background: HC.paper, border: `1px solid ${HC.hair}`,
-          borderRadius: 24, padding: '18px 18px',
-        }}>
-          <p style={{
-            margin: 0, fontFamily: HF_B, fontWeight: 400,
-            fontSize: 13.5, lineHeight: 1.85, color: HC.ink, letterSpacing: '0.1px',
+        <div
+          onClick={onEditStatus}
+          style={{
+            background: HC.paper, border: `1.5px dashed ${HC.hair}`,
+            borderRadius: 24, padding: '22px 20px',
+            display: 'flex', alignItems: 'center', gap: 16,
+            cursor: onEditStatus ? 'pointer' : 'default',
+          }}
+        >
+          <div style={{
+            width: 44, height: 44, borderRadius: 14, flexShrink: 0,
+            background: HC.rosehip,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            {DAILY_SUMMARY.text.replace(/^Sofía/, bName)}
-          </p>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M11 5V17M5 11H17" stroke={HC.brick} strokeWidth="2.2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div style={{
+              fontFamily: HF_T, fontWeight: 700, fontSize: 14.5,
+              color: HC.ink, letterSpacing: '-0.1px', marginBottom: 4,
+            }}>
+              Actualiza el estado de {bName}
+            </div>
+            <div style={{
+              fontFamily: HF_B, fontWeight: 400, fontSize: 12.5,
+              color: HC.inkSoft, lineHeight: 1.5,
+            }}>
+              Registra cómo está hoy para tener un resumen siempre a mano.
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Lactario card (compact) ──────────────────────────────────────────────────
-function MilkBottleMeter({ reserved = 120, needed = 180 }) {
-  const total = Math.max(needed, 1);
-  const pct = Math.max(0, Math.min(100, Math.round((reserved / total) * 100)));
-  const needsMore = reserved < needed;
-  const bottleLevel = Math.max(0, Math.min(5, Math.round((pct / 100) * 5)));
+// ─── Lactario card ────────────────────────────────────────────────────────────
+const BEREAVEMENT_CAPSULES = [
+  {
+    title: 'Qué puedo sentir en estos días',
+    desc: 'Emociones intensas, confusión, culpa, rabia o silencio pueden aparecer y cambiar durante el día. No hay una sola forma correcta de vivir esto.',
+    tag: 'Acompañamiento',
+  },
+  {
+    title: 'Recuerdos y despedida',
+    desc: 'Si la familia lo desea, el equipo puede orientar formas cuidadosas de despedirse, guardar recuerdos o pedir apoyo espiritual y cultural.',
+    tag: 'Decisiones con calma',
+  },
+  {
+    title: 'Cuidar el cuerpo después de la pérdida',
+    desc: 'El cuerpo puede seguir con cambios hormonales, producción de leche, cansancio o dolor. Pide ayuda al equipo si algo te preocupa.',
+    tag: 'Cuidado físico',
+  },
+  {
+    title: 'Cuándo pedir ayuda urgente',
+    desc: 'Busca apoyo inmediato si sientes que no puedes mantenerte a salvo, si la angustia te sobrepasa o si necesitas compañía ahora.',
+    tag: 'Apoyo humano',
+  },
+];
 
+const BEREAVEMENT_LIBRARY = [
+  {
+    title: 'Primeras horas: no hay una forma correcta',
+    tag: 'Duelo temprano',
+    tone: HC.viola,
+    points: [
+      'Puedes sentir tristeza, calma, rabia, culpa, desconcierto o nada por momentos.',
+      'No tienes que decidir todo de inmediato. Pide que te repitan la informacion si la necesitas.',
+      'Puedes pedir estar acompanada/o por alguien de confianza o por el equipo.',
+    ],
+  },
+  {
+    title: 'Recuerdos y despedida',
+    tag: 'Memoria',
+    tone: HC.rosehip,
+    points: [
+      'Si lo desean, pueden preguntar por formas de despedirse y guardar recuerdos.',
+      'Algunas familias eligen fotos, huellas, una manta, una carta o una bendicion/ritual.',
+      'Tambien es valido no querer hacerlo ahora. El equipo puede cuidar ese ritmo.',
+    ],
+  },
+  {
+    title: 'Cuidar el cuerpo',
+    tag: 'Cuidado fisico',
+    tone: HC.apple,
+    points: [
+      'El cuerpo puede seguir con cambios hormonales, cansancio, dolor o produccion de leche.',
+      'Pregunta por manejo de dolor, lactancia/inhibicion o senales por las que consultar.',
+      'Comer, hidratarse y dormir puede sentirse dificil; pequenos pasos tambien cuentan.',
+    ],
+  },
+  {
+    title: 'Cuando pedir ayuda ahora',
+    tag: 'Apoyo urgente',
+    tone: HC.sun,
+    points: [
+      'Pide ayuda inmediata si sientes que no puedes mantenerte a salvo.',
+      'Tambien si la angustia te sobrepasa o necesitas compania en este momento.',
+      'Puedes pedir hablar con enfermeria, psicologia, trabajo social o apoyo espiritual.',
+    ],
+  },
+];
+
+const BEREAVEMENT_RESOURCES = [
+  {
+    name: 'Sands',
+    text: 'Ofrece apoyo para personas afectadas por la muerte de un bebe, incluyendo linea de ayuda, chat, comunidades y materiales de duelo.',
+  },
+  {
+    name: 'Bliss',
+    text: 'Organizacion enfocada en bebes prematuros y enfermos; incluye orientacion para familias que viven perdida neonatal.',
+  },
+  {
+    name: 'March of Dimes',
+    text: 'Tiene recursos sobre perdida, duelo y apoyo a familias durante embarazo, parto y etapa neonatal.',
+  },
+];
+
+const POST_DISCHARGE_CAPSULES = [
+  { id: 51, title: 'Primeros dias en casa', desc: 'Rutinas simples, visitas y registro de lo importante.', tag: 'Casa', color: HC.sun },
+  { id: 52, title: 'Controles y seguimiento', desc: 'Como preparar controles y llevar preguntas utiles.', tag: 'Seguimiento', color: HC.clear },
+  { id: 53, title: 'Signos de alarma', desc: 'Cuando llamar o consultar de inmediato.', tag: 'Seguridad', color: HC.rosehip },
+  { id: 54, title: 'Alimentacion y medicamentos', desc: 'Horarios, tomas, dosis e indicaciones en casa.', tag: 'Rutina', color: HC.apple },
+  { id: 55, title: 'Cuidar tambien a la familia', desc: 'Cansancio, apoyo concreto y emociones despues del alta.', tag: 'Familia', color: HC.viola },
+];
+
+const POST_DISCHARGE_TIPS = [
+  'Ten a mano controles, telefonos utiles e indicaciones escritas.',
+  'Registra tomas, panales, medicamentos o temperatura si eso te ordena.',
+  'Limita visitas al inicio y pide lavado de manos a quienes entren.',
+  'Consulta si notas dificultad respiratoria, color azulado, fiebre, rechazo persistente de alimentacion o decaimiento marcado.',
+];
+
+function BereavementHome({ babyName, childrenList, activeChildId, onSelectChild }) {
+  const name = babyName || 'tu bebé';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-      <img
-        src={`assets/mamadera-${bottleLevel}.svg?v=2`}
-        alt={`${pct}% de leche reservada`}
-        style={{
-          width: 64,
-          height: 116,
-          objectFit: 'contain',
-          flexShrink: 0,
-          display: 'block',
-        }}
-      />
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: '8px 22px 0' }}>
+        <div style={{
+          fontFamily: HF_B, fontWeight: 500, fontSize: 12,
+          color: HC.ink2, letterSpacing: '0.2px',
+        }}>
+          Estamos contigo
+        </div>
+        <div style={{
+          fontFamily: HF_T, fontWeight: 700, fontSize: 26,
+          color: HC.ink, letterSpacing: '-0.5px',
+          marginTop: 4, lineHeight: 1.15,
+        }}>
+          Acompañamiento para este momento.
+        </div>
+      </div>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+
+      <div style={{
+        margin: '18px 22px 0',
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 24,
+        padding: '18px 18px 20px',
+      }}>
         <div style={{
-          display: 'flex', justifyContent: 'space-between', gap: 10,
-          fontFamily: HF_B, fontSize: 11.5, color: HC.ink2,
+          fontFamily: HF_T, fontSize: 19, fontWeight: 700,
+          color: HC.ink, letterSpacing: '-0.2px',
         }}>
-          <span>Reservada</span>
-          <strong style={{ color: HC.ink }}>{reserved} ml</strong>
+          {name}
         </div>
         <div style={{
-          display: 'flex', justifyContent: 'space-between', gap: 10,
-          marginTop: 3,
-          fontFamily: HF_B, fontSize: 11.5, color: HC.ink2,
+          fontFamily: HF_B, fontSize: 13,
+          color: HC.ink2, lineHeight: 1.6,
+          marginTop: 8,
         }}>
-          <span>Necesita</span>
-          <strong style={{ color: HC.ink }}>{needed} ml</strong>
+          Sentimos mucho lo que están viviendo. Este espacio queda en pausa de controles y tareas, y reúne apoyo para atravesar estos días con el equipo de salud cerca.
+        </div>
+      </div>
+
+      <div style={{ margin: '24px 22px 0' }}>
+        <HSectionHead title="Para acompañarte" kicker="Cápsulas de duelo" />
+        <div style={{ marginBottom: 14 }}>
+          <HSectionHead title="Biblioteca de apoyo" kicker="Solo para este momento" />
+          {BEREAVEMENT_LIBRARY.map((item) => (
+            <div key={item.title} style={{
+              background: HC.paper,
+              border: `1px solid ${HC.hair}`,
+              borderRadius: 22,
+              padding: '15px 16px',
+              marginBottom: 10,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 15,
+                  background: item.tone,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                  fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink,
+                }}>
+                  {item.tag.slice(0, 1)}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{
+                    fontFamily: HF_B, fontSize: 10.5, fontWeight: 700,
+                    color: HC.ink3, letterSpacing: 0.8, textTransform: 'uppercase',
+                    marginBottom: 4,
+                  }}>
+                    {item.tag}
+                  </div>
+                  <div style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink, letterSpacing: '-0.1px' }}>
+                    {item.title}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 9 }}>
+                    {item.points.map(point => (
+                      <div key={point} style={{ display: 'flex', gap: 7, alignItems: 'flex-start' }}>
+                        <div style={{ width: 5, height: 5, borderRadius: '50%', background: HC.brick, marginTop: 8, flexShrink: 0 }} />
+                        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.5 }}>
+                          {point}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {BEREAVEMENT_CAPSULES.map((cap) => (
+          <div key={cap.title} style={{
+            background: HC.paper,
+            border: `1px solid ${HC.hair}`,
+            borderRadius: 22,
+            padding: '15px 16px',
+            marginBottom: 10,
+          }}>
+            <div style={{
+              display: 'inline-flex',
+              borderRadius: 999,
+              padding: '5px 9px',
+              background: HC.sageSoft,
+              fontFamily: HF_B,
+              fontSize: 10.5,
+              fontWeight: 600,
+              color: HC.ink2,
+              marginBottom: 8,
+            }}>
+              {cap.tag}
+            </div>
+            <div style={{
+              fontFamily: HF_T,
+              fontSize: 15.5,
+              fontWeight: 700,
+              color: HC.ink,
+              letterSpacing: '-0.1px',
+            }}>
+              {cap.title}
+            </div>
+            <div style={{
+              fontFamily: HF_B,
+              fontSize: 12.5,
+              color: HC.ink2,
+              lineHeight: 1.55,
+              marginTop: 5,
+            }}>
+              {cap.desc}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        margin: '18px 22px 0',
+        background: HC.cardSoft,
+        borderRadius: 22,
+        padding: '16px 17px',
+      }}>
+        <div style={{ fontFamily: HF_T, fontSize: 15, fontWeight: 700, color: HC.ink }}>
+          Apoyo del equipo
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.55, marginTop: 5 }}>
+          Puedes pedir hablar con enfermería, psicología, trabajo social o acompañamiento espiritual si lo necesitas. No tienes que pasar por esto sin compañía.
+        </div>
+      </div>
+      <BereavementResourcesBlock />
+    </div>
+  );
+}
+
+function BereavementResourcesBlock() {
+  return (
+    <div style={{ margin: '14px 22px 0' }}>
+      <div style={{
+        background: HC.paper,
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 22,
+        padding: '15px 16px',
+      }}>
+        <div style={{ fontFamily: HF_T, fontSize: 15, fontWeight: 700, color: HC.ink }}>
+          Recursos externos
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.55, marginTop: 6 }}>
+          Estos recursos pueden servir como complemento al acompanamiento local del equipo.
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
+          {BEREAVEMENT_RESOURCES.map(resource => (
+            <div key={resource.name} style={{ background: HC.cardSoft, borderRadius: 16, padding: '11px 12px' }}>
+              <div style={{ fontFamily: HF_T, fontSize: 13.5, fontWeight: 700, color: HC.ink }}>
+                {resource.name}
+              </div>
+              <div style={{ fontFamily: HF_B, fontSize: 12, color: HC.ink2, lineHeight: 1.45, marginTop: 3 }}>
+                {resource.text}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PostDischargeHome({ babyName, childrenList, activeChildId, onSelectChild, onGoToCapsula }) {
+  const name = babyName || 'tu bebe';
+  return (
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: '8px 22px 0' }}>
+        <div style={{ fontFamily: HF_B, fontWeight: 700, fontSize: 12, color: HC.ink2, letterSpacing: 0.7, textTransform: 'uppercase' }}>
+          Hito de alta
         </div>
         <div style={{
-          marginTop: 7,
-          fontFamily: HF_T, fontSize: 12.5, fontWeight: 700,
-          color: needsMore ? HC.brick : '#3D9156',
-          lineHeight: 1.25,
+          fontFamily: HF_T, fontWeight: 800, fontSize: 27,
+          color: HC.ink, letterSpacing: '-0.5px',
+          marginTop: 4, lineHeight: 1.12,
         }}>
-          {needsMore ? 'Se necesita que la madre vaya a dejar mas leche.' : 'Leche suficiente por ahora.'}
+          Ya estan en camino a casa.
         </div>
+      </div>
+
+      <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+
+      <div style={{
+        margin: '18px 22px 0',
+        background: '#fff',
+        border: `1px solid ${HC.hair}`,
+        borderRadius: 26,
+        padding: '18px 18px 20px',
+        boxShadow: '0 16px 30px rgba(154,120,51,0.10)',
+      }}>
+        <div style={{
+          display: 'inline-flex',
+          borderRadius: 999,
+          padding: '6px 10px',
+          background: HC.sunSoft,
+          fontFamily: HF_B,
+          fontSize: 11,
+          fontWeight: 700,
+          color: HC.ink2,
+          marginBottom: 10,
+        }}>
+          Nuevo comienzo
+        </div>
+        <div style={{ fontFamily: HF_T, fontSize: 20, fontWeight: 800, color: HC.ink, letterSpacing: '-0.2px' }}>
+          {name}
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 13, color: HC.ink2, lineHeight: 1.6, marginTop: 8 }}>
+          Este espacio cambia para acompanarlos fuera del hospital. Dejamos atras lactario y SEDILE, y priorizamos controles, rutinas en casa, signos de alarma y cuidado familiar.
+        </div>
+      </div>
+
+      <div style={{ margin: '24px 22px 0' }}>
+        <HSectionHead title="Capsulas post alta" kicker="Para casa" />
+        {POST_DISCHARGE_CAPSULES.map(cap => (
+          <div
+            key={cap.id}
+            onClick={() => onGoToCapsula && onGoToCapsula(cap.id)}
+            style={{
+              background: '#fff',
+              border: `1px solid ${HC.hair}`,
+              borderRadius: 22,
+              padding: '14px 15px',
+              marginBottom: 10,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{
+              width: 38, height: 38, borderRadius: 16,
+              background: cap.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              fontFamily: HF_T, fontSize: 16, fontWeight: 800, color: HC.ink,
+            }}>
+              {cap.tag.slice(0, 1)}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: HF_T, fontSize: 15.5, fontWeight: 800, color: HC.ink, letterSpacing: '-0.1px' }}>
+                {cap.title}
+              </div>
+              <div style={{ fontFamily: HF_B, fontSize: 12.3, color: HC.ink2, lineHeight: 1.45, marginTop: 3 }}>
+                {cap.desc}
+              </div>
+            </div>
+            {HIcon.chevR(HC.ink3)}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ margin: '22px 22px 0' }}>
+        <HSectionHead title="Checklist en casa" kicker="Primeros dias" />
+        <div style={{ background: '#fff', border: `1px solid ${HC.hair}`, borderRadius: 22, padding: '15px 16px' }}>
+          {POST_DISCHARGE_TIPS.map(tip => (
+            <div key={tip} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', marginBottom: 10 }}>
+              <div style={{ width: 18, height: 18, borderRadius: 9, background: HC.apple, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+                <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 800, color: HC.ink }}>✓</span>
+              </div>
+              <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.5 }}>
+                {tip}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DischargePrompt({ onConfirm }) {
+  const [confirming, setConfirming] = React.useState(false);
+  return (
+    <div style={{ margin: '18px 22px 0' }}>
+      <div style={{ background: HC.sunSoft, border: `1px solid ${HC.hair}`, borderRadius: 22, padding: '15px 16px' }}>
+        <div style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 800, color: HC.ink, letterSpacing: '-0.1px' }}>
+          ¿Ya les dieron el alta?
+        </div>
+        <div style={{ fontFamily: HF_B, fontSize: 12.5, color: HC.ink2, lineHeight: 1.5, marginTop: 5 }}>
+          Si el equipo ya confirmo el alta, puedes cambiar KUN al modo post alta.
+        </div>
+        {confirming ? (
+          <div style={{ display: 'flex', gap: 9, marginTop: 12 }}>
+            <button onClick={() => setConfirming(false)} style={{ flex: 1, border: `1px solid ${HC.hair}`, background: '#fff', color: HC.ink, borderRadius: 999, padding: '11px 12px', fontFamily: HF_T, fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>
+              Volver
+            </button>
+            <button onClick={onConfirm} style={{ flex: 1, border: 'none', background: HC.brick, color: '#fff', borderRadius: 999, padding: '11px 12px', fontFamily: HF_T, fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>
+              Confirmar alta
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setConfirming(true)} style={{ width: '100%', border: 'none', background: HC.brick, color: '#fff', borderRadius: 999, padding: '12px 14px', fontFamily: HF_T, fontSize: 13.5, fontWeight: 800, cursor: 'pointer', marginTop: 12 }}>
+            Cambiar a post alta
+          </button>
+        )}
       </div>
     </div>
   );
@@ -494,6 +1421,12 @@ function MilkBottleMeter({ reserved = 120, needed = 180 }) {
 
 function LactarioCard({ reservation, onOpen, onCancel }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
+
+  const reserved = 120;
+  const needed   = 180;
+  const pct = Math.max(0, Math.min(100, (reserved / Math.max(needed, 1)) * 100));
+  const needsMore = reserved < needed;
+  const bottleLevel = Math.max(0, Math.min(5, Math.round((pct / 100) * 5)));
 
   const slots = window.LACTARIO_SLOTS || [];
   const nextSlot = slots.find(s => s.used < 4);
@@ -504,70 +1437,108 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
 
   return (
     <div style={{ margin: '16px 22px 0' }}>
-      <div
-        onClick={onOpen}
-        style={{
-          background: HC.paper, border: `1px solid ${HC.hair}`,
-          borderRadius: '24px 24px 0 0', padding: '14px 14px 14px 16px',
-          display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
-        }}
-      >
-        {/* Sun icon box */}
-        <div style={{
-          width: 44, height: 44, borderRadius: 14,
-          background: HC.sun, display: 'grid', placeItems: 'center', flexShrink: 0,
-        }}>
-          {HIcon.bottle(HC.ink)}
-        </div>
-
-        {/* Content */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 10,
-            color: HC.ink2, letterSpacing: '0.5px', textTransform: 'uppercase',
-          }}>Lactario</div>
-          <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 15,
-            color: HC.ink, marginTop: 3, lineHeight: 1.2,
-          }}>
-            {hasReservation ? 'Reservado' : 'Reservar extracción'}
-          </div>
-          <div style={{
-            fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
-            color: HC.ink2, marginTop: 2,
-          }}>
-            {hasReservation
-              ? `${reservations.length}/${dailyMax} turnos hoy · primero ${displayTime}`
-              : `Próximo turno libre: ${displayTime}`}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <button
-          onClick={(e) => { e.stopPropagation(); onOpen && onOpen(); }}
-          style={{
-            background: hasReservation ? 'transparent' : HC.brick,
-            color: hasReservation ? HC.brick : '#fff',
-            border: hasReservation ? `1.5px solid ${HC.brick}` : 'none',
-            padding: '12px 20px', borderRadius: 999,
-            fontFamily: HF_T, fontWeight: 700, fontSize: 12.5,
-            cursor: 'pointer', whiteSpace: 'nowrap',
-          }}
-        >
-          {hasReservation ? 'Ver' : 'Reservar'}
-        </button>
-      </div>
 
       <div style={{
-        background: HC.paper,
-        border: `1px solid ${HC.hair}`,
-        borderTop: 'none',
-        borderRadius: '0 0 24px 24px',
-        marginTop: -1,
-        padding: '14px 16px 16px',
-      }}>
-        <div style={{ height: 1, background: HC.hairSoft, marginBottom: 2 }}/>
-        <MilkBottleMeter reserved={120} needed={180} />
+        background: HC.paper, border: `1px solid ${HC.hair}`,
+        borderRadius: 24, padding: '14px 14px 16px 16px',
+        cursor: 'pointer',
+      }} onClick={onOpen}>
+
+        {/* ── Top row: icon + text + button ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Mamadera icon — same asset, slightly smaller */}
+          <img
+            src={`assets/mamadera-${bottleLevel}.svg?v=2`}
+            alt="Mamadera"
+            style={{ width: 44, height: 52, objectFit: 'contain', flexShrink: 0, display: 'block' }}
+          />
+
+          {/* Text */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: HF_B, fontWeight: 400, fontSize: 11.5,
+              color: HC.ink2, marginTop: 2,
+            }}>
+              {hasReservation
+                ? `${reservations.length}/${dailyMax} turnos hoy · primero ${displayTime}`
+                : `Próximo turno libre: ${displayTime}`}
+            </div>
+          </div>
+
+          {/* CTA button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onOpen && onOpen(); }}
+            style={{
+              background: hasReservation ? 'transparent' : HC.brick,
+              color: hasReservation ? HC.brick : '#fff',
+              border: hasReservation ? `1.5px solid ${HC.brick}` : 'none',
+              padding: '10px 18px', borderRadius: 999,
+              fontFamily: HF_T, fontWeight: 700, fontSize: 13.5,
+              cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            }}
+          >
+            {hasReservation ? 'Ver' : 'Reservar'}
+          </button>
+        </div>
+
+        {/* ── Divider ── */}
+        <div style={{ height: 1, background: HC.hair, margin: '14px 0 12px' }}/>
+
+        {/* ── Milk meter ── */}
+        <div>
+          {/* Label + value */}
+          <div style={{
+            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+            marginBottom: 8,
+          }}>
+            <span style={{ fontFamily: HF_B, fontSize: 13, fontWeight: 500, color: HC.ink }}>
+              Leche disponible
+            </span>
+            <span style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 700, color: HC.ink }}>
+              <span style={{ fontSize: 17 }}>{reserved}</span>
+              {' '}
+              <span style={{ fontWeight: 400, color: HC.ink2 }}>/ {needed} ml</span>
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div style={{
+            height: 8, borderRadius: 999,
+            background: HC.hairSoft,
+          }}>
+            <div style={{
+              height: '100%', borderRadius: 999,
+              background: HC.apple,
+              width: `${pct}%`,
+              transition: 'width .4s',
+            }}/>
+          </div>
+
+          {/* Alert */}
+          {needsMore && (
+            <div style={{
+              marginTop: 10,
+              background: HC.appleSoft, borderRadius: 14,
+              padding: '10px 13px',
+              display: 'flex', alignItems: 'flex-start', gap: 10,
+            }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                background: HC.apple,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginTop: 1,
+              }}>
+                <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 700, color: HC.ink, lineHeight: 1 }}>!</span>
+              </div>
+              <span style={{
+                fontFamily: HF_B, fontSize: 12.5, fontWeight: 500,
+                color: HC.ink, lineHeight: 1.45,
+              }}>
+                Faltan {needed - reserved} ml — pasa a dejar más leche al lactario.
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Cancel reservation link */}
@@ -580,7 +1551,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
               ¿Confirmar cancelación?{' '}
               <span
                 onClick={(e) => { e.stopPropagation(); onCancel(displayTime); setConfirmCancel(false); }}
-                style={{ color: '#C0392B', fontWeight: 700, cursor: 'pointer' }}
+                style={{ color: '#D14B3A', fontWeight: 700, cursor: 'pointer' }}
               >Sí, cancelar</span>
               {' · '}
               <span
@@ -606,83 +1577,70 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
   );
 }
 
-// ─── Capsule cards (standard) ──────────────────────────────────────────────────
-function CapsuleCard({ tag, tagKind, title, desc, mins, illoColor, illoIcon, onClick, completed }) {
-  const tagBg    = tagKind === 'new' ? HC.sun  : HC.viola;
-  const tagDot   = tagKind === 'new' ? HC.brick : null;
-  const displayTag = completed ? 'COMPLETADA' : tag;
+// ─── Capsule cards (compact row style) ────────────────────────────────────────
+function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
+  const topicMap = {
+    'Orientación UCIN':              { icon: KIcon.cat.kang,   color: HC.viola },
+    'Cuidado médico':                { icon: KIcon.cat.ecmo,   color: HC.clear },
+    'Lactancia y alimentación':      { icon: KIcon.cat.breast, color: HC.apple },
+    'Vínculo y cuidados cotidianos': { icon: KIcon.cat.kang,   color: HC.rosehip },
+    'Camino a casa':                 { icon: KIcon.cat.prem,   color: HC.sun },
+    'Familia y comunidad':           { icon: KIcon.cat.kang,   color: HC.cardSoft },
+  };
+  const tm = topicMap[topic] || { icon: KIcon.cat.kang, color: HC.cardSoft };
   return (
     <div onClick={onClick} style={{
-      background: HC.paper, border: `1px solid ${HC.hair}`,
-      borderRadius: 20, padding: 16, marginBottom: 10,
-      display: 'flex', gap: 14, alignItems: 'stretch', cursor: 'pointer',
+      background: HC.paper, borderRadius: 22, padding: '14px 16px',
+      display: 'flex', alignItems: 'center', gap: 14,
+      border: `1px solid ${HC.hair}`, cursor: 'pointer', marginBottom: 10,
     }}>
-      {/* Illo */}
+      {/* Square category icon */}
       <div style={{
-        width: 64, borderRadius: 16, background: illoColor,
-        display: 'grid', placeItems: 'center', flexShrink: 0,
+        width: 46, height: 46, borderRadius: 14, background: tm.color,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
-        {illoIcon}
+        {completed
+          ? <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10L8 14L16 6" stroke={HC.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          : tm.icon(HC.ink)
+        }
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div>
-          {/* Tag */}
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            background: tagBg, color: HC.ink,
-            fontFamily: HF_B, fontWeight: 600, fontSize: 10,
-            padding: '3px 9px', borderRadius: 999,
-            letterSpacing: '0.4px', textTransform: 'uppercase',
-            marginBottom: 8,
-          }}>
-            {completed && KIcon.check(HC.ink)}
-            {!completed && tagDot && <span style={{ width: 5, height: 5, borderRadius: '50%', background: tagDot }}/>}
-            {displayTag}
-          </span>
-          <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 15,
-            color: HC.ink, letterSpacing: '-0.2px', lineHeight: 1.25,
-            marginBottom: 4, textWrap: 'pretty',
-          }}>{title}</div>
-          <div style={{
-            fontFamily: HF_B, fontWeight: 400, fontSize: 12,
-            color: HC.ink2, lineHeight: 1.45, textWrap: 'pretty',
-          }}>
-            {desc}
-          </div>
-        </div>
-
+      {/* Text */}
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <span style={{
-            fontFamily: HF_B, fontWeight: 500, fontSize: 11, color: HC.ink3,
-            letterSpacing: '0.2px',
-          }}>{mins}</span>
-          <div style={{
-            width: 32, height: 32, borderRadius: '50%',
-            background: HC.cream, border: `1px solid ${HC.hair}`,
-            display: 'grid', placeItems: 'center',
-          }}>
-            {completed ? KIcon.check(HC.brick) : HIcon.arrow(HC.brick)}
-          </div>
+          fontFamily: HF_T, fontSize: 14.5, fontWeight: 700, color: HC.ink,
+          letterSpacing: '-0.1px', marginBottom: 4,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>{title}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: HF_B, fontSize: 11.5, color: HC.ink3, fontWeight: 400 }}>
+          <span>{mins}</span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: HC.ink3 }}/>
+          <span>{tag || 'Cápsula'}</span>
         </div>
       </div>
+
+      {/* Chevron */}
+      {HIcon.chevR(HC.ink3)}
     </div>
   );
 }
 
 // ─── Public entry ──────────────────────────────────────────────────────────────
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
+                       children: childrenList, activeChildId, onSelectChild,
+                       activeChildVitalStatus, onMarkDischarged,
+                       birthDate, gestWeeks, gestDays,
                        lactarioReservation, onOpenLactario, onCancelLactario,
-                       completedCapsulas, babyStatus, onEditBabyStatus }) {
-  const [showDailySummaryModal, setShowDailySummaryModal] = React.useState(false);
+                       completedCapsulas, babyStatus, babyWeightHistory, onSaveBabyWeight, onEditBabyStatus,
+                       onGoToBond, onOpenSummary }) {
   const completed = completedCapsulas || [];
   const bName = babyName || 'Sofía';
-  
+  const isBereavement = activeChildVitalStatus === 'deceased';
+  const isDischarged = activeChildVitalStatus === 'discharged';
   return (
-    <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%' }}>
+    <div style={{ position: 'relative', overflowX: 'hidden', maxWidth: '100%', minHeight: '100%', background: isDischarged ? '#FFF9E8' : 'transparent' }}>
       {/* subtle decorative shape — half moon rosehip behind content */}
       <div style={{
         position: 'absolute', top: 420, right: -80,
@@ -699,91 +1657,66 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
       }}/>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <HomeGreeting parentName={parentName} />
-        <BabyHero babyName={bName} />
-        
-        {/* Daily Summary Button */}
-        <div style={{ margin: '24px 22px 0' }}>
-          <button onClick={() => setShowDailySummaryModal(true)} style={{
-            width: '100%', background: HC.paper, border: `1px solid ${HC.hair}`,
-            borderRadius: 24, padding: '18px 22px',
-            display: 'flex', alignItems: 'center', gap: 14,
-            cursor: 'pointer', textAlign: 'left',
-          }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: 14,
-              background: HC.rosehip, display: 'grid', placeItems: 'center', flexShrink: 0,
-            }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke={HC.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 12h18M12 3v18"/>
-              </svg>
+        {isBereavement ? (
+          <BereavementHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+        ) : isDischarged ? (
+          <PostDischargeHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} onGoToCapsula={onGoToCapsula} />
+        ) : (
+          <>
+            <HomeGreeting parentName={parentName} />
+            <BabyHero
+              babyName={bName}
+              birthDate={birthDate}
+              gestWeeks={gestWeeks}
+              gestDays={gestDays}
+              onOpenSummary={onOpenSummary}
+            />
+            {/* Widget de Actividad Diaria */}
+            <div style={{ margin: '16px 22px 0' }}>
+              <DailyActivityWidget babyName={bName} onGoToBond={() => onGoToBond && onGoToBond('journey')} />
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{
-                fontFamily: HF_B, fontWeight: 500, fontSize: 10,
-                color: HC.brick, letterSpacing: '0.5px', textTransform: 'uppercase',
-              }}>Resumen</div>
-              <div style={{
-                fontFamily: HF_T, fontWeight: 700, fontSize: 15,
-                color: HC.ink, marginTop: 3, lineHeight: 1.2,
-              }}>Resumen del día</div>
-            </div>
-            <div style={{
-              width: 34, height: 34, borderRadius: '50%',
-              background: HC.cream, border: `1px solid ${HC.hair}`,
-              display: 'grid', placeItems: 'center', flexShrink: 0,
-            }}>
-              {HIcon.arrow(HC.brick)}
-            </div>
-          </button>
-        </div>
-        
-        <LactarioCard
-          reservation={lactarioReservation}
-          onOpen={onOpenLactario}
-          onCancel={onCancelLactario}
-        />
+
+            <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+            <WeightTracker history={babyWeightHistory} onSave={onSaveBabyWeight} />
+            
+            <LactarioCard
+              reservation={lactarioReservation}
+              onOpen={onOpenLactario}
+              onCancel={onCancelLactario}
+            />
+            <DischargePrompt onConfirm={onMarkDischarged} />
+          </>
+        )}
+        {!isBereavement && !isDischarged && (
+          <>
         <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
-            title="Para ti, hoy"
-            kicker="Cápsulas educativas"
+            title="Cápsulas recomendadas"
             action="Ver todo"
             onAction={onGoToEdu}
           />
         </div>
         <div style={{ padding: '0 22px', boxSizing: 'border-box' }}>
           <CapsuleCard
-            tagKind="new" tag="NUEVO"
+            topic="Vínculo y cuidados cotidianos"
             title="El apego en la UCIN"
-            desc={`Cómo construir el vínculo con ${bName} desde los primeros días en la unidad neonatal.`}
-            mins="5 min · cápsula"
-            illoColor={HC.rosehip}
-            illoIcon={HIcon.kangaroo(HC.viola)}
+            mins="5 min"
+            tag="Nuevo para ti"
             completed={completed.includes(1)}
             onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
           />
           <CapsuleCard
-            tagKind="rec" tag="RECOMENDADO PARA TI"
+            topic="Lactancia y alimentación"
             title="Sonda al dedo"
-            desc={`Aprende paso a paso cómo alimentar a ${bName} con sonda al dedo de forma segura.`}
-            mins="5 min · cápsula"
-            illoColor={HC.apple}
-            illoIcon={HIcon.drop(HC.ink)}
+            mins="5 min"
+            tag="Recomendado"
             completed={completed.includes(2)}
             onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
           />
         </div>
+          </>
+        )}
       </div>
-
-      {/* Daily Summary Modal */}
-      <DailySummaryModal
-        isOpen={showDailySummaryModal}
-        onClose={() => setShowDailySummaryModal(false)}
-        babyName={bName}
-        babyStatus={babyStatus}
-        onEditStatus={onEditBabyStatus}
-      />
     </div>
   );
 }

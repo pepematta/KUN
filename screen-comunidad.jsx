@@ -1,6 +1,126 @@
 // Comunidad section — foro de preguntas + experiencias entre familias.
 // Exposes: ScreenComunidad()
 
+// ── Avatar icons (personalized shapes) ──────────────────
+const AVATAR_ICONS = {
+  flower: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="8.5" r="4" fill={c}/>
+      <circle cx="8.5" cy="14" r="4" fill={c}/>
+      <circle cx="19.5" cy="14" r="4" fill={c}/>
+      <circle cx="10.5" cy="20" r="4" fill={c}/>
+      <circle cx="17.5" cy="20" r="4" fill={c}/>
+      <circle cx="14" cy="15" r="3" fill="rgba(255,255,255,.55)"/>
+    </svg>
+  ),
+  pebble: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <ellipse cx="13" cy="14" rx="8" ry="10" transform="rotate(24 13 14)" fill={c}/>
+      <circle cx="18.5" cy="9.5" r="3.2" fill="rgba(255,255,255,.42)"/>
+    </svg>
+  ),
+  bubble: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="11" cy="12" r="6" fill={c}/>
+      <circle cx="17.5" cy="17" r="5.5" fill={c}/>
+      <circle cx="17" cy="10" r="3.5" fill="rgba(255,255,255,.45)"/>
+    </svg>
+  ),
+  moon: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="15" cy="14" r="9" fill={c}/>
+      <circle cx="19" cy="10" r="9" fill="rgba(255,255,255,.55)"/>
+    </svg>
+  ),
+  arch: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M6 22V13C6 8.6 9.6 5 14 5C18.4 5 22 8.6 22 13V22H6Z" fill={c}/>
+      <circle cx="14" cy="15" r="4" fill="rgba(255,255,255,.5)"/>
+    </svg>
+  ),
+  dots: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="9" cy="10" r="4.2" fill={c}/>
+      <circle cx="18" cy="10" r="4.2" fill={c}/>
+      <circle cx="9" cy="19" r="4.2" fill={c}/>
+      <circle cx="18" cy="19" r="4.2" fill={c}/>
+    </svg>
+  ),
+  leaf: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 4C14 4 18 8 18 15C18 19.4 16.1 23 14 24C11.9 23 10 19.4 10 15C10 8 14 4 14 4Z" fill={c}/>
+      <path d="M12 12C12.5 13 13 14 14 14.5C15 14 15.5 13 16 12" stroke={c} strokeWidth="0.8" fill="none"/>
+    </svg>
+  ),
+  leafPair: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <ellipse cx="11" cy="14" rx="5" ry="9" transform="rotate(-28 11 14)" fill={c}/>
+      <ellipse cx="18" cy="15" rx="4.5" ry="8" transform="rotate(32 18 15)" fill={c}/>
+      <circle cx="14" cy="20" r="2" fill="rgba(255,255,255,.48)"/>
+    </svg>
+  ),
+  star: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 4L16.6 11.2H24L18.2 15.8L20.6 23L14 18.8L7.4 23L9.8 15.8L4 11.2H11.4L14 4Z" fill={c}/>
+    </svg>
+  ),
+  cloud: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="10" cy="16" r="5" fill={c}/>
+      <circle cx="15" cy="12" r="6" fill={c}/>
+      <circle cx="20" cy="16" r="4.8" fill={c}/>
+      <rect x="8" y="15" width="14" height="7" rx="3.5" fill={c}/>
+      <circle cx="18" cy="10" r="2.2" fill="rgba(255,255,255,.45)"/>
+    </svg>
+  ),
+  drop: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 4C14 4 10 10 10 15C10 18.3 11.8 21 14 21C16.2 21 18 18.3 18 15C18 10 14 4 14 4Z" fill={c}/>
+    </svg>
+  ),
+  heart: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 23C4 17 2 13 2 10C2 7.2 4.2 5 6.5 5C8 5 9.5 6 10.5 7.5C11.5 6 13 5 14.5 5C16.8 5 19 7.2 19 10C19 13 17 17 14 23Z" fill={c}/>
+    </svg>
+  ),
+  sun: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="5" fill={c}/>
+      <line x1="14" y1="2" x2="14" y2="6" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="14" y1="22" x2="14" y2="26" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="2" y1="14" x2="6" y2="14" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="22" y1="14" x2="26" y2="14" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="5.5" y1="5.5" x2="8.5" y2="8.5" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="19.5" y1="19.5" x2="22.5" y2="22.5" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="22.5" y1="5.5" x2="19.5" y2="8.5" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      <line x1="8.5" y1="19.5" x2="5.5" y2="22.5" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  clover: (c) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="10" cy="9" r="3.5" fill={c}/>
+      <circle cx="18" cy="9" r="3.5" fill={c}/>
+      <circle cx="10" cy="17" r="3.5" fill={c}/>
+      <circle cx="14" cy="19" r="1.5" fill={c}/>
+    </svg>
+  ),
+};
+
+const AVATAR_PRESETS = [
+  { iconType: 'flower', color: '#F0743E', bgColor: '#FFF5DC' },
+  { iconType: 'star', color: '#9C7CB8', bgColor: '#EFE8F5' },
+  { iconType: 'cloud', color: '#7AA8B8', bgColor: '#E9EEF7' },
+  { iconType: 'leaf', color: '#6FA85F', bgColor: '#EAF2E7' },
+  { iconType: 'leafPair', color: '#8CA66E', bgColor: '#FFF5DC' },
+  { iconType: 'sun', color: '#FDD848', bgColor: '#FFF5DC' },
+];
+
+function avatarPresetFor(name = '') {
+  const key = String(name || 'familia');
+  const sum = Array.from(key).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return AVATAR_PRESETS[sum % AVATAR_PRESETS.length];
+}
+
 const COM_ICONS = {
   back: (c) => (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -78,18 +198,24 @@ const COM_ICONS = {
   ),
 };
 
-// ── Avatar reutilizable ─────────────────────────────────
-function ComAvatar({ name, color, size = 44 }) {
-  const initial = (name || '?').charAt(0).toUpperCase();
+// ── Avatar reutilizable (with personalized icons) ──────
+function ComAvatar({ name, color, iconType, bgColor, size = 44 }) {
+  const preset = iconType ? {} : avatarPresetFor(name);
+  const finalIcon = iconType || preset.iconType;
+  const finalColor = color || preset.color;
+  const finalBg = bgColor || preset.bgColor || color;
+  const iconRenderer = AVATAR_ICONS[finalIcon];
   return (
     <div style={{
-      width: size, height: size, borderRadius: '50%',
-      background: color, color: KUN.ink,
+      width: size, height: size, borderRadius: 14,
+      background: finalBg,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'Quicksand, sans-serif',
-      fontSize: size * 0.40, fontWeight: 700, flexShrink: 0,
-      letterSpacing: -0.2,
-    }}>{initial}</div>
+      flexShrink: 0,
+      overflow: 'hidden',
+      border: `1px solid ${KUN.hair}`,
+    }}>
+      {iconRenderer && iconRenderer(finalColor)}
+    </div>
   );
 }
 
@@ -222,6 +348,8 @@ const PROFESSIONALS = [
     name: 'Juanita',
     role: 'Enfermera / Matrona',
     color: KUN.sage,
+    bgColor: '#E4ECE4',
+    iconType: 'flower',
     last: 'Te mando un artículo que te podría servir',
     time: '10:32 AM',
     online: true,
@@ -231,6 +359,8 @@ const PROFESSIONALS = [
     name: 'Lucía',
     role: 'Psicóloga',
     color: '#B58E5F',
+    bgColor: '#F4ECDD',
+    iconType: 'heart',
     last: '¿Podríamos hablar hoy día?',
     time: 'Ayer',
     online: false,
@@ -238,10 +368,10 @@ const PROFESSIONALS = [
 ];
 
 const AVAILABLE_PROFESSIONALS = [
-  { id: 'juanita', name: 'Juanita Pérez',  role: 'Enfermera / Matrona', color: KUN.sage,    desc: 'Turno mañana · UCIN' },
-  { id: 'lucia',   name: 'Lucía Mendoza',  role: 'Psicóloga',            color: '#B58E5F',  desc: 'Acompañamiento familiar' },
-  { id: 'rocio',   name: 'Rocío Salinas',  role: 'Nutricionista',        color: '#9C7CB8',  desc: 'Lactancia y alimentación' },
-  { id: 'andres',  name: 'Andrés Carmona', role: 'Kinesiólogo',          color: '#7AA8B8',  desc: 'Estimulación temprana' },
+  { id: 'juanita', name: 'Juanita Pérez',  role: 'Enfermera / Matrona', color: KUN.sage, bgColor: '#E4ECE4', iconType: 'flower', desc: 'Turno mañana · UCIN' },
+  { id: 'lucia',   name: 'Lucía Mendoza',  role: 'Psicóloga',            color: '#B58E5F', bgColor: '#F4ECDD', iconType: 'heart', desc: 'Acompañamiento familiar' },
+  { id: 'rocio',   name: 'Rocío Salinas',  role: 'Nutricionista',        color: '#FDD848', bgColor: '#FFF5DC', iconType: 'sun', desc: 'Lactancia y alimentación' },
+  { id: 'andres',  name: 'Andrés Carmona', role: 'Kinesiólogo',          color: '#AAD59E', bgColor: '#EBF5EE', iconType: 'leaf', desc: 'Estimulación temprana' },
 ];
 
 function ChatList({ onOpenChat, onNew }) {
@@ -780,11 +910,11 @@ function CommunityInnerTabs({ active, onChange }) {
         return (
           <div key={t.id} onClick={() => onChange(t.id)} style={{
             cursor: 'pointer',
-            padding: '10px 18px', borderRadius: 999,
+            padding: '10px 18px', borderRadius: 10,
             background: isA ? KUN.brick : KUN.cardSoft,
             color: isA ? '#fff' : KUN.inkSoft,
             fontFamily: COM_FT, fontSize: 13, fontWeight: 700, letterSpacing: 0.1,
-            border: isA ? 'none' : `1px solid ${KUN.hair}`,
+            border: 'none',
             transition: 'all .2s',
           }}>{t.label}</div>
         );
@@ -871,7 +1001,7 @@ function ReplyThreadItem({ answer, depth = 0 }) {
     if (!text.trim()) return;
     setChildren(prev => [...prev, {
       author: 'Tú',
-      color: KUN.rosehip,
+      ...avatarPresetFor('Tú'),
       text: text.trim(),
       time: 'Ahora',
       likes: 0,
@@ -901,7 +1031,7 @@ function ReplyThreadItem({ answer, depth = 0 }) {
               fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.inkMuted,
             }}>?</div>
           ) : (
-            <ComAvatar name={answer.author} color={answer.color} size={32} />
+            <ComAvatar name={answer.author} color={answer.color} bgColor={answer.bgColor} iconType={answer.iconType} size={32} />
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
@@ -961,7 +1091,10 @@ function ReplyThreadItem({ answer, depth = 0 }) {
 const QUESTIONS = [
   {
     id: 'q1',
-    author: 'Pedro', authorColor: '#7AA8B8',
+    author: 'Pedro',
+    authorColor: '#7AA8B8',
+    authorBgColor: '#E9EEF7',
+    authorIcon: 'cloud',
     role: 'Papá de Tomás',
     category: 'Prematuridad',
     title: '¿Cuántos años tiene tu bebé prematuro y cuánto pesa?',
@@ -971,12 +1104,15 @@ const QUESTIONS = [
     tags: ['prematuro', 'peso', 'desarrollo', 'edad', 'ucin'],
     answers: [
       { author: 'Anónimo', anonymous: true, color: KUN.inkMuted, text: 'Mi hijo nació de 25 semanas 🩵 ahora tiene 3 años y pesa como 12 kg.', time: 'Hace 1 h' },
-      { author: 'Carla',   color: '#B58E5F', text: 'La mía nació de 27 semanas, hoy tiene 2 años y está en 10,5 kg aprox.', time: 'Hace 30 min' },
+      { author: 'Carla', color: '#9C7CB8', bgColor: '#EFE8F5', iconType: 'star', text: 'La mía nació de 27 semanas, hoy tiene 2 años y está en 10,5 kg aprox.', time: 'Hace 30 min' },
     ],
   },
   {
     id: 'q2',
-    author: 'Mariana', authorColor: KUN.accent,
+    author: 'Mariana',
+    authorColor: KUN.brick,
+    authorBgColor: '#FCE7DE',
+    authorIcon: 'flower',
     role: 'Mamá de Sofía',
     category: 'Lactancia materna',
     title: '¿Cómo puedo recuperar mi producción de leche?',
@@ -998,7 +1134,7 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-          <ComAvatar name={q.author} color={q.authorColor} size={40} />
+          <ComAvatar name={q.author} color={q.authorColor} bgColor={q.authorBgColor} iconType={q.authorIcon} size={40} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
               fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1,
@@ -1009,11 +1145,6 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <span style={{
-            padding: '5px 11px', borderRadius: 999,
-            background: KUN.sun, color: KUN.ink,
-            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
-          }}>PREGUNTA</span>
           <div onClick={e => e.stopPropagation()}>
             <PostActionsMenu
               isOwn={q.author === currentUser || q.fresh}
@@ -1062,12 +1193,12 @@ function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, mode
         </div>
       )}
 
-      <PostActions likes={q.likes} replies={q.replies} />
+      <PostActions likes={q.likes} replies={q.replies} onReply={() => onOpen(q.id)} />
     </div>
   );
 }
 
-function QuestionThread({ qId, onBack, questions }) {
+function QuestionThread({ qId, onBack, questions, currentUser, onReply }) {
   const q = (questions || QUESTIONS).find(x => x.id === qId) || QUESTIONS.find(x => x.id === qId);
   const [replyAnon, setReplyAnon] = React.useState(false);
   const [replyText, setReplyText] = React.useState('');
@@ -1079,9 +1210,23 @@ function QuestionThread({ qId, onBack, questions }) {
 
   const handleReply = () => {
     if (!replyText.trim()) return;
+    const author = replyAnon ? 'Anónimo' : (currentUser || 'Tú');
+    const avatar = replyAnon ? { iconType: 'cloud', color: KUN.inkMuted, bgColor: KUN.cardSoft } : avatarPresetFor(author);
+    onReply && onReply(q.id, {
+      author,
+      anonymous: replyAnon,
+      color: avatar.color,
+      bgColor: avatar.bgColor,
+      iconType: avatar.iconType,
+      text: replyText.trim(),
+      time: 'Ahora',
+      likes: 0,
+      children: [],
+    });
     setReplyPosted(true);
     setTimeout(() => setReplyPosted(false), 2000);
     setReplyText('');
+    setReplyAnon(false);
   };
 
   return (
@@ -1094,7 +1239,7 @@ function QuestionThread({ qId, onBack, questions }) {
           border: `1px solid ${KUN.hair}`,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-            <ComAvatar name={q.author} color={q.authorColor} size={40} />
+            <ComAvatar name={q.author} color={q.authorColor} bgColor={q.authorBgColor} iconType={q.authorIcon} size={40} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
                 {q.author}
@@ -1179,7 +1324,7 @@ function QuestionThread({ qId, onBack, questions }) {
                       fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.inkMuted,
                     }}>?</div>
                   ) : (
-                    <ComAvatar name={a.author} color={a.color} size={32} />
+                    <ComAvatar name={a.author} color={a.color} bgColor={a.bgColor} iconType={a.iconType} size={32} />
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
@@ -1281,7 +1426,7 @@ function QuestionThread({ qId, onBack, questions }) {
 const EXPERIENCES = [
   {
     id: 'e1',
-    author: 'Mariana', color: KUN.accent, role: 'Mamá de Sofía',
+    author: 'Mariana', color: KUN.brick, bgColor: '#FFF5DC', iconType: 'flower', role: 'Mamá de Sofía',
     short: 'El proceso más largo de mi vida empezó un día 17 de enero del 2025 🩵 Aún no termina pero ya casi lo logramos 🥹 Ya casi se acaban las vueltas de chequeos.',
     long: ' Sin imaginarlo, antes de tiempo, estás ahí con el miedo inundándote y con la casi nula posibilidad de escuchar llorar a tu bebé, de abrazarlo, darle un beso y llevarlo contigo…',
     time: 'Hace 2 h',
@@ -1299,7 +1444,7 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-          <ComAvatar name={e.author} color={e.color} size={40} />
+          <ComAvatar name={e.author} color={e.color} bgColor={e.bgColor} iconType={e.iconType} size={40} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: COM_FT, fontSize: 14, fontWeight: 700, color: KUN.ink, letterSpacing: -0.1 }}>
               {e.author}
@@ -1310,11 +1455,6 @@ function ExperienceCard({ e, currentUser, onReport, onEdit, onDelete, moderation
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <span style={{
-            padding: '5px 11px', borderRadius: 999,
-            background: KUN.apple, color: KUN.ink,
-            fontFamily: COM_FT, fontSize: 10.5, fontWeight: 700, letterSpacing: 0.4,
-          }}>EXPERIENCIA</span>
           <div onClick={e => e.stopPropagation()}>
             <PostActionsMenu
               isOwn={e.author === currentUser || e.fresh}
@@ -1664,7 +1804,7 @@ function postMatchesSearch(post, query) {
   return terms.every(term => haystack.includes(term));
 }
 
-function CommunityView({ onNew, questions, experiences, focusQuestionId, currentUser, onReport, onEdit, onDelete, moderationMode, allowNew = true }) {
+function CommunityView({ onNew, questions, experiences, focusQuestionId, currentUser, onReply, onReport, onEdit, onDelete, moderationMode, allowNew = true }) {
   const [sub, setSub] = React.useState('questions');
   const [openQ, setOpenQ] = React.useState(null);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -1677,7 +1817,7 @@ function CommunityView({ onNew, questions, experiences, focusQuestionId, current
   }, [focusQuestionId]);
 
   if (openQ) {
-    return <QuestionThread qId={openQ} questions={questions} onBack={() => setOpenQ(null)} />;
+    return <QuestionThread qId={openQ} questions={questions} currentUser={currentUser} onReply={onReply} onBack={() => setOpenQ(null)} />;
   }
 
   return (
@@ -1717,14 +1857,31 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
       return { questions: [], experiences: [] };
     }
   });
+  const [savedReplies, setSavedReplies] = React.useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('kun_community_replies_v1') || '{}');
+    } catch {
+      return {};
+    }
+  });
   const saveUserPosts = (next) => {
     setUserPosts(next);
     try { localStorage.setItem('kun_community_posts_v1', JSON.stringify(next)); } catch {}
   };
+  const saveReplies = (next) => {
+    setSavedReplies(next);
+    try { localStorage.setItem('kun_community_replies_v1', JSON.stringify(next)); } catch {}
+  };
   const userQuestions = userPosts.questions || [];
   const userExperiences = userPosts.experiences || [];
+  const withSavedReplies = (question) => {
+    const extraAnswers = savedReplies[question.id] || [];
+    const answers = [...(question.answers || []), ...extraAnswers];
+    return { ...question, answers, replies: Math.max(question.replies || 0, answers.length) };
+  };
   const mergedQuestions = [...userQuestions, ...questions, ...QUESTIONS.filter(q => !questions.some(userQ => userQ.id === q.id) && !userQuestions.some(userQ => userQ.id === q.id))]
-    .filter(q => !hiddenIds.includes(q.id));
+    .filter(q => !hiddenIds.includes(q.id))
+    .map(withSavedReplies);
   const mergedExperiences = [...userExperiences, ...EXPERIENCES]
     .filter(e => !hiddenIds.includes(e.id));
   const [newPost, setNewPost] = React.useState(null);
@@ -1743,13 +1900,24 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
     setReportingPostId(null);
   };
   const handlePublishPost = ({ kind, title, body, tags, anon, hasPhoto }) => {
+    window.KUNAnalytics?.track('foro_publicacion_creada', {
+      tipo: kind === 'question' ? 'pregunta' : 'experiencia',
+      anonima: !!anon,
+      con_foto: !!hasPhoto,
+      hashtags_count: Array.isArray(tags) ? tags.length : 0,
+    });
     const id = `${kind}-${Date.now()}`;
     const author = anon ? 'Anonimo' : (currentUser || 'Tu');
+    const avatar = anon ? { iconType: 'cloud', color: KUN.inkMuted, bgColor: KUN.cardSoft } : avatarPresetFor(author);
     const base = {
       id,
       author,
-      authorColor: anon ? KUN.inkMuted : KUN.rosehip,
-      color: anon ? KUN.inkMuted : KUN.rosehip,
+      authorColor: avatar.color,
+      authorBgColor: avatar.bgColor,
+      authorIcon: avatar.iconType,
+      color: avatar.color,
+      bgColor: avatar.bgColor,
+      iconType: avatar.iconType,
       role: anon ? 'Publicacion anonima' : 'Familia KUN',
       time: 'Ahora',
       likes: 0,
@@ -1780,6 +1948,13 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
       });
     }
   };
+  const handleReplySubmit = (questionId, reply) => {
+    const current = savedReplies[questionId] || [];
+    saveReplies({
+      ...savedReplies,
+      [questionId]: [...current, { ...reply, id: `reply-${Date.now()}` }],
+    });
+  };
   const handleDelete = (postId) => {
     saveUserPosts({
       questions: userQuestions.filter(q => q.id !== postId),
@@ -1795,6 +1970,7 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
         experiences={mergedExperiences}
         focusQuestionId={focusQuestionId}
         currentUser={currentUser}
+        onReply={handleReplySubmit}
         onReport={handleReport}
         onEdit={() => {}}
         onDelete={handleDelete}

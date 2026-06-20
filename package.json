@@ -1,0 +1,10 @@
+{
+  "name": "kun-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "KUN — prototipo (frontend estático + funciones serverless en /api)",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  }
+}
