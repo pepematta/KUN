@@ -254,71 +254,77 @@ function BabyHero({ babyName = 'Sofía', birthDate, gestWeeks, gestDays, onOpenS
   return (
     <div style={{ margin: '16px 18px 0', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative' }}>
 
-      {/* ── Compact baby card ── */}
+      {/* ── Compact baby card (Unified with Nurse info) ── */}
       <div style={{
         background: HC.rosehip,
-        borderRadius: 28, padding: '16px 18px',
-        display: 'flex', alignItems: 'center', gap: 16, overflow: 'hidden',
+        borderRadius: 28, padding: '16px 18px 12px 18px',
+        display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden',
+        position: 'relative',
       }}>
         {/* Decorative circle */}
         <div style={{
           position: 'absolute', top: -40, right: -40,
           width: 130, height: 130, borderRadius: '50%',
           background: 'rgba(255,255,255,0.15)', pointerEvents: 'none',
+          zIndex: 0,
         }}/>
 
-        {/* Circular photo */}
-        <div style={{
-          width: 76, height: 76, borderRadius: '50%', flexShrink: 0,
-          overflow: 'hidden',
-          boxShadow: '0 0 0 3px rgba(255,255,255,0.7)',
-        }}>
-          <img src="guaguas/guagua1.jpg" alt={babyName} style={{
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center 30%',
-          }}/>
-        </div>
-
-        {/* Name + age pills stacked vertically */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Baby profile row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
+          {/* Circular photo */}
           <div style={{
-            fontFamily: HF_T, fontWeight: 700, fontSize: 28,
-            color: HC.ink, letterSpacing: '-0.4px', lineHeight: 1, marginBottom: 10,
-          }}>{babyName}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <AgeStat label="Edad cronológica" value={chronoText}    onClick={() => setAgeInfo('chrono')} />
-            <AgeStat label="Edad corregida"   value={correctedText} onClick={() => setAgeInfo('corrected')} />
+            width: 76, height: 76, borderRadius: '50%', flexShrink: 0,
+            overflow: 'hidden',
+            boxShadow: '0 0 0 3px rgba(255,255,255,0.7)',
+          }}>
+            <img src="guaguas/guagua1.jpg" alt={babyName} style={{
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center 30%',
+            }}/>
+          </div>
+
+          {/* Name + age pills stacked vertically */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: HF_T, fontWeight: 700, fontSize: 28,
+              color: HC.ink, letterSpacing: '-0.4px', lineHeight: 1, marginBottom: 10,
+            }}>{babyName}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <AgeStat label="Edad cronológica" value={chronoText}    onClick={() => setAgeInfo('chrono')} />
+              <AgeStat label="Edad corregida"   value={correctedText} onClick={() => setAgeInfo('corrected')} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ── Nurse card ── */}
-      <div style={{
-        background: HC.paper, borderRadius: 22, padding: '13px 16px',
-        display: 'flex', alignItems: 'center', gap: 12,
-        border: `1px solid ${HC.hair}`,
-      }}>
-        {/* Avatar with initial */}
+        {/* Nurse info row */}
         <div style={{
-          width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-          background: HC.clear,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingTop: 10,
+          borderTop: '1px solid rgba(46, 42, 38, 0.12)',
+          position: 'relative',
+          zIndex: 1,
         }}>
-          <span style={{ fontFamily: HF_T, fontSize: 16, fontWeight: 700, color: HC.ink }}>V</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 24, height: 24, borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.45)',
+              border: '1px solid rgba(46, 42, 38, 0.08)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{ fontFamily: HF_T, fontSize: 11, fontWeight: 700, color: HC.ink }}>V</span>
+            </div>
+            <div style={{ display: 'flex', gap: 4, alignItems: 'baseline' }}>
+              <span style={{ fontFamily: HF_B, fontSize: 12.5, fontWeight: 400, color: 'rgba(46,42,38,0.75)' }}>Enfermera:</span>
+              <span style={{ fontFamily: HF_T, fontSize: 13, fontWeight: 700, color: HC.ink }}>Valentina Rojas</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#30A46C' }}/>
+            <span style={{ fontFamily: HF_B, fontSize: 11.5, fontWeight: 600, color: 'rgba(46,42,38,0.75)' }}>En turno</span>
+          </div>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: HF_B, fontSize: 9.5, fontWeight: 600,
-            color: HC.ink3, letterSpacing: '0.7px', textTransform: 'uppercase', marginBottom: 3,
-          }}>Enfermera de turno</div>
-          <div style={{
-            fontFamily: HF_T, fontSize: 16, fontWeight: 700,
-            color: HC.ink, letterSpacing: '-0.2px',
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          }}>Valentina Rojas</div>
-        </div>
-        {/* Online indicator */}
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#52C17B', flexShrink: 0 }}/>
       </div>
 
       {/* ── Resumen de [Bebé] Button ── */}
