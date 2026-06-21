@@ -1,4 +1,4 @@
-﻿// Vínculo section — entry, Diario de vida, Actividades con mi hijo.
+// Vínculo section — entry, Diario de vida, Actividades con mi hijo.
 // Applies KUN Design System v2: Quicksand titles, Poppins body, Brick CTAs,
 // hairline cards, DS palette per category, decorative half-moon shapes.
 
@@ -3647,6 +3647,51 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
 
           </div>
         ))}
+        {canEditDiary && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12, marginBottom: 12, padding: '0 4px' }}>
+            <button
+              onClick={() => setFab(true)}
+              style={{
+                width: '100%',
+                background: 'rgba(240, 116, 62, 0.04)',
+                border: `2px dashed ${KUN.brick}`,
+                borderRadius: 24,
+                padding: '24px 16px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 12,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                outline: 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(240, 116, 62, 0.08)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(240, 116, 62, 0.04)';
+              }}
+            >
+              <div style={{
+                width: 44, height: 44, borderRadius: '50%',
+                background: KUN.brick,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(240, 116, 62, 0.24)',
+              }}>
+                {VINK_ICONS.plus('#fff')}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
+                <span style={{ fontFamily: V_FT, fontSize: 15, fontWeight: 700, color: KUN.ink }}>
+                  Escribir en el diario
+                </span>
+                <span style={{ fontFamily: V_FB, fontSize: 12, color: KUN.inkMuted, textAlign: 'center' }}>
+                  Añade una foto, nota, audio o usa una guía para continuar hoy
+                </span>
+              </div>
+            </button>
+          </div>
+        )}
 
         {/* Anchor para scroll al fondo */}
         <div ref={bottomRef}/>
@@ -3705,20 +3750,6 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
               </div>
             </div>
           )}
-          <button onClick={() => setFab(x => !x)} style={{
-            position:'absolute', right:20, bottom:100, zIndex:180,
-            width:52, height:52, borderRadius:'50%', border:'none',
-            background: fab ? KUN.ink : KUN.brick,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            cursor:'pointer',
-            boxShadow: fab ? '0 8px 20px rgba(42,35,32,0.28)' : '0 8px 22px rgba(240,116,62,0.36)',
-            transition:'background .18s',
-          }}>
-            {fab
-              ? <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M5 5L17 17M17 5L5 17" stroke="#fff" strokeWidth="2.4" strokeLinecap="round"/></svg>
-              : VINK_ICONS.plus('#fff')
-            }
-          </button>
         </>
       )}
 
