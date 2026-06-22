@@ -51,15 +51,15 @@
 <script src="kun-env.js?v=1"></script>
 <script type="text/babel" src="analytics.jsx?v=4"></script>
 <script type="text/babel" src="edu-shared.jsx?v=13"></script>
-<script type="text/babel" src="screen-auth.jsx?v=22"></script>
+<script type="text/babel" src="screen-auth.jsx?v=28"></script>
 <script type="text/babel" src="screen-tour.jsx?v=31"></script>
-<script type="text/babel" src="screen-lactario.jsx?v=12"></script>
+<script type="text/babel" src="screen-lactario.jsx?v=13"></script>
 <script type="text/babel" src="screen-baby-status.jsx?v=13"></script>
-<script type="text/babel" src="screen-home.jsx?v=39"></script>
+<script type="text/babel" src="screen-home.jsx?v=45"></script>
 <script type="text/babel" src="edu-camino.jsx?v=9"></script>
-<script type="text/babel" src="edu-personalizado.jsx?v=8"></script>
+<script type="text/babel" src="edu-personalizado.jsx?v=9"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=52"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=54"></script>
 <script type="text/babel" src="screen-comunidad.jsx?v=19"></script>
 <script type="text/babel" src="screen-capsula.jsx?v=13"></script>
 <script type="text/babel" src="screen-staff.jsx?v=10"></script>
@@ -72,11 +72,57 @@ const { useState } = React;
 
 const BABY_STATUS_BY_CHILD_KEY = 'kun_baby_status_by_child_v1';
 const LEGACY_BABY_STATUS_KEY = 'kun_baby_status_v1';
-const BABY_WEIGHT_BY_CHILD_KEY = 'kun_baby_weight_by_child_v1';
+const LEGACY_BABY_WEIGHT_BY_CHILD_KEY = 'kun_baby_weight_by_child_v1';
+const BABY_WEIGHT_BY_USER_KEY = 'kun_baby_weight_by_user_v1';
+const CAPSULE_PROGRESS_BY_CHILD_KEY = 'kun_capsule_progress_by_child_v1';
 const WELCOME_TOUR_ENABLED = true;
 
 function childStatusKey(child, fallback = 'child-1') {
   return child?.id || child?.rut || fallback;
+}
+
+function capsuleProgressUserKey(authData) {
+  if (!authData) return 'anon';
+  return authData.rut || authData.createdAt || authData.parentName || 'local-parent';
+}
+
+function loadCapsuleProgress(authData, childKey) {
+  try {
+    const all = JSON.parse(localStorage.getItem(CAPSULE_PROGRESS_BY_CHILD_KEY) || '{}');
+    return all[capsuleProgressUserKey(authData)]?.[childKey]
+      || authData?.capsuleProgressByChild?.[childKey]
+      || { completedCapsulas: [], quizResults: {} };
+  } catch {
+    return authData?.capsuleProgressByChild?.[childKey] || { completedCapsulas: [], quizResults: {} };
+  }
+}
+
+function saveCapsuleProgress(authData, childKey, progress) {
+  try {
+    const all = JSON.parse(localStorage.getItem(CAPSULE_PROGRESS_BY_CHILD_KEY) || '{}');
+    const userKey = capsuleProgressUserKey(authData);
+    const next = {
+      ...all,
+      [userKey]: {
+        ...(all[userKey] || {}),
+        [childKey]: {
+          completedCapsulas: Array.isArray(progress?.completedCapsulas) ? progress.completedCapsulas : [],
+          quizResults: progress?.quizResults || {},
+        },
+      },
+    };
+    localStorage.setItem(CAPSULE_PROGRESS_BY_CHILD_KEY, JSON.stringify(next));
+    if (authData && typeof window.KAuth !== 'undefined') {
+      const updatedAuth = {
+        ...authData,
+        capsuleProgressByChild: {
+          ...(authData.capsuleProgressByChild || {}),
+          [childKey]: next[userKey][childKey],
+        },
+      };
+      window.KAuth.save(updatedAuth);
+    }
+  } catch {}
 }
 
 function childHasStatus(status) {
@@ -113,6 +159,7 @@ function normalizeFamilyChildren(authData, clinicalBabies) {
       name: clinical?.babyName || child.name || child.babyName || (index === 0 ? authData?.babyName || '' : '') || `Bebé ${index + 1}`,
       sex: clinical?.sex || child.sex || '',
       weightGrams: child.weightGrams || '',
+      photo: child.photo || child.photoSrc || '',
       vitalStatus: clinical?.vitalStatus === 'deceased'
         ? 'deceased'
         : (child.vitalStatus === 'discharged' ? 'discharged' : (clinical?.vitalStatus || child.vitalStatus || 'hospitalized')),
@@ -131,11 +178,18 @@ function normalizeWeightEntry(entry) {
   return { date: entry?.date || todayISO(), grams };
 }
 
-function loadBabyWeightByChild(children = []) {
+function loadBabyWeightByChild(authData, children = []) {
+  const userKey = capsuleProgressUserKey(authData);
   let stored = {};
+  let legacyStored = {};
+  let migrated = false;
   try {
-    const parsed = JSON.parse(localStorage.getItem(BABY_WEIGHT_BY_CHILD_KEY) || '{}');
-    if (parsed && typeof parsed === 'object') stored = parsed;
+    const parsed = JSON.parse(localStorage.getItem(BABY_WEIGHT_BY_USER_KEY) || '{}');
+    if (parsed?.[userKey] && typeof parsed[userKey] === 'object') stored = parsed[userKey];
+  } catch {}
+  try {
+    const parsedLegacy = JSON.parse(localStorage.getItem(LEGACY_BABY_WEIGHT_BY_CHILD_KEY) || '{}');
+    if (!authData?.demoAccount && parsedLegacy && typeof parsedLegacy === 'object') legacyStored = parsedLegacy;
   } catch {}
   const seeded = { ...stored };
   children.forEach(child => {
@@ -145,10 +199,108 @@ function loadBabyWeightByChild(children = []) {
       seeded[key] = existing;
       return;
     }
+    const legacy = Array.isArray(legacyStored[key]) ? legacyStored[key].map(normalizeWeightEntry).filter(Boolean) : [];
+    if (legacy.length > 0) {
+      seeded[key] = legacy;
+      migrated = true;
+      return;
+    }
     const initial = normalizeWeightEntry({ date: todayISO(), grams: child?.weightGrams });
     if (initial) seeded[key] = [initial];
   });
+  if (migrated) saveBabyWeightByChild(authData, seeded);
   return seeded;
+}
+
+function saveBabyWeightByChild(authData, weightByChild) {
+  try {
+    const all = JSON.parse(localStorage.getItem(BABY_WEIGHT_BY_USER_KEY) || '{}');
+    localStorage.setItem(BABY_WEIGHT_BY_USER_KEY, JSON.stringify({
+      ...all,
+      [capsuleProgressUserKey(authData)]: weightByChild,
+    }));
+  } catch {}
+}
+
+function demoWeightHistory() {
+  return [
+    { date: '2026-06-08', grams: 1340 },
+    { date: '2026-06-09', grams: 1365 },
+    { date: '2026-06-10', grams: 1380 },
+    { date: '2026-06-11', grams: 1415 },
+    { date: '2026-06-12', grams: 1430 },
+    { date: '2026-06-13', grams: 1460 },
+    { date: '2026-06-14', grams: 1485 },
+    { date: '2026-06-15', grams: 1510 },
+    { date: '2026-06-16', grams: 1540 },
+    { date: '2026-06-17', grams: 1575 },
+    { date: '2026-06-18', grams: 1610 },
+    { date: '2026-06-19', grams: 1650 },
+    { date: '2026-06-20', grams: 1685 },
+    { date: '2026-06-21', grams: 1720 },
+  ];
+}
+
+function getDemoSeedData(authData, childKey) {
+  if (!authData?.demoAccount || !childKey) return null;
+  return {
+    babyStatusByChild: {
+      [childKey]: {
+        lugar: 'Intermedio B',
+        temperatura: 'Cuna abierta',
+        respiracion: 'Cánula nasal',
+        alimentacion: ['Sonda nasogástrica', 'Pecho directo'],
+        accesos: ['PICC'],
+        diagnosticos: ['Prematuridad', 'Dificultad respiratoria', 'Ictericia / fototerapia'],
+      },
+    },
+    babyWeightByChild: { [childKey]: demoWeightHistory() },
+    completedCapsulas: [11, 14, 21, 22, 1, 23, 4, 2, 33, 34],
+    quizResults: {
+      1: { isCorrect: true, selectedIndex: 1, correctIndex: 1, answeredAt: '2026-06-15T14:20:00' },
+      2: { isCorrect: true, selectedIndex: 0, correctIndex: 0, answeredAt: '2026-06-18T10:10:00' },
+      22: { isCorrect: false, selectedIndex: 2, correctIndex: 1, answeredAt: '2026-06-12T18:30:00' },
+    },
+    recordings: [
+      { author: 'Mamá', role: 'Mamá - Cuento para Sofía', color: KUN.rosehip, name: 'La nube valiente', contentType: 'story', contentTitle: 'La nube valiente', duration: '1:08', time: 'Hoy 20:12', readingSpeed: 'Normal' },
+      { author: 'Papá', role: 'Papá - Canción para Sofía', color: KUN.apple, name: 'Duérmete mi niña', contentType: 'cancion', contentTitle: 'Duérmete mi niña', duration: '0:52', time: 'Ayer 21:05' },
+      { author: 'Mamá', role: 'Mamá - Voz para Sofía', color: KUN.viola, name: 'Mensaje de la tarde', duration: '0:38', time: 'Hace 3 días' },
+    ],
+    lactarioReservation: ['10:30 - 11:10', '17:10 - 17:50'],
+    forumQuestions: [
+      {
+        id: 'demo-foro-1',
+        author: 'Camila',
+        role: 'Familia de Sofía',
+        category: 'Alimentación',
+        title: '¿Cómo sé si se cansó con el pecho?',
+        text: 'Hoy intentamos pecho directo y me gustaría saber qué señales mirar para no exigirla demasiado.',
+        time: 'Ayer',
+        likes: 4,
+        replies: 1,
+        fresh: true,
+        authorIcon: 'flower',
+        authorColor: '#F0743E',
+        authorBgColor: '#FFF5DC',
+        answers: [{ author: 'Equipo KUN', role: 'Personal médico', color: KUN.apple, text: 'Observa pausas largas, cambios de color, respiración agitada o sueño repentino. Si aparece, detengan y avisen al equipo.', time: 'Hoy', staff: true }],
+      },
+      {
+        id: 'demo-foro-2',
+        author: 'Camila',
+        role: 'Familia de Sofía',
+        category: 'Vínculo',
+        title: 'Ideas para hablarle cuando está dormida',
+        text: 'A veces no sé qué decirle cuando llego y está tranquila.',
+        time: 'Hace 5 días',
+        likes: 7,
+        replies: 3,
+        authorIcon: 'cloud',
+        authorColor: '#7AA8B8',
+        authorBgColor: '#E9EEF7',
+        answers: [],
+      },
+    ],
+  };
 }
 
 function PlaceholderScreen({ title, subtitle, icon }) {
@@ -332,12 +484,24 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lact
       name: c.name || '',
       sex: c.sex || '',
       weightGrams: c.weightGrams || '',
+      photo: c.photo || '',
     }));
   });
   const [reminder, setReminder] = React.useState(String(lactarioReminderMinutes || 60));
 
   const updateChild = (index, patch) => {
     setChildren(prev => prev.map((c, i) => (i === index ? { ...c, ...patch } : c)));
+  };
+  const handleChildPhoto = (index, file) => {
+    const finish = (photo) => updateChild(index, { photo });
+    if (typeof readBabyPhotoFile === 'function') {
+      readBabyPhotoFile(file, finish);
+      return;
+    }
+    if (!file?.type?.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => finish(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const handleSave = () => {
@@ -348,6 +512,7 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lact
       name: (c.name || '').trim() || `Bebé ${i + 1}`,
       sex: c.sex || '',
       weightGrams: c.weightGrams ? Math.max(0, parseInt(c.weightGrams, 10) || 0) : '',
+      photo: c.photo || '',
     }));
     onSave({
       parentName: parentName.trim(),
@@ -499,6 +664,50 @@ function SettingsPanel({ authData, onSave, onClose, onLogout, onReplayTour, lact
                   Hijo/a {index + 1}
                 </div>
               )}
+              <div>
+                <label style={labelStyle}>FOTO DEL BEBÉ</label>
+                <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
+                  <label style={{
+                    width: 72, height: 72, borderRadius: '50%',
+                    overflow:'hidden', flexShrink:0,
+                    border:`1.5px dashed ${KUN.brick}`,
+                    background: KUN.cream,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    cursor:'pointer',
+                  }}>
+                    {child.photo ? (
+                      <img src={child.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    ) : (
+                      <span style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, fontFamily:'Quicksand, sans-serif', fontSize:10.5, fontWeight:800, color:KUN.brick, textAlign:'center', lineHeight:1.1 }}>
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="none">
+                          <path d="M4 8.2C4 7.1 4.9 6.2 6 6.2H8.2L9.8 4.3H14.2L15.8 6.2H18C19.1 6.2 20 7.1 20 8.2V17C20 18.1 19.1 19 18 19H6C4.9 19 4 18.1 4 17V8.2Z" stroke={KUN.brick} strokeWidth="1.8" strokeLinejoin="round"/>
+                          <circle cx="12" cy="12.6" r="3.6" stroke={KUN.brick} strokeWidth="1.8"/>
+                        </svg>
+                        <span>Subir<br/>foto</span>
+                      </span>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display:'none' }}
+                      onChange={e => { handleChildPhoto(index, e.target.files?.[0]); e.target.value = ''; }}
+                    />
+                  </label>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:'Poppins, sans-serif', fontSize:12.5, color:KUN.inkSoft, lineHeight:1.45 }}>
+                      Esta será la foto que verás en Inicio para este bebé.
+                    </div>
+                    {child.photo && (
+                      <button
+                        onClick={() => updateChild(index, { photo: '' })}
+                        style={{ marginTop:7, border:'none', background:'transparent', padding:0, color:KUN.brick, fontFamily:'Quicksand, sans-serif', fontSize:12.5, fontWeight:700, cursor:'pointer' }}
+                      >
+                        Quitar foto
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
               <div>
                 <label style={labelStyle}>NOMBRE</label>
                 <input
@@ -707,7 +916,7 @@ function Prototype() {
   const [quizResults, setQuizResults] = useState({});
   const [activeChildId, setActiveChildId] = useState(() => authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1');
   const [babyStatusByChild, setBabyStatusByChild] = useState(() => loadBabyStatusByChild(authData?.activeChildId || authData?.children?.[0]?.id || authData?.rut || 'child-1'));
-  const [babyWeightByChild, setBabyWeightByChild] = useState(() => loadBabyWeightByChild(authData?.children || []));
+  const [babyWeightByChild, setBabyWeightByChild] = useState(() => loadBabyWeightByChild(authData, authData?.children || []));
   const [babyStatusEditOpen, setBabyStatusEditOpen] = useState(false);
   const [babySummaryOpen, setBabySummaryOpen] = useState(false);
   const [forumQuestions, setForumQuestions] = useState([]);
@@ -748,11 +957,8 @@ function Prototype() {
   const familyChildren = normalizeFamilyChildren(authData, clinicalBabies);
   React.useEffect(() => {
     if (!authData || authData.role === 'staff') return;
-    setBabyWeightByChild(prev => {
-      const seeded = loadBabyWeightByChild(familyChildren);
-      return { ...seeded, ...prev };
-    });
-  }, [authData?.rut, authData?.children?.length]);
+    setBabyWeightByChild(loadBabyWeightByChild(authData, familyChildren));
+  }, [authData?.rut, authData?.createdAt, authData?.children?.length]);
   const activeChild = familyChildren.find(child => child.id === activeChildId) || familyChildren[0] || null;
   const primaryChild = familyChildren[0] || null;
   const activeChildKey = childStatusKey(activeChild, activeChildId || authData?.rut || 'child-1');
@@ -799,6 +1005,43 @@ function Prototype() {
   const childLabel = primaryChild?.sex === 'f' ? 'hija' : 'hijo';
   const parentRecommendations = clinicalRecommendations[primaryChild?.rut || authData?.rut] || [];
 
+  React.useEffect(() => {
+    if (!authData?.demoAccount || !activeChildKey) return;
+    const demo = getDemoSeedData(authData, activeChildKey);
+    if (!demo) return;
+    setBabyStatusByChild(prev => {
+      const next = { ...demo.babyStatusByChild, ...prev };
+      if (!prev[activeChildKey]) {
+        try { localStorage.setItem(BABY_STATUS_BY_CHILD_KEY, JSON.stringify(next)); } catch {}
+      }
+      return next;
+    });
+    setBabyWeightByChild(prev => {
+      const hasHistory = Array.isArray(prev[activeChildKey]) && prev[activeChildKey].length > 1;
+      const next = hasHistory ? prev : { ...prev, ...demo.babyWeightByChild };
+      if (!hasHistory) {
+        saveBabyWeightByChild(authData, next);
+      }
+      return next;
+    });
+    if (!completedCapsulas.length) setCompletedCapsulas(demo.completedCapsulas);
+    if (!Object.keys(quizResults || {}).length) setQuizResults(demo.quizResults);
+    if (!recordings.length) setRecordings(demo.recordings);
+    if (!lactarioReservation.length) setLactarioReservation(demo.lactarioReservation);
+    if (!forumQuestions.length) setForumQuestions(demo.forumQuestions);
+    saveCapsuleProgress(authData, activeChildKey, {
+      completedCapsulas: completedCapsulas.length ? completedCapsulas : demo.completedCapsulas,
+      quizResults: Object.keys(quizResults || {}).length ? quizResults : demo.quizResults,
+    });
+  }, [authData?.demoAccount, activeChildKey]);
+
+  React.useEffect(() => {
+    if (!authData || authData.role === 'staff' || !activeChildKey) return;
+    const progress = loadCapsuleProgress(authData, activeChildKey);
+    setCompletedCapsulas(Array.isArray(progress.completedCapsulas) ? progress.completedCapsulas : []);
+    setQuizResults(progress.quizResults || {});
+  }, [authData?.rut, authData?.createdAt, activeChildKey]);
+
   const setLactarioReminderMinutes = (minutes) => {
     setLactarioReminderMinutesState(minutes);
     try { localStorage.setItem('kun_lactario_reminder_minutes_v1', String(minutes)); } catch {}
@@ -815,7 +1058,7 @@ function Prototype() {
       const withoutToday = current.filter(entry => entry.date !== nextEntry.date);
       const nextHistory = [...withoutToday, nextEntry].sort((a, b) => a.date.localeCompare(b.date));
       const next = { ...prev, [activeChildKey]: nextHistory };
-      try { localStorage.setItem(BABY_WEIGHT_BY_CHILD_KEY, JSON.stringify(next)); } catch {}
+      saveBabyWeightByChild(authData, next);
       return next;
     });
     const currentChildren = Array.isArray(authData?.children) && authData.children.length ? authData.children : familyChildren;
@@ -886,7 +1129,7 @@ function Prototype() {
     const incoming = Array.isArray(editedChildren) ? editedChildren : [];
     const updatedChildren = incoming.map((child, i) => {
       const existing = familyChildren.find(c => c.id === child.id) || {};
-      return { ...existing, id: child.id || `child-${i + 1}`, name: child.name, sex: child.sex, weightGrams: child.weightGrams || existing.weightGrams || '' };
+      return { ...existing, id: child.id || `child-${i + 1}`, name: child.name, sex: child.sex, weightGrams: child.weightGrams || existing.weightGrams || '', photo: child.photo || existing.photo || '' };
     });
     const activeMatch = updatedChildren.find(c => c.id === activeChild?.id) || updatedChildren[0];
     const updated = {
@@ -916,6 +1159,7 @@ function Prototype() {
     });
     const targetChild = pendingStatusChild || activeChild;
     const targetKey = childStatusKey(targetChild, activeChildKey);
+    const statusMarksDischarged = status?.lugar === 'Dado de alta' || status?.lugar === 'Alta';
     const next = { ...babyStatusByChild, [targetKey]: status };
     const nextDoneByChild = { ...babyStatusDoneByChild, [targetKey]: true };
     const nextPendingChild = familyChildren.find(child => {
@@ -926,8 +1170,20 @@ function Prototype() {
     setBabyStatusByChild(next);
     try { localStorage.setItem(BABY_STATUS_BY_CHILD_KEY, JSON.stringify(next)); } catch {}
     setActiveChildId(nextActiveChildId);
+    const currentChildren = Array.isArray(authData?.children) && authData.children.length ? authData.children : familyChildren;
+    const updatedChildren = currentChildren.map(child => (
+      childStatusKey(child) === targetKey
+        ? {
+            ...child,
+            vitalStatus: statusMarksDischarged ? 'discharged' : 'hospitalized',
+            dischargedAt: statusMarksDischarged ? (child.dischargedAt || Date.now()) : undefined,
+            dischargeMarkedBy: statusMarksDischarged ? 'status_summary' : undefined,
+          }
+        : child
+    ));
     const updated = {
       ...authData,
+      children: updatedChildren,
       babyStatusDoneByChild: nextDoneByChild,
       babyStatusDone: !nextPendingChild,
       activeChildId: nextActiveChildId,
@@ -1099,7 +1355,22 @@ function Prototype() {
     if (capsuleSource.tab === 'edu') setEduSub(capsuleSource.sub);
   };
   const markCapsulaCompleted = (id = capsuleId) => {
-    setCompletedCapsulas(prev => [id, ...prev.filter(doneId => doneId !== id)]);
+    setCompletedCapsulas(prev => {
+      const nextCompleted = prev.includes(id) ? prev : [...prev, id];
+      const progress = {
+        completedCapsulas: nextCompleted,
+        quizResults,
+      };
+      saveCapsuleProgress(authData, activeChildKey, progress);
+      setAuthData(prevAuth => prevAuth ? ({
+        ...prevAuth,
+        capsuleProgressByChild: {
+          ...(prevAuth.capsuleProgressByChild || {}),
+          [activeChildKey]: progress,
+        },
+      }) : prevAuth);
+      return nextCompleted;
+    });
   };
   const completeCapsula = () => {
     const cap = window.CAP_LIBRARY?.[capsuleId];
@@ -1154,13 +1425,28 @@ function Prototype() {
       selected_index: result?.selectedIndex,
       correct_index: result?.correctIndex,
     });
-    setQuizResults(prev => ({
-      ...prev,
-      [capsuleId]: {
-        ...result,
-        answeredAt: new Date().toISOString(),
-      },
-    }));
+    setQuizResults(prev => {
+      const next = {
+        ...prev,
+        [capsuleId]: {
+          ...result,
+          answeredAt: new Date().toISOString(),
+        },
+      };
+      const progress = {
+        completedCapsulas,
+        quizResults: next,
+      };
+      saveCapsuleProgress(authData, activeChildKey, progress);
+      setAuthData(prevAuth => prevAuth ? ({
+        ...prevAuth,
+        capsuleProgressByChild: {
+          ...(prevAuth.capsuleProgressByChild || {}),
+          [activeChildKey]: progress,
+        },
+      }) : prevAuth);
+      return next;
+    });
   };
 
   const openNotificationItem = (item) => {
@@ -1194,6 +1480,7 @@ function Prototype() {
       return;
     }
     if (target.tab === 'ucin' || target.lactario) {
+      setLactarioOpen(!!target.lactario);
       setTab('ucin');
       return;
     }
@@ -1230,9 +1517,14 @@ function Prototype() {
       birthDate={authData?.birthDate}
       gestWeeks={authData?.gestWeeks}
       gestDays={authData?.gestDays}
+      babyPhoto={activeChild?.photo || ''}
+      onEditBabyPhoto={() => setSettingsOpen(true)}
       lactarioReservation={lactarioReservation}
       completedCapsulas={completedCapsulas}
-      onOpenLactario={() => setLactarioOpen(true)}
+      onOpenLactario={() => {
+        setLactarioOpen(true);
+        setTab('ucin');
+      }}
       onCancelLactario={cancelLactarioSlot}
       babyStatus={babyStatus}
       babyWeightHistory={babyWeightHistory}
@@ -1252,6 +1544,8 @@ function Prototype() {
       view={bondView} setView={setBondView}
       recordings={recordings} addRecording={addRecording}
       babyName={primaryBabyName}
+      demoAccount={!!authData?.demoAccount}
+      diaryStorageKey={`kun_diary_entries_v1_${capsuleProgressUserKey(authData)}_${primaryChildKey}`}
       canEditDiary={authData.role === 'parent' && ['mama', 'papa', 'parent'].includes(authData.familyRole || 'mama')}
     />;
   } else if (tab === 'ucin') {
@@ -1261,6 +1555,8 @@ function Prototype() {
       onCancel={cancelLactarioSlot}
       reminderMinutes={lactarioReminderMinutes}
       isDischarged={activeChildIsDischarged}
+      initialView={lactarioOpen ? 'lactario' : 'main'}
+      onLactarioBack={() => setLactarioOpen(false)}
     />;
   } else {
     body = <ScreenComunidad

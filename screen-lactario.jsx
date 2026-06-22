@@ -769,8 +769,12 @@ function UcinPostAltaView() {
   );
 }
 
-function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60, isDischarged = false }) {
-  const [view, setView] = React.useState('main');
+function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60, isDischarged = false, initialView = 'main', onLactarioBack }) {
+  const [view, setView] = React.useState(initialView || 'main');
+
+  React.useEffect(() => {
+    setView(initialView || 'main');
+  }, [initialView]);
 
   if (isDischarged) {
     return <UcinPostAltaView />;
@@ -785,7 +789,10 @@ function ScreenUCIN({ reservation, onReserve, onCancel, reminderMinutes = 60, is
           onCancel={onCancel}
           reminderMinutes={reminderMinutes}
           title="Reservas al lactario"
-          onBack={() => setView('main')}
+          onBack={() => {
+            setView('main');
+            onLactarioBack && onLactarioBack();
+          }}
         />
       </div>
     );

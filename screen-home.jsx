@@ -227,7 +227,26 @@ function AgeStat({ label, value, onClick }) {
   );
 }
 
-function BabyHero({ babyName = 'Sofía', birthDate, gestWeeks, gestDays, onOpenSummary }) {
+function BabyPhotoPlaceholder({ compact = false }) {
+  return (
+    <div style={{
+      width:'100%', height:'100%', display:'flex', flexDirection:'column',
+      alignItems:'center', justifyContent:'center', gap: compact ? 2 : 4,
+      background:'rgba(255,255,255,0.54)',
+    }}>
+      <svg width={compact ? 25 : 31} height={compact ? 25 : 31} viewBox="0 0 24 24" fill="none">
+        <path d="M4 8.2C4 7.1 4.9 6.2 6 6.2H8.2L9.8 4.3H14.2L15.8 6.2H18C19.1 6.2 20 7.1 20 8.2V17C20 18.1 19.1 19 18 19H6C4.9 19 4 18.1 4 17V8.2Z" stroke={HC.brick} strokeWidth="1.8" strokeLinejoin="round"/>
+        <circle cx="12" cy="12.6" r="3.6" stroke={HC.brick} strokeWidth="1.8"/>
+      </svg>
+      <span style={{
+        fontFamily: HF_T, fontSize: compact ? 8.5 : 10,
+        fontWeight: 800, color: HC.ink, lineHeight: 1,
+      }}>Subir foto</span>
+    </div>
+  );
+}
+
+function BabyHero({ babyName = 'Sofía', babyPhoto, birthDate, gestWeeks, gestDays, onOpenSummary, onEditPhoto }) {
   const [ageInfo, setAgeInfo] = React.useState(null);
   const ages = computeBabyAges(birthDate, gestWeeks, gestDays);
   const chronoText = ages ? formatAgeMWD(ages.chrono) : 'Sin fecha';
@@ -272,16 +291,21 @@ function BabyHero({ babyName = 'Sofía', birthDate, gestWeeks, gestDays, onOpenS
         {/* Baby profile row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
           {/* Circular photo */}
-          <div style={{
+          <button onClick={onEditPhoto} title="Editar foto del bebé" style={{
             width: 76, height: 76, borderRadius: '50%', flexShrink: 0,
             overflow: 'hidden',
             boxShadow: '0 0 0 3px rgba(255,255,255,0.7)',
+            border:'none', padding:0, background:'rgba(255,255,255,0.32)', cursor:'pointer',
           }}>
-            <img src="guaguas/guagua1.jpg" alt={babyName} style={{
-              width: '100%', height: '100%',
-              objectFit: 'cover', objectPosition: 'center 30%',
-            }}/>
-          </div>
+            {babyPhoto ? (
+              <img src={babyPhoto} alt={babyName} style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'center 30%',
+              }}/>
+            ) : (
+              <BabyPhotoPlaceholder />
+            )}
+          </button>
 
           {/* Name + age pills stacked vertically */}
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -1288,7 +1312,7 @@ function BereavementResourcesBlock() {
   );
 }
 
-function PostDischargeHome({ babyName, childrenList, activeChildId, onSelectChild, onGoToCapsula }) {
+function PostDischargeHome({ babyName, childrenList, activeChildId, onSelectChild, onGoToCapsula, onEditStatus }) {
   const name = babyName || 'tu bebe';
   return (
     <div style={{ position: 'relative', zIndex: 1 }}>
@@ -1334,6 +1358,21 @@ function PostDischargeHome({ babyName, childrenList, activeChildId, onSelectChil
         <div style={{ fontFamily: HF_B, fontSize: 13, color: HC.ink2, lineHeight: 1.6, marginTop: 8 }}>
           Este espacio cambia para acompanarlos fuera del hospital. Dejamos atras lactario y SEDILE, y priorizamos controles, rutinas en casa, signos de alarma y cuidado familiar.
         </div>
+        <button onClick={onEditStatus} style={{
+          width: '100%',
+          border: `1.5px solid ${HC.brick}`,
+          background: '#fff',
+          color: HC.brick,
+          borderRadius: 999,
+          padding: '12px 14px',
+          fontFamily: HF_T,
+          fontSize: 13.5,
+          fontWeight: 800,
+          cursor: 'pointer',
+          marginTop: 14,
+        }}>
+          Corregir ubicacion del bebe
+        </button>
       </div>
 
       <div style={{ margin: '24px 22px 0' }}>
@@ -1435,7 +1474,15 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
   const bottleLevel = Math.max(0, Math.min(5, Math.round((pct / 100) * 5)));
 
   const slots = window.LACTARIO_SLOTS || [];
-  const nextSlot = slots.find(s => s.used < 4);
+  const slotStartMinutes = (time = '') => {
+    const match = time.match(/^(\d{2}):(\d{2})/);
+    if (!match) return 0;
+    return Number(match[1]) * 60 + Number(match[2]);
+  };
+  const now = new Date();
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const availableSlots = slots.filter(s => s.used < 4);
+  const nextSlot = availableSlots.find(s => slotStartMinutes(s.time) >= nowMinutes) || availableSlots[0];
   const reservations = Array.isArray(reservation) ? reservation : (reservation ? [reservation] : []);
   const hasReservation = reservations.length > 0;
   const displayTime = hasReservation ? reservations[0] : (nextSlot ? nextSlot.time : '—');
@@ -1634,14 +1681,82 @@ function CapsuleCard({ topic, title, mins, tag, onClick, completed }) {
 }
 
 // ─── Public entry ──────────────────────────────────────────────────────────────
+function normalizeRecommendationText(value) {
+  return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function seededRecommendationIndex(seed, length) {
+  if (!length) return 0;
+  let hash = 0;
+  const text = String(seed || '');
+  for (let i = 0; i < text.length; i += 1) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) % length;
+}
+
+function getDailyCapsulePick(capsules, seed, fallback = null) {
+  const list = (capsules || []).filter(Boolean);
+  if (!list.length) return fallback;
+  return list[seededRecommendationIndex(seed, list.length)] || list[0] || fallback;
+}
+
+function capsuleHasTopic(capsule, needle) {
+  const target = normalizeRecommendationText(needle);
+  return (capsule?.topics || [capsule?.topic]).some(topic => normalizeRecommendationText(topic).includes(target));
+}
+
+function getConditionCapsuleCandidates(status, catalog) {
+  const values = [
+    status?.lugar,
+    status?.temperatura,
+    status?.respiracion,
+    ...(Array.isArray(status?.alimentacion) ? status.alimentacion : []),
+    ...(Array.isArray(status?.accesos) ? status.accesos : []),
+    ...(Array.isArray(status?.diagnosticos) ? status.diagnosticos : []),
+  ].map(normalizeRecommendationText);
+  const has = (...needles) => values.some(value => needles.some(needle => value.includes(needle)));
+  const ids = [];
+  if (has('sonda')) ids.push(2, 3, 35);
+  if (has('pecho', 'mamadera', 'alimentacion', 'nutricion')) ids.push(6, 34, 35, 42, 54);
+  if (has('cpap', 'canula', 'ventilacion', 'respiratoria', 'oxigen')) ids.push(21, 22, 25, 53);
+  if (has('uci', 'intensivo', 'recien ingresado')) ids.push(11, 15, 21, 22);
+  if (has('intermedio a', 'intermedio b', 'intermedio')) ids.push(31, 32, 33, 34, 35);
+  if (has('incubadora', 'cuna de calor', 'temperatura')) ids.push(15, 23, 25);
+  if (has('picc', 'cateter', 'via periferica', 'umbilical', 'venoso central')) ids.push(15, 22, 24, 43);
+  if (has('prematuridad', 'premat')) ids.push(25, 41, 52);
+  if (has('ictericia', 'fototerapia', 'sepsis', 'cardiopatia', 'enterocolitis', 'hipoglicemia')) ids.push(24, 25, 43, 52, 53);
+  const byId = Array.from(new Set(ids)).map(id => catalog.find(cap => cap.id === id)).filter(Boolean);
+  if (byId.length) return byId;
+  return catalog.filter(cap => capsuleHasTopic(cap, 'cuidado') || capsuleHasTopic(cap, 'lactancia') || capsuleHasTopic(cap, 'orientacion'));
+}
+
+function getHomeRecommendedCapsules({ babyStatus, activeChildId }) {
+  const catalog = Array.isArray(window.CAPSULAS) ? window.CAPSULAS : [];
+  const today = new Date().toISOString().slice(0, 10);
+  const childSeed = activeChildId || 'child';
+  const bondOptions = catalog.filter(cap => capsuleHasTopic(cap, 'vinculo') || capsuleHasTopic(cap, 'nculo'));
+  const bond = getDailyCapsulePick(bondOptions, `${today}-${childSeed}-bond`, catalog.find(cap => cap.id === 1));
+  const conditionOptions = getConditionCapsuleCandidates(babyStatus || {}, catalog).filter(cap => !bond || cap.id !== bond.id);
+  const condition = getDailyCapsulePick(conditionOptions, `${today}-${childSeed}-condition`, catalog.find(cap => cap.id === 21 || cap.id === 2));
+  return [
+    bond && { ...bond, tag: 'Vínculo diario' },
+    condition && { ...condition, tag: babyStatus?.lugar ? 'Según su estado' : 'Recomendado' },
+  ].filter(Boolean);
+}
+
 function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
                        children: childrenList, activeChildId, onSelectChild,
                        activeChildVitalStatus, onMarkDischarged,
-                       birthDate, gestWeeks, gestDays,
+                       birthDate, gestWeeks, gestDays, babyPhoto, onEditBabyPhoto,
                        lactarioReservation, onOpenLactario, onCancelLactario,
                        completedCapsulas, babyStatus, babyWeightHistory, onSaveBabyWeight, onEditBabyStatus,
                        onGoToBond, onOpenSummary }) {
   const completed = completedCapsulas || [];
+  const recommendedCapsules = getHomeRecommendedCapsules({ babyStatus, activeChildId });
+  const firstRecommended = recommendedCapsules[0] || {};
+  const secondRecommended = recommendedCapsules[1] || {};
   const bName = babyName || 'Sofía';
   const isBereavement = activeChildVitalStatus === 'deceased';
   const isDischarged = activeChildVitalStatus === 'discharged';
@@ -1666,16 +1781,18 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         {isBereavement ? (
           <BereavementHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
         ) : isDischarged ? (
-          <PostDischargeHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} onGoToCapsula={onGoToCapsula} />
+          <PostDischargeHome babyName={bName} childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} onGoToCapsula={onGoToCapsula} onEditStatus={onEditBabyStatus} />
         ) : (
           <>
             <HomeGreeting parentName={parentName} />
             <BabyHero
               babyName={bName}
+              babyPhoto={babyPhoto}
               birthDate={birthDate}
               gestWeeks={gestWeeks}
               gestDays={gestDays}
               onOpenSummary={onOpenSummary}
+              onEditPhoto={onEditBabyPhoto}
             />
             {/* Widget de Actividad Diaria */}
             <div style={{ margin: '16px 22px 0' }}>
@@ -1690,7 +1807,6 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
               onOpen={onOpenLactario}
               onCancel={onCancelLactario}
             />
-            <DischargePrompt onConfirm={onMarkDischarged} />
           </>
         )}
         {!isBereavement && !isDischarged && (
@@ -1705,19 +1821,19 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         <div style={{ padding: '0 22px', boxSizing: 'border-box' }}>
           <CapsuleCard
             topic="Vínculo y cuidados cotidianos"
-            title="El apego en la UCIN"
-            mins="5 min"
-            tag="Nuevo para ti"
-            completed={completed.includes(1)}
-            onClick={() => onGoToCapsula ? onGoToCapsula(1) : onGoToEdu()}
+            title={firstRecommended.title || "El apego en la UCIN"}
+            mins={firstRecommended.dur || "5 min"}
+            tag={firstRecommended.tag || "Vínculo diario"}
+            completed={completed.includes(firstRecommended.id || 1)}
+            onClick={() => onGoToCapsula ? onGoToCapsula(firstRecommended.id || 1) : onGoToEdu()}
           />
           <CapsuleCard
             topic="Lactancia y alimentación"
-            title="Sonda al dedo"
-            mins="5 min"
-            tag="Recomendado"
-            completed={completed.includes(2)}
-            onClick={() => onGoToCapsula ? onGoToCapsula(2) : onGoToEdu()}
+            title={secondRecommended.title || "Sonda al dedo"}
+            mins={secondRecommended.dur || "5 min"}
+            tag={secondRecommended.tag || "Según su estado"}
+            completed={completed.includes(secondRecommended.id || 2)}
+            onClick={() => onGoToCapsula ? onGoToCapsula(secondRecommended.id || 2) : onGoToEdu()}
           />
         </div>
           </>

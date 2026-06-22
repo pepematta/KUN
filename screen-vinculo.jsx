@@ -3534,14 +3534,25 @@ function CreateEntry({ onBack, onSave }) {
   );
 }
 
-function DiaryPrototype({ onBack, canEditDiary = true }) {
+function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diaryStorageKey = DIARY_FEED_KEY }) {
   const [entries, setEntries] = React.useState(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem(DIARY_FEED_KEY) || '[]');
-      const storedIds = new Set(stored.map(e => e.id));
-      const seeds = DIARY_FEED_SEED.filter(s => !storedIds.has(s.id));
-      return [...stored, ...seeds];
-    } catch { return DIARY_FEED_SEED; }
+      const stored = JSON.parse(localStorage.getItem(diaryStorageKey) || '[]');
+      let baseEntries = Array.isArray(stored) ? stored : [];
+      if (!demoAccount && diaryStorageKey !== DIARY_FEED_KEY && baseEntries.length === 0) {
+        const legacy = JSON.parse(localStorage.getItem(DIARY_FEED_KEY) || '[]');
+        const legacyEntries = Array.isArray(legacy)
+          ? legacy.filter(e => e && !String(e.id || '').startsWith('df'))
+          : [];
+        if (legacyEntries.length > 0) {
+          baseEntries = legacyEntries;
+          try { localStorage.setItem(diaryStorageKey, JSON.stringify(legacyEntries)); } catch {}
+        }
+      }
+      const storedIds = new Set(baseEntries.map(e => e.id));
+      const seeds = demoAccount ? DIARY_FEED_SEED.filter(s => !storedIds.has(s.id)) : [];
+      return [...baseEntries, ...seeds];
+    } catch { return demoAccount ? DIARY_FEED_SEED : []; }
   });
 
   const [fab,   setFab]   = React.useState(false);
@@ -3558,7 +3569,7 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
   const persist = (next) => {
     setEntries(next);
     try {
-      localStorage.setItem(DIARY_FEED_KEY, JSON.stringify(next.filter(e => !String(e.id).startsWith('df'))));
+      localStorage.setItem(diaryStorageKey, JSON.stringify(next.filter(e => !String(e.id).startsWith('df'))));
     } catch {}
   };
 
@@ -3795,8 +3806,8 @@ function DiaryPrototype({ onBack, canEditDiary = true }) {
     </div>
   );
 }
-function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía' }) {
-  if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} />;
+function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía', demoAccount = false, diaryStorageKey = DIARY_FEED_KEY }) {
+  if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} demoAccount={demoAccount} diaryStorageKey={diaryStorageKey} />;
   if (view === 'activities' || view === 'activities-cuentos' || view === 'activities-canciones' || view === 'activities-musica') {
     const tab = view.startsWith('activities-') ? view.replace('activities-', '') : 'cuentos';
     return <ActividadesGuagua initialTab={tab} onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;

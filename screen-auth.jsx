@@ -200,6 +200,22 @@ function RoleSelectView({ onPick, onTerms }) {
           </div>
         </div>
 
+        <button type="button" onClick={() => onPick('admin')} style={{
+          alignSelf: 'center',
+          marginTop: 4,
+          border: `1px solid ${KUN.hair}`,
+          background: 'rgba(255,255,255,0.72)',
+          color: KUN.inkMuted,
+          borderRadius: 999,
+          padding: '8px 14px',
+          fontFamily: A_FB,
+          fontSize: 12,
+          fontWeight: 700,
+          cursor: 'pointer',
+        }}>
+          Administracion
+        </button>
+
         <div style={{
           marginTop: 10, padding: '14px 4px', textAlign: 'center',
           fontFamily: A_FB, fontSize: 12, color: KUN.inkMuted, fontWeight: 400, lineHeight: 1.5,
@@ -362,6 +378,64 @@ function WorkerLoginView({ onBack, onSubmit }) {
   );
 }
 
+function AdminLoginView({ onBack, onDemo }) {
+  const [pass, setPass] = React.useState('');
+  const [err, setErr] = React.useState('');
+  const validPass = 'kun-admin';
+  const handle = () => {
+    if (pass.trim() !== validPass) {
+      setErr('Clave incorrecta.');
+      return;
+    }
+    setErr('');
+    onDemo && onDemo();
+  };
+  return (
+    <>
+      <AuthShapes/>
+      <div style={{ position:'relative', zIndex: 1 }}>
+        <AuthBack onBack={onBack} />
+      </div>
+      <div style={{ position:'relative', zIndex: 1, padding: '18px 28px 0' }}>
+        <div style={{ fontFamily: A_FT, fontSize: 26, fontWeight: 700, color: KUN.ink, letterSpacing: -0.5, lineHeight: 1.15 }}>
+          Administrador
+        </div>
+        <div style={{ marginTop: 8, fontFamily: A_FB, fontSize: 13.5, color: KUN.inkSoft, fontWeight: 400, lineHeight: 1.5 }}>
+          Acceso interno para revisar la cuenta demo con datos de prueba.
+        </div>
+      </div>
+      <div style={{ position:'relative', zIndex: 1, padding: '26px 28px 0' }}>
+        <div style={labelStyle}>Clave de administrador</div>
+        <input
+          type="password"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handle()}
+          placeholder="Clave interna"
+          autoFocus
+          style={inputStyle}
+        />
+        {err && (
+          <div style={{ marginTop: 12, fontFamily: A_FB, fontSize: 12.5, color: '#D14B3A', fontWeight: 500 }}>{err}</div>
+        )}
+        <div style={{
+          marginTop: 14, padding: '12px 14px', borderRadius: 16,
+          background: KUN.cardSoft, fontFamily: A_FB, fontSize: 12,
+          color: KUN.inkSoft, lineHeight: 1.45,
+        }}>
+          Esta entrada no crea una cuenta real de familia ni mezcla datos con usuarios de testeo.
+        </div>
+      </div>
+      <div style={{ flex: 1 }}/>
+      <div style={{ position:'relative', zIndex: 1, padding: '20px 28px 36px' }}>
+        <PrimaryButton onClick={handle} disabled={!pass.trim()}>
+          Abrir cuenta demo
+        </PrimaryButton>
+      </div>
+    </>
+  );
+}
+
 const PARENTESCO_OPTIONS = [
   { value: 'mama', label: 'Mamá' },
   { value: 'papa', label: 'Papá' },
@@ -369,6 +443,27 @@ const PARENTESCO_OPTIONS = [
 ];
 
 const MAX_CHILDREN = 4;
+
+function readBabyPhotoFile(file, onReady) {
+  if (!file?.type?.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const maxSide = 720;
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      onReady(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = () => onReady(reader.result);
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
 
 function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName, initialChildren, initialBirthDate, initialGestWeeks, initialGestDays }) {
   const [familyRole, setFamilyRole] = React.useState(initialFamilyRole || 'mama');
@@ -389,8 +484,11 @@ function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName
   const updateChild = (index, patch) => {
     setChildren(prev => prev.map((child, i) => i === index ? { ...child, ...patch } : child));
   };
+  const handleChildPhoto = (index, file) => {
+    readBabyPhotoFile(file, (photo) => updateChild(index, { photo }));
+  };
   const addChild = () => {
-    setChildren(prev => prev.length >= MAX_CHILDREN ? prev : [...prev, { id: makeChildId(prev.length), name: '', sex: '', weightGrams: '' }]);
+    setChildren(prev => prev.length >= MAX_CHILDREN ? prev : [...prev, { id: makeChildId(prev.length), name: '', sex: '', weightGrams: '', photo: '' }]);
   };
   const removeChild = (index) => {
     setChildren(prev => prev.length <= 1 ? prev : prev.filter((_, i) => i !== index));
@@ -409,6 +507,7 @@ function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName
       name: (child.name || '').trim(),
       sex: child.sex || '',
       weightGrams: child.weightGrams ? Math.max(0, parseInt(child.weightGrams, 10) || 0) : '',
+      photo: child.photo || '',
     }));
     onContinue({
       familyRole, parentName: parentName.trim(), birthDate,
@@ -554,6 +653,50 @@ function BabyInfoView({ onContinue, onBack, initialFamilyRole, initialParentName
                   </button>
                 )}
               </div>
+              <div style={{ marginBottom: 12 }}>
+                <div style={labelStyle}>Foto del bebé</div>
+                <div style={{ display:'flex', alignItems:'center', gap: 12 }}>
+                  <label style={{
+                    width: 72, height: 72, borderRadius:'50%',
+                    overflow:'hidden', flexShrink:0,
+                    border:`1.5px dashed ${KUN.brick}`,
+                    background: KUN.cream,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    cursor:'pointer',
+                  }}>
+                    {children[index]?.photo ? (
+                      <img src={children[index].photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    ) : (
+                      <span style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, fontFamily:A_FT, fontSize:10.5, fontWeight:800, color:KUN.brick, textAlign:'center', lineHeight:1.1 }}>
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="none">
+                          <path d="M4 8.2C4 7.1 4.9 6.2 6 6.2H8.2L9.8 4.3H14.2L15.8 6.2H18C19.1 6.2 20 7.1 20 8.2V17C20 18.1 19.1 19 18 19H6C4.9 19 4 18.1 4 17V8.2Z" stroke={KUN.brick} strokeWidth="1.8" strokeLinejoin="round"/>
+                          <circle cx="12" cy="12.6" r="3.6" stroke={KUN.brick} strokeWidth="1.8"/>
+                        </svg>
+                        <span>Subir<br/>foto</span>
+                      </span>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display:'none' }}
+                      onChange={e => { handleChildPhoto(index, e.target.files?.[0]); e.target.value = ''; }}
+                    />
+                  </label>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:A_FB, fontSize:12.5, color:KUN.inkSoft, lineHeight:1.45 }}>
+                      Esta será la foto de Inicio. Si prefieres, puedes subirla después en Ajustes.
+                    </div>
+                    {children[index]?.photo && (
+                      <button
+                        onClick={() => updateChild(index, { photo: '' })}
+                        style={{ marginTop:7, border:'none', background:'transparent', padding:0, color:KUN.brick, fontFamily:A_FT, fontSize:12.5, fontWeight:700, cursor:'pointer' }}
+                      >
+                        Quitar foto
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
               <input
                 value={children[index]?.name || ''}
                 onChange={(e) => updateChild(index, { name: e.target.value })}
@@ -625,6 +768,36 @@ function makeChildId(index) {
   return `child-${index + 1}-${Date.now()}`;
 }
 
+function createDemoParentAccount() {
+  const childId = 'demo-child-sofia';
+  return {
+    role: 'parent',
+    familyRole: 'mama',
+    parentName: 'Camila',
+    birthDate: '2026-05-24',
+    gestWeeks: 30,
+    gestDays: 4,
+    children: [{
+      id: childId,
+      rut: 'demo-bebe',
+      name: 'Sofía',
+      sex: 'femenino',
+      weightGrams: 1720,
+      photo: 'guaguas/guagua3.jpg',
+      vitalStatus: 'hospitalized',
+    }],
+    activeChildId: childId,
+    babyName: 'Sofía',
+    sessionActive: true,
+    createdAt: 1719000000000,
+    demoAccount: true,
+    childrenSetupDone: true,
+    tourDone: true,
+    babyStatusDone: true,
+    babyStatusDoneByChild: { [childId]: true },
+  };
+}
+
 
 function ScreenAuth({ onAuthenticated }) {
   const stored = KAuth.load();
@@ -651,7 +824,8 @@ function ScreenAuth({ onAuthenticated }) {
     }}>
       {view === 'role' && (
         <RoleSelectView onPick={(role) => {
-          if (role === 'worker') setView('worker');
+          if (role === 'admin') setView('admin');
+          else if (role === 'worker') setView('worker');
           else setView('rut');
         }} onTerms={() => setView('terms')} />
       )}
@@ -664,6 +838,16 @@ function ScreenAuth({ onAuthenticated }) {
           onSubmit={(data) => {
             KAuth.save(data);
             onAuthenticated(data);
+          }}
+        />
+      )}
+      {view === 'admin' && (
+        <AdminLoginView
+          onBack={() => setView('role')}
+          onDemo={() => {
+            const demo = createDemoParentAccount();
+            KAuth.save(demo);
+            onAuthenticated(demo);
           }}
         />
       )}
@@ -683,7 +867,6 @@ function ScreenAuth({ onAuthenticated }) {
             setPendingBirthDate(birthDate);
             setPendingGestWeeks(gestWeeks);
             setPendingGestDays(gestDays);
-            const existing = KAuth.load();
             const source = (children && children.length)
               ? children
               : [{ id: 'child-1', name: '', sex: '' }];
@@ -692,15 +875,17 @@ function ScreenAuth({ onAuthenticated }) {
               name: (child.name || '').trim() || `Bebé ${index + 1}`,
               sex: child.sex || '',
               weightGrams: child.weightGrams ? Math.max(0, parseInt(child.weightGrams, 10) || 0) : '',
+              photo: child.photo || '',
             }));
             const first = prepared[0];
             finishParentLogin({
-              ...(existing || {}),
               role: 'parent', familyRole: familyRole || 'mama',
               parentName: (parentName || '').trim(),
               birthDate, gestWeeks, gestDays,
               children: prepared, activeChildId: first.id, babyName: first.name,
-              sessionActive: true, createdAt: existing?.createdAt || Date.now(),
+              sessionActive: true, createdAt: Date.now(),
+              demoAccount: false,
+              capsuleProgressByChild: {},
               // Completar el alta es un setup nuevo: reinicia el onboarding para
               // que siempre aparezcan el panel de estado del bebé y el tour guiado.
               tourDone: false,
