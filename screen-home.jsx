@@ -351,6 +351,10 @@ function BabyHero({ babyName = 'Sofía', babyPhoto, birthDate, gestWeeks, gestDa
         </div>
       </div>
 
+      {/* ── Resumen del día ── */}
+      <div style={{ marginTop: 6 }}>
+        <HSectionHead title={`¿Cómo está ${babyName} hoy?`} />
+      </div>
       {/* ── Resumen de [Bebé] Button ── */}
       <button
         onClick={onOpenSummary}
@@ -1800,8 +1804,15 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             </div>
 
             <ChildSwitcher childrenList={childrenList} activeChildId={activeChildId} onSelectChild={onSelectChild} />
+
+            <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
+              <HSectionHead title={`¿Cuánto pesa ${bName} hoy?`} />
+            </div>
             <WeightTracker history={babyWeightHistory} onSave={onSaveBabyWeight} />
-            
+
+            <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
+              <HSectionHead title="Reserva en lactario" />
+            </div>
             <LactarioCard
               reservation={lactarioReservation}
               onOpen={onOpenLactario}
@@ -1836,6 +1847,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
             onClick={() => onGoToCapsula ? onGoToCapsula(secondRecommended.id || 2) : onGoToEdu()}
           />
         </div>
+        <DischargePrompt onConfirm={onMarkDischarged} />
           </>
         )}
       </div>
