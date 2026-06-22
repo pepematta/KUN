@@ -294,7 +294,6 @@ function ComTopTabs({ active, onChange }) {
         return (
           <div
             key={t.id}
-            data-tour-id={t.id === 'questions' ? 'community-preguntas-button' : 'community-experiencias-button'}
             onClick={() => onChange(t.id)}
             style={{
             flex: 1, textAlign: 'center', cursor: 'pointer',
@@ -917,7 +916,11 @@ function CommunityInnerTabs({ active, onChange }) {
       {tabs.map(t => {
         const isA = t.id === active;
         return (
-          <div key={t.id} onClick={() => onChange(t.id)} style={{
+          <div
+            key={t.id}
+            data-tour-id={t.id === 'questions' ? 'community-preguntas-button' : 'community-experiencias-button'}
+            onClick={() => onChange(t.id)}
+            style={{
             cursor: 'pointer',
             padding: '10px 18px', borderRadius: 10,
             background: isA ? KUN.brick : KUN.cardSoft,
@@ -933,7 +936,7 @@ function CommunityInnerTabs({ active, onChange }) {
 }
 
 // ── Acciones (like / share / reply) ─────────────────────
-function PostActions({ likes, replies, onReply }) {
+function PostActions({ likes, replies, onReply, replyTourId }) {
   const [liked, setLiked] = React.useState(false);
   const count = likes + (liked ? 1 : 0);
   return (
@@ -951,7 +954,7 @@ function PostActions({ likes, replies, onReply }) {
           color: liked ? KUN.brick : KUN.inkSoft,
         }}>{count}</span>
       </div>
-      <div onClick={(e) => { e.stopPropagation(); onReply && onReply(); }} style={{
+      <div data-tour-id={replyTourId} onClick={(e) => { e.stopPropagation(); onReply && onReply(); }} style={{
         display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
       }}>
         {COM_ICONS.reply(KUN.inkSoft)}
@@ -1289,7 +1292,7 @@ function QuestionThread({ qId, onBack, questions, currentUser, onReply }) {
               }}>{q.staffAnswer}</div>
             </div>
           )}
-          <PostActions likes={q.likes} replies={q.replies} />
+          <PostActions likes={q.likes} replies={q.replies} replyTourId="community-reply-button" />
         </div>
 
         {/* Respuestas */}

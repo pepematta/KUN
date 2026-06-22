@@ -56,6 +56,10 @@ const STEPS = [
     highlightElement: '[data-tour-id="bottom-nav-inicio"]',
     bubblePosition: 'top',
     highlightPadding: 12,
+    mascotVariant: 'guideDown',
+    mascotPosition: 'guideHome',
+    mascotSize: 220,
+    mascotFlipX: true,
     bubble: 'Aquí comienza todo. En esta sección ves el estado de tu bebé, información importante y accesos rápidos.',
     btn: 'Siguiente',
   },
@@ -131,7 +135,7 @@ const STEPS = [
     highlightElement: '[data-tour-id="diary-add-button"]',
     bubblePosition: 'bottom',
     highlightPadding: 12,
-    bubble: 'Toca aquí para crear un nuevo recuerdo. Elige si quieres agregar una foto, escribir una nota, grabar audio, o todo a la vez.',
+    bubble: 'Toca aquí para guardar un recuerdo. Puedes elegir una foto, escribir una nota, grabar un audio o usar una guía si no sabes cómo empezar.',
     btn: 'Siguiente',
     isInsideDiary: true,
   },
@@ -141,7 +145,7 @@ const STEPS = [
     highlightElement: '[data-tour-id="color-selector"]',
     bubblePosition: 'bottom',
     highlightPadding: 12,
-    bubble: 'Estos colores personalizan el fondo de tu recuerdo. Elige el que más te guste.',
+    bubble: 'Si usas una guía, podrás elegir un color suave para distinguir este recuerdo en el diario. Es opcional y puedes cambiarlo antes de guardar.',
     btn: 'Siguiente',
     isInsideDiary: true,
   },
@@ -270,12 +274,11 @@ const STEPS = [
     highlightPadding: 12,
     bubble: 'Toca aquí para escribir una nueva pregunta o experiencia. Escribe, agrégale etiquetas si quieres, y publica.',
     btn: 'Siguiente',
-    isInsideCompose: true,
   },
   {
     type: 'coachmark',
     tabIndex: 3,
-    highlightElement: '[data-tour-id="community-reply-section"]',
+    highlightElement: '[data-tour-id="community-reply-button"], [data-tour-id="community-reply-section"]',
     bubblePosition: 'bottom',
     highlightPadding: 12,
     bubble: 'Cada publicación crea su propio hilo. Otros papás responden, tú respondes a ellos. Es una conversación entre padres.',
@@ -350,11 +353,21 @@ function FullTourOverlay() {
 function measureHighlightRect(selector, padding = 12) {
   if (!selector) return null;
   const device = document.querySelector('.kun-device') || document.documentElement;
-  const element = document.querySelector(selector);
-  if (!element) return null;
+  const elements = Array.from(document.querySelectorAll(selector))
+    .filter(element => {
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    });
+  if (!elements.length) return null;
 
   const deviceRect = device.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
+  const elementRects = elements.map(element => element.getBoundingClientRect());
+  const elementRect = {
+    left: Math.min(...elementRects.map(rect => rect.left)),
+    top: Math.min(...elementRects.map(rect => rect.top)),
+    right: Math.max(...elementRects.map(rect => rect.right)),
+    bottom: Math.max(...elementRects.map(rect => rect.bottom)),
+  };
   const maxWidth = deviceRect.width;
   const maxHeight = deviceRect.height;
   const left = Math.max(0, elementRect.left - deviceRect.left - padding);
@@ -521,6 +534,10 @@ function CoachmarkBubble({
   onBack,
   onNext,
   showBack = true,
+  mascotVariant,
+  mascotSize,
+  mascotFlipX = false,
+  mascotPosition,
 }) {
   const bubbleRef = React.useRef(null);
   const [bubbleHeight, setBubbleHeight] = React.useState(0);
@@ -538,7 +555,9 @@ function CoachmarkBubble({
   const deviceHeight = device?.clientHeight || 844;
   const margin = 14;
   const gap = 12;
-  const width = Math.min(318, deviceWidth - margin * 2);
+  const hasMascot = !!mascotVariant;
+  const isHomeGuide = mascotPosition === 'guideHome';
+  const width = Math.min(hasMascot ? 350 : 318, deviceWidth - margin * 2);
   const measuredHeight = bubbleHeight || 130;
   const spaceAbove = rect.y - margin;
   const spaceBelow = deviceHeight - (rect.y + rect.h) - margin;
@@ -567,7 +586,7 @@ function CoachmarkBubble({
         background: '#fff',
         border: `1px solid ${KUN.hair}`,
         borderRadius: 16,
-        padding: '14px 15px 12px',
+        padding: isHomeGuide ? '14px 15px 126px' : '14px 15px 12px',
         boxShadow: '0 12px 30px rgba(42,35,32,0.18)',
         zIndex: 30,
       }}
@@ -593,9 +612,43 @@ function CoachmarkBubble({
         fontWeight: 400,
         color: KUN.ink,
         lineHeight: 1.5,
+        textAlign: hasMascot ? 'center' : 'left',
       }}>
+        {hasMascot && !isHomeGuide && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '-78px auto 4px',
+            height: Math.min(mascotSize || 230, 250),
+            pointerEvents: 'none',
+          }}>
+            <TourMascot
+              variant={mascotVariant}
+              size={Math.min(mascotSize || 230, 250)}
+              flipX={mascotFlipX}
+            />
+          </div>
+        )}
         {text}
       </div>
+
+      {hasMascot && isHomeGuide && (
+        <div style={{
+          position: 'absolute',
+          left: 8,
+          bottom: -54,
+          width: mascotSize || 220,
+          height: mascotSize || 220,
+          pointerEvents: 'none',
+          zIndex: 2,
+        }}>
+          <TourMascot
+            variant={mascotVariant}
+            size={mascotSize || 220}
+            flipX={mascotFlipX}
+          />
+        </div>
+      )}
 
       <div style={{
         position: 'relative',
@@ -705,19 +758,23 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
       });
     };
 
-    const revealAndMeasure = () => {
-      const element = document.querySelector(current.highlightElement);
-      if (!element) {
+    const revealAndMeasure = (attempt = 0) => {
+      const elements = Array.from(document.querySelectorAll(current.highlightElement));
+      if (!elements.length) {
         setSpotlightRect(null);
+        if (attempt < 6) {
+          timers.push(setTimeout(() => revealAndMeasure(attempt + 1), 160));
+        }
         return;
       }
+      const element = elements[elements.length - 1];
       element.scrollIntoView({ behavior:'smooth', block:'center', inline:'nearest' });
       recalculate();
       timers.push(setTimeout(recalculate, 180));
       timers.push(setTimeout(recalculate, 420));
     };
 
-    timers.push(setTimeout(revealAndMeasure, 100));
+    timers.push(setTimeout(() => revealAndMeasure(0), 100));
     window.addEventListener('resize', recalculate);
     window.addEventListener('scroll', recalculate, true);
 
@@ -760,15 +817,25 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
     />
   );
 
-  const SkipLink = ({ light }) => (
-    <div onClick={skip} style={{
-      textAlign:'center', fontFamily: T_FT, fontSize: 13, fontWeight: 600,
-      color: light ? KUN.inkMuted : 'rgba(255,255,255,0.6)',
-      cursor:'pointer', textDecoration:'underline',
-      letterSpacing: 0.1,
+  const ExitTourButton = ({ light = false }) => (
+    <button onClick={skip} style={{
+      position:'absolute',
+      top: 58,
+      right: 18,
+      zIndex: 60,
+      border: light ? `1px solid ${KUN.hair}` : '1px solid rgba(255,255,255,0.34)',
+      borderRadius: 999,
+      background: light ? 'rgba(255,255,255,0.94)' : 'rgba(42,35,32,0.55)',
+      color: light ? KUN.inkSoft : '#fff',
+      padding: '7px 11px',
+      fontFamily: T_FT,
+      fontSize: 12,
+      fontWeight: 700,
+      cursor:'pointer',
+      boxShadow: light ? '0 4px 12px rgba(42,35,32,0.08)' : 'none',
     }}>
-      Saltar recorrido
-    </div>
+      Salir del tutorial
+    </button>
   );
 
   // ── Full-screen steps (step 0 & step 5) ──────────────────────────────────
@@ -789,6 +856,7 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
         fontFamily: T_FB,
       }}>
         <TourShapes/>
+        <ExitTourButton light />
 
         {isLast && current.videoAsset ? (
           <TourFinalVideo key={current.videoAsset} src={current.videoAsset} />
@@ -862,7 +930,6 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
           </button>
         </div>
 
-        {!isLast && <div style={{ position:'relative', zIndex: 1 }}><SkipLink light /></div>}
       </div>
     );
   }
@@ -874,6 +941,8 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
       data-tour-target={current.highlightElement || ''}
       style={{ position:'absolute', inset:0, zIndex: 400, fontFamily: T_FB }}
     >
+      <ExitTourButton />
+
       {/* Full-screen click blocker (prevents interaction with app behind) */}
       <div style={{ position:'absolute', inset:0, zIndex: 0 }}/>
 
@@ -890,34 +959,19 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
         <Dots />
       </div>
 
-      {current.type === 'nav' && current.mascotVariant && (
-        <div style={{
-          position:'absolute',
-          left:'50%',
-          top: current.mascotPosition === 'heroTop' ? 104 : 112,
-          transform:'translateX(-50%)',
-          width: current.mascotSize || 250,
-          height: current.mascotSize || 250,
-          zIndex: 18,
-          pointerEvents:'none',
-        }}>
-          <TourMascot
-            variant={current.mascotVariant}
-            size={current.mascotSize || 250}
-            flipX={current.mascotFlipX}
-          />
-        </div>
-      )}
-
-      {spotlightRect && (
+      {(spotlightRect || tabRect) && (
         <CoachmarkBubble
-          rect={spotlightRect}
+          rect={spotlightRect || tabRect}
           bubblePosition={current.bubblePosition}
           text={current.bubble}
           buttonLabel={current.btn}
           showBack={step > 0}
           onBack={back}
           onNext={advance}
+          mascotVariant={(current.type === 'nav' || current.mascotPosition === 'guideHome') ? current.mascotVariant : undefined}
+          mascotSize={(current.type === 'nav' || current.mascotPosition === 'guideHome') ? current.mascotSize : undefined}
+          mascotFlipX={current.mascotFlipX}
+          mascotPosition={current.mascotPosition}
         />
       )}
     </div>
