@@ -292,7 +292,11 @@ function ComTopTabs({ active, onChange }) {
       {tabs.map(t => {
         const isA = t.id === active;
         return (
-          <div key={t.id} onClick={() => onChange(t.id)} style={{
+          <div
+            key={t.id}
+            data-tour-id={t.id === 'questions' ? 'community-preguntas-button' : 'community-experiencias-button'}
+            onClick={() => onChange(t.id)}
+            style={{
             flex: 1, textAlign: 'center', cursor: 'pointer',
             padding: '10px 6px', borderRadius: 999,
             background: isA ? KUN.brick : KUN.cardSoft,
@@ -729,9 +733,14 @@ function PostActionsMenu({ isOwn, onReport, onEdit, onDelete, moderationMode }) 
 
   return (
     <div style={{ position: 'relative' }}>
-      <div onClick={() => setOpen(!open)} style={{
-        cursor: 'pointer', padding: '6px 4px',
-      }}>{COM_ICONS.dots(KUN.inkMuted)}</div>
+      <ContextualTooltip
+        tooltipKey="comunidad_post_menu"
+        content="Aquí puedes reportar, editar o eliminar tu publicación."
+      >
+        <div onClick={() => setOpen(!open)} style={{
+          cursor: 'pointer', padding: '6px 4px',
+        }}>{COM_ICONS.dots(KUN.inkMuted)}</div>
+      </ContextualTooltip>
 
       {open && (
         <div style={{
@@ -1124,9 +1133,9 @@ const QUESTIONS = [
   },
 ];
 
-function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, moderationMode }) {
+function QuestionCard({ q, onOpen, currentUser, onReport, onEdit, onDelete, moderationMode, tourId }) {
   return (
-    <div onClick={() => onOpen(q.id)} style={{
+    <div data-tour-id={tourId} onClick={() => onOpen(q.id)} style={{
       background: '#fff', borderRadius: 24, padding: 18,
       marginBottom: 12, cursor: 'pointer',
       border: q.fresh ? `2px solid ${KUN.brick}` : `1px solid ${KUN.hair}`,
@@ -1359,7 +1368,7 @@ function QuestionThread({ qId, onBack, questions, currentUser, onReply }) {
         )}
 
         {/* Composer de respuesta */}
-        <div style={{
+        <div data-tour-id="community-reply-section" style={{
           background: '#fff', borderRadius: 22, padding: 16,
           border: `1px solid ${KUN.hair}`,
         }}>
@@ -1389,22 +1398,28 @@ function QuestionThread({ qId, onBack, questions, currentUser, onReply }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 paddingTop: 12, borderTop: `1px dashed ${KUN.hair}`,
               }}>
-                <div onClick={() => setReplyAnon(a => !a)} style={{
-                  display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-                }}>
-                  <div style={{
-                    width: 22, height: 22, borderRadius: 6,
-                    border: `1.5px solid ${replyAnon ? KUN.brick : KUN.inkFaint}`,
-                    background: replyAnon ? KUN.brick : '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'all .2s',
+                <ContextualTooltip
+                  tooltipKey="comunidad_anon_toggle"
+                  content="Actívalo si prefieres publicar sin tu nombre."
+                  position="top"
+                >
+                  <div onClick={() => setReplyAnon(a => !a)} style={{
+                    display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
                   }}>
-                    {replyAnon && KIcon.check('#fff')}
+                    <div style={{
+                      width: 22, height: 22, borderRadius: 6,
+                      border: `1.5px solid ${replyAnon ? KUN.brick : KUN.inkFaint}`,
+                      background: replyAnon ? KUN.brick : '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'all .2s',
+                    }}>
+                      {replyAnon && KIcon.check('#fff')}
+                    </div>
+                    <span style={{ fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
+                      Responder anónimamente
+                    </span>
                   </div>
-                  <span style={{ fontFamily: COM_FT, fontSize: 13, fontWeight: 700, color: KUN.inkSoft }}>
-                    Responder anónimamente
-                  </span>
-                </div>
+                </ContextualTooltip>
                 <button onClick={handleReply} style={{
                   padding: '9px 18px', height: 36, borderRadius: 999, border: 'none',
                   background: replyText.trim() ? KUN.brick : 'rgba(42,35,32,0.08)',
@@ -1509,17 +1524,19 @@ function QuestionsFeed({ onOpen, questions, currentUser, onReport, onEdit, onDel
   const list = questions || QUESTIONS;
   return (
     <div style={{ padding: '0 20px' }}>
-      {list.map(q => (
-        <QuestionCard
-          key={q.id}
-          q={q}
-          onOpen={onOpen}
-          currentUser={currentUser}
-          onReport={onReport}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          moderationMode={moderationMode}
-        />
+      {list.map((q, index) => (
+        <div key={q.id} data-tour-id={index === 0 ? 'community-post-with-replies' : undefined}>
+          <QuestionCard
+            tourId={index === 0 ? 'community-post' : undefined}
+            q={q}
+            onOpen={onOpen}
+            currentUser={currentUser}
+            onReport={onReport}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            moderationMode={moderationMode}
+          />
+        </div>
       ))}
       {!list.length && <EmptyCommunitySearch query={searchQuery} />}
     </div>
@@ -1546,7 +1563,7 @@ function ExperiencesFeed({ experiences = EXPERIENCES, currentUser, onReport, onE
 }
 
 // ── New post sheet (bottom sheet simulado en pantalla) ──
-function NewPostSheet({ onClose, defaultKind = 'question', onPublish }) {
+function NewPostSheet({ onClose, defaultKind = 'question', onPublish, tourMode = false }) {
   const [kind, setKind] = React.useState(defaultKind);
   const [anon, setAnon] = React.useState(false);
   const [posted, setPosted] = React.useState(false);
@@ -1587,7 +1604,7 @@ function NewPostSheet({ onClose, defaultKind = 'question', onPublish }) {
       background: 'rgba(42,35,32,0.4)',
       display: 'flex', alignItems: 'flex-end',
     }}>
-      <div style={{
+      <div data-tour-id={tourMode ? 'community-new-post-button' : 'community-compose-form'} style={{
         width: '100%', background: KUN.bg,
         borderTopLeftRadius: 28, borderTopRightRadius: 28,
         padding: '14px 20px 112px',
@@ -1831,7 +1848,7 @@ function CommunityView({ onNew, questions, experiences, focusQuestionId, current
       </div>
 
       {/* FAB nueva publicación */}
-      {allowNew && <button onClick={() => onNew(sub)} style={{
+      {allowNew && <button data-tour-id="community-new-post-button" onClick={() => onNew(sub)} style={{
         position: 'absolute', bottom: 14, right: 20,
         width: 58, height: 58, borderRadius: '50%', border: 'none',
         background: KUN.brick, color: '#fff',
@@ -1849,7 +1866,7 @@ function CommunityView({ onNew, questions, experiences, focusQuestionId, current
 // ║                  PUBLIC ENTRY                         ║
 // ╚══════════════════════════════════════════════════════╝
 
-function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser = '', onReportSubmit, moderationMode = false, onModerateRemove, allowNew = true, hiddenIds = [] }) {
+function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser = '', onReportSubmit, moderationMode = false, onModerateRemove, allowNew = true, hiddenIds = [], tourComposeOpen = false }) {
   const [userPosts, setUserPosts] = React.useState(() => {
     try {
       return JSON.parse(localStorage.getItem('kun_community_posts_v1') || '{"questions":[],"experiences":[]}');
@@ -1887,6 +1904,11 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
   const [newPost, setNewPost] = React.useState(null);
   const [reportingPostId, setReportingPostId] = React.useState(null);
   const [reportingPostTitle, setReportingPostTitle] = React.useState('');
+
+  React.useEffect(() => {
+    if (tourComposeOpen) setNewPost('question');
+    else setNewPost(null);
+  }, [tourComposeOpen]);
 
   const handleReport = (postId) => {
     const post = mergedQuestions.find(q => q.id === postId) || mergedExperiences.find(e => e.id === postId);
@@ -1976,7 +1998,7 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
         onDelete={handleDelete}
         onNew={(kind) => setNewPost(kind === 'experiences' ? 'experience' : 'question')}
         moderationMode={moderationMode}
-        allowNew={allowNew}
+        allowNew={allowNew && !tourComposeOpen}
       />
 
       {newPost && (
@@ -1984,6 +2006,7 @@ function ScreenComunidad({ focusQuestionId = null, questions = [], currentUser =
           defaultKind={newPost}
           onPublish={handlePublishPost}
           onClose={() => setNewPost(null)}
+          tourMode={tourComposeOpen}
         />
       )}
 

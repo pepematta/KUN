@@ -50,18 +50,19 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="kun-env.js?v=1"></script>
 <script type="text/babel" src="analytics.jsx?v=4"></script>
-<script type="text/babel" src="edu-shared.jsx?v=13"></script>
+<script type="text/babel" src="edu-shared.jsx?v=15"></script>
+<script type="text/babel" src="contextual-tooltip.jsx?v=2"></script>
 <script type="text/babel" src="screen-auth.jsx?v=28"></script>
-<script type="text/babel" src="screen-tour.jsx?v=31"></script>
+<script type="text/babel" src="screen-tour.jsx?v=36"></script>
 <script type="text/babel" src="screen-lactario.jsx?v=13"></script>
-<script type="text/babel" src="screen-baby-status.jsx?v=13"></script>
+<script type="text/babel" src="screen-baby-status.jsx?v=15"></script>
 <script type="text/babel" src="screen-home.jsx?v=46"></script>
-<script type="text/babel" src="edu-camino.jsx?v=9"></script>
+<script type="text/babel" src="edu-camino.jsx?v=10"></script>
 <script type="text/babel" src="edu-personalizado.jsx?v=9"></script>
 <script type="text/babel" src="edu-biblioteca.jsx?v=16"></script>
-<script type="text/babel" src="screen-vinculo.jsx?v=54"></script>
-<script type="text/babel" src="screen-comunidad.jsx?v=19"></script>
-<script type="text/babel" src="screen-capsula.jsx?v=13"></script>
+<script type="text/babel" src="screen-vinculo.jsx?v=55"></script>
+<script type="text/babel" src="screen-comunidad.jsx?v=22"></script>
+<script type="text/babel" src="screen-capsula.jsx?v=14"></script>
 <script type="text/babel" src="screen-staff.jsx?v=10"></script>
 </head>
 <body>
@@ -901,6 +902,7 @@ function Prototype() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [manualTourOpen, setManualTourOpen] = useState(false);
   const [manualTourReturn, setManualTourReturn] = useState(null);
+  const [activeTourTarget, setActiveTourTarget] = useState('');
   const [capsulaOpen, setCapsulaOpen] = useState(false);
   const [capsuleId, setCapsuleId] = useState(1);
   const [lactarioOpen,        setLactarioOpen]        = useState(false);
@@ -1304,6 +1306,7 @@ function Prototype() {
     setTab('home');
     setEduSub('camino');
     setBondView('entry');
+    setActiveTourTarget('');
   };
   const handleTourDone = () => {
     window.KUNAnalytics?.track('tour_kun_completado');
@@ -1322,6 +1325,7 @@ function Prototype() {
   const closeManualTour = () => {
     const previous = manualTourReturn;
     setManualTourOpen(false);
+    setActiveTourTarget('');
     if (previous) {
       setTab(previous.tab || 'home');
       setEduSub(previous.eduSub || 'camino');
@@ -1330,6 +1334,49 @@ function Prototype() {
       setCapsulaOpen(!!previous.capsulaOpen);
     }
     setManualTourReturn(null);
+  };
+
+  const handleTourStepChange = (nextTab, tourStep) => {
+    const target = tourStep?.highlightElement || '';
+    const targetId = target.match(/data-tour-id="([^"]+)"/)?.[1] || '';
+    setActiveTourTarget(targetId);
+
+    setCapsulaOpen(false);
+    setBabySummaryOpen(false);
+    if (target.includes('diario-main-card')) {
+      setTab('bond');
+      setBondView('entry');
+      return;
+    }
+    if (target.includes('diary-') || target.includes('color-selector')) {
+      setTab('bond');
+      setBondView('journey');
+      return;
+    }
+    if (
+      target.includes('vinculo-stories-tab')
+      || target.includes('story-card')
+      || target.includes('recordings-section')
+    ) {
+      setTab('bond');
+      setBondView('activities-cuentos');
+      return;
+    }
+    if (target.includes('vinculo-activities-section')) {
+      setTab('bond');
+      setBondView('entry');
+      return;
+    }
+    if (target.includes('baby-status-narrative')) {
+      setTab('home');
+      setBabySummaryOpen(true);
+      return;
+    }
+    if (tourStep?.isInsideUCIN) {
+      setTab('ucin');
+      return;
+    }
+    setTab(nextTab || 'home');
   };
 
   const goToEdu = (sub = 'camino') => {
@@ -1546,6 +1593,7 @@ function Prototype() {
       babyName={primaryBabyName}
       demoAccount={!!authData?.demoAccount}
       diaryStorageKey={`kun_diary_entries_v1_${capsuleProgressUserKey(authData)}_${primaryChildKey}`}
+      tourTarget={activeTourTarget}
       canEditDiary={authData.role === 'parent' && ['mama', 'papa', 'parent'].includes(authData.familyRole || 'mama')}
     />;
   } else if (tab === 'ucin') {
@@ -1560,10 +1608,11 @@ function Prototype() {
     />;
   } else {
     body = <ScreenComunidad
-      focusQuestionId={communityStart.focusQuestionId}
+      focusQuestionId={activeTourTarget === 'community-reply-section' ? 'q1' : communityStart.focusQuestionId}
       questions={forumQuestions}
       currentUser={parentName}
       onReportSubmit={handleParentReportSubmit}
+      tourComposeOpen={activeTourTarget === 'community-new-post-button'}
     />;
   }
 
@@ -1663,7 +1712,7 @@ function Prototype() {
             <ScreenTour
               onDone={handleTourDone}
               onSkip={handleTourSkip}
-              onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
+              onStepChange={handleTourStepChange}
             />
           )}
 
@@ -1671,7 +1720,7 @@ function Prototype() {
             <ScreenTour
               onDone={closeManualTour}
               onSkip={closeManualTour}
-              onStepChange={(t) => { setTab(t); setCapsulaOpen(false); }}
+              onStepChange={handleTourStepChange}
             />
           )}
 
@@ -1735,9 +1784,14 @@ function Prototype() {
     typeof window.ScreenComunidad === 'function' &&
     typeof window.ScreenCapsula === 'function' &&
     typeof window.ScreenStaffApp === 'function' &&
+    typeof window.TooltipSeenProvider === 'function' &&
     typeof window.KUN !== 'undefined'
   ) {
-    ReactDOM.createRoot(document.getElementById('root')).render(<Prototype />);
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <TooltipSeenProvider>
+        <Prototype />
+      </TooltipSeenProvider>
+    );
   } else if (attempts > 0) {
     setTimeout(() => tryRender(attempts - 1), 80);
   }

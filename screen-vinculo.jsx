@@ -114,7 +114,7 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 12 }}>
 
           {/* Featured card — Diario de vida */}
-          <div onClick={() => onPick('journey')} style={{
+          <div data-tour-id="diario-main-card" onClick={() => onPick('journey')} style={{
             background: KUN.brick, borderRadius: 30, padding: '18px 22px',
             color:'#fff', cursor:'pointer', position:'relative', overflow:'hidden',
           }}>
@@ -140,7 +140,7 @@ function VinkEntry({ onPick, babyName = 'Sofía' }) {
           </div>
 
           {/* 3 activity blocks */}
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div data-tour-id="vinculo-activities-section" style={{ display: 'flex', gap: 10 }}>
             {[
               {
                 id: 'cuentos', label: 'Cuentos', color: KUN.viola,
@@ -1512,10 +1512,10 @@ function ActivityRecordingList({ recordings = [] }) {
   );
 }
 
-function StoryRow({ story, onOpen, recordings = [] }) {
+function StoryRow({ story, onOpen, recordings = [], tourId }) {
   return (
     <>
-      <div onClick={onOpen} style={{
+      <div data-tour-id={tourId} onClick={onOpen} style={{
         ...activityTintCardStyle(story.color),
         marginBottom: recordings.length ? 8 : 10,
         cursor:'pointer',
@@ -1534,10 +1534,11 @@ function StoryRow({ story, onOpen, recordings = [] }) {
 
 function CuentosTab({ onOpenStory, recordings = [] }) {
   return (
-    <div style={{ padding: '0 20px 24px' }}>
+    <div data-tour-id="recordings-section" style={{ padding: '0 20px 24px' }}>
       {STORIES.map((s, i) => (
         <StoryRow
           key={i}
+          tourId={i === 0 ? 'story-card' : undefined}
           story={s}
           onOpen={() => onOpenStory(s)}
           recordings={recordings.filter(r => r.contentType === 'story' && r.contentTitle === s.title)}
@@ -1824,19 +1825,25 @@ function Recorder({ onClose, onSave, context }) {
           })}
         </svg>
 
-        <button onClick={() => setRecording(r => !r)} style={{
-          width: 86, height: 86, borderRadius: '50%', border:'none',
-          background: recording ? '#fff' : KUN.brick,
-          boxShadow: recording
-            ? `0 0 0 6px ${KUN.rosehip}, 0 8px 18px rgba(240,116,62,0.30)`
-            : '0 8px 18px rgba(240,116,62,0.40)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          cursor:'pointer',
-        }}>
-          {recording
-            ? <div style={{ width: 26, height: 26, borderRadius: 6, background: KUN.brick }}/>
-            : <div style={{ width: 30, height: 30, borderRadius: '50%', background:'#fff' }}/>}
-        </button>
+        <ContextualTooltip
+          tooltipKey="vinculo_recorder"
+          content="Toca para empezar a grabar, y de nuevo para detener."
+          position="top"
+        >
+          <button onClick={() => setRecording(r => !r)} style={{
+            width: 86, height: 86, borderRadius: '50%', border:'none',
+            background: recording ? '#fff' : KUN.brick,
+            boxShadow: recording
+              ? `0 0 0 6px ${KUN.rosehip}, 0 8px 18px rgba(240,116,62,0.30)`
+              : '0 8px 18px rgba(240,116,62,0.40)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            cursor:'pointer',
+          }}>
+            {recording
+              ? <div style={{ width: 26, height: 26, borderRadius: 6, background: KUN.brick }}/>
+              : <div style={{ width: 30, height: 30, borderRadius: '50%', background:'#fff' }}/>}
+          </button>
+        </ContextualTooltip>
 
         {seconds > 0 && !recording && (
           <button onClick={save} style={{
@@ -1895,7 +1902,7 @@ function ActividadesGuagua({ onBack, recordings, addRecording, initialTab }) {
       <SubHeader title="Actividades con mi hijo" onBack={onBack} />
 
       {/* Tab pills */}
-      <div style={{ margin: '0 20px 18px', display:'flex', gap: 8 }}>
+      <div data-tour-id="vinculo-stories-tab" style={{ margin: '0 20px 18px', display:'flex', gap: 8 }}>
         {TABS.map(t => {
           const isA = t.id === sub;
           const iconColor = isA ? '#fff' : KUN.inkSoft;
@@ -2707,7 +2714,7 @@ function DiaryGuideSheet({ onClose, onSave }) {
         </div>
 
         {/* 2 — COLOR SUAVE */}
-        <div style={{ background:'#fff', borderRadius:20, border:`1px solid ${KUN.hair}`,
+        <div data-tour-id="color-selector" style={{ background:'#fff', borderRadius:20, border:`1px solid ${KUN.hair}`,
           padding:'12px 14px', marginBottom:14 }}>
           <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted,
             letterSpacing:0.7, textTransform:'uppercase', marginBottom:9 }}>Color suave</div>
@@ -2824,51 +2831,56 @@ function DiaryTemplatePersonField({ field, value = {}, onChange }) {
     reader.readAsDataURL(file);
   };
   return (
-    <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:18, padding:12 }}>
-      <div style={{ display:'flex', gap:10, alignItems:'center' }}>
-        <div style={{
-          width:48,
-          height:48,
-          borderRadius:'50%',
-          background: value.photo ? '#fff' : KUN.cardSoft,
-          overflow:'hidden',
-          display:'flex',
+    <ContextualTooltip
+      tooltipKey="vinculo_person_field"
+      content="Puedes agregar una foto de familia aquí (opcional)."
+    >
+      <div style={{ background:'#fff', border:`1px solid ${KUN.hair}`, borderRadius:18, padding:12 }}>
+        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+          <div style={{
+            width:48,
+            height:48,
+            borderRadius:'50%',
+            background: value.photo ? '#fff' : KUN.cardSoft,
+            overflow:'hidden',
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            flexShrink:0,
+            fontFamily:V_FT,
+            fontSize:18,
+            fontWeight:700,
+            color:KUN.ink,
+            border:`1px solid ${KUN.hair}`,
+          }}>
+            {value.photo ? <img src={value.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : diaryInitials(value.name)}
+          </div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:.7, textTransform:'uppercase', marginBottom:6 }}>{field.label}</div>
+            <input value={value.name || ''} onChange={e => update({ name:e.target.value })} placeholder="Nombre"
+              style={{ width:'100%', boxSizing:'border-box', border:'none', borderBottom:`1px solid ${KUN.hair}`, outline:'none', padding:'4px 0 7px', fontFamily:V_FB, fontSize:14, color:KUN.ink, background:'transparent' }} />
+          </div>
+        </div>
+        <label style={{
+          display:'inline-flex',
           alignItems:'center',
-          justifyContent:'center',
-          flexShrink:0,
-          fontFamily:V_FT,
-          fontSize:18,
-          fontWeight:700,
-          color:KUN.ink,
+          gap:6,
+          marginTop:10,
           border:`1px solid ${KUN.hair}`,
+          background:KUN.cardSoft,
+          borderRadius:999,
+          padding:'7px 10px',
+          fontFamily:V_FT,
+          fontSize:12,
+          fontWeight:700,
+          color:KUN.inkSoft,
+          cursor:'pointer',
         }}>
-          {value.photo ? <img src={value.photo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : diaryInitials(value.name)}
-        </div>
-        <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ fontFamily:V_FB, fontSize:11, fontWeight:600, color:KUN.inkMuted, letterSpacing:.7, textTransform:'uppercase', marginBottom:6 }}>{field.label}</div>
-          <input value={value.name || ''} onChange={e => update({ name:e.target.value })} placeholder="Nombre"
-            style={{ width:'100%', boxSizing:'border-box', border:'none', borderBottom:`1px solid ${KUN.hair}`, outline:'none', padding:'4px 0 7px', fontFamily:V_FB, fontSize:14, color:KUN.ink, background:'transparent' }} />
-        </div>
+          {VINK_ICONS.camera(KUN.inkMuted)} {value.photo ? 'Cambiar foto' : 'Agregar foto'}
+          <input type="file" accept="image/*" style={{ display:'none' }} onChange={e => { handlePhoto(e.target.files?.[0]); e.target.value = ''; }} />
+        </label>
       </div>
-      <label style={{
-        display:'inline-flex',
-        alignItems:'center',
-        gap:6,
-        marginTop:10,
-        border:`1px solid ${KUN.hair}`,
-        background:KUN.cardSoft,
-        borderRadius:999,
-        padding:'7px 10px',
-        fontFamily:V_FT,
-        fontSize:12,
-        fontWeight:700,
-        color:KUN.inkSoft,
-        cursor:'pointer',
-      }}>
-        {VINK_ICONS.camera(KUN.inkMuted)} {value.photo ? 'Cambiar foto' : 'Agregar foto'}
-        <input type="file" accept="image/*" style={{ display:'none' }} onChange={e => { handlePhoto(e.target.files?.[0]); e.target.value = ''; }} />
-      </label>
-    </div>
+    </ContextualTooltip>
   );
 }
 
@@ -3287,7 +3299,7 @@ function DayFloatingAddButton({ onCreate }) {
     ? document.querySelector('.kun-device')
     : null;
   const button = (
-    <button onClick={onCreate} style={{
+    <button data-tour-id="diary-add-button" onClick={onCreate} style={{
       position:'absolute',
       right: 24,
       bottom: 112,
@@ -3397,11 +3409,25 @@ function EntryModeSelector({ onFree, onGuide }) {
 }
 
 function WritingIdeas({ ideas = [], onPick }) {
-  return <div style={{ display:'flex', flexDirection:'column', gap: 7 }}>{ideas.slice(0, 3).map(idea => <button key={idea} onClick={() => onPick(idea)} style={{ border:'none', background: KUN.cardSoft, borderRadius: 14, padding:'10px 12px', textAlign:'left', fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, cursor:'pointer' }}>{idea}</button>)}</div>;
+  return (
+    <ContextualTooltip
+      tooltipKey="vinculo_writing_ideas"
+      content="Toca una idea para agregarla a tu texto."
+    >
+      <div style={{ display:'flex', flexDirection:'column', gap: 7 }}>{ideas.slice(0, 3).map(idea => <button key={idea} onClick={() => onPick(idea)} style={{ border:'none', background: KUN.cardSoft, borderRadius: 14, padding:'10px 12px', textAlign:'left', fontFamily: V_FB, fontSize: 12.5, color: KUN.inkSoft, cursor:'pointer' }}>{idea}</button>)}</div>
+    </ContextualTooltip>
+  );
 }
 
 function ExampleChips({ examples = [], onPick }) {
-  return <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:2 }}>{examples.map(example => <button key={example} onClick={() => onPick(example)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.inkSoft, borderRadius:999, padding:'8px 11px', fontFamily:V_FB, fontSize:12, whiteSpace:'nowrap', cursor:'pointer' }}>{example}</button>)}</div>;
+  return (
+    <ContextualTooltip
+      tooltipKey="vinculo_writing_ideas"
+      content="Toca una idea para agregarla a tu texto."
+    >
+      <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:2 }}>{examples.map(example => <button key={example} onClick={() => onPick(example)} style={{ border:`1px solid ${KUN.hair}`, background:'#fff', color:KUN.inkSoft, borderRadius:999, padding:'8px 11px', fontFamily:V_FB, fontSize:12, whiteSpace:'nowrap', cursor:'pointer' }}>{example}</button>)}</div>
+    </ContextualTooltip>
+  );
 }
 
 function GuidedWritingCard({ color, text, setText, ideas, examples, showSuggestions, onStartWriting }) {
@@ -3454,7 +3480,14 @@ function GuidedWritingCard({ color, text, setText, ideas, examples, showSuggesti
 }
 
 function SoftColorSelector({ value, onChange }) {
-  return <div style={{ display:'flex', gap: 9, marginBottom: 16 }}>{DIARY_COLORS.map(c => <button key={c} onClick={() => onChange(c)} style={{ width: 30, height: 30, borderRadius:'50%', background:c, border: value === c ? `2px solid ${KUN.ink}` : '2px solid #fff', boxShadow:`0 0 0 1px ${KUN.hair}`, cursor:'pointer' }} />)}</div>;
+  return (
+    <ContextualTooltip
+      tooltipKey="vinculo_color_selector"
+      content="Estos colores cambian el fondo de tu recuerdo."
+    >
+      <div data-tour-id="color-selector" style={{ display:'flex', gap: 9, marginBottom: 16 }}>{DIARY_COLORS.map(c => <button key={c} onClick={() => onChange(c)} style={{ width: 30, height: 30, borderRadius:'50%', background:c, border: value === c ? `2px solid ${KUN.ink}` : '2px solid #fff', boxShadow:`0 0 0 1px ${KUN.hair}`, cursor:'pointer' }} />)}</div>
+    </ContextualTooltip>
+  );
 }
 
 function ClassicPromptStrip({ onPick }) {
@@ -3534,7 +3567,7 @@ function CreateEntry({ onBack, onSave }) {
   );
 }
 
-function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diaryStorageKey = DIARY_FEED_KEY }) {
+function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diaryStorageKey = DIARY_FEED_KEY, tourTarget = '' }) {
   const [entries, setEntries] = React.useState(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(diaryStorageKey) || '[]');
@@ -3565,6 +3598,15 @@ function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diar
   React.useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior:'instant' });
   }, []);
+
+  React.useEffect(() => {
+    setFab(false);
+    if (tourTarget === 'color-selector') {
+      setSheet('guide');
+    } else {
+      setSheet(current => current === 'guide' ? null : current);
+    }
+  }, [tourTarget]);
 
   const persist = (next) => {
     setEntries(next);
@@ -3629,7 +3671,7 @@ function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diar
 
       {/* Feed — scroll propio */}
       <div style={{ flex:1, overflowY:'auto', overflowX:'hidden', padding:'0 12px 100px', boxSizing:'border-box' }}>
-        {groups.map(group => (
+        {groups.map((group, groupIndex) => (
           <div key={group.date}>
 
             {/* Date separator */}
@@ -3646,8 +3688,12 @@ function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diar
 
             {/* Two-column masonry */}
             <div style={{ columnCount:2, columnGap:8, marginBottom:6 }}>
-              {group.entries.map(entry => (
-                <div key={entry.id} style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom:8 }}>
+              {group.entries.map((entry, entryIndex) => (
+                <div
+                  key={entry.id}
+                  data-tour-id={groupIndex === 0 && entryIndex === 0 ? 'diary-memory-card' : undefined}
+                  style={{ breakInside:'avoid', WebkitColumnBreakInside:'avoid', marginBottom:8 }}
+                >
                   {entry.type === 'photo' && <DiaryFeedPhotoCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
                   {entry.type === 'text'  && <DiaryFeedNoteCard  entry={entry} onOpen={() => setExportEntry(entry)}/>}
                   {entry.type === 'audio' && <DiaryFeedAudioCard entry={entry} onOpen={() => setExportEntry(entry)}/>}
@@ -3661,6 +3707,7 @@ function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diar
         {canEditDiary && (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12, marginBottom: 12, padding: '0 4px' }}>
             <button
+              data-tour-id="diary-add-button"
               onClick={() => setFab(true)}
               style={{
                 width: '100%',
@@ -3806,8 +3853,8 @@ function DiaryPrototype({ onBack, canEditDiary = true, demoAccount = false, diar
     </div>
   );
 }
-function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía', demoAccount = false, diaryStorageKey = DIARY_FEED_KEY }) {
-  if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} demoAccount={demoAccount} diaryStorageKey={diaryStorageKey} />;
+function ScreenVinculo({ view, setView, recordings, addRecording, canEditDiary = true, babyName = 'Sofía', demoAccount = false, diaryStorageKey = DIARY_FEED_KEY, tourTarget = '' }) {
+  if (view === 'journey') return <DiaryPrototype onBack={() => setView('entry')} canEditDiary={canEditDiary} demoAccount={demoAccount} diaryStorageKey={diaryStorageKey} tourTarget={tourTarget} />;
   if (view === 'activities' || view === 'activities-cuentos' || view === 'activities-canciones' || view === 'activities-musica') {
     const tab = view.startsWith('activities-') ? view.replace('activities-', '') : 'cuentos';
     return <ActividadesGuagua initialTab={tab} onBack={() => setView('entry')} recordings={recordings} addRecording={addRecording} />;

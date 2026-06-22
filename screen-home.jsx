@@ -128,17 +128,22 @@ function HomeGreeting({ parentName }) {
 // ─── Featured baby card (tarjeta destacada) ────────────────────────────────────
 function PillStat({ value, label, onClick }) {
   return (
-    <div onClick={onClick} style={{
-      background: 'rgba(255,255,255,0.92)',
-      backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-      borderRadius: 999, padding: '6px 12px',
-      display: 'inline-flex', alignItems: 'baseline', gap: 4,
-      maxWidth: '100%',
-      cursor: onClick ? 'pointer' : 'default',
-    }}>
-      <span style={{ fontFamily: HF_T, fontWeight: 700, fontSize: 14, color: HC.ink }}>{value}</span>
-      <span style={{ fontFamily: HF_B, fontWeight: 500, fontSize: 10.5, color: HC.ink2, whiteSpace: 'nowrap' }}>{label}</span>
-    </div>
+    <ContextualTooltip
+      tooltipKey="inicio_pill_edad"
+      content="Toca aquí para ver la diferencia entre la edad cronológica y la corregida."
+    >
+      <div onClick={onClick} style={{
+        background: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+        borderRadius: 999, padding: '6px 12px',
+        display: 'inline-flex', alignItems: 'baseline', gap: 4,
+        maxWidth: '100%',
+        cursor: onClick ? 'pointer' : 'default',
+      }}>
+        <span style={{ fontFamily: HF_T, fontWeight: 700, fontSize: 14, color: HC.ink }}>{value}</span>
+        <span style={{ fontFamily: HF_B, fontWeight: 500, fontSize: 10.5, color: HC.ink2, whiteSpace: 'nowrap' }}>{label}</span>
+      </div>
+    </ContextualTooltip>
   );
 }
 
@@ -271,7 +276,7 @@ function BabyHero({ babyName = 'Sofía', babyPhoto, birthDate, gestWeeks, gestDa
         }
       : null;
   return (
-    <div style={{ margin: '16px 18px 0', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative' }}>
+    <div data-tour-id="baby-hero-card" style={{ margin: '16px 18px 0', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative' }}>
 
       {/* ── Compact baby card (Unified with Nurse info) ── */}
       <div style={{
@@ -357,6 +362,7 @@ function BabyHero({ babyName = 'Sofía', babyPhoto, birthDate, gestWeeks, gestDa
       </div>
       {/* ── Resumen de [Bebé] Button ── */}
       <button
+        data-tour-id="baby-status-summary"
         onClick={onOpenSummary}
         style={{
           width: '100%',
@@ -589,7 +595,7 @@ function DailySummaryModal({ isOpen, onClose, babyName, babyStatus, onEditStatus
                 </div>
               : null;
           })() : (
-            <div style={{
+            <div data-tour-id="baby-status-narrative" style={{
               background: HC.paper, border: `1px solid ${HC.hair}`,
               borderRadius: 24, padding: '22px 20px',
             }}>
@@ -786,7 +792,7 @@ function WeightTracker({ history = [], onSave }) {
   };
 
   return (
-    <div style={{ margin: '18px 22px 0' }}>
+    <div data-tour-id="weight-section" style={{ margin: '18px 22px 0' }}>
       <div style={{
         background: HC.paper,
         border: `1px solid ${HC.hair}`,
@@ -1493,7 +1499,7 @@ function LactarioCard({ reservation, onOpen, onCancel }) {
   const dailyMax = window.LACTARIO_MAX_DAILY || 4;
 
   return (
-    <div style={{ margin: '16px 22px 0' }}>
+    <div data-tour-id="lactario-card" style={{ margin: '16px 22px 0' }}>
 
       <div style={{
         background: HC.paper, border: `1px solid ${HC.hair}`,
@@ -1822,7 +1828,7 @@ function ScreenHome({ onGoToEdu, onGoToCapsula, parentName, babyName,
         )}
         {!isBereavement && !isDischarged && (
           <>
-        <div style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
+        <div data-tour-id="recommended-capsules" style={{ marginTop: 26, padding: '0 22px', boxSizing: 'border-box' }}>
           <HSectionHead
             title="Cápsulas recomendadas"
             action="Ver todo"

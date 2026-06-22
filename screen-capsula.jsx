@@ -1516,15 +1516,21 @@ function ScreenCapsula({ capsuleId, onBack, onComplete, quizResult, onQuizAnswer
         <CapLeft onClick={goPrev} visible={!isFirst} />
 
         {/* Dots */}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          {pages.map((_, i) => (
-            <div key={i} onClick={() => setIdx(i)} style={{
-              width: i === idx ? 22 : 7, height: 7, borderRadius: 4,
-              background: i === idx ? KUN.brick : 'rgba(42,35,32,0.12)',
-              transition: 'all 0.3s ease', cursor: 'pointer',
-            }} />
-          ))}
-        </div>
+        <ContextualTooltip
+          tooltipKey="educacion_progress_dots"
+          content="Toca un punto para saltar directo a esa página."
+          position="top"
+        >
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            {pages.map((_, i) => (
+              <div key={i} onClick={() => setIdx(i)} style={{
+                width: i === idx ? 22 : 7, height: 7, borderRadius: 4,
+                background: i === idx ? KUN.brick : 'rgba(42,35,32,0.12)',
+                transition: 'all 0.3s ease', cursor: 'pointer',
+              }} />
+            ))}
+          </div>
+        </ContextualTooltip>
 
         <CapRight onClick={goNext} visible={!isLast} />
       </div>

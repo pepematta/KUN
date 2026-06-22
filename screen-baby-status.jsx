@@ -263,23 +263,28 @@ function NarrativeChip({ label, colorKey, onClick }) {
   const bg = colorMap[colorKey] || KUN.clear;
 
   return (
-    <span onClick={onClick} style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      background: bg,
-      borderRadius: 999,
-      padding: '4px 12px',
-      fontFamily: BST_FT,
-      fontSize: 12.5,
-      fontWeight: 700,
-      lineHeight: 1.6,
-      verticalAlign: 'middle',
-      margin: '6px 2px',
-      color: KUN.ink,
-      cursor: onClick ? 'pointer' : 'default',
-    }}>
-      {label}
-    </span>
+    <ContextualTooltip
+      tooltipKey="inicio_narrative_chip"
+      content="Las palabras destacadas se pueden tocar para ver qué significan."
+    >
+      <span onClick={onClick} style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        background: bg,
+        borderRadius: 999,
+        padding: '4px 12px',
+        fontFamily: BST_FT,
+        fontSize: 12.5,
+        fontWeight: 700,
+        lineHeight: 1.6,
+        verticalAlign: 'middle',
+        margin: '6px 2px',
+        color: KUN.ink,
+        cursor: onClick ? 'pointer' : 'default',
+      }}>
+        {label}
+      </span>
+    </ContextualTooltip>
   );
 }
 
@@ -326,7 +331,7 @@ function BabyStatusNarrative({ status, babyName, onEdit, forceFull }) {
     : <React.Fragment key={i}>{seg.text}</React.Fragment>;
 
   return (
-    <div style={{
+    <div data-tour-id="baby-status-narrative" style={{
       background: '#fff',
       border: `1px solid ${KUN.hair}`,
       borderRadius: 24,
@@ -427,31 +432,37 @@ window.BabyStatusNarrative = BabyStatusNarrative;
 function InfoTooltip({ text, open, onToggle }) {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
-      <button
-        onClick={(e) => { e.stopPropagation(); onToggle(); }}
-        style={{
-          position: 'relative',
-          zIndex: 11,
-          width: 24,
-          height: 24,
-          borderRadius: '50%',
-          border: open ? 'none' : `1px solid ${KUN.hair}`,
-          background: open ? KUN.brick : KUN.cream,
-          color: open ? '#fff' : KUN.inkMuted,
-          fontFamily: BST_FB,
-          fontSize: 11,
-          fontWeight: 700,
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          lineHeight: 1,
-          padding: 0,
-        }}
+      <ContextualTooltip
+        tooltipKey="ucin_info_tooltip"
+        content="Solo puedes tener una explicación abierta a la vez."
+        position="top"
       >
-        i
-      </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggle(); }}
+          style={{
+            position: 'relative',
+            zIndex: 11,
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            border: open ? 'none' : `1px solid ${KUN.hair}`,
+            background: open ? KUN.brick : KUN.cream,
+            color: open ? '#fff' : KUN.inkMuted,
+            fontFamily: BST_FB,
+            fontSize: 11,
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            lineHeight: 1,
+            padding: 0,
+          }}
+        >
+          i
+        </button>
+      </ContextualTooltip>
       {open && (
         <div
           onClick={(e) => e.stopPropagation()}

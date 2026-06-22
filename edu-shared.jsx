@@ -274,7 +274,7 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
       </div>
       <div style={{ display:'flex', gap: 8, alignItems:'center' }}>
         {onSettings && (
-          <button onClick={onSettings} style={{
+          <button data-tour-id="settings-icon" onClick={onSettings} style={{
             width: 40, height: 40, borderRadius: 20, border: `1px solid ${KUN.hair}`,
             background: '#fff',
             display:'flex', alignItems:'center', justifyContent:'center',
@@ -283,7 +283,7 @@ function KTopBar({ title, onBell, hasNotif, onSettings }) {
             {KIcon.gear(KUN.ink)}
           </button>
         )}
-        <button onClick={onBell} style={{
+        <button data-tour-id="notifications-icon" onClick={onBell} style={{
           width: 40, height: 40, borderRadius: 20, border: `1px solid ${KUN.hair}`,
           background: '#fff',
           display:'flex', alignItems:'center', justifyContent:'center',
@@ -331,6 +331,13 @@ function KSubTabs({ active, onChange }) {
         const isA = t.id === active;
         return (
           <div key={t.id}
+            data-tour-id={
+              t.id === 'camino'
+                ? 'edu-cuidados-basicos-tab'
+                : t.id === 'perso'
+                  ? 'edu-especial-tab'
+                  : 'edu-biblioteca-tab'
+            }
             onClick={() => onChange && onChange(t.id)}
             style={{
               flex: 1, textAlign:'center', cursor:'pointer',
@@ -406,6 +413,13 @@ function KBottomNav({ active = 'edu', onChange }) {
           return (
             <div key={t.id}
               data-nav-tab={t.id}
+              data-tour-id={
+                t.id === 'home' ? 'bottom-nav-inicio'
+                : t.id === 'bond' ? 'bottom-nav-vinculo'
+                : t.id === 'edu' ? 'bottom-nav-educacion'
+                : t.id === 'comm' ? 'bottom-nav-comunidad'
+                : 'bottom-nav-ucin'
+              }
               onClick={() => onChange && onChange(t.id)}
               style={{
                 display:'flex', flexDirection:'column', alignItems:'center', gap: 4,

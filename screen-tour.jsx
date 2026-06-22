@@ -22,7 +22,7 @@ const TOUR_MASCOTS = {
 };
 
 // ── Tab IDs matching data-nav-tab attributes in KBottomNav ──
-const TAB_IDS = ['home', 'edu', 'bond', 'comm'];
+const TAB_IDS = ['home', 'edu', 'bond', 'comm', 'ucin'];
 const HIGHLIGHT_PAD = 8;
 
 // Measure a tab's rect relative to the device container at runtime.
@@ -44,65 +44,280 @@ function measureTabRect(tabId) {
 
 const STEPS = [
   {
-    type:   'full',
+    type: 'full',
     mascotVariant: 'wave',
     mascotSize: 250,
     bubble: '¡Hola! Soy KUN. Voy a mostrarte todo lo que puedes hacer aquí para acompañar a tu bebé en este proceso. ¿Empezamos?',
-    btn:    '¡Vamos!',
+    btn: '¡Vamos!',
   },
   {
-    type:     'nav',
+    type: 'coachmark',
     tabIndex: 0,
-    mascotVariant: 'guideDown',
-    mascotPosition: 'guideHome',
-    mascotSize: 238,
-    mascotFlipX: true,
-    bubble:   'Aquí verás cómo está tu bebé hoy: su peso, sus días en el hospital y la enfermera que lo está cuidando.',
-    btn:      'Siguiente',
+    highlightElement: '[data-tour-id="bottom-nav-inicio"]',
+    bubblePosition: 'top',
+    highlightPadding: 12,
+    bubble: 'Aquí comienza todo. En esta sección ves el estado de tu bebé, información importante y accesos rápidos.',
+    btn: 'Siguiente',
   },
   {
-    type:     'nav',
+    type: 'coachmark',
+    tabIndex: 0,
+    highlightElement: '[data-tour-id="baby-hero-card"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Aquí ves a tu enfermera de turno, la edad cronológica y corregida de tu bebé, y su foto. Toca la edad para entender la diferencia.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 0,
+    highlightElement: '[data-tour-id="baby-status-summary"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Este es el resumen diario. Las palabras destacadas explican términos médicos. Tócalas para entender. Este resumen lo actualiza el equipo médico.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 0,
+    highlightElement: '[data-tour-id="weight-section"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Aquí se registra el peso diario de tu bebé. Podrás ver cómo ha evolucionado en el tiempo.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 0,
+    highlightElement: '[data-tour-id="lactario-card"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'En el Lactario puedes reservar horas para estar con tu bebé. Máximo 4 turnos por día. También ves cuánta leche hay y si necesitas rellenar.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 0,
+    highlightElement: '[data-tour-id="recommended-capsules"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Aquí aparecen cápsulas educativas recomendadas para ti según el estado de tu bebé.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'nav',
     tabIndex: 2,
+    highlightElement: '[data-tour-id="bottom-nav-vinculo"]',
+    bubblePosition: 'top',
+    highlightPadding: 12,
     mascotVariant: 'bondHero',
     mascotPosition: 'heroTop',
     mascotSize: 250,
-    bubble:   'Aquí puedes guardar los momentos importantes, compartirlos con tu familia y leerle cuentos o cantarle a tu bebé.',
-    btn:      'Siguiente',
+    bubble: 'Aquí es donde creas memoria de estos días. Puedes guardar fotos, videos, notas, grabaciones de voz. También leerle cuentos y cantarle canciones a tu bebé.',
+    btn: 'Siguiente',
   },
   {
-    type:     'nav',
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="diario-main-card"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'En el Diario ves todos tus recuerdos organizados por día. Puedes agregar fotos, videos, notas o grabar tu voz.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="diary-add-button"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Toca aquí para crear un nuevo recuerdo. Elige si quieres agregar una foto, escribir una nota, grabar audio, o todo a la vez.',
+    btn: 'Siguiente',
+    isInsideDiary: true,
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="color-selector"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Estos colores personalizan el fondo de tu recuerdo. Elige el que más te guste.',
+    btn: 'Siguiente',
+    isInsideDiary: true,
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="diary-memory-card"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Cada recuerdo que guardas puedes compartirlo con tu familia. Tócalo y elige cómo quieres compartirlo.',
+    btn: 'Siguiente',
+    isInsideDiary: true,
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="vinculo-activities-section"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Aquí hay cuentos para leerle y canciones para cantarle. Cada una tiene instrucciones especiales. Puedes guardar tus favoritas.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="vinculo-stories-tab"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Usa estas pestañas para cambiar entre cuentos, canciones y música.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="story-card"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Toca cualquier cuento o canción para abrirlo. Sigue las instrucciones y cántale o cuéntale a tu bebé. Es un momento especial para ustedes.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 2,
+    highlightElement: '[data-tour-id="recordings-section"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: '¡Y aquí pueden grabar! Tú, tu pareja, hermanos... todos pueden dejar mensajes y canciones para tu bebé. Es muy especial.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'nav',
     tabIndex: 1,
+    highlightElement: '[data-tour-id="bottom-nav-educacion"]',
+    bubblePosition: 'top',
+    highlightPadding: 12,
     mascotVariant: 'learning',
     mascotPosition: 'heroTop',
     mascotSize: 260,
-    bubble:   'Te iremos preparando con información especial para cada etapa de tu bebé. A tu ritmo, cuando puedas.',
-    btn:      'Siguiente',
+    bubble: 'En Educación te preparamos paso a paso. Hay tres tipos de contenido para ti.',
+    btn: 'Siguiente',
   },
   {
-    type:     'nav',
+    type: 'coachmark',
+    tabIndex: 1,
+    highlightElement: '[data-tour-id="edu-cuidados-basicos-tab"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'CUIDADOS BÁSICOS: Aquí están las cosas que todo papá o mamá en una UCIN debe saber. Ve completando una a una. Cuando termines una, se libera la siguiente.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 1,
+    highlightElement: '[data-tour-id="edu-especial-tab"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'ESPECIAL PARA MI HIJO: Aquí ves cápsulas específicas según el estado de tu bebé. Conforme actualices su información, aparecerán nuevas cápsulas que necesita.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 1,
+    highlightElement: '[data-tour-id="edu-biblioteca-tab"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'APRENDER MÁS: Aquí están TODAS las cápsulas disponibles. Puedes explorar por tu cuenta sin estar limitado al camino recomendado.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'nav',
     tabIndex: 3,
+    highlightElement: '[data-tour-id="bottom-nav-comunidad"]',
+    bubblePosition: 'top',
+    highlightPadding: 12,
     mascotVariant: 'support',
     mascotPosition: 'heroTop',
     mascotSize: 300,
     mascotTop: -136,
     mascotContentPaddingTop: 176,
-    bubble:   'En Comunidad puedes conectarte con otros papás y mamás que están viviendo algo parecido. Recuerda que sus respuestas no están respaldadas por UC CHRISTUS y pueden contener información errónea; ante dudas médicas, consulta al equipo de salud.',
-    btn:      'Siguiente',
+    bubble: 'COMUNIDAD: Es un espacio para conectar con otros papás en la misma situación. Aquí comparten preguntas, experiencias y se apoyan mutuamente.',
+    btn: 'Siguiente',
   },
   {
-    type:   'full',
-    bubble: 'Ya estás listo. Recuerda que no estás solo en esto. Aquí estaremos contigo en cada paso. 🧡',
-    btn:    'Comenzar',
+    type: 'coachmark',
+    tabIndex: 3,
+    highlightElement: '[data-tour-id="community-preguntas-button"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Aquí haces preguntas cuando necesitas consejo o ayuda de otros papás.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 3,
+    highlightElement: '[data-tour-id="community-experiencias-button"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Aquí compartes tus experiencias. Contar lo que vives ayuda a otros papás que están en la misma situación.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 3,
+    highlightElement: '[data-tour-id="community-new-post-button"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Toca aquí para escribir una nueva pregunta o experiencia. Escribe, agrégale etiquetas si quieres, y publica.',
+    btn: 'Siguiente',
+    isInsideCompose: true,
+  },
+  {
+    type: 'coachmark',
+    tabIndex: 3,
+    highlightElement: '[data-tour-id="community-reply-section"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 12,
+    bubble: 'Cada publicación crea su propio hilo. Otros papás responden, tú respondes a ellos. Es una conversación entre padres.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    highlightElement: '[data-tour-id="bottom-nav-ucin"]',
+    bubblePosition: 'top',
+    highlightPadding: 12,
+    bubble: 'UCIN: Aquí encuentras toda la información médica de tu bebé, reservas del lactario, y preguntas frecuentes útiles sobre cuidados en la UCIN.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    highlightElement: '[data-tour-id="settings-icon"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 10,
+    bubble: 'En Configuración puedes cambiar tus datos, ver tu perfil, y volver a ver este tutorial cuando quieras.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'coachmark',
+    highlightElement: '[data-tour-id="notifications-icon"]',
+    bubblePosition: 'bottom',
+    highlightPadding: 10,
+    bubble: 'Aquí recibirás notificaciones importantes: cuando se liberen nuevas cápsulas, respuestas en la comunidad, recordatorios del equipo.',
+    btn: 'Siguiente',
+  },
+  {
+    type: 'full',
+    bubble: 'Ya estás listo. Recuerda: no estás solo en esto. Aquí estaremos contigo en cada paso. 🧡',
+    btn: 'Comenzar',
     isLast: true,
-    mascotVariant: null,
     videoAsset: './assets/kun/kun-tutorial-final.mp4?v=8',
   },
 ];
 
 // ── Dark overlay with rectangular cutout ─────────────────────────────────────
-function CutoutOverlay({ rect }) {
+function CutoutOverlay({ rect, opacity = 0.6, borderRadius = 18 }) {
   const { x, y, w, h } = rect;
-  const bg = 'rgba(0,0,0,0.72)';
+  const bg = `rgba(0,0,0,${opacity})`;
   return (
     <>
       <div style={{ position:'absolute', top:0, left:0, right:0, height: y, background: bg, pointerEvents:'all' }}/>
@@ -113,7 +328,7 @@ function CutoutOverlay({ rect }) {
       <div style={{
         position:'absolute',
         top: y, left: x, width: w, height: h,
-        borderRadius: 18,
+        borderRadius,
         boxShadow: `0 0 0 2.5px ${KUN.brick}, 0 0 0 6px rgba(240,116,62,0.22), 0 0 28px rgba(240,116,62,0.30)`,
         pointerEvents: 'none',
       }}/>
@@ -121,8 +336,52 @@ function CutoutOverlay({ rect }) {
   );
 }
 
-// Tab that should be visible in the background for each step
-const STEP_TAB = [null, 'home', 'bond', 'edu', 'comm', null];
+function FullTourOverlay() {
+  return (
+    <div style={{
+      position:'absolute',
+      inset:0,
+      background:'rgba(0,0,0,0.6)',
+      pointerEvents:'all',
+    }}/>
+  );
+}
+
+function measureHighlightRect(selector, padding = 12) {
+  if (!selector) return null;
+  const device = document.querySelector('.kun-device') || document.documentElement;
+  const element = document.querySelector(selector);
+  if (!element) return null;
+
+  const deviceRect = device.getBoundingClientRect();
+  const elementRect = element.getBoundingClientRect();
+  const maxWidth = deviceRect.width;
+  const maxHeight = deviceRect.height;
+  const left = Math.max(0, elementRect.left - deviceRect.left - padding);
+  const top = Math.max(0, elementRect.top - deviceRect.top - padding);
+  const right = Math.min(maxWidth, elementRect.right - deviceRect.left + padding);
+  const bottom = Math.min(maxHeight, elementRect.bottom - deviceRect.top + padding);
+  if (right <= left || bottom <= top) return null;
+  return {
+    x: Math.round(left),
+    y: Math.round(top),
+    w: Math.round(right - left),
+    h: Math.round(bottom - top),
+    borderRadius: 12,
+  };
+}
+
+// Tab that should be visible in the background for each step.
+// Top-bar steps without a tabIndex use Inicio as a stable background for now.
+const STEP_TAB = STEPS.map(step => (
+  step.type !== 'full'
+    ? (
+        step.highlightElement?.includes('bottom-nav-ucin')
+          ? 'ucin'
+          : (step.isInsideUCIN ? 'ucin' : (TAB_IDS[step.tabIndex] || 'home'))
+      )
+    : null
+));
 
 // Decorative half-moons for full-screen steps
 function TourShapes() {
@@ -254,6 +513,130 @@ function TourFinalVideo({ src }) {
   );
 }
 
+function CoachmarkBubble({
+  rect,
+  bubblePosition = 'bottom',
+  text,
+  buttonLabel = 'Siguiente',
+  onBack,
+  onNext,
+  showBack = true,
+}) {
+  const bubbleRef = React.useRef(null);
+  const [bubbleHeight, setBubbleHeight] = React.useState(0);
+
+  React.useLayoutEffect(() => {
+    if (!bubbleRef.current) return;
+    const nextHeight = Math.ceil(bubbleRef.current.getBoundingClientRect().height);
+    if (nextHeight !== bubbleHeight) setBubbleHeight(nextHeight);
+  }, [text, buttonLabel, showBack, bubbleHeight]);
+
+  if (!rect) return null;
+
+  const device = document.querySelector('.kun-device');
+  const deviceWidth = device?.clientWidth || 390;
+  const deviceHeight = device?.clientHeight || 844;
+  const margin = 14;
+  const gap = 12;
+  const width = Math.min(318, deviceWidth - margin * 2);
+  const measuredHeight = bubbleHeight || 130;
+  const spaceAbove = rect.y - margin;
+  const spaceBelow = deviceHeight - (rect.y + rect.h) - margin;
+  const preferredBelow = bubblePosition !== 'top';
+  const canFitBelow = spaceBelow >= measuredHeight + gap;
+  const canFitAbove = spaceAbove >= measuredHeight + gap;
+  const showBelow = preferredBelow
+    ? (canFitBelow || !canFitAbove)
+    : (!canFitAbove && canFitBelow);
+  const idealLeft = rect.x + rect.w / 2 - width / 2;
+  const left = Math.max(margin, Math.min(deviceWidth - width - margin, idealLeft));
+  const top = showBelow
+    ? Math.min(deviceHeight - measuredHeight - margin, rect.y + rect.h + gap)
+    : Math.max(margin, rect.y - measuredHeight - gap);
+  const arrowCenter = Math.max(18, Math.min(width - 18, rect.x + rect.w / 2 - left));
+
+  return (
+    <div
+      ref={bubbleRef}
+      style={{
+        position: 'absolute',
+        left,
+        top,
+        width,
+        boxSizing: 'border-box',
+        background: '#fff',
+        border: `1px solid ${KUN.hair}`,
+        borderRadius: 16,
+        padding: '14px 15px 12px',
+        boxShadow: '0 12px 30px rgba(42,35,32,0.18)',
+        zIndex: 30,
+      }}
+    >
+      <div style={{
+        position: 'absolute',
+        left: arrowCenter - 7,
+        [showBelow ? 'top' : 'bottom']: -7,
+        width: 14,
+        height: 14,
+        background: '#fff',
+        borderLeft: showBelow ? `1px solid ${KUN.hair}` : 'none',
+        borderTop: showBelow ? `1px solid ${KUN.hair}` : 'none',
+        borderRight: showBelow ? 'none' : `1px solid ${KUN.hair}`,
+        borderBottom: showBelow ? 'none' : `1px solid ${KUN.hair}`,
+        transform: 'rotate(45deg)',
+      }}/>
+
+      <div style={{
+        position: 'relative',
+        fontFamily: T_FB,
+        fontSize: 13,
+        fontWeight: 400,
+        color: KUN.ink,
+        lineHeight: 1.5,
+      }}>
+        {text}
+      </div>
+
+      <div style={{
+        position: 'relative',
+        display: 'grid',
+        gridTemplateColumns: showBack ? '82px 1fr' : '1fr',
+        gap: 8,
+        marginTop: 12,
+      }}>
+        {showBack && (
+          <button onClick={onBack} style={{
+            height: 36,
+            border: `1px solid ${KUN.hair}`,
+            borderRadius: 999,
+            background: '#fff',
+            color: KUN.inkSoft,
+            fontFamily: T_FT,
+            fontSize: 12,
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}>
+            Atrás
+          </button>
+        )}
+        <button onClick={onNext} style={{
+          height: 36,
+          border: 'none',
+          borderRadius: 999,
+          background: KUN.brick,
+          color: '#fff',
+          fontFamily: T_FT,
+          fontSize: 12,
+          fontWeight: 700,
+          cursor: 'pointer',
+        }}>
+          {buttonLabel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function getTourMascotStyle(step, tabRect) {
   const size = step.mascotSize || 240;
   if (step.mascotPosition === 'guideHome') {
@@ -281,16 +664,17 @@ function getTourMascotStyle(step, tabRect) {
 function ScreenTour({ onDone, onSkip, onStepChange }) {
   const [step, setStep] = React.useState(0);
   const [tabRect, setTabRect] = React.useState(null);
+  const [spotlightRect, setSpotlightRect] = React.useState(null);
   const current = STEPS[step];
   const isLast = step === STEPS.length - 1;
 
   React.useEffect(() => {
     const tabId = STEP_TAB[step];
-    if (tabId && onStepChange) onStepChange(tabId);
+    if (onStepChange) onStepChange(tabId, current, step);
 
-    if (current.type === 'nav') {
+    if (current.type !== 'full') {
       const id = setTimeout(() => {
-        const r = measureTabRect(TAB_IDS[current.tabIndex]);
+        const r = measureTabRect(tabId || 'home');
         setTabRect(r);
       }, 60);
       return () => clearTimeout(id);
@@ -298,6 +682,53 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
       setTabRect(null);
     }
   }, [step]);
+
+  React.useEffect(() => {
+    if (current.type === 'full' || !current.highlightElement) {
+      setSpotlightRect(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    let frameId = null;
+    const timers = [];
+
+    const recalculate = () => {
+      if (cancelled) return;
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => {
+        if (cancelled) return;
+        setSpotlightRect(measureHighlightRect(
+          current.highlightElement,
+          current.highlightPadding ?? 12
+        ));
+      });
+    };
+
+    const revealAndMeasure = () => {
+      const element = document.querySelector(current.highlightElement);
+      if (!element) {
+        setSpotlightRect(null);
+        return;
+      }
+      element.scrollIntoView({ behavior:'smooth', block:'center', inline:'nearest' });
+      recalculate();
+      timers.push(setTimeout(recalculate, 180));
+      timers.push(setTimeout(recalculate, 420));
+    };
+
+    timers.push(setTimeout(revealAndMeasure, 100));
+    window.addEventListener('resize', recalculate);
+    window.addEventListener('scroll', recalculate, true);
+
+    return () => {
+      cancelled = true;
+      if (frameId) cancelAnimationFrame(frameId);
+      timers.forEach(clearTimeout);
+      window.removeEventListener('resize', recalculate);
+      window.removeEventListener('scroll', recalculate, true);
+    };
+  }, [step, current.highlightElement, current.highlightPadding]);
 
   const advance = () => {
     if (isLast) { onDone(); }
@@ -343,7 +774,11 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
   // ── Full-screen steps (step 0 & step 5) ──────────────────────────────────
   if (current.type === 'full') {
     return (
-      <div style={{
+      <div
+        data-tour-step={step + 1}
+        data-tour-type={current.type}
+        data-tour-target=""
+        style={{
         position:'absolute', inset:0, zIndex: 400,
         background: KUN.bg,
         display:'flex', flexDirection:'column',
@@ -432,87 +867,59 @@ function ScreenTour({ onDone, onSkip, onStepChange }) {
     );
   }
 
-  // ── Nav highlight steps (steps 1–4) ──────────────────────────────────────
-  if (!tabRect) {
-    return <div style={{ position:'absolute', inset:0, zIndex: 400, background:'rgba(0,0,0,0.72)' }}/>;
-  }
-
   return (
-    <div style={{ position:'absolute', inset:0, zIndex: 400, fontFamily: T_FB }}>
+    <div
+      data-tour-step={step + 1}
+      data-tour-type={current.type}
+      data-tour-target={current.highlightElement || ''}
+      style={{ position:'absolute', inset:0, zIndex: 400, fontFamily: T_FB }}
+    >
       {/* Full-screen click blocker (prevents interaction with app behind) */}
       <div style={{ position:'absolute', inset:0, zIndex: 0 }}/>
 
-      {/* Overlay with cutout */}
-      <CutoutOverlay rect={tabRect} />
+      {/* Spotlight: a four-panel overlay around the selected feature. */}
+      {current.highlightElement && spotlightRect
+        ? <CutoutOverlay
+            rect={spotlightRect}
+            opacity={0.6}
+            borderRadius={12}
+          />
+        : <FullTourOverlay />}
 
-      {/* Step dots — top of dark area */}
-      <div style={{ position:'absolute', top: 68, left:0, right:0, zIndex: 10 }}>
+      <div style={{ position:'absolute', top: 68, left:0, right:0, zIndex: 24, pointerEvents:'none' }}>
         <Dots />
       </div>
 
-      {/* KUN + bubble card — floats above the highlighted tab */}
-      <div style={{
-        position:'absolute', left: 20, right: 20,
-        bottom: tabRect.cardBottom,
-        zIndex: 10,
-      }}>
-        <div style={getTourMascotStyle(current, tabRect)}>
-          <TourMascot variant={current.mascotVariant} size={current.mascotSize} flipX={current.mascotFlipX} />
-        </div>
+      {current.type === 'nav' && current.mascotVariant && (
         <div style={{
-          position:'relative',
-          zIndex: 10,
-          background: '#fff',
-          borderRadius: 28,
-          overflow:'visible',
-          border: `1px solid ${KUN.hair}`,
-          boxShadow: '0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.12)',
+          position:'absolute',
+          left:'50%',
+          top: current.mascotPosition === 'heroTop' ? 104 : 112,
+          transform:'translateX(-50%)',
+          width: current.mascotSize || 250,
+          height: current.mascotSize || 250,
+          zIndex: 18,
+          pointerEvents:'none',
         }}>
-          <div style={{
-            padding: current.mascotPosition === 'guideHome'
-              ? '18px 20px 82px'
-              : `${current.mascotContentPaddingTop || 116}px 20px 22px`,
-            display:'flex', flexDirection:'column',
-            alignItems:'center', gap: 14,
-          }}>
-            {/* Message */}
-            <div style={{
-              fontFamily: T_FB, fontSize: 14, fontWeight: 400, color: KUN.ink,
-              lineHeight: 1.55, textAlign:'center',
-            }}>
-              {current.bubble}
-            </div>
-
-            <div style={{ width:'100%', display:'grid', gridTemplateColumns: step > 0 ? '92px 1fr' : '1fr', gap: 10, alignItems:'center' }}>
-              {step > 0 && (
-                <button onClick={back} style={{
-                  height: 42,
-                  border:`1px solid ${KUN.hair}`,
-                  background:'#fff',
-                  color: KUN.inkSoft,
-                  borderRadius: 999,
-                  fontFamily: T_FT, fontSize: 13.5, fontWeight: 700,
-                  cursor:'pointer',
-                }}>
-                  Atrás
-                </button>
-              )}
-
-              {/* Next button — DS pill */}
-              <button onClick={advance} style={{
-                width:'100%', padding: '11px 18px', height: 42, boxSizing:'border-box',
-                background: KUN.brick, color: '#fff',
-                border:'none', borderRadius: 999,
-                fontFamily: T_FT, fontSize: 13.5, fontWeight: 700, letterSpacing: -0.1,
-                cursor:'pointer',
-              }}>
-                {current.btn}
-              </button>
-            </div>
-            <SkipLink />
-          </div>
+          <TourMascot
+            variant={current.mascotVariant}
+            size={current.mascotSize || 250}
+            flipX={current.mascotFlipX}
+          />
         </div>
-      </div>
+      )}
+
+      {spotlightRect && (
+        <CoachmarkBubble
+          rect={spotlightRect}
+          bubblePosition={current.bubblePosition}
+          text={current.bubble}
+          buttonLabel={current.btn}
+          showBack={step > 0}
+          onBack={back}
+          onNext={advance}
+        />
+      )}
     </div>
   );
 }

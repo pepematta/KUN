@@ -393,26 +393,31 @@ function CaminoFeedback({ stagePath, parentName, babyName, feedbackSent, onSubmi
               color: KUN.ink,
             }}
           />
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
-            {FEEDBACK_TAGS.map(tag => {
-              const active = tags.includes(tag);
-              return (
-                <button key={tag} onClick={() => toggleTag(tag)} style={{
-                  border: active ? 'none' : `1px solid ${KUN.hair}`,
-                  background: active ? KUN.brick : KUN.cream,
-                  color: active ? '#fff' : KUN.inkSoft,
-                  borderRadius: 999,
-                  padding: '8px 10px',
-                  fontFamily: C_FT,
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}>
-                  {tag}
-                </button>
-              );
-            })}
-          </div>
+          <ContextualTooltip
+            tooltipKey="educacion_camino_feedback"
+            content="Puedes elegir más de una opción. Esto se enviará al equipo de salud."
+          >
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+              {FEEDBACK_TAGS.map(tag => {
+                const active = tags.includes(tag);
+                return (
+                  <button key={tag} onClick={() => toggleTag(tag)} style={{
+                    border: active ? 'none' : `1px solid ${KUN.hair}`,
+                    background: active ? KUN.brick : KUN.cream,
+                    color: active ? '#fff' : KUN.inkSoft,
+                    borderRadius: 999,
+                    padding: '8px 10px',
+                    fontFamily: C_FT,
+                    fontSize: 11.5,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}>
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
+          </ContextualTooltip>
           <textarea
             value={note}
             onChange={e => setNote(e.target.value)}

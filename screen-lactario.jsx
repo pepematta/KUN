@@ -365,7 +365,7 @@ function UcinLactarioBox({ reservation, onOpen, reminderMinutes = 60 }) {
     : `Proximo turno disponible: ${nextSlot ? nextSlot.time : 'sin cupos'}`;
 
   return (
-    <div style={{ padding: '0 20px 16px' }}>
+    <div data-tour-id="ucin-lactario-section" style={{ padding: '0 20px 16px' }}>
       <button
         onClick={onOpen}
         style={{
@@ -484,6 +484,7 @@ function ucinTextKey(value) {
 function UcinFaqBox({ onOpen }) {
   return (
     <button
+      data-tour-id="ucin-faq-section"
       onClick={onOpen}
       style={{
         width: '100%',
